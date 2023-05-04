@@ -45,8 +45,4 @@ public class User {
 		}
 	}
 
-	public int getCash() {
-		return cash;
-	}
-
 }

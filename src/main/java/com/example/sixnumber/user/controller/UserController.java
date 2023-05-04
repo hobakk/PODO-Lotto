@@ -1,9 +1,11 @@
 package com.example.sixnumber.user.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
 	private final UserService userService;
+
 	@PostMapping("/signup")
 	public ResponseEntity<ApiResponse> signup(@RequestBody SignupRequest request) {
 		return ResponseEntity.ok(userService.signUp(request));
@@ -34,5 +37,11 @@ public class UserController {
 		HttpHeaders headers = new HttpHeaders();
 		response.addHeader(JwtProvider.AUTHORIZATION_HEADER, generatedToken);
 		return ResponseEntity.ok().headers(headers).body(ApiResponse.ok("로그인 성공"));
+	}
+
+	@GetMapping("/cash")
+	public ResponseEntity<ApiResponse> getCash(HttpServletRequest request) {
+		int cash = userService.getCash(request);
+		return ResponseEntity.ok().body(ApiResponse.ok("조회 성공\n" + cash));
 	}
 }
