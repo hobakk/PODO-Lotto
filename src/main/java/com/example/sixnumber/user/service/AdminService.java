@@ -27,6 +27,14 @@ public class AdminService {
 	private final CashRepository cashRepository;
 	private final UserRepository userRepository;
 
+	public ApiResponse setAdmin(Long userId, HttpServletRequest request) {
+		CheckRole(request);
+		User user = findByUser(userId);
+		user.setAdmin();
+		userRepository.save(user);
+		return ApiResponse.ok("변경 완료");
+	}
+
 	public DataApiResponse<?> getUsers(HttpServletRequest request) {
 		CheckRole(request);
 		return DataApiResponse.ok("조회 성공", userRepository.findAll());

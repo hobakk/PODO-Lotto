@@ -24,6 +24,11 @@ public class AdminController {
 
 	private final AdminService adminService;
 
+	@GetMapping("/user/{userId}")
+	public ResponseEntity<ApiResponse> setAdmin(@PathVariable Long userId, HttpServletRequest request) {
+		return ResponseEntity.ok(adminService.setAdmin(userId, request));
+	}
+
 	@GetMapping("/users")
 	public ResponseEntity<DataApiResponse<?>> getUsers(HttpServletRequest request) {
 		return ResponseEntity.ok(adminService.getUsers(request));
