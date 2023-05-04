@@ -26,7 +26,7 @@ public class JwtProvider {
 	private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256); // 임시로 작성해놓았습니다. 의견주시면 감사하겠습니다.
 	private static final int expire = 1000;//30분
 
-	public String accessToken(String email, Long userId, String nickname) {
+	public static String accessToken(String email, Long userId, String nickname) {
 		Date curDate = new Date();
 		Date expireDate = new Date(curDate.getTime() + expire);
 		HashMap<String, Object> headers = new HashMap<>();
@@ -45,16 +45,16 @@ public class JwtProvider {
 			.compact();
 	}
 
-	public Optional<String> resolveToken(HttpServletRequest request) {
+	public static String resolveToken(HttpServletRequest request) {
 		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
 
 		if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
-			return Optional.of(bearerToken.substring(6));
+			return bearerToken.substring(6);
 		}
-		return Optional.empty();
+		return null;
 	}
 
-	public boolean validateToken(String token) throws ExpiredJwtException {
+	public static boolean validateToken(String token) throws ExpiredJwtException {
 		try {
 			Jwts.parserBuilder().setSigningKey(KEY).build().parseClaimsJws(token);
 			return true;
@@ -70,7 +70,7 @@ public class JwtProvider {
 		return false;
 	}
 
-	private Claims getClaims(String token) {
+	public static Claims getClaims(String token) {
 		return Jwts.parserBuilder()
 			.setSigningKey(KEY)
 			.build()
