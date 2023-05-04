@@ -1,13 +1,12 @@
 package com.example.sixnumber.user.entity;
 
-import java.security.SecureRandom;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import com.example.sixnumber.user.dto.SignupRequest;
+import com.example.sixnumber.user.type.UserRole;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,12 +24,14 @@ public class User {
 	private String password;
 	private String nickname;
 	private int cash;
+	private UserRole role;
 	private String sign;
 
 	public User(SignupRequest request, String password) {
 		this.email = request.getEmail();
 		this.password = password;
 		this.nickname = request.getNickname();
+		this.role = UserRole.ROLE_USER;
 		this.cash = 1000;
 	}
 
@@ -43,6 +44,10 @@ public class User {
 				this.cash -= cash;
 				break;
 		}
+	}
+
+	public void setAdmin() {
+		this.role = UserRole.ROLE_ADMIN;
 	}
 
 }
