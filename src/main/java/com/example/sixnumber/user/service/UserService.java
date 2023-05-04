@@ -55,30 +55,27 @@ public class UserService {
 	}
 
 	public int getCash(HttpServletRequest request) {
+		// user 가 보유한 cash 정보 보안을 위해 Jwt payloads 에 넣지 않아 db에서 user 를 찾음
+		User user = findByTokenByUser(request);
+		return user.getCash();
+	}
+
+	public ApiResponse charging(ChargingRequest chargingRequest, HttpServletRequest httpServletRequest) {
+		User user = findByTokenByUser(httpServletRequest);
+		Cash cash = new Cash(user, chargingRequest);
+		cashRepository.save(cash);
+		return ApiResponse.ok("요청 성공");
+	}
+
+	private User findByTokenByUser(HttpServletRequest request) {
 		Claims claims;
 		String token = JwtProvider.resolveToken(request);
 		if (token != null) {
 			JwtProvider.validateToken(token);
 			claims = JwtProvider.getClaims(token);
 			String email = claims.getSubject();
-			User user = findByUser(email);
-			return user.getCash();
+			return findByUser(email);
 		} else { throw  new IllegalArgumentException("유효하지 않은 토큰"); }
-	}
-
-	public ApiResponse charging(ChargingRequest chargingRequest, HttpServletRequest httpServletRequest) {
-		Claims claims;
-		String token = JwtProvider.resolveToken(httpServletRequest);
-		if (token != null) {
-			JwtProvider.validateToken(token);
-			claims = JwtProvider.getClaims(token);
-			String email = claims.getSubject();
-			User user = findByUser(email);
-			// user 가 보유한 cash 정보 보안을 위해 Jwt payloads 에 넣지 않아 db에서 user 를 찾음
-			Cash cash = new Cash(user, chargingRequest);
-			cashRepository.save(cash);
-		} else { throw  new IllegalArgumentException("유효하지 않은 토큰"); }
-		return ApiResponse.ok("요청 성공");
 	}
 
 	private User findByUser(String email) {
