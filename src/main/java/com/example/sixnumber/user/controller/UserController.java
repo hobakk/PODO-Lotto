@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.util.JwtProvider;
+import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.service.UserService;
@@ -43,5 +44,10 @@ public class UserController {
 	public ResponseEntity<ApiResponse> getCash(HttpServletRequest request) {
 		int cash = userService.getCash(request);
 		return ResponseEntity.ok().body(ApiResponse.ok("조회 성공\n" + cash));
+	}
+
+	@PostMapping("/cash")
+	public ResponseEntity<ApiResponse> charging(@RequestBody ChargingRequest chargingRequest, HttpServletRequest httpServletRequest) {
+		return ResponseEntity.ok(userService.charging(chargingRequest, httpServletRequest));
 	}
 }

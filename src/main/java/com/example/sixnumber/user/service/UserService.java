@@ -10,9 +10,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.util.JwtProvider;
+import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
+import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
+import com.example.sixnumber.user.repository.CashRepository;
 import com.example.sixnumber.user.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;
@@ -26,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final CashRepository cashRepository;
 	private final PasswordEncoder passwordEncoder;
 
 	public ApiResponse signUp(SignupRequest request) {
@@ -60,6 +64,21 @@ public class UserService {
 			User user = findByUser(email);
 			return user.getCash();
 		} else { throw  new IllegalArgumentException("유효하지 않은 토큰"); }
+	}
+
+	public ApiResponse charging(ChargingRequest chargingRequest, HttpServletRequest httpServletRequest) {
+		Claims claims;
+		String token = JwtProvider.resolveToken(httpServletRequest);
+		if (token != null) {
+			JwtProvider.validateToken(token);
+			claims = JwtProvider.getClaims(token);
+			String email = claims.getSubject();
+			System.out.println( claims.get("nickname"));
+			User user = findByUser(email);
+			Cash cash = new Cash(user, chargingRequest);
+			cashRepository.save(cash);
+		} else { throw  new IllegalArgumentException("유효하지 않은 토큰"); }
+		return ApiResponse.ok("요청 성공");
 	}
 
 	private User findByUser(String email) {
