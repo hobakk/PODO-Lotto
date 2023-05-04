@@ -51,7 +51,7 @@ public class UserService {
 		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
 			throw new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다");
 		}
-		return JwtProvider.accessToken(user.getEmail(), user.getId(), user.getNickname());
+		return JwtProvider.accessToken(user);
 	}
 
 	public int getCash(HttpServletRequest request) {
@@ -73,8 +73,8 @@ public class UserService {
 			JwtProvider.validateToken(token);
 			claims = JwtProvider.getClaims(token);
 			String email = claims.getSubject();
-			System.out.println( claims.get("nickname"));
 			User user = findByUser(email);
+			// user 가 보유한 cash 정보 보안을 위해 Jwt payloads 에 넣지 않아 db에서 user 를 찾음
 			Cash cash = new Cash(user, chargingRequest);
 			cashRepository.save(cash);
 		} else { throw  new IllegalArgumentException("유효하지 않은 토큰"); }
