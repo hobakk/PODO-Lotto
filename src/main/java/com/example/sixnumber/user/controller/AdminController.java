@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sixnumber.global.dto.ApiResponse;
-import com.example.sixnumber.global.dto.DataApiResponse;
+import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.dto.MapApiResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.service.AdminService;
 
@@ -30,12 +31,12 @@ public class AdminController {
 	}
 
 	@GetMapping("/users")
-	public ResponseEntity<DataApiResponse<?>> getUsers(HttpServletRequest request) {
+	public ResponseEntity<ListApiResponse<?>> getUsers(HttpServletRequest request) {
 		return ResponseEntity.ok(adminService.getUsers(request));
 	}
 
 	@GetMapping("/chargs")
-	public ResponseEntity<DataApiResponse<?>> getChargs(HttpServletRequest request) {
+	public ResponseEntity<ListApiResponse<?>> getChargs(HttpServletRequest request) {
 		return ResponseEntity.ok(adminService.getChargs(request));
 	}
 
@@ -47,5 +48,10 @@ public class AdminController {
 	@PostMapping("/downCash/{userId}")
 	public ResponseEntity<ApiResponse> downCash(@RequestBody CashRequest cashRequest, HttpServletRequest httpServletRequest) {
 		return ResponseEntity.ok(adminService.downCash(cashRequest, httpServletRequest));
+	}
+
+	@PostMapping("/lotto")
+	public ResponseEntity<MapApiResponse<Integer, Integer>> createLotto(HttpServletRequest request) {
+		return ResponseEntity.ok(adminService.createLotto(request));
 	}
 }

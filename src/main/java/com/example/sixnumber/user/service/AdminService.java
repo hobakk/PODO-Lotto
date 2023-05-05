@@ -1,13 +1,19 @@
 package com.example.sixnumber.user.service;
 
+import java.time.LocalDate;
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.dto.ApiResponse;
-import com.example.sixnumber.global.dto.DataApiResponse;
+import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.dto.MapApiResponse;
 import com.example.sixnumber.global.util.JwtProvider;
+import com.example.sixnumber.lotto.entity.Lotto;
+import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.CashRepository;
@@ -26,6 +32,7 @@ public class AdminService {
 
 	private final CashRepository cashRepository;
 	private final UserRepository userRepository;
+	private final LottoRepository lottoRepository;
 
 	public ApiResponse setAdmin(Long userId, HttpServletRequest request) {
 		CheckRole(request);
@@ -35,14 +42,14 @@ public class AdminService {
 		return ApiResponse.ok("변경 완료");
 	}
 
-	public DataApiResponse<?> getUsers(HttpServletRequest request) {
+	public ListApiResponse<?> getUsers(HttpServletRequest request) {
 		CheckRole(request);
-		return DataApiResponse.ok("조회 성공", userRepository.findAll());
+		return ListApiResponse.ok("조회 성공", userRepository.findAll());
 	}
 
-	public DataApiResponse<?> getChargs(HttpServletRequest request) {
+	public ListApiResponse<?> getChargs(HttpServletRequest request) {
 		CheckRole(request);
-		return DataApiResponse.ok("조회 성공", cashRepository.findAll());
+		return ListApiResponse.ok("조회 성공", cashRepository.findAll());
 	}
 
 	public ApiResponse upCash(CashRequest cashRequest, HttpServletRequest httpServletRequest) {
@@ -59,6 +66,20 @@ public class AdminService {
 		user.setCash("-", cashRequest.getValue());
 		userRepository.save(user);
 		return ApiResponse.ok("차감 완료");
+	}
+
+	//초기 로또메인 만들기 위한 코드, 이후 사용할 일이 적어서 코드 중복사용을 안해서 생기는 불이익이 없을거라 생각
+	public MapApiResponse<Integer, Integer> createLotto(HttpServletRequest request) {
+		CheckRole(request);
+		LocalDate today = LocalDate.now();
+
+		HashMap<Integer, Integer> countMap = new HashMap<>();
+		for (int i = 1; i <= 45; i++) {
+			countMap.put(i, 0);
+		}
+		Lotto lotto = new Lotto(countMap, today);
+		lottoRepository.save(lotto);
+		return MapApiResponse.ok("생성 완료", countMap);
 	}
 
 	private void CheckRole(HttpServletRequest request) {
