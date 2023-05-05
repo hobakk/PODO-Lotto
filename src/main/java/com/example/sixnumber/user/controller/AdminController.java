@@ -51,7 +51,7 @@ public class AdminController {
 	}
 
 	@PostMapping("/lotto")
-	public ResponseEntity<MapApiResponse<Integer, Integer>> createLotto(HttpServletRequest request) {
+	public ResponseEntity<ListApiResponse<Integer>> createLotto(HttpServletRequest request) {
 		return ResponseEntity.ok(adminService.createLotto(request));
 	}
 }

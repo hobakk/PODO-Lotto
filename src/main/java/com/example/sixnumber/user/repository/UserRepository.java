@@ -4,11 +4,11 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.sixnumber.user.entity.User;
+import com.example.sixnumber.user.entity.Users;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<Users, Long> {
 
 	Boolean existsUserByEmail(String email);
 	Boolean existsUserByNickname(String nickname);
-	Optional<User> findUserByEmail(String email);
+	Optional<Users> findUserByEmail(String email);
 }
