@@ -3,11 +3,10 @@ package com.example.sixnumber.global.util;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.example.sixnumber.user.entity.User;
+import com.example.sixnumber.user.entity.Users;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -28,19 +27,19 @@ public class JwtProvider {
 	private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256); // 임시로 작성해놓았습니다. 의견주시면 감사하겠습니다.
 	private static final int expire = 1000;//30분
 
-	public static String accessToken(User user) {
+	public static String accessToken(Users users) {
 		Date curDate = new Date();
 		Date expireDate = new Date(curDate.getTime() + expire);
 		HashMap<String, Object> headers = new HashMap<>();
 		headers.put("typ", "JWT");
 		headers.put("alg", "HS256");
 		HashMap<String, Object> payloads = new HashMap<>();
-		payloads.put("id", user.getId());
-		payloads.put("nickname", user.getNickname());
-		payloads.put("role", user.getRole());
+		payloads.put("id", users.getId());
+		payloads.put("nickname", users.getNickname());
+		payloads.put("role", users.getRole());
 		return Jwts.builder()
 			.setHeader(headers)
-			.setSubject(user.getEmail())
+			.setSubject(users.getEmail())
 			.setClaims(payloads)
 			.setIssuedAt(curDate)
 			.setExpiration(expireDate)
