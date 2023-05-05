@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '19'
 
 configurations {
     compileOnly {
@@ -42,6 +42,14 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+
+    // oracle 데이터베이스 설치
+    runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
+    implementation 'com.oracle.database.security:oraclepki:'
+    implementation 'com.oracle.database.security:osdt_cert:'
+    implementation 'com.oracle.database.security:osdt_core:'
+
+
 }
 
 tasks.named('test') {

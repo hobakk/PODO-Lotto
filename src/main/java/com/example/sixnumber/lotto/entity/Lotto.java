@@ -1,19 +1,15 @@
 package com.example.sixnumber.lotto.entity;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.MapKeyColumn;
-
-import com.example.sixnumber.global.util.TimeStamped;
+import javax.persistence.OrderColumn;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,21 +18,20 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Lotto extends TimeStamped {
+public class Lotto {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
 
 	@ElementCollection
-	@CollectionTable(name = "lotto_number")
-	@MapKeyColumn(name = "number")
-	@Column(name = "count")
-	private HashMap<Integer, Integer> numberList = new HashMap<>();
-	private LocalDate creationDate;
+	@OrderColumn(name = "countList_index")
+	private List<Integer> countList = new ArrayList<>(46);
+	private String creationDate;
 
-	public Lotto(HashMap<Integer, Integer> numberList, LocalDate creationDate) {
-		this.numberList = numberList;
+	public Lotto(List<Integer> countList, String creationDate) {
+		this.countList = countList;
 		this.creationDate = creationDate;
 	}
 }
