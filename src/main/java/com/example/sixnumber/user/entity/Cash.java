@@ -1,10 +1,10 @@
 package com.example.sixnumber.user.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 import com.example.sixnumber.user.dto.ChargingRequest;
 
@@ -19,15 +19,14 @@ public class Cash {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
-
-	@ManyToOne
-	private User user;
+	private Long userId;
 	private String msg;
 	private int value;
 
-	public Cash(User user, ChargingRequest request) {
-		this.user = user;
+	public Cash(Long userId, ChargingRequest request) {
+		this.userId = userId;
 		this.msg = request.getMsg();
 		this.value = request.getValue();
 	}
