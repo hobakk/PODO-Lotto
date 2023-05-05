@@ -26,15 +26,15 @@ public class SixNumber extends TimeStamped {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private Long userId;
-	private LocalDateTime buyDate;
+	private String buyDate;
 
 	@ElementCollection
 	@OrderColumn(name = "number_index")
-	private List<Integer> number = new ArrayList<>(6);
+	private List<Integer> numberList = new ArrayList<>(6);
 
-	public SixNumber(Long userId, LocalDateTime buyDate, List<Integer> number) {
+	public SixNumber(Long userId, String buyDate, List<Integer> numberList) {
 		this.userId = userId;
 		this.buyDate = buyDate;
-		this.number = number;
+		this.numberList = numberList;
 	}
 }
