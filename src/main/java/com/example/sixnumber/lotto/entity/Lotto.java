@@ -1,5 +1,6 @@
 package com.example.sixnumber.lotto.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 
@@ -32,9 +33,9 @@ public class Lotto extends TimeStamped {
 	@MapKeyColumn(name = "number")
 	@Column(name = "count")
 	private HashMap<Integer, Integer> numberList = new HashMap<>();
-	private LocalDateTime creationDate;
+	private LocalDate creationDate;
 
-	public Lotto(HashMap<Integer, Integer> numberList, LocalDateTime creationDate) {
+	public Lotto(HashMap<Integer, Integer> numberList, LocalDate creationDate) {
 		this.numberList = numberList;
 		this.creationDate = creationDate;
 	}

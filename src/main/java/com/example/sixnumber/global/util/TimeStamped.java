@@ -1,5 +1,6 @@
 package com.example.sixnumber.global.util;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -18,9 +19,9 @@ import lombok.Getter;
 public class TimeStamped {
 	@CreatedDate
 	@Column(updatable = false)
-	protected LocalDateTime createdAt;
+	protected LocalDate createdAt;
 
-	@LastModifiedDate
-	@Column
-	protected LocalDateTime modifiedAt;
+	// @LastModifiedDate
+	// @Column
+	// protected LocalDateTime modifiedAt;
 }
