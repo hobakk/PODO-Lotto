@@ -6,6 +6,8 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.stereotype.Component;
+
 import com.example.sixnumber.user.entity.User;
 
 import io.jsonwebtoken.Claims;
@@ -19,28 +21,25 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class JwtProvider {
 
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	public static final String BEARER_PREFIX = "Bearer";
-	private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256); // 임시로 작성해놓았습니다. 의견주시면 감사하겠습니다.
-	private static final int expire = 1000;//30분
+	private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+	private static final int expire = 1000 * 60 * 30;//30분
 
-	public static String accessToken(User user) {
+	public static String accessToken(String email, Long userId) {
 		Date curDate = new Date();
 		Date expireDate = new Date(curDate.getTime() + expire);
 		HashMap<String, Object> headers = new HashMap<>();
 		headers.put("typ", "JWT");
 		headers.put("alg", "HS256");
-		HashMap<String, Object> payloads = new HashMap<>();
-		payloads.put("id", user.getId());
-		payloads.put("nickname", user.getNickname());
-		payloads.put("role", user.getRole());
 		return Jwts.builder()
 			.setHeader(headers)
-			.setSubject(user.getEmail())
-			.setClaims(payloads)
+			.setSubject(email)
+			.claim("id", userId)
 			.setIssuedAt(curDate)
 			.setExpiration(expireDate)
 			.signWith(KEY)
@@ -51,7 +50,7 @@ public class JwtProvider {
 		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
 
 		if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
-			return bearerToken.substring(6);
+			return bearerToken.substring(7);
 		}
 		return null;
 	}
