@@ -1,7 +1,5 @@
 package com.example.sixnumber.user.service;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,12 +9,12 @@ import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
+import com.example.sixnumber.user.dto.WithdrawRequest;
 import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.CashRepository;
 import com.example.sixnumber.user.repository.UserRepository;
 
-import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,6 +27,7 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final CashRepository cashRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final String withdrawMsg = "회원탈퇴";
 
 	public ApiResponse signUp(SignupRequest request) {
 		if (userRepository.existsUserByEmail(request.getEmail())) {
@@ -52,28 +51,26 @@ public class UserService {
 		return JwtProvider.accessToken(user);
 	}
 
-	public int getCash(HttpServletRequest request) {
-		// user 가 보유한 cash 정보 보안을 위해 Jwt payloads 에 넣지 않아 db에서 user 를 찾음
-		User user = findByTokenByUser(request);
+	public void logout(User user) {  }
+
+	public ApiResponse withdraw(WithdrawRequest request, String email) {
+		if (!request.getMsg().equals(withdrawMsg)) {
+			throw new IllegalArgumentException("잘못된 문자열 입력");
+		}
+		User user = findByUser(email);
+		user.setStatus("DORMANT");
+		userRepository.save(user);
+		return ApiResponse.ok("회원 탈퇴 완료");
+	}
+
+	public int getCash(User user) {
 		return user.getCash();
 	}
 
-	public ApiResponse charging(ChargingRequest chargingRequest, HttpServletRequest httpServletRequest) {
-		User user = findByTokenByUser(httpServletRequest);
-		Cash cash = new Cash(user.getId(), chargingRequest);
+	public ApiResponse charging(ChargingRequest chargingRequest, Long userId) {
+		Cash cash = new Cash(userId, chargingRequest);
 		cashRepository.save(cash);
 		return ApiResponse.ok("요청 성공");
-	}
-
-	private User findByTokenByUser(HttpServletRequest request) {
-		Claims claims;
-		String token = JwtProvider.resolveToken(request);
-		if (token != null) {
-			JwtProvider.validateToken(token);
-			claims = JwtProvider.getClaims(token);
-			String email = claims.getSubject();
-			return findByUser(email);
-		} else { throw  new IllegalArgumentException("유효하지 않은 토큰"); }
 	}
 
 	private User findByUser(String email) {
