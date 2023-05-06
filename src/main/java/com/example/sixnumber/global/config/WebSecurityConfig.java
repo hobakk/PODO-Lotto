@@ -40,7 +40,11 @@ public class WebSecurityConfig {
 		http.csrf().disable()
 			.addFilterBefore(new JwtSecurityFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
-		http.authorizeRequests().anyRequest().permitAll();
+		http.authorizeRequests(auth -> auth
+			.antMatchers("/api/admin/**")
+			.hasRole("ADMIN")
+			.anyRequest().permitAll()
+		);
 
 		// 로그인 사용
 		http.formLogin().loginPage("/api/users/signin").permitAll();
