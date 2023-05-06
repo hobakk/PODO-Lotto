@@ -18,7 +18,7 @@ import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
-import com.example.sixnumber.user.entity.Users;
+import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 
 import io.jsonwebtoken.Claims;
@@ -37,7 +37,7 @@ public class SixNumberService {
 	private final Random rd = new Random();
 
 	public ListApiResponse<Integer> buyNumber(BuyNumberRequest buyNumberRequest, HttpServletRequest httpServletRequest) {
-		Users users = findByTokenByUser(httpServletRequest);
+		User user = findByTokenByUser(httpServletRequest);
 		String now = toDay();
 
 		List<Integer> numberList = new ArrayList<>();
@@ -47,7 +47,7 @@ public class SixNumberService {
 				break;
 			}
 		}
-		SixNumber sixNumber = new SixNumber(users.getId(), now, numberList);
+		SixNumber sixNumber = new SixNumber(user.getId(), now, numberList);
 		sixNumberRepository.save(sixNumber);
 
 		// 스캐줄러로 뺄지 말지 고민중 이유 : 한개의 서비스 로직에서 너무 많은 저장이 이루어짐. 영속성 컨텍스트 각이 나오는지도 보고있음
@@ -61,12 +61,12 @@ public class SixNumberService {
 		lottoRepository.save(lotto);
 
 		// 저장할 필요가 있는지 점검할 필요가 있음
-		users.setCash("-", buyNumberRequest.getValue() * 200);
-		userRepository.save(users);
+		user.setCash("-", buyNumberRequest.getValue() * 200);
+		userRepository.save(user);
 		return ListApiResponse.ok("요청 성공", numberList);
 	}
 
-	private Users findByTokenByUser(HttpServletRequest request) {
+	private User findByTokenByUser(HttpServletRequest request) {
 		Claims claims;
 		String token = JwtProvider.resolveToken(request);
 		if (token != null) {
@@ -77,7 +77,7 @@ public class SixNumberService {
 		} else { throw  new IllegalArgumentException("유효하지 않은 토큰"); }
 	}
 
-	private Users findByUser(String email) {
+	private User findByUser(String email) {
 		return userRepository.findUserByEmail(email)
 			.orElseThrow(()-> new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다"));
 	}

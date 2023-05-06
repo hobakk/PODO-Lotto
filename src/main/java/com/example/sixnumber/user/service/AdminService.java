@@ -16,7 +16,7 @@ import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.CashRequest;
-import com.example.sixnumber.user.entity.Users;
+import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.CashRepository;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.UserRole;
@@ -37,9 +37,9 @@ public class AdminService {
 
 	public ApiResponse setAdmin(Long userId, HttpServletRequest request) {
 		CheckRole(request);
-		Users users = findByUser(userId);
-		users.setAdmin();
-		userRepository.save(users);
+		User user = findByUser(userId);
+		user.setAdmin();
+		userRepository.save(user);
 		return ApiResponse.ok("변경 완료");
 	}
 
@@ -55,17 +55,17 @@ public class AdminService {
 
 	public ApiResponse upCash(CashRequest cashRequest, HttpServletRequest httpServletRequest) {
 		CheckRole(httpServletRequest);
-		Users users = findByUser(cashRequest.getUserId());
-		users.setCash("+", cashRequest.getValue());
-		userRepository.save(users);
+		User user = findByUser(cashRequest.getUserId());
+		user.setCash("+", cashRequest.getValue());
+		userRepository.save(user);
 		return ApiResponse.ok("충전 완료");
 	}
 
 	public ApiResponse downCash(CashRequest cashRequest, HttpServletRequest httpServletRequest) {
 		CheckRole(httpServletRequest);
-		Users users = findByUser(cashRequest.getUserId());
-		users.setCash("-", cashRequest.getValue());
-		userRepository.save(users);
+		User user = findByUser(cashRequest.getUserId());
+		user.setCash("-", cashRequest.getValue());
+		userRepository.save(user);
 		return ApiResponse.ok("차감 완료");
 	}
 
@@ -98,7 +98,7 @@ public class AdminService {
 		} else { throw  new IllegalArgumentException("유효하지 않은 토큰"); }
 	}
 
-	private Users findByUser(Long userId) {
+	private User findByUser(Long userId) {
 		return userRepository.findById(userId)
 			.orElseThrow(()-> new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다"));
 	}

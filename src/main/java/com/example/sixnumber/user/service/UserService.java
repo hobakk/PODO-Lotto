@@ -12,7 +12,7 @@ import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.entity.Cash;
-import com.example.sixnumber.user.entity.Users;
+import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.CashRepository;
 import com.example.sixnumber.user.repository.UserRepository;
 
@@ -39,33 +39,33 @@ public class UserService {
 		}
 
 		String password = passwordEncoder.encode(request.getPassword());
-		Users users = new Users(request, password);
-		userRepository.save(users);
+		User user = new User(request, password);
+		userRepository.save(user);
 		return ApiResponse.create("회원가입 완료");
 	}
 
 	public String signIn(SigninRequest request) {
-		Users users = findByUser(request.getEmail());
-		if (!passwordEncoder.matches(request.getPassword(), users.getPassword())) {
+		User user = findByUser(request.getEmail());
+		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
 			throw new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다");
 		}
-		return JwtProvider.accessToken(users);
+		return JwtProvider.accessToken(user);
 	}
 
 	public int getCash(HttpServletRequest request) {
 		// user 가 보유한 cash 정보 보안을 위해 Jwt payloads 에 넣지 않아 db에서 user 를 찾음
-		Users users = findByTokenByUser(request);
-		return users.getCash();
+		User user = findByTokenByUser(request);
+		return user.getCash();
 	}
 
 	public ApiResponse charging(ChargingRequest chargingRequest, HttpServletRequest httpServletRequest) {
-		Users users = findByTokenByUser(httpServletRequest);
-		Cash cash = new Cash(users.getId(), chargingRequest);
+		User user = findByTokenByUser(httpServletRequest);
+		Cash cash = new Cash(user.getId(), chargingRequest);
 		cashRepository.save(cash);
 		return ApiResponse.ok("요청 성공");
 	}
 
-	private Users findByTokenByUser(HttpServletRequest request) {
+	private User findByTokenByUser(HttpServletRequest request) {
 		Claims claims;
 		String token = JwtProvider.resolveToken(request);
 		if (token != null) {
@@ -76,7 +76,7 @@ public class UserService {
 		} else { throw  new IllegalArgumentException("유효하지 않은 토큰"); }
 	}
 
-	private Users findByUser(String email) {
+	private User findByUser(String email) {
 		return userRepository.findUserByEmail(email)
 			.orElseThrow(()-> new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다"));
 	}

@@ -6,6 +6,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.type.UserRole;
@@ -17,7 +18,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Users {
+@Table(name = "Users")
+public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +38,7 @@ public class Users {
 	private UserRole role;
 	private String sign;
 
-	public Users(SignupRequest request, String password) {
+	public User(SignupRequest request, String password) {
 		this.email = request.getEmail();
 		this.password = password;
 		this.nickname = request.getNickname();
