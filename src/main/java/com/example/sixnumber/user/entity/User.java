@@ -1,5 +1,8 @@
 package com.example.sixnumber.user.entity;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -8,7 +11,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import com.example.sixnumber.user.dto.SignupRequest;
+import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
 
 import lombok.AccessLevel;
@@ -19,7 +27,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "Users")
-public class User {
+public class User implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +44,10 @@ public class User {
 	@Enumerated
 	@Column(name = "role", nullable = false, length = 12)
 	private UserRole role;
+	@Enumerated
+	@Column(name = "status", nullable = false)
+	private Status status;
+
 	private String sign;
 
 	public User(SignupRequest request, String password) {
@@ -43,6 +55,7 @@ public class User {
 		this.password = password;
 		this.nickname = request.getNickname();
 		this.role = UserRole.ROLE_USER;
+		this.status = Status.ACTIVE;
 		this.cash = 1000;
 	}
 
@@ -55,5 +68,46 @@ public class User {
 
 	public void setAdmin() {
 		this.role = UserRole.ROLE_ADMIN;
+	}
+	public void setStatus(String status) {
+		switch (status) {
+			case "ACTIVE" -> this.status = Status.ACTIVE;
+			case "SUSPENDED" -> this.status = Status.SUSPENDED;
+			case "DORMANT" -> this.status = Status.DORMANT;
+		}
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		Collection<GrantedAuthority> authorities = new HashSet<>();
+		for (UserRole eachRole : UserRole.values()) {
+			authorities.add(new SimpleGrantedAuthority(eachRole.name()));
+		}
+		return authorities;
+	}
+
+	@Override
+	public String getUsername() {
+		return this.email;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return false;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return false;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return false;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return false;
 	}
 }
