@@ -24,14 +24,18 @@ public class Lotto {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
+	@Column(name = "email", nullable = false)
+	private String email;
 
 	@ElementCollection
-	@OrderColumn(name = "countList_index")
+	@OrderColumn(name = "countList_index", nullable = false)
 	private List<Integer> countList = new ArrayList<>(46);
+	@Column(name = "creationDate", nullable = false)
 	private String creationDate;
 
-	public Lotto(List<Integer> countList, String creationDate) {
-		this.countList = countList;
+	public Lotto(String email, String creationDate, List<Integer> countList) {
 		this.creationDate = creationDate;
+		this.email = email;
+		this.countList = countList;
 	}
 }
