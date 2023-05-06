@@ -78,7 +78,7 @@ public class SixNumberService {
 	}
 
 	private User findByUser(String email) {
-		return userRepository.findUserByEmail(email)
+		return userRepository.findByEmail(email)
 			.orElseThrow(()-> new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다"));
 	}
 

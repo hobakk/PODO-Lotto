@@ -53,7 +53,7 @@ public class UserService {
 		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
 			throw new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다");
 		}
-		return JwtProvider.accessToken(user);
+		return JwtProvider.accessToken(user.getEmail(), user.getId());
 	}
 
 	public void logout(User user) {  }
@@ -79,7 +79,7 @@ public class UserService {
 	}
 
 	private User findByUser(String email) {
-		return userRepository.findUserByEmail(email)
+		return userRepository.findByEmail(email)
 			.orElseThrow(()-> new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다"));
 	}
 }
