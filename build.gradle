@@ -26,6 +26,8 @@ dependencies {
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // 스프링 시큐리티
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
     //Thymeleaf
@@ -45,9 +47,12 @@ dependencies {
 
     // oracle 데이터베이스 설치
     runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
+    // oracle 에서 security 사용
     implementation 'com.oracle.database.security:oraclepki:'
     implementation 'com.oracle.database.security:osdt_cert:'
     implementation 'com.oracle.database.security:osdt_core:'
+
+
 
 
 }
