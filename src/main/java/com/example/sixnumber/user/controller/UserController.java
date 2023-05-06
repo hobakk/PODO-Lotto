@@ -62,7 +62,7 @@ public class UserController {
 	}
 
 	@PostMapping("/cash")
-	public ResponseEntity<ApiResponse> charging(@RequestBody ChargingRequest chargingRequest, User user) {
+	public ResponseEntity<ApiResponse> charging(@RequestBody ChargingRequest chargingRequest, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.charging(chargingRequest, user.getId()));
 	}
 }
