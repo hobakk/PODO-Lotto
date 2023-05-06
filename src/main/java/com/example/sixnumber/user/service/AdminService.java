@@ -17,6 +17,7 @@ import com.example.sixnumber.user.dto.StatusRequest;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.CashRepository;
 import com.example.sixnumber.user.repository.UserRepository;
+import com.example.sixnumber.user.type.UserRole;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,10 +32,11 @@ public class AdminService {
 	private final UserRepository userRepository;
 	private final LottoRepository lottoRepository;
 
-	public ApiResponse setAdmin(Long userId) {
-		User user = findByUser(userId);
-		user.setAdmin();
-		userRepository.save(user);
+	public ApiResponse setAdmin(User user, Long userId) {
+		confirmationProcess(user, userId);
+		User target = findByUser(userId);
+		target.setAdmin();
+		userRepository.save(target);
 		return ApiResponse.ok("변경 완료");
 	}
 
@@ -76,15 +78,27 @@ public class AdminService {
 		return ListApiResponse.ok("생성 완료", countList);
 	}
 
-	public ApiResponse setStatus(Long userId, StatusRequest request) {
-		User user = findByUser(userId);
-		user.setStatus(request.getMsg());
-		userRepository.save(user);
+	public ApiResponse setStatus(User user, Long userId, StatusRequest request) {
+		confirmationProcess(user, userId);
+		User target = findByUser(userId);
+		target.setStatus(request.getMsg());
+		userRepository.save(target);
 		return ApiResponse.ok("상태 변경 완료");
 	}
 
 	private User findByUser(Long userId) {
 		return userRepository.findById(userId)
 			.orElseThrow(()-> new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다"));
+	}
+
+	private void confirmationProcess(User user, Long userId) {
+		if (userId != null) {
+			if (user.getId().equals(userId)) {
+				throw new IllegalArgumentException("본인 입니다");
+			}
+		}
+		if (user.getRole().equals(UserRole.ROLE_ADMIN)) {
+			throw new IllegalArgumentException("운영자 계정입니다");
+		}
 	}
 }

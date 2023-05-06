@@ -29,8 +29,8 @@ public class AdminController {
 	private final AdminService adminService;
 
 	@GetMapping("/users/{userId}")
-	public ResponseEntity<ApiResponse> setAdmin(@PathVariable Long userId) {
-		return ResponseEntity.ok(adminService.setAdmin(userId));
+	public ResponseEntity<ApiResponse> setAdmin(@PathVariable Long userId, @AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(adminService.setAdmin(user, userId));
 	}
 
 	@GetMapping("/users")
@@ -59,7 +59,7 @@ public class AdminController {
 	}
 
 	@PostMapping("/setStatus/{userId}")
-	public ResponseEntity<?> setStatus(@PathVariable Long userId, @RequestBody StatusRequest request) {
-		return ResponseEntity.ok(adminService.setStatus(userId, request));
+	public ResponseEntity<?> setStatus(@PathVariable Long userId, @RequestBody StatusRequest request, @AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(adminService.setStatus(user, userId, request));
 	}
 }
