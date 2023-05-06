@@ -14,6 +14,7 @@ import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.CashRepository;
 import com.example.sixnumber.user.repository.UserRepository;
+import com.example.sixnumber.user.type.Status;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +46,10 @@ public class UserService {
 
 	public String signIn(SigninRequest request) {
 		User user = findByUser(request.getEmail());
+		if (user.getStatus().equals(Status.DORMANT)) {
+			throw new IllegalArgumentException("탈퇴한 계정입니다");
+		}
+
 		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
 			throw new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다");
 		}
