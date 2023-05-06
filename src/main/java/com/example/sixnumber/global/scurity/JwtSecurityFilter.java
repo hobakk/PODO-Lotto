@@ -21,7 +21,9 @@ import com.example.sixnumber.global.util.JwtProvider;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtSecurityFilter extends OncePerRequestFilter {
 
@@ -30,18 +32,16 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
+		String token = JwtProvider.resolveToken(request);
 
-		if ((request.getRequestURI().equals("/api/users/signin") || request.getRequestURI().equals("/api/test/secured"))) {
-			String token = JwtProvider.resolveToken(request);
-
-			if (token != null) {
-				if (!JwtProvider.validateToken(token)) {
-					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다");
-				}
-				Claims claims = JwtProvider.getClaims(token);
-				createAuthentication(claims.getSubject());
+		if (token != null) {
+			if (!JwtProvider.validateToken(token)) {
+				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다");
 			}
+			Claims claims = JwtProvider.getClaims(token);
+			createAuthentication(claims.getSubject());
 		}
+
 		filterChain.doFilter(request, response);
 	}
 
