@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -37,17 +38,16 @@ public class WebSecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		// CSRF 설정
-		http.csrf().disable()
-			.addFilterBefore(new JwtSecurityFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class);
+		http.csrf().disable();
 
-		http.authorizeRequests(auth -> auth
-			.antMatchers("/api/admin/**")
-			.hasRole("ADMIN")
-			.anyRequest().permitAll()
-		);
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-		// 로그인 사용
-		http.formLogin().loginPage("/api/users/signin").permitAll();
+		http.authorizeRequests()
+			.antMatchers("/api/admin/**").hasRole("ADMIN")
+			.antMatchers("/**").permitAll()
+			.and()
+			.addFilterBefore(new JwtSecurityFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class);;
+
 
 		return http.build();
 	}
