@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -41,13 +42,13 @@ public class User implements UserDetails {
 	private String nickname;
 	@Column(name = "cash")
 	private int cash;
-	@Enumerated
+	@Enumerated(EnumType.STRING)
 	@Column(name = "role", nullable = false, length = 12)
 	private UserRole role;
-	@Enumerated
+	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
 	private Status status;
-
+	@Column(name = "sign")
 	private String sign;
 
 	public User(SignupRequest request, String password) {

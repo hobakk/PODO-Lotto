@@ -3,7 +3,6 @@ package com.example.sixnumber.user.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -39,9 +38,8 @@ public class UserController {
 	@PostMapping("/signin")
 	public ResponseEntity<ApiResponse> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
 		String generatedToken = userService.signIn(request);
-		HttpHeaders headers = new HttpHeaders();
 		response.addHeader(JwtProvider.AUTHORIZATION_HEADER, generatedToken);
-		return ResponseEntity.ok().headers(headers).body(ApiResponse.ok("로그인 성공"));
+		return ResponseEntity.ok(ApiResponse.ok("로그인 성공"));
 	}
 
 	@PostMapping("/logout")
@@ -55,7 +53,6 @@ public class UserController {
 	public ResponseEntity<?> withdraw(@RequestBody WithdrawRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.withdraw(request, user.getEmail()));
 	}
-
 
 	// 로그인 후 화면에 바로 띄울지에 대한 고민
 	@GetMapping("/cash")
