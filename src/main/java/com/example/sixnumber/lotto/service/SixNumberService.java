@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
@@ -35,8 +36,25 @@ public class SixNumberService {
 
 	private final SixNumberRepository sixNumberRepository;
 	private final LottoRepository lottoRepository;
-	private final UserRepository userRepository;
 	private final Random rd = new Random();
+
+	public ApiResponse mainTopNumbers(User user) {
+		confirmationProcess(null, user);
+		Lotto lotto = findByLotto();
+
+		List<Integer> numberList = lotto.getCountList();
+		List<Integer> sortedIndices = new ArrayList<>();
+		for (int i = 0; i < numberList.size(); i++) {
+			sortedIndices.add(i);
+		}
+
+		sortedIndices.sort((index1, index2) -> numberList.get(index2).compareTo(numberList.get(index1)));
+		List<Integer> topIndices = sortedIndices.subList(0, Math.min(sortedIndices.size(), 6));
+		Collections.sort(topIndices);
+		String result = topIndices.stream().map(Object::toString).collect(Collectors.joining(" "));
+
+		return ApiResponse.ok(result);
+	}
 
 	public ListApiResponse<String> buyNumber(BuyNumberRequest request, User user) {
 		confirmationProcess(request, user);
@@ -114,27 +132,36 @@ public class SixNumberService {
 		return yd.format(today);
 	}
 
+	private Lotto findByLotto() {
+		return lottoRepository.findById(1L)
+			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 정보"));
+	}
+
 	private void confirmationProcess(BuyNumberRequest request, User user) {
-		if (request.getRepetition() > 1000) {
-			if (user.getCash() < request.getValue() * 200) {
+		if (request != null) {
+			if (request.getRepetition() > 1000) {
+				if (user.getCash() < request.getValue() * 200) {
+					throw new IllegalArgumentException("포인트가 부족합니다");
+				}
+				user.setCash("-", request.getValue() * 200);
+			} else if (request.getRepetition() < 1000) {
+				if (user.getCash() < request.getValue() * (request.getRepetition() / 2)) {
+					throw new IllegalArgumentException("포인트가 부족합니다");
+				}
+				user.setCash("-", request.getValue() * 200 * (request.getRepetition() * 10));
+			}
+		} else if (user != null) {
+			if (user.getCash() < 1000) {
 				throw new IllegalArgumentException("포인트가 부족합니다");
 			}
-			user.setCash("-", request.getValue() * 200);
-			userRepository.save(user);
-		} else {
-			if (user.getCash() < request.getValue() * (request.getRepetition() / 2)) {
-				throw new IllegalArgumentException("포인트가 부족합니다");
-			}
-			user.setCash("-", request.getValue() * 200 * (request.getRepetition() * 10));
-			userRepository.save(user);
+			user.setCash("-", 1000);
 		}
 	}
 
 	// 스캐줄러로 뺄지 말지 고민중 이유 : 한개의 서비스 로직에서 너무 많은 저장이 이루어짐. 영속성 컨텍스트 각이 나오는지도 보고있음
 	// 방법 : 저장된 sixNumber 를 시간단위로 모아 한번에 스케줄러로 처리 병렬을 지원하는 java.util.concurrent.ScheduledExecutorService 사용
 	private void saveMainLottoList(List<String> list) {
-		Lotto lotto = lottoRepository.findById(1L)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 정보"));
+		Lotto lotto = findByLotto();
 
 		List<Integer> countList = lotto.getCountList();
 		for (String sentence : list) {

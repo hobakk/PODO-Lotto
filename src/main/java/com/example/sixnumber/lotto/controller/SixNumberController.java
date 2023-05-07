@@ -2,6 +2,7 @@ package com.example.sixnumber.lotto.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,13 +21,18 @@ public class SixNumberController {
 
 	private final SixNumberService sixNumberService;
 
-	@PostMapping("/buy")
-	public ResponseEntity<?> buyNumber(@RequestBody BuyNumberRequest buyNumberRequest, @AuthenticationPrincipal User user) {
+	@PostMapping("/main")
+	public ResponseEntity<?> mainTopNumbers(@AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(sixNumberService.mainTopNumbers(user));
+	}
+
+	@PostMapping("")
+	public ResponseEntity<?> buyNumbers(@RequestBody BuyNumberRequest buyNumberRequest, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(sixNumberService.buyNumber(buyNumberRequest, user));
 	}
 
-	@PostMapping("/buyRepetition")
-	public ResponseEntity<?> buyRepetitionNumber(@RequestBody BuyNumberRequest buyNumberRequest, @AuthenticationPrincipal User user) {
+	@PostMapping("/Repetition")
+	public ResponseEntity<?> buyRepetitionTopNumbers(@RequestBody BuyNumberRequest buyNumberRequest, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(sixNumberService.buyRepetitionNumber(buyNumberRequest, user));
 	}
 }
