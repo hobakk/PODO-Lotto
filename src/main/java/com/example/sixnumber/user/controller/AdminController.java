@@ -25,19 +25,24 @@ public class AdminController {
 
 	private final AdminService adminService;
 
-	@GetMapping("/users/{userId}")
-	public ResponseEntity<ApiResponse> setAdmin(@PathVariable Long userId, @AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(adminService.setAdmin(user, userId));
-	}
-
 	@GetMapping("/users")
 	public ResponseEntity<ListApiResponse<?>> getUsers() {
 		return ResponseEntity.ok(adminService.getUsers());
 	}
 
-	@GetMapping("/chargs")
-	public ResponseEntity<ListApiResponse<?>> getChargs() {
-		return ResponseEntity.ok(adminService.getChargs());
+	@GetMapping("/chargs/before")
+	public ResponseEntity<ListApiResponse<?>> getBeforeChargs() {
+		return ResponseEntity.ok(adminService.getBeforeChargs());
+	}
+
+	@GetMapping("/chargs/after")
+	public ResponseEntity<ListApiResponse<?>> getAfterChargs() {
+		return ResponseEntity.ok(adminService.getAfterChargs());
+	}
+
+	@PostMapping("/users/{userId}")
+	public ResponseEntity<ApiResponse> setAdmin(@PathVariable Long userId, @AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(adminService.setAdmin(user, userId));
 	}
 
 	@PostMapping("/users/upCash")

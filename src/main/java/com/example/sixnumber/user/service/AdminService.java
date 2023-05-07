@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,8 @@ import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.StatusRequest;
+import com.example.sixnumber.user.dto.UsersReponse;
+import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.CashRepository;
 import com.example.sixnumber.user.repository.UserRepository;
@@ -36,30 +39,37 @@ public class AdminService {
 		confirmationProcess(user, userId);
 		User target = findByUser(userId);
 		target.setAdmin();
-		userRepository.save(target);
 		return ApiResponse.ok("변경 완료");
 	}
 
 	// page 처리 필요함
-	public ListApiResponse<?> getUsers() {
-		return ListApiResponse.ok("조회 성공", userRepository.findAll());
+	public ListApiResponse<UsersReponse> getUsers() {
+		return ListApiResponse.ok("조회 성공", userRepository.findAll().stream().map(UsersReponse::new).collect(Collectors.toList()));
 	}
 
-	public ListApiResponse<?> getChargs() {
-		return ListApiResponse.ok("조회 성공", cashRepository.findAll());
+	public ListApiResponse<?> getAfterChargs() {
+		return ListApiResponse.ok("조회 성공", cashRepository.processingEqaulAfter());
+	}
+	public ListApiResponse<?> getBeforeChargs() {
+		return ListApiResponse.ok("조회 성공", cashRepository.processingEqaulBefore());
 	}
 
 	public ApiResponse upCash(CashRequest cashRequest) {
 		User user = findByUser(cashRequest.getUserId());
+		Cash cash = cashRepository.findById(cashRequest.getCashId())
+			.orElseThrow(() -> new IllegalArgumentException("해당 정보가 존재하지 않습니다"));
+
+		if (!user.getId().equals(cash.getUserId())) {
+			throw new IllegalArgumentException("충전 요청한 사용자 정보와 동일하지 않습니다");
+		}
 		user.setCash("+", cashRequest.getValue());
-		userRepository.save(user);
+		cash.setProcessingAfter();
 		return ApiResponse.ok("충전 완료");
 	}
 
 	public ApiResponse downCash(CashRequest cashRequest) {
 		User user = findByUser(cashRequest.getUserId());
 		user.setCash("-", cashRequest.getValue());
-		userRepository.save(user);
 		return ApiResponse.ok("차감 완료");
 	}
 
@@ -82,22 +92,21 @@ public class AdminService {
 		confirmationProcess(user, userId);
 		User target = findByUser(userId);
 		target.setStatus(request.getMsg());
-		userRepository.save(target);
 		return ApiResponse.ok("상태 변경 완료");
 	}
 
 	private User findByUser(Long userId) {
 		return userRepository.findById(userId)
-			.orElseThrow(()-> new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다"));
+			.orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다"));
 	}
 
 	private void confirmationProcess(User user, Long userId) {
-		if (userId != null) {
-			if (user.getId().equals(userId)) {
-				throw new IllegalArgumentException("본인 입니다");
-			}
+		if (user.getId().equals(userId)) {
+			throw new IllegalArgumentException("본인 입니다");
 		}
-		if (user.getRole().equals(UserRole.ROLE_ADMIN)) {
+
+		User target = findByUser(userId);
+		if (target.getRole().equals(UserRole.ROLE_ADMIN)) {
 			throw new IllegalArgumentException("운영자 계정입니다");
 		}
 	}
