@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,76 +38,75 @@ public class SixNumberService {
 	private final LottoRepository lottoRepository;
 	private final UserRepository userRepository;
 	private final Random rd = new Random();
-	private final int num = rd.nextInt(45) + 1;
 
-	public ListApiResponse<Integer> buyNumber(BuyNumberRequest request, User user) {
+	public ListApiResponse<String> buyNumber(BuyNumberRequest request, User user) {
 		confirmationProcess(request, user);
 
-		List<Integer> numberList = new ArrayList<>();
-		for (int i = 0; i < 20; i++) {
-			if (!numberList.contains(num)) {
-				numberList.add(num);
+		List<String> topNumbers = new ArrayList<>();
+		for (int i = 0; i < request.getValue(); i++) {
+			Set<Integer> set = new HashSet<>();
+
+			while (set.size() < 6) {
+				int randomNum = rd.nextInt(45) + 1;
+				set.add(randomNum);
 			}
-			if (numberList.size() == 6) {
-				break;
-			}
+
+			List<Integer> numList = new ArrayList<>(set);
+			Collections.sort(numList);
+
+			String result = numList.stream().map(Object::toString).collect(Collectors.joining(" "));
+			topNumbers.add(result);
 		}
-		Collections.sort(numberList);
-		SixNumber sixNumber = new SixNumber(user.getId(), today(), numberList);
+
+		SixNumber sixNumber = new SixNumber(user.getId(), today(), topNumbers);
 		sixNumberRepository.save(sixNumber);
-		saveMainLottoList(numberList);
+		saveMainLottoList(topNumbers);
 
 		// 임시로 값을 확인하기 위해 ListApiResponse 를 사용
-		return ListApiResponse.ok("요청 성공", numberList);
+		return ListApiResponse.ok("요청 성공", topNumbers);
 	}
 
-	public ListApiResponse<Integer> buyRepetitionNumber(BuyNumberRequest request, User user) {
+	public ListApiResponse<String> buyRepetitionNumber(BuyNumberRequest request, User user) {
 		confirmationProcess(request, user);
 
-		List<HashSet<Integer>> setList = new ArrayList<>();
-		List<Integer> numberList = new ArrayList<>(6);
+		List<String> topNumbers = new ArrayList<>();
 		int repetition = request.getRepetition();
 
 		for (int i = 0; i < request.getValue(); i++) {
 			HashMap<Integer, Integer> countMap = new HashMap<>();
+
 			for (int x = 1; x <= 45; x++) {
 				countMap.put(x, 0);
 			}
 
 			for (int j = 0; j < repetition; j++) {
-				HashSet<Integer> lottoList = new HashSet<>(6);
-				for (int x = 0; x < 15; x++) {
-					lottoList.add(num);
-					if (lottoList.size() == 6) {
-						setList.add(lottoList);
-						break;
-					}
-				}
-			}
+				Set<Integer> set = new HashSet<>();
 
-			for (HashSet<Integer> lotto : setList) {
-				for (Integer num : lotto) {
+				while (set.size() < 6) {
+					int num = rd.nextInt(45) + 1;
+					set.add(num);
+				}
+
+				for (int num : set) {
 					int count = countMap.get(num);
 					countMap.put(num, count + 1);
 				}
 			}
-			System.out.println(countMap);
 
-			List<Map.Entry<Integer, Integer>> entryList = new ArrayList<>(countMap.entrySet());
-			entryList.sort(Map.Entry.<Integer, Integer>comparingByValue().reversed());
+			List<Integer> list = new ArrayList<>(countMap.keySet());
+			list.sort((num1, num2) -> countMap.get(num2).compareTo(countMap.get(num1)));
 
-			for (int x = 0; x < 6; x++) {
-				int checknum = entryList.get(x).getKey();
-				numberList.add(checknum);
-				setList.clear();
-			}
-			Collections.sort(numberList);
-			SixNumber sixNumber = new SixNumber(user.getId(), today(), numberList);
-			sixNumberRepository.save(sixNumber);
-			saveMainLottoList(numberList);
+			List<Integer> checkLotto = list.subList(0, 6);
+			Collections.sort(checkLotto);
+			String result = checkLotto.stream().map(Object::toString).collect(Collectors.joining(" "));
+			topNumbers.add(result);
+			countMap.clear();
 		}
-		System.out.println(numberList);
-		return ListApiResponse.ok("요청 성공", numberList);
+
+		SixNumber sixNumber = new SixNumber(user.getId(), today(), topNumbers);
+		sixNumberRepository.save(sixNumber);
+		saveMainLottoList(topNumbers);
+		return ListApiResponse.ok("요청 성공", topNumbers);
 	}
 
 	private String today() {
@@ -132,12 +133,18 @@ public class SixNumberService {
 
 	// 스캐줄러로 뺄지 말지 고민중 이유 : 한개의 서비스 로직에서 너무 많은 저장이 이루어짐. 영속성 컨텍스트 각이 나오는지도 보고있음
 	// 방법 : 저장된 sixNumber 를 시간단위로 모아 한번에 스케줄러로 처리 병렬을 지원하는 java.util.concurrent.ScheduledExecutorService 사용
-	private void saveMainLottoList(List<Integer> list) {
-		Lotto lotto = lottoRepository.findById(0L)
+	private void saveMainLottoList(List<String> list) {
+		Lotto lotto = lottoRepository.findById(1L)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 정보"));
+
 		List<Integer> countList = lotto.getCountList();
-		for (int num : list) {
-			countList.set(num, +1);
+		for (String sentence : list) {
+			String[] numbers = sentence.split(" ");
+
+			for (String numberStr : numbers) {
+				int num = Integer.parseInt(numberStr) -1;
+				countList.set(num, countList.get(num) + 1);
+			}
 		}
 		lottoRepository.save(lotto);
 	}

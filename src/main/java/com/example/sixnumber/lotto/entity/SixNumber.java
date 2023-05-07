@@ -29,9 +29,9 @@ public class SixNumber {
 
 	@ElementCollection
 	@OrderColumn(name = "number_index")
-	private List<Integer> numberList = new ArrayList<>(6);
+	private List<String> numberList = new ArrayList<>(6);
 
-	public SixNumber(Long userId, String buyDate, List<Integer> numberList) {
+	public SixNumber(Long userId, String buyDate, List<String> numberList) {
 		this.userId = userId;
 		this.buyDate = buyDate;
 		this.numberList = numberList;
