@@ -34,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class SixNumberService {
 
+	private final UserRepository userRepository;
 	private final SixNumberRepository sixNumberRepository;
 	private final LottoRepository lottoRepository;
 	private final Random rd = new Random();
@@ -139,12 +140,12 @@ public class SixNumberService {
 
 	private void confirmationProcess(BuyNumberRequest request, User user) {
 		if (request != null) {
-			if (request.getRepetition() > 1000) {
+			if (request.getRepetition() < 1000) {
 				if (user.getCash() < request.getValue() * 200) {
 					throw new IllegalArgumentException("포인트가 부족합니다");
 				}
 				user.setCash("-", request.getValue() * 200);
-			} else if (request.getRepetition() < 1000) {
+			} else if (request.getRepetition() > 1000) {
 				if (user.getCash() < request.getValue() * (request.getRepetition() / 2)) {
 					throw new IllegalArgumentException("포인트가 부족합니다");
 				}
@@ -156,6 +157,7 @@ public class SixNumberService {
 			}
 			user.setCash("-", 1000);
 		}
+		userRepository.save(user);
 	}
 
 	// 스캐줄러로 뺄지 말지 고민중 이유 : 한개의 서비스 로직에서 너무 많은 저장이 이루어짐. 영속성 컨텍스트 각이 나오는지도 보고있음

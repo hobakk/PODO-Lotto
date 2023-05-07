@@ -69,6 +69,9 @@ public class AdminService {
 
 	public ApiResponse downCash(CashRequest cashRequest) {
 		User user = findByUser(cashRequest.getUserId());
+		if (user.getCash() < cashRequest.getValue()) {
+			throw new IllegalArgumentException("해당 유저가 보유한 금액보다 많습니다");
+		}
 		user.setCash("-", cashRequest.getValue());
 		return ApiResponse.ok("차감 완료");
 	}
