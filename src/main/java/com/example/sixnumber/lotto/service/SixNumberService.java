@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.dto.ListApiResponse;
-import com.example.sixnumber.global.dto.MapApiResponse;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.SixNumber;
@@ -146,6 +145,5 @@ public class SixNumberService {
 				countList.set(num, countList.get(num) + 1);
 			}
 		}
-		lottoRepository.save(lotto);
 	}
 }

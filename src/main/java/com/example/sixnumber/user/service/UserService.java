@@ -64,7 +64,6 @@ public class UserService {
 		}
 		User user = findByUser(email);
 		user.setStatus("DORMANT");
-		userRepository.save(user);
 		return ApiResponse.ok("회원 탈퇴 완료");
 	}
 
