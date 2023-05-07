@@ -1,7 +1,5 @@
 package com.example.sixnumber.user.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
-import com.example.sixnumber.global.dto.MapApiResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.StatusRequest;
 import com.example.sixnumber.user.entity.User;
