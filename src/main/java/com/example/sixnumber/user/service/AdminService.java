@@ -64,18 +64,18 @@ public class AdminService {
 	}
 
 	//초기 로또메인 만들기 위한 코드, 이후 사용할 일이 적어서 코드 중복사용을 안해서 생기는 불이익이 없을거라 생각
-	public ListApiResponse<Integer> createLotto(String email) {
+	public ApiResponse createLotto(String email) {
 		Date date = new Date();
 		SimpleDateFormat yd = new SimpleDateFormat("yyyy-MM");
 		String today = yd.format(date);
 
-		List<Integer> countList = new ArrayList<>(45);
+		List<Integer> countList = new ArrayList<>();
 		for (int i = 0; i < 45; i++) {
-			countList.set(i, 0);
+			countList.add(1);
 		}
 		Lotto lotto = new Lotto(today, email, countList);
 		lottoRepository.save(lotto);
-		return ListApiResponse.ok("생성 완료", countList);
+		return ApiResponse.ok("생성 완료");
 	}
 
 	public ApiResponse setStatus(User user, Long userId, StatusRequest request) {

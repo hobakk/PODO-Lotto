@@ -51,7 +51,7 @@ public class AdminController {
 	}
 
 	@PostMapping("/lotto")
-	public ResponseEntity<ListApiResponse<Integer>> createLotto(@AuthenticationPrincipal User user) {
+	public ResponseEntity<ApiResponse> createLotto(@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(adminService.createLotto(user.getEmail()));
 	}
 
