@@ -26,6 +26,7 @@ public class Application {
 			SignupRequest signupRequest = new SignupRequest("admin","asdf","관리자");
 			String password = passwordEncoder.encode(signupRequest.getPassword());
 			User admin = new User(signupRequest, password);
+			admin.setAdmin();
 			admin.setCash("+", 999998999);
 			userRepository.save(admin);
 		};
