@@ -31,13 +31,13 @@ public class LottoService {
 
 		List<Integer> countList = new ArrayList<>(45);
 		for (int i = 0; i < 45; i++) {
-			countList.set(i, 0);
+			countList.add(1);
 		}
 
 		for (int i = 0; i < response.getNumList().size(); i++) {
 			List<Integer> numberList = response.getNumList().get(i);
 			for (int num : numberList) {
-				countList.set(num, + 1);
+				countList.set(num, countList.get(num) + 1);
 			}
 		}
 
