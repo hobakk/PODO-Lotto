@@ -1,13 +1,11 @@
 package com.example.sixnumber.lotto.service;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -76,7 +74,7 @@ public class SixNumberService {
 			topNumbers.add(result);
 		}
 
-		SixNumber sixNumber = new SixNumber(user.getId(), today(), topNumbers);
+		SixNumber sixNumber = new SixNumber(user.getId(), LocalDate.now(), topNumbers);
 		sixNumberRepository.save(sixNumber);
 		saveMainLottoList(topNumbers);
 
@@ -121,16 +119,10 @@ public class SixNumberService {
 			countMap.clear();
 		}
 
-		SixNumber sixNumber = new SixNumber(user.getId(), today(), topNumbers);
+		SixNumber sixNumber = new SixNumber(user.getId(), LocalDate.now(), topNumbers);
 		sixNumberRepository.save(sixNumber);
 		saveMainLottoList(topNumbers);
 		return ListApiResponse.ok("요청 성공", topNumbers);
-	}
-
-	private String today() {
-		Date today = new Date();
-		SimpleDateFormat yd = new SimpleDateFormat("yyyy-MM");
-		return yd.format(today);
 	}
 
 	private Lotto findByLotto() {
@@ -140,22 +132,22 @@ public class SixNumberService {
 
 	private void confirmationProcess(BuyNumberRequest request, User user) {
 		if (request != null) {
+			int requiredCash;
 			if (request.getRepetition() < 1000) {
-				if (user.getCash() < request.getValue() * 200) {
-					throw new IllegalArgumentException("포인트가 부족합니다");
-				}
-				user.setCash("-", request.getValue() * 200);
-			} else if (request.getRepetition() > 1000) {
-				if (user.getCash() < request.getValue() * (request.getRepetition() / 2)) {
-					throw new IllegalArgumentException("포인트가 부족합니다");
-				}
-				user.setCash("-", request.getValue() * 200 * (request.getRepetition() * 10));
+				requiredCash = request.getValue() * 200;
+			} else {
+				requiredCash =request.getValue() * (request.getRepetition() / 2);
 			}
+
+			if (user.getCash() < requiredCash) {
+				throw new IllegalArgumentException("포인트가 부족합니다");
+			}
+
+			user.setCash("-", requiredCash);
 		} else if (user != null) {
 			if (user.getCash() < 1000) {
 				throw new IllegalArgumentException("포인트가 부족합니다");
 			}
-			user.setCash("-", 1000);
 		}
 		userRepository.save(user);
 	}

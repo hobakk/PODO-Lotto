@@ -1,8 +1,8 @@
 package com.example.sixnumber.user.service;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -78,15 +78,12 @@ public class AdminService {
 
 	//초기 로또메인 만들기 위한 코드, 이후 사용할 일이 적어서 코드 중복사용을 안해서 생기는 불이익이 없을거라 생각
 	public ApiResponse createLotto(String email) {
-		Date date = new Date();
-		SimpleDateFormat yd = new SimpleDateFormat("yyyy-MM");
-		String today = yd.format(date);
 
 		List<Integer> countList = new ArrayList<>();
 		for (int i = 0; i < 45; i++) {
 			countList.add(1);
 		}
-		Lotto lotto = new Lotto(today, email, countList);
+		Lotto lotto = new Lotto("main", email, YearMonth.now(), countList);
 		lottoRepository.save(lotto);
 		return ApiResponse.ok("생성 완료");
 	}

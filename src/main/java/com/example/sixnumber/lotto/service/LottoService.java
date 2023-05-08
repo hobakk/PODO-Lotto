@@ -1,8 +1,7 @@
 package com.example.sixnumber.lotto.service;
 
-import java.text.SimpleDateFormat;
+import java.time.YearMonth;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -24,24 +23,20 @@ public class LottoService {
 	private final LottoRepository lottoRepository;
 
 	public void FindByTopNumberListForMonth(SchedulerResponse<Integer> response) {
-		Date date = new Date();
-		SimpleDateFormat yd = new SimpleDateFormat("yyyy-MM");
-		String today = yd.format(date);
-		if (response.getNumList().isEmpty()) { throw new IllegalArgumentException("스케줄러 오류"); }
 
-		List<Integer> countList = new ArrayList<>(45);
-		for (int i = 0; i < 45; i++) {
-			countList.add(1);
-		}
-
-		for (int i = 0; i < response.getNumList().size(); i++) {
-			List<Integer> numberList = response.getNumList().get(i);
-			for (int num : numberList) {
-				countList.set(num, countList.get(num) + 1);
-			}
-		}
-
-		Lotto lotto = new Lotto("Scheduler", today, countList);
-		lottoRepository.save(lotto);
+		// List<Integer> countList = new ArrayList<>(45);
+		// for (int i = 0; i < 45; i++) {
+		// 	countList.add(1);
+		// }
+		//
+		// for (int i = 0; i < response.getNumList().size(); i++) {
+		// 	List<Integer> numberList = response.getNumList().get(i);
+		// 	for (int num : numberList) {
+		// 		countList.set(num, countList.get(num) + 1);
+		// 	}
+		// }
+		//
+		// Lotto lotto = new Lotto("main", "Scheduler", YearMonth.now(), countList);
+		// lottoRepository.save(lotto);
 	}
 }
