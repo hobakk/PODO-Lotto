@@ -44,6 +44,7 @@ public class WebSecurityConfig {
 
 		http.authorizeRequests()
 			.antMatchers("/api/admin/**").hasRole("ADMIN")
+			.antMatchers("/api/lotto/**").hasAnyRole("ADMIN", "PAID")
 			.antMatchers("/**").permitAll()
 			.and()
 			.addFilterBefore(new JwtSecurityFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class);;
