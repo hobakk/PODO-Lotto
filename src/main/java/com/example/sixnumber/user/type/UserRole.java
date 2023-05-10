@@ -2,6 +2,7 @@ package com.example.sixnumber.user.type;
 
 public enum UserRole {
 	ROLE_USER(Authority.USER),
+	ROLE_PAID(Authority.PAID),
 	ROLE_ADMIN(Authority.ADMIN);
 
 	private final String authority;
@@ -16,6 +17,7 @@ public enum UserRole {
 
 	public static class Authority {
 		public static final String USER = "ROLE_USER";
+		public static final String PAID = "ROLE_PAID";
 		public static final String ADMIN = "ROLE_ADMIN";
 	}
 }

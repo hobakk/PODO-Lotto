@@ -1,5 +1,6 @@
 package com.example.sixnumber.user.entity;
 
+import java.time.YearMonth;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -48,8 +49,8 @@ public class User implements UserDetails {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", nullable = false)
 	private Status status;
-	@Column(name = "sign")
-	private String sign;
+	@Column(name = "paymentDate")
+	private String paymentDate;
 
 	public User(SignupRequest request, String password) {
 		this.email = request.getEmail();
@@ -60,16 +61,26 @@ public class User implements UserDetails {
 		this.cash = 1000;
 	}
 
+	public void setPaymentDate(String yearMonth) {
+		this.paymentDate = yearMonth;
+	}
 	public void setCash(String sign, int cash) {
 		switch (sign) {
 			case "+" -> this.cash += cash;
 			case "-" -> this.cash -= cash;
 		}
 	}
+	public void setRole(String role) {
+		switch (role) {
+			case "USER" -> this.role = UserRole.ROLE_USER;
+			case "PAID" -> this.role = UserRole.ROLE_PAID;
+		}
+	}
 
 	public void setAdmin() {
 		this.role = UserRole.ROLE_ADMIN;
 	}
+
 	public void setStatus(String status) {
 		switch (status) {
 			case "ACTIVE" -> this.status = Status.ACTIVE;
