@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
+import com.example.sixnumber.lotto.dto.BuyRepetitionNumberRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
@@ -37,26 +38,8 @@ public class SixNumberService {
 	private final LottoRepository lottoRepository;
 	private final Random rd = new Random();
 
-	public ApiResponse mainTopNumbers(User user) {
-		confirmationProcess(null, user);
-		Lotto lotto = findByLotto();
-
-		List<Integer> numberList = lotto.getCountList();
-		List<Integer> sortedIndices = new ArrayList<>();
-		for (int i = 0; i < numberList.size(); i++) {
-			sortedIndices.add(i);
-		}
-
-		sortedIndices.sort((index1, index2) -> numberList.get(index2).compareTo(numberList.get(index1)));
-		List<Integer> topIndices = sortedIndices.subList(0, Math.min(sortedIndices.size(), 6));
-		Collections.sort(topIndices);
-		String result = topIndices.stream().map(Object::toString).collect(Collectors.joining(" "));
-
-		return ApiResponse.ok(result);
-	}
-
 	public ListApiResponse<String> buyNumber(BuyNumberRequest request, User user) {
-		confirmationProcess(request, user);
+		confirmationProcess(request, null,  user);
 
 		List<String> topNumbers = new ArrayList<>();
 		for (int i = 0; i < request.getValue(); i++) {
@@ -82,8 +65,8 @@ public class SixNumberService {
 		return ListApiResponse.ok("요청 성공", topNumbers);
 	}
 
-	public ListApiResponse<String> buyRepetitionNumber(BuyNumberRequest request, User user) {
-		confirmationProcess(request, user);
+	public ListApiResponse<String> buyRepetitionNumber(BuyRepetitionNumberRequest request, User user) {
+		confirmationProcess(null, request, user);
 
 		List<String> topNumbers = new ArrayList<>();
 		int repetition = request.getRepetition();
@@ -130,25 +113,22 @@ public class SixNumberService {
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 정보"));
 	}
 
-	private void confirmationProcess(BuyNumberRequest request, User user) {
-		if (request != null) {
-			int requiredCash;
-			if (request.getRepetition() < 1000) {
-				requiredCash = request.getValue() * 200;
-			} else {
-				requiredCash =request.getValue() * (request.getRepetition() / 2);
-			}
+	private void confirmationProcess(BuyNumberRequest buyNumberRequest, BuyRepetitionNumberRequest buyRepetitionNumberRequest, User user) {
+		int requiredCash = 0;
 
-			if (user.getCash() < requiredCash) {
-				throw new IllegalArgumentException("포인트가 부족합니다");
-			}
-
-			user.setCash("-", requiredCash);
-		} else if (user != null) {
-			if (user.getCash() < 1000) {
-				throw new IllegalArgumentException("포인트가 부족합니다");
-			}
+		if (buyRepetitionNumberRequest == null) {
+			requiredCash = buyNumberRequest.getValue() * 200;
+		} else if (buyNumberRequest == null) {
+			requiredCash = buyRepetitionNumberRequest.getValue() * (buyRepetitionNumberRequest.getRepetition() / 2);
+		} else {
+			throw new IllegalArgumentException("정보가 옳바르지 않습니다");
 		}
+
+		if (user.getCash() < requiredCash) {
+			throw new IllegalArgumentException("금액이 부족합니다");
+		}
+
+		user.setCash("-", requiredCash);
 		userRepository.save(user);
 	}
 
@@ -162,7 +142,7 @@ public class SixNumberService {
 			String[] numbers = sentence.split(" ");
 
 			for (String numberStr : numbers) {
-				int num = Integer.parseInt(numberStr) -1;
+				int num = Integer.parseInt(numberStr) - 1;
 				countList.set(num, countList.get(num) + 1);
 			}
 		}
