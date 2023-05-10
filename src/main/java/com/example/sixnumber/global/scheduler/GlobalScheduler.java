@@ -1,4 +1,4 @@
-package com.example.sixnumber.lotto.scheduler;
+package com.example.sixnumber.global.scheduler;
 
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -15,14 +15,18 @@ import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
+import com.example.sixnumber.user.entity.User;
+import com.example.sixnumber.user.repository.UserRepository;
+import com.example.sixnumber.user.type.UserRole;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 @Transactional
-public class LottoScheduler {
+public class GlobalScheduler {
 
+	private final UserRepository userRepository;
 	private final LottoRepository lottoRepository;
 	private final SixNumberRepository sixNumberRepository;
 
@@ -40,6 +44,23 @@ public class LottoScheduler {
 
 		if (lotto.isEmpty()) {
 			generatesStatistics(year, lastMonth, findYm);
+		}
+	}
+
+	@Scheduled(cron = "0 0 9 ? * MON-FRI *")
+	public void paymentAndCancellation() {
+		System.out.println("자동 결제 및 해지");
+
+		List<User> userList = userRepository.findByRole(UserRole.ROLE_PAID);
+		for (User user : userList) {
+			String paymentDate = user.getPaymentDate();
+			if (paymentDate.equals(YearMonth.now().toString())) {
+				user.setCash("-", 5000);
+			} else if (paymentDate.equals("월정액 해지")) {
+				user.setRole("USER");
+			} else {
+				throw new IllegalArgumentException("얘기치 않은 동작 및 오류");
+			}
 		}
 	}
 
