@@ -7,11 +7,11 @@ import lombok.Getter;
 @Getter
 public class ApiResponse {
 	protected final int code;
-	protected final String mes;
+	protected final String msg;
 
-	public ApiResponse(int code, String mes) {
+	public ApiResponse(int code, String msg) {
 		this.code = code;
-		this.mes = mes;
+		this.msg = msg;
 	}
 
 	public static ApiResponse ok(String msg) { return new ApiResponse(HttpStatus.OK.value(), msg); }

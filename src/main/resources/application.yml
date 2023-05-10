@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    username: c##minjae
+    password: db1234
+    url: jdbc:oracle:thin:@localhost:1521:XE
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    database: oracle
+    database-platform: org.hibernate.dialect.Oracle12cDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  error:
+    include-message: always
