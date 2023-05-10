@@ -32,7 +32,6 @@ public class GlobalScheduler {
 
 	@Scheduled(cron = "0 0 11 ? * MON-FRI *")
 	public void findByTopNumberListForMonth() {
-
 		String ym = YearMonth.now().toString();
 		String[] yToM = ym.split("-");
 		int year = Integer.parseInt(yToM[0]);
@@ -54,10 +53,13 @@ public class GlobalScheduler {
 		List<User> userList = userRepository.findByRole(UserRole.ROLE_PAID);
 		for (User user : userList) {
 			String paymentDate = user.getPaymentDate();
-			if (paymentDate.equals(YearMonth.now().toString())) {
+
+			if (!paymentDate.equals(YearMonth.now().toString())) {
 				user.setCash("-", 5000);
-			} else if (paymentDate.equals("월정액 해지")) {
+				user.setPaymentDate(YearMonth.now().toString());
+			} else if (paymentDate.equals("월정액 해지") || user.getCash() < 5000) {
 				user.setRole("USER");
+				user.setPaymentDate("");
 			} else {
 				throw new IllegalArgumentException("얘기치 않은 동작 및 오류");
 			}
@@ -85,20 +87,20 @@ public class GlobalScheduler {
 			}
 		}
 		for (int i = 0; i < countList.size(); i++) {
-			statistics = "(" + i+1 + " : " + countList.get(i) + "), ";
-			if (i % 9 == 0) {
-				statistics = statistics + "\n";
-			}
+			statistics = statistics + "(" + i+1 + " : " + countList.get(i) + "), ";
 		}
+		statistics = statistics.substring(0, statistics.length() -2);
 
 		List<Integer> sortedIndices = new ArrayList<>();
 		for (int i = 0; i < countList.size(); i++) {
 			sortedIndices.add(i);
 		}
 
+		// 중복코드를 어떻게 처리할지 고민해봐야함
 		sortedIndices.sort((index1, index2) -> countList.get(index2).compareTo(countList.get(index1)));
 		List<Integer> topIndices = sortedIndices.subList(0, Math.min(sortedIndices.size(), 6));
 		Collections.sort(topIndices);
+		topIndices.replaceAll(Integer -> Integer + 1);
 		String value = topIndices.stream().map(Object::toString).collect(Collectors.joining(" "));
 
 		// 새로운 db에 statistics, value 를 저장하는게 좋을지 고민해봐야함

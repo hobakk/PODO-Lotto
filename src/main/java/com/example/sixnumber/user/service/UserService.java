@@ -18,6 +18,7 @@ import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.CashRepository;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
+import com.example.sixnumber.user.type.UserRole;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,17 +75,20 @@ public class UserService {
 	public ApiResponse setPaid(ReleasePaidRequest request, String email) {
 		User user = findByUser(email);
 
-		if (request == null) {
-			if (user.getCash() < 5000) {
-				throw new IllegalArgumentException("금액이 부족합니다");
+		if (request.getMsg().equals("월정액 해지")) {
+			if (!user.getRole().equals(UserRole.ROLE_PAID)) {
+				throw new IllegalArgumentException("월정액 사용자가 아닙니다");
 			}
-			user.setCash("-", 5000);
-			user.setRole("PAID");
-			user.setPaymentDate(YearMonth.now().toString());
-		} else {
 			user.setPaymentDate(request.getMsg());
 			return ApiResponse.ok("해지 신청 성공");
 		}
+
+		if (user.getCash() < 5000 || user.getRole().equals(UserRole.ROLE_PAID)) {
+			throw new IllegalArgumentException("금액이 부족하거나 이미 월정액 이용자입니다");
+		}
+		user.setCash("-", 5000);
+		user.setRole("PAID");
+		user.setPaymentDate(YearMonth.now().toString());
 
 		return ApiResponse.ok("권한 변경 성공");
 	}
