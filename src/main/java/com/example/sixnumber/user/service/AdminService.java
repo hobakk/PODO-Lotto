@@ -83,7 +83,7 @@ public class AdminService {
 		for (int i = 0; i < 45; i++) {
 			countList.add(1);
 		}
-		Lotto lotto = new Lotto("main", email, YearMonth.now(), countList);
+		Lotto lotto = new Lotto("main", email, YearMonth.now(), countList, "", "");
 		lottoRepository.save(lotto);
 		return ApiResponse.ok("생성 완료");
 	}

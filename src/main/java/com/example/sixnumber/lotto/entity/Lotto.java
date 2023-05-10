@@ -31,18 +31,22 @@ public class Lotto extends TimeStamped {
 	private String email;
 	@Column(name = "subject", nullable = false)
 	private String subject;
-
-
 	@ElementCollection
 	@OrderColumn(name = "countList_index", nullable = false)
 	private List<Integer> countList = new ArrayList<>(46);
 	@Column(name = "creationDate", nullable = false)
 	private YearMonth creationDate;
+	@Column(name = "statistics")
+	private String statistics;
+	@Column(name = "value")
+	private String value;
 
-	public Lotto(String subject, String email, YearMonth creationDate, List<Integer> countList) {
+	public Lotto(String subject, String email, YearMonth creationDate, List<Integer> countList, String statistics, String value) {
 		this.subject = subject;
 		this.creationDate = creationDate;
 		this.email = email;
 		this.countList = countList;
+		this.statistics = statistics;
+		this.value = value;
 	}
 }
