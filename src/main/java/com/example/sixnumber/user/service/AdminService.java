@@ -1,9 +1,8 @@
 package com.example.sixnumber.user.service;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -78,12 +77,17 @@ public class AdminService {
 
 	//초기 로또메인 만들기 위한 코드, 이후 사용할 일이 적어서 코드 중복사용을 안해서 생기는 불이익이 없을거라 생각
 	public ApiResponse createLotto(String email) {
+		Optional<Lotto> findMain = lottoRepository.findByMain();
+
+		if (findMain.isPresent()) {
+			throw new IllegalArgumentException("메인 로또가 이미 생성되어 있습니다");
+		}
 
 		List<Integer> countList = new ArrayList<>();
 		for (int i = 0; i < 45; i++) {
 			countList.add(1);
 		}
-		Lotto lotto = new Lotto("main", email, YearMonth.now(), countList, "", "");
+		Lotto lotto = new Lotto("main", email, null, countList, "", "");
 		lottoRepository.save(lotto);
 		return ApiResponse.ok("생성 완료");
 	}
