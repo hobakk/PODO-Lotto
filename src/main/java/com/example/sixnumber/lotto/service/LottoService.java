@@ -28,7 +28,7 @@ public class LottoService {
 	private final LottoRepository lottoRepository;
 
 	public ItemApiResponse<LottoResponse> mainTopNumbers() {
-		Lotto lotto = lottoRepository.findById(0L).orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
+		Lotto lotto = lottoRepository.findById(1L).orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
 
 		List<Integer> countList = lotto.getCountList();
 		List<Integer> sortedIndices = new ArrayList<>();
@@ -36,15 +36,14 @@ public class LottoService {
 
 		for (int i = 0; i < countList.size(); i++) {
 			sortedIndices.add(i);
-			statistics = "(" + i+1 + " : " + countList.get(i) + "), ";
-			if (i % 9 == 0) {
-				statistics = statistics + "\n";
-			}
+			statistics = statistics + "(" + (i+1) + "번 : " + countList.get(i) + "), ";
 		}
+		statistics = statistics.substring(0, statistics.length() -2);
 
 		sortedIndices.sort((index1, index2) -> countList.get(index2).compareTo(countList.get(index1)));
 		List<Integer> topIndices = sortedIndices.subList(0, Math.min(sortedIndices.size(), 6));
 		Collections.sort(topIndices);
+		topIndices.replaceAll(integer -> integer + 1);
 		String result = topIndices.stream().map(Object::toString).collect(Collectors.joining(" "));
 
 		return ItemApiResponse.ok("조회 성공", new LottoResponse(statistics, result));
