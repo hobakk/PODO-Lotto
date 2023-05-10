@@ -3,6 +3,7 @@ package com.example.sixnumber.global.config;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class WebSecurityConfig {
 
 	private final UserDetailsServiceImpl userDetailsService;
+	private final RedisTemplate<String, String> redisTemplate;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {

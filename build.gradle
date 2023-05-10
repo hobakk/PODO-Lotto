@@ -52,8 +52,8 @@ dependencies {
     implementation 'com.oracle.database.security:osdt_cert:'
     implementation 'com.oracle.database.security:osdt_core:'
 
-
-
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 }
 
