@@ -34,7 +34,7 @@ public class Lotto extends TimeStamped {
 	@ElementCollection
 	@OrderColumn(name = "countList_index", nullable = false)
 	private List<Integer> countList = new ArrayList<>(46);
-	@Column(name = "creationDate", nullable = false)
+	@Column(name = "creationDate")
 	private YearMonth creationDate;
 	@Column(name = "statistics")
 	private String statistics;
