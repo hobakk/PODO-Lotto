@@ -2,6 +2,7 @@ package com.example.sixnumber.user.service;
 
 import java.time.YearMonth;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,8 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final CashRepository cashRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final RedisTemplate<String, String> redisTemplate;
+	private final String RTK = "RT: ";
 
 	public ApiResponse signUp(SignupRequest request) {
 		if (userRepository.existsUserByEmail(request.getEmail())) {
@@ -49,6 +52,12 @@ public class UserService {
 
 	public String signIn(SigninRequest request) {
 		User user = findByUser(request.getEmail());
+
+		if (redisTemplate.opsForValue().get(RTK + user.getId()) != null) {
+			redisTemplate.delete(RTK + user.getId());
+			throw new IllegalArgumentException("중복 로그인입니다");
+		}
+
 		if (user.getStatus().equals(Status.DORMANT)) {
 			throw new IllegalArgumentException("탈퇴한 계정입니다");
 		}
@@ -56,10 +65,16 @@ public class UserService {
 		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
 			throw new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다");
 		}
+
+		String refreshToken = JwtProvider.refreshToken(user.getEmail(), user.getId());
+		redisTemplate.opsForValue().set(RTK + user.getId(), refreshToken);
+
 		return JwtProvider.accessToken(user.getEmail(), user.getId());
 	}
 
-	public void logout(User user) {  }
+	public void logout(User user) {
+		redisTemplate.delete(RTK + user.getId());
+	}
 
 	public ApiResponse withdraw(WithdrawRequest request, String email) {
 		String withdrawMsg = "회원탈퇴";
@@ -69,6 +84,7 @@ public class UserService {
 		}
 		User user = findByUser(email);
 		user.setStatus("DORMANT");
+		redisTemplate.delete(RTK + user.getId());
 		return ApiResponse.ok("회원 탈퇴 완료");
 	}
 

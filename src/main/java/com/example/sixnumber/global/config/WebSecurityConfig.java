@@ -49,7 +49,7 @@ public class WebSecurityConfig {
 			.antMatchers("/api/lotto/**").hasAnyRole("ADMIN", "PAID")
 			.antMatchers("/**").permitAll()
 			.and()
-			.addFilterBefore(new JwtSecurityFilter(userDetailsService), UsernamePasswordAuthenticationFilter.class);;
+			.addFilterBefore(new JwtSecurityFilter(userDetailsService, redisTemplate), UsernamePasswordAuthenticationFilter.class);;
 
 
 		return http.build();
