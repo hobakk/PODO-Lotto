@@ -72,8 +72,9 @@ public class UserService {
 		return JwtProvider.accessToken(user.getEmail(), user.getId());
 	}
 
-	public void logout(User user) {
+	public ApiResponse logout(User user) {
 		redisTemplate.delete(RTK + user.getId());
+		return ApiResponse.ok("로그아웃 성공");
 	}
 
 	public ApiResponse withdraw(WithdrawRequest request, String email) {

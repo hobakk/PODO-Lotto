@@ -42,14 +42,12 @@ public class UserController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<?> logout(@AuthenticationPrincipal User user, HttpServletResponse response) {
-		response.setHeader(JwtProvider.AUTHORIZATION_HEADER, "");
-		userService.logout(user);
-		return ResponseEntity.ok("로그아웃 완료");
+	public ResponseEntity<ApiResponse> logout(@AuthenticationPrincipal User user, HttpServletResponse response) {
+		return ResponseEntity.ok(userService.logout(user));
 	}
 
 	@PostMapping("/withdraw")
-	public ResponseEntity<?> withdraw(@RequestBody WithdrawRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<ApiResponse> withdraw(@RequestBody WithdrawRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.withdraw(request, user.getEmail()));
 	}
 
@@ -57,7 +55,7 @@ public class UserController {
 	@GetMapping("/cash")
 	public ResponseEntity<ApiResponse> getCash(@AuthenticationPrincipal User user) {
 		int cash = userService.getCash(user);
-		return ResponseEntity.ok().body(ApiResponse.ok("조회 성공\n" + cash));
+		return ResponseEntity.ok().body(ApiResponse.ok("조회 성공" + cash));
 	}
 
 	@PostMapping("/cash")
@@ -66,7 +64,7 @@ public class UserController {
 	}
 
 	@PostMapping("/setPaid")
-	public ResponseEntity<?> setPaid(@RequestBody ReleasePaidRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<ApiResponse> setPaid(@RequestBody ReleasePaidRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.setPaid(request ,user.getEmail()));
 	}
 }
