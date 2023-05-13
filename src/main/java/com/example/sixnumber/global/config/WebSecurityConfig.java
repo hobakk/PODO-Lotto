@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.example.sixnumber.global.scurity.JwtSecurityFilter;
 import com.example.sixnumber.global.scurity.UserDetailsServiceImpl;
+import com.example.sixnumber.global.util.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class WebSecurityConfig {
 
 	private final UserDetailsServiceImpl userDetailsService;
+	private final JwtProvider jwtProvider;
 	private final RedisTemplate<String, String> redisTemplate;
 
 	@Bean
@@ -49,7 +51,7 @@ public class WebSecurityConfig {
 			.antMatchers("/api/lotto/**").hasAnyRole("ADMIN", "PAID")
 			.antMatchers("/**").permitAll()
 			.and()
-			.addFilterBefore(new JwtSecurityFilter(userDetailsService, redisTemplate), UsernamePasswordAuthenticationFilter.class);;
+			.addFilterBefore(new JwtSecurityFilter(userDetailsService, jwtProvider, redisTemplate), UsernamePasswordAuthenticationFilter.class);;
 
 
 		return http.build();

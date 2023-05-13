@@ -29,39 +29,40 @@ import lombok.RequiredArgsConstructor;
 public class JwtSecurityFilter extends OncePerRequestFilter {
 
 	private final UserDetailsServiceImpl userDetailsService;
+	private final JwtProvider jwtProvider;
 	private final RedisTemplate<String, String> redisTemplate;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		String token = JwtProvider.resolveToken(request);
+		String token = jwtProvider.resolveToken(request);
 
 		try {
 			if (token != null) {
-				if (!JwtProvider.validateToken(token)) {
+				if (!jwtProvider.validateToken(token)) {
 					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
 				}
 
-				Long id = JwtProvider.getClaims(token).get("id", Long.class);
+				Long id = jwtProvider.getClaims(token).get("id", Long.class);
 				if (redisTemplate.opsForValue().get("RT: " + id) == null) {
-					JwtProvider.setExpire(token);
+					jwtProvider.setExpire(token);
 					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
 				}
 
-				Claims claims = JwtProvider.getClaims(token);
+				Claims claims = jwtProvider.getClaims(token);
 				createAuthentication(claims.getSubject());
 			}
 		} catch (ExpiredJwtException e) {
 			Long id = e.getClaims().get("id", Long.class);
 			String refreshTokenInRedis = redisTemplate.opsForValue().get("RT: " + id);
 
-			if (Objects.isNull(refreshTokenInRedis) || JwtProvider.isTokenExpired(refreshTokenInRedis)) {
+			if (Objects.isNull(refreshTokenInRedis) || jwtProvider.isTokenExpired(refreshTokenInRedis)) {
 				redisTemplate.delete("RT: " + id);
 				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
 			}
 
 			String email = e.getClaims().getSubject();
-			String newAccessToken = JwtProvider.accessToken(email, id);
+			String newAccessToken = jwtProvider.accessToken(email, id);
 
 			response.setHeader(JwtProvider.AUTHORIZATION_HEADER, "Bearer " + newAccessToken);
 			createAuthentication(email);

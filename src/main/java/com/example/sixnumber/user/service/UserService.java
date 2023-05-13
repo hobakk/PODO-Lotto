@@ -32,6 +32,7 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final CashRepository cashRepository;
+	private final JwtProvider jwtProvider;
 	private final PasswordEncoder passwordEncoder;
 	private final RedisTemplate<String, String> redisTemplate;
 	private final String RTK = "RT: ";
@@ -66,10 +67,10 @@ public class UserService {
 			throw new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다");
 		}
 
-		String refreshToken = JwtProvider.refreshToken(user.getEmail(), user.getId());
+		String refreshToken = jwtProvider.refreshToken(user.getEmail(), user.getId());
 		redisTemplate.opsForValue().set(RTK + user.getId(), refreshToken);
 
-		return JwtProvider.accessToken(user.getEmail(), user.getId());
+		return jwtProvider.accessToken(user.getEmail(), user.getId());
 	}
 
 	public ApiResponse logout(User user) {

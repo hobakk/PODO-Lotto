@@ -28,10 +28,10 @@ public class JwtProvider {
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	public static final String BEARER_PREFIX = "Bearer";
 	private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-	private static final int expire = 1000 /* * 60 * 30 */;//30분
+	private static final int expire = 1000 * 60 * 30;
 	private static final Long refreshExpire = 7 * 24 * 60 * 60 * 1000L;
 
-	public static String accessToken(String email, Long userId) {
+	public String accessToken(String email, Long userId) {
 		Date curDate = new Date();
 		Date expireDate = new Date(curDate.getTime() + expire);
 		HashMap<String, Object> headers = new HashMap<>();
@@ -47,7 +47,7 @@ public class JwtProvider {
 			.compact();
 	}
 
-	public static String refreshToken(String email, Long userId) {
+	public String refreshToken(String email, Long userId) {
 		Date curDate = new Date();
 		Date refreshExpireDate = new Date(curDate.getTime() + refreshExpire);
 		HashMap<String, Object> headers = new HashMap<>();
@@ -63,7 +63,7 @@ public class JwtProvider {
 			.compact();
 	}
 
-	public static String resolveToken(HttpServletRequest request) {
+	public String resolveToken(HttpServletRequest request) {
 		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
 
 		if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
@@ -72,7 +72,7 @@ public class JwtProvider {
 		return null;
 	}
 
-	public static Boolean validateToken(String token) throws ExpiredJwtException {
+	public Boolean validateToken(String token) throws ExpiredJwtException {
 		try {
 			Jwts.parserBuilder().setSigningKey(KEY).build().parseClaimsJws(token);
 		return true;
@@ -86,7 +86,7 @@ public class JwtProvider {
 		return false;
 	}
 
-	public static Claims getClaims(String token) {
+	public Claims getClaims(String token) {
 		return Jwts.parserBuilder()
 			.setSigningKey(KEY)
 			.build()
@@ -94,11 +94,11 @@ public class JwtProvider {
 			.getBody();
 	}
 
-	public static void setExpire(String token) {
+	public void setExpire(String token) {
 		getClaims(token).setExpiration(new Date());
 	}
 
-	public static Boolean isTokenExpired(String token) {
+	public Boolean isTokenExpired(String token) {
 		Date expirationDate = getClaims(token).getExpiration();
 		return expirationDate.before(new Date());
 	}
