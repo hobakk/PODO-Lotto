@@ -59,6 +59,10 @@ public class UserService {
 			throw new IllegalArgumentException("중복 로그인입니다");
 		}
 
+		if (user.getStatus().equals(Status.SUSPENDED)) {
+			throw new IllegalArgumentException("정지된 계정입니다");
+		}
+
 		if (user.getStatus().equals(Status.DORMANT)) {
 			throw new IllegalArgumentException("탈퇴한 계정입니다");
 		}

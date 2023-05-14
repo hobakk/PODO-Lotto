@@ -32,6 +32,9 @@ import com.example.sixnumber.user.type.UserRole;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
+	@InjectMocks
+	private UserService userService;
+
 	@Mock
 	private UserRepository userRepository;
 	@Mock
@@ -42,9 +45,6 @@ public class UserServiceTest {
 	private PasswordEncoder passwordEncoder;
 	@Mock
 	private RedisTemplate<String, String> redisTemplate;
-
-	@InjectMocks
-	private UserService userService;
 
 	@BeforeEach
 	public void setup() {
