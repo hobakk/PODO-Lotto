@@ -13,6 +13,8 @@ import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.StatusRequest;
+import com.example.sixnumber.user.dto.UsersReponse;
+import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.AdminService;
 
@@ -26,17 +28,17 @@ public class AdminController {
 	private final AdminService adminService;
 
 	@GetMapping("/users")
-	public ResponseEntity<ListApiResponse<?>> getUsers() {
+	public ResponseEntity<ListApiResponse<UsersReponse>> getUsers() {
 		return ResponseEntity.ok(adminService.getUsers());
 	}
 
 	@GetMapping("/chargs/before")
-	public ResponseEntity<ListApiResponse<?>> getBeforeChargs() {
+	public ResponseEntity<ListApiResponse<Cash>> getBeforeChargs() {
 		return ResponseEntity.ok(adminService.getBeforeChargs());
 	}
 
 	@GetMapping("/chargs/after")
-	public ResponseEntity<ListApiResponse<?>> getAfterChargs() {
+	public ResponseEntity<ListApiResponse<Cash>> getAfterChargs() {
 		return ResponseEntity.ok(adminService.getAfterChargs());
 	}
 

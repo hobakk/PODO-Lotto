@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,7 @@ public class AdminService {
 	private final CashRepository cashRepository;
 	private final UserRepository userRepository;
 	private final LottoRepository lottoRepository;
+	private final RedisTemplate<String, String> redisTemplate;
 
 	public ApiResponse setAdmin(User user, Long userId) {
 		confirmationProcess(user, userId);
@@ -46,10 +48,10 @@ public class AdminService {
 		return ListApiResponse.ok("조회 성공", userRepository.findAll().stream().map(UsersReponse::new).collect(Collectors.toList()));
 	}
 
-	public ListApiResponse<?> getAfterChargs() {
+	public ListApiResponse<Cash> getAfterChargs() {
 		return ListApiResponse.ok("조회 성공", cashRepository.processingEqaulAfter());
 	}
-	public ListApiResponse<?> getBeforeChargs() {
+	public ListApiResponse<Cash> getBeforeChargs() {
 		return ListApiResponse.ok("조회 성공", cashRepository.processingEqaulBefore());
 	}
 
@@ -95,6 +97,13 @@ public class AdminService {
 	public ApiResponse setStatus(User user, Long userId, StatusRequest request) {
 		confirmationProcess(user, userId);
 		User target = findByUser(userId);
+
+		if (request.getMsg().equals("SUSPENDED") || request.getMsg().equals("DORMANT")) {
+			if (redisTemplate.opsForValue().get("RT: " + target.getId()) != null) {
+				redisTemplate.delete("RT: " + target.getId());
+			}
+		}
+
 		target.setStatus(request.getMsg());
 		return ApiResponse.ok("상태 변경 완료");
 	}
