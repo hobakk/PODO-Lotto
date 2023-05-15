@@ -59,12 +59,12 @@ public class UserService {
 			throw new IllegalArgumentException("중복 로그인입니다");
 		}
 
-		if (user.getStatus().equals(Status.SUSPENDED)) {
-			throw new IllegalArgumentException("정지된 계정입니다");
-		}
-
-		if (user.getStatus().equals(Status.DORMANT)) {
-			throw new IllegalArgumentException("탈퇴한 계정입니다");
+		if (!user.getStatus().equals(Status.ACTIVE)) {
+			switch (user.getStatus()) {
+				case SUSPENDED -> throw new IllegalArgumentException("정지된 계정입니다");
+				case DORMANT -> throw new IllegalArgumentException("탈퇴한 계정입니다");
+				default -> throw new IllegalArgumentException("잘못된 상태정보입니다");
+			}
 		}
 
 		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -111,7 +111,6 @@ public class UserService {
 		user.setCash("-", 5000);
 		user.setRole("PAID");
 		user.setPaymentDate(YearMonth.now().toString());
-
 		return ApiResponse.ok("권한 변경 성공");
 	}
 
