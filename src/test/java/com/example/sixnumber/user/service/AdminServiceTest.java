@@ -18,6 +18,8 @@ import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.lotto.dto.LottoResponse;
+import com.example.sixnumber.lotto.entity.Lotto;
+import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
 import com.example.sixnumber.user.entity.Cash;
@@ -37,7 +39,7 @@ public class AdminServiceTest {
 	@Mock
 	private CashRepository cashRepository;
 	@Mock
-	private LottoResponse lottoResponse;
+	private LottoRepository lottoRepository;
 	@Mock
 	private RedisTemplate<String, String> redisTemplate;
 
@@ -132,6 +134,7 @@ public class AdminServiceTest {
 		CashRequest request = TestDataFactory.cashRequest();
 
 		User user = TestDataFactory.user();
+
 		when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
 		ApiResponse response = adminService.downCash(request);
@@ -139,5 +142,17 @@ public class AdminServiceTest {
 		verify(userRepository).findById(anyLong());
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "차감 완료");
+	}
+
+	@Test
+	void createLottoWhenNoMain() {
+		Optional<Lotto> checkedLotto = Optional.empty();
+		when(lottoRepository.findByMain()).thenReturn(checkedLotto);
+
+		ApiResponse response = adminService.createLotto("email");
+
+		verify(lottoRepository).findByMain();
+		assertEquals(response.getCode(), 200);
+		assertEquals(response.getMsg(), "생성 완료");
 	}
 }
