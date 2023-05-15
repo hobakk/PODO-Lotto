@@ -2,6 +2,7 @@ package com.example.sixnumber.fixture;
 
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
+import com.example.sixnumber.user.dto.ReleasePaidRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.entity.Cash;
@@ -13,6 +14,7 @@ public class TestDataFactory {
 		User user = new User(signupRequest(), "ePassword");
 		user.setCash("+", 5000);
 		user.setRole("USER");
+		user.setStatus("ACTIVE");
 		return user;
 	}
 

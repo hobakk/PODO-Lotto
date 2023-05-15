@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +29,7 @@ import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.CashRepository;
 import com.example.sixnumber.user.repository.UserRepository;
+import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,25 +48,32 @@ public class UserServiceTest {
 	@Mock
 	private RedisTemplate<String, String> redisTemplate;
 
+	private User saveUser;
+	private SignupRequest signupRequest;
+	private SigninRequest signinRequest;
+	private ValueOperations<String, String> valueOperations;
+
 	@BeforeEach
 	public void setup() {
 		// MockitoAnnotations.openMocks(this);
+		saveUser = TestDataFactory.user();
+		signupRequest = TestDataFactory.signupRequest();
+		signinRequest = TestDataFactory.signinRequest();
+		valueOperations = mock(ValueOperations.class);
 	}
 
 	@Test
-	void signup() {
-		SignupRequest request = TestDataFactory.signupRequest();
-
+	void signup_success() {
 		when(userRepository.existsUserByEmail(anyString())).thenReturn(false);
 		when(userRepository.existsUserByNickname(anyString())).thenReturn(false);
 
 		String encodedPassword = "ePassword";
-		when(passwordEncoder.encode(request.getPassword())).thenReturn(encodedPassword);
+		when(passwordEncoder.encode(signupRequest.getPassword())).thenReturn(encodedPassword);
 
-		User saveUser = new User(request, encodedPassword);
+		User saveUser = new User(signupRequest, encodedPassword);
 		when(userRepository.save(any(User.class))).thenReturn(saveUser);
 
-		ApiResponse response = userService.signUp(request);
+		ApiResponse response = userService.signUp(signupRequest);
 
 		verify(userRepository).existsUserByEmail(anyString());
 		verify(userRepository).existsUserByNickname(anyString());
@@ -74,14 +83,29 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void signin() {
-		SigninRequest signinRequest = TestDataFactory.signinRequest();
+	void signup_fail_overlapEmail() {
+		when(userRepository.existsUserByEmail(anyString())).thenReturn(true);
 
-		User saveUser = TestDataFactory.user();
+		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> userService.signUp(signupRequest));
 
+		verify(userRepository).existsUserByEmail(anyString());
+	}
+
+	@Test
+	void signup_fail_overlapNickname() {
+		when(userRepository.existsUserByNickname(anyString())).thenReturn(true);
+
+		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> userService.signUp(signupRequest));
+
+		verify(userRepository).existsUserByNickname(anyString());
+	}
+
+	@Test
+	void signin_success() {
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
 
-		ValueOperations<String, String> valueOperations = mock(ValueOperations.class);
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 		when(valueOperations.get(anyString())).thenReturn(null);
 
@@ -102,6 +126,70 @@ public class UserServiceTest {
 	}
 
 	@Test
+	void signin_fail_overlapLogin() {
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+
+		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+		when(valueOperations.get(anyString())).thenReturn("RTV");
+
+		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> userService.signIn(signinRequest));
+
+		verify(userRepository).findByEmail(anyString());
+		verify(valueOperations).get(anyString());
+		verify(redisTemplate).delete(anyString());
+	}
+
+	@Test
+	void signin_fail_SuspendedUser() {
+		saveUser.setStatus("SUSPENDED");
+
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+
+		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+		when(valueOperations.get(anyString())).thenReturn(null);
+
+		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> userService.signIn(signinRequest));
+
+		verify(userRepository).findByEmail(anyString());
+		verify(valueOperations).get(anyString());
+	}
+
+	@Test
+	void signin_fail_DormantUser() {
+		saveUser.setStatus("DORMANT");
+
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+
+		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+		when(valueOperations.get(anyString())).thenReturn(null);
+
+		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> userService.signIn(signinRequest));
+
+		verify(userRepository).findByEmail(anyString());
+		verify(valueOperations).get(anyString());
+	}
+
+	@Test
+	void signin_fail_incorrectPW() {
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+
+		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+		when(valueOperations.get(anyString())).thenReturn(null);
+
+		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+
+		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> userService.signIn(signinRequest));
+
+		verify(userRepository).findByEmail(anyString());
+		verify(valueOperations).get(anyString());
+		verify(passwordEncoder).matches(anyString(), anyString());
+	}
+
+	@Test
 	void logout() {
 		User saveUser = TestDataFactory.user();
 
@@ -113,11 +201,10 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void withdraw() {
+	void withdraw_success() {
 		WithdrawRequest request = mock(WithdrawRequest.class);
-		User saveUser = TestDataFactory.user();
-
 		when(request.getMsg()).thenReturn("회원탈퇴");
+
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
 
 		ApiResponse response = userService.withdraw(request, saveUser.getEmail());
@@ -128,46 +215,97 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void setUSER() {
-		ReleasePaidRequest request = mock(ReleasePaidRequest.class);
-		when(request.getMsg()).thenReturn("월정액 해지");
+	void withdraw_fail_incorrectMsg() {
+		WithdrawRequest request = mock(WithdrawRequest.class);
+		when(request.getMsg()).thenReturn("incorrectMsg");
 
-		User user = mock(User.class);
-		when(user.getEmail()).thenReturn("email@test.com");
-		when(user.getRole()).thenReturn(UserRole.ROLE_PAID);
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.withdraw(request, saveUser.getEmail()));
 
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
-
-		ApiResponse response = userService.setPaid(request, user.getEmail());
-
-		verify(user).getRole();
-		verify(user).setPaymentDate(request.getMsg());
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "해지 신청 성공");
-
+		verify(request).getMsg();
 	}
 
 	@Test
-	void setPAID() {
+	void setUser_success() {
+		ReleasePaidRequest request = mock(ReleasePaidRequest.class);
+		when(request.getMsg()).thenReturn("월정액 해지");
+
+		saveUser.setRole("PAID");
+
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+
+		ApiResponse response = userService.setPaid(request, saveUser.getEmail());
+
+		assertEquals(response.getCode(), 200);
+		assertEquals(response.getMsg(), "해지 신청 성공");
+	}
+
+	@Test
+	void setUser_fail_USER() {
+		ReleasePaidRequest request = mock(ReleasePaidRequest.class);
+		when(request.getMsg()).thenReturn("월정액 해지");
+
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.setPaid(request, saveUser.getEmail()));
+
+		verify(request).getMsg();
+		verify(userRepository).findByEmail(anyString());
+	}
+
+	@Test
+	void setPaid_success() {
+		ReleasePaidRequest request = mock(ReleasePaidRequest.class);
+		when(request.getMsg()).thenReturn("false");
+
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+
+		ApiResponse response = userService.setPaid(request, saveUser.getEmail());
+
+		verify(userRepository).findByEmail(anyString());
+		assertEquals(response.getCode(), 200);
+		assertEquals(response.getMsg(), "권한 변경 성공");
+	}
+	
+	@Test
+	void setPaid_fail_lowCash() {
 		ReleasePaidRequest request = mock(ReleasePaidRequest.class);
 		when(request.getMsg()).thenReturn("false");
 
 		User user = mock(User.class);
-		when(user.getEmail()).thenReturn("email@test.com");
-		when(user.getRole()).thenReturn(UserRole.ROLE_USER);
-		when(user.getCash()).thenReturn(6000);
+		when(user.getEmail()).thenReturn("user@test.com");
+		when(user.getCash()).thenReturn(1000);
 
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
 
-		ApiResponse response = userService.setPaid(request, user.getEmail());
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.setPaid(request, user.getEmail()));
 
+		verify(request).getMsg();
+		verify(user).getEmail();
+		verify(user).getCash();
+		verify(user, never()).setRole(anyString());
+		verify(userRepository).findByEmail(anyString());
+	}
+
+	@Test
+	void setPaid_fail_PaidUser() {
+		ReleasePaidRequest request = mock(ReleasePaidRequest.class);
+		when(request.getMsg()).thenReturn("false");
+
+		User user = mock(User.class);
+		when(user.getEmail()).thenReturn("user@test.com");
+		when(user.getCash()).thenReturn(6000);
+		when(user.getRole()).thenReturn(UserRole.ROLE_PAID);
+
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.setPaid(request, user.getEmail()));
+
+		verify(request).getMsg();
+		verify(user).getEmail();
 		verify(user).getCash();
 		verify(user).getRole();
-		verify(user).setCash("-", 5000);
-		verify(user).setRole("PAID");
-		verify(user).setPaymentDate(anyString());
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "권한 변경 성공");
+		verify(user, never()).setRole(anyString());
+		verify(userRepository).findByEmail(anyString());
 	}
 
 	@Test
