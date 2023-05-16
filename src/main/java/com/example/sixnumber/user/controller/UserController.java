@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sixnumber.global.dto.ApiResponse;
+import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.user.dto.ChargingRequest;
+import com.example.sixnumber.user.dto.GetChargingResponse;
 import com.example.sixnumber.user.dto.ReleasePaidRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -58,7 +60,12 @@ public class UserController {
 		return ResponseEntity.ok().body(ApiResponse.ok("조회 성공" + cash));
 	}
 
-	@PostMapping("/cash")
+	@GetMapping("/charging")
+	public ResponseEntity<ListApiResponse<GetChargingResponse>> getChargings(@AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(userService.getCharges(user.getId()));
+	}
+
+	@PostMapping("/charging")
 	public ResponseEntity<ApiResponse> charging(@RequestBody ChargingRequest chargingRequest, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.charging(chargingRequest, user.getId()));
 	}

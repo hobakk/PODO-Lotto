@@ -1,6 +1,8 @@
 package com.example.sixnumber.user.service;
 
 import java.time.YearMonth;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -8,8 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.dto.ApiResponse;
+import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.user.dto.ChargingRequest;
+import com.example.sixnumber.user.dto.GetChargingResponse;
 import com.example.sixnumber.user.dto.ReleasePaidRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -119,13 +123,30 @@ public class UserService {
 	}
 
 	public ApiResponse charging(ChargingRequest chargingRequest, Long userId) {
+		List<Cash> list = cashRepository.processingEqaulBefore();
+
+		if (list.size() >= 5) throw new IllegalArgumentException("처리되지 않은 요청사항이 많습니다");
+
+		if (list.stream().anyMatch(l -> l.getMsg().contains(chargingRequest.getMsg())))
+			throw new IllegalArgumentException("이전 요청중에 중복 문자가 포함되어있어 반려되었습니다");
+
 		Cash cash = new Cash(userId, chargingRequest);
 		cashRepository.save(cash);
 		return ApiResponse.ok("요청 성공");
+	}
+
+	public ListApiResponse<GetChargingResponse> getCharges(Long userId) {
+		List<Cash> chargingList = cashRepository.findAllByUserId(userId);
+
+		if (chargingList.isEmpty()) throw new IllegalArgumentException("충전 요청이 존재하지 않습니다");
+
+		List<GetChargingResponse> responses = chargingList.stream().map(GetChargingResponse::new).collect(Collectors.toList());
+		return ListApiResponse.ok("신청 리스트 조회 성공", responses);
 	}
 
 	private User findByUser(String email) {
 		return userRepository.findByEmail(email)
 			.orElseThrow(()-> new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다"));
 	}
+
 }
