@@ -21,6 +21,7 @@ import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.CashRepository;
 import com.example.sixnumber.user.repository.UserRepository;
+import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
 
 import lombok.AllArgsConstructor;
@@ -103,13 +104,13 @@ public class AdminService {
 
 		if (!statusList.contains(request.getMsg())) throw new IllegalArgumentException("잘못된 입력값입니다");
 
-		if (request.getMsg().equals("SUSPENDED") || request.getMsg().equals("DORMANT")) {
+		target.setStatus(request.getMsg());
+
+		if (target.getStatus().equals(Status.SUSPENDED) || target.getStatus().equals(Status.DORMANT)) {
 			if (redisTemplate.opsForValue().get("RT: " + target.getId()) != null) {
 				redisTemplate.delete("RT: " + target.getId());
 			}
 		}
-
-		target.setStatus(request.getMsg());
 		return ApiResponse.ok("상태 변경 완료");
 	}
 
