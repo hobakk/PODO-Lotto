@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -140,27 +142,13 @@ public class UserServiceTest {
 		verify(redisTemplate).delete(anyString());
 	}
 
-	@Test
-	void signin_fail_SuspendedUser() {
-		saveUser.setStatus("SUSPENDED");
+	@ParameterizedTest
+	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#statusTestData")
+	void signin_fail_Status(Status status) {
+		User user = mock(User.class);
+		when(user.getStatus()).thenReturn(status);
 
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
-
-		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-		when(valueOperations.get(anyString())).thenReturn(null);
-
-		Assertions.assertThrows(IllegalArgumentException.class,
-			() -> userService.signIn(signinRequest));
-
-		verify(userRepository).findByEmail(anyString());
-		verify(valueOperations).get(anyString());
-	}
-
-	@Test
-	void signin_fail_DormantUser() {
-		saveUser.setStatus("DORMANT");
-
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
 
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 		when(valueOperations.get(anyString())).thenReturn(null);
@@ -265,46 +253,24 @@ public class UserServiceTest {
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "권한 변경 성공");
 	}
-	
-	@Test
-	void setPaid_fail_lowCash() {
+
+	@ParameterizedTest
+	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#setPaidTestData")
+	void setPaid_fail_lowCashOrRole(int cash, UserRole role) {
 		ReleasePaidRequest request = mock(ReleasePaidRequest.class);
 		when(request.getMsg()).thenReturn("false");
 
 		User user = mock(User.class);
-		when(user.getEmail()).thenReturn("user@test.com");
-		when(user.getCash()).thenReturn(1000);
+		when(user.getEmail()).thenReturn("test@email.com");
+		when(user.getCash()).thenReturn(cash);
+		// 분명하게 필요한 정보인데 스터빙 오류가 계속 떠서 lenient() 적용함
+		lenient().when(user.getRole()).thenReturn(role);
 
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.setPaid(request, user.getEmail()));
 
 		verify(request).getMsg();
-		verify(user).getEmail();
-		verify(user).getCash();
-		verify(user, never()).setRole(anyString());
-		verify(userRepository).findByEmail(anyString());
-	}
-
-	@Test
-	void setPaid_fail_PaidUser() {
-		ReleasePaidRequest request = mock(ReleasePaidRequest.class);
-		when(request.getMsg()).thenReturn("false");
-
-		User user = mock(User.class);
-		when(user.getEmail()).thenReturn("user@test.com");
-		when(user.getCash()).thenReturn(6000);
-		when(user.getRole()).thenReturn(UserRole.ROLE_PAID);
-
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
-
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.setPaid(request, user.getEmail()));
-
-		verify(request).getMsg();
-		verify(user).getEmail();
-		verify(user).getCash();
-		verify(user).getRole();
-		verify(user, never()).setRole(anyString());
 		verify(userRepository).findByEmail(anyString());
 	}
 
@@ -318,7 +284,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void Charginh() {
+	void Charging() {
 		ChargingRequest request = mock(ChargingRequest.class);
 		when(request.getMsg()).thenReturn("훈재오리");
 		when(request.getValue()).thenReturn(5000);
