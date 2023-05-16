@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -21,8 +23,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.dto.ApiResponse;
+import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.user.dto.ChargingRequest;
+import com.example.sixnumber.user.dto.GetChargingResponse;
 import com.example.sixnumber.user.dto.ReleasePaidRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -256,7 +260,7 @@ public class UserServiceTest {
 
 	@ParameterizedTest
 	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#setPaidTestData")
-	void setPaid_fail_lowCashOrRole(int cash, UserRole role) {
+	void setPaid_fail_lowCash_Or_Role(int cash, UserRole role) {
 		ReleasePaidRequest request = mock(ReleasePaidRequest.class);
 		when(request.getMsg()).thenReturn("false");
 
@@ -284,20 +288,59 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void Charging() {
+	void charging_success() {
 		ChargingRequest request = mock(ChargingRequest.class);
-		when(request.getMsg()).thenReturn("훈재오리");
-		when(request.getValue()).thenReturn(5000);
+		when(request.getMsg()).thenReturn("false");
 
-		User saveUser = TestDataFactory.user();
+		List<Cash> onlyOneData = TestDataFactory.onlyOneData();
+
+		when(cashRepository.processingEqaulBefore()).thenReturn(onlyOneData);
 
 		Cash cash = new Cash(saveUser.getId(), request);
 		when(cashRepository.save(any(Cash.class))).thenReturn(cash);
 
 		ApiResponse response = userService.charging(request, saveUser.getId());
 
+		verify(cashRepository).processingEqaulBefore();
 		verify(cashRepository).save(any(Cash.class));
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "요청 성공");
+	}
+
+	@ParameterizedTest
+	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#chargingTestData")
+	void charging_fail_manyCharges_Or_incorrectMsg(List<Cash> testList) {
+		ChargingRequest request = TestDataFactory.chargingRequest();
+
+		when(cashRepository.processingEqaulBefore()).thenReturn(testList);
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.charging(request, saveUser.getId()));
+
+		verify(cashRepository).processingEqaulBefore();
+	}
+
+	@Test
+	void getCharges_success() {
+		List<Cash> onlyOneData = TestDataFactory.onlyOneData();
+
+		when(cashRepository.findAllByUserId(saveUser.getId())).thenReturn(onlyOneData);
+
+		ListApiResponse<GetChargingResponse> response = userService.getCharges(saveUser.getId());
+
+		verify(cashRepository).findAllByUserId(saveUser.getId());
+		assertEquals(response.getCode(), 200);
+		assertEquals(response.getMsg(), "신청 리스트 조회 성공");
+		assertEquals(response.getData().size(), onlyOneData.size());
+	}
+
+	@Test
+	void getCharges_fail_noData() {
+		List<Cash> noData = new ArrayList<>();
+
+		when(cashRepository.findAllByUserId(anyLong())).thenReturn(noData);
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getCharges(0L));
+
+		verify(cashRepository).findAllByUserId(anyLong());
 	}
 }

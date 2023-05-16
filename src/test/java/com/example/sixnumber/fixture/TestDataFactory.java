@@ -1,5 +1,7 @@
 package com.example.sixnumber.fixture;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.params.provider.Arguments;
@@ -31,6 +33,28 @@ public class TestDataFactory {
 
 	public static Cash cash() {
 		return new Cash(user().getId(), chargingRequest());
+	}
+
+	public static List<Cash> cashList() {
+		List<Cash> list = new ArrayList<>();
+		boolean full = true;
+		int i = 1;
+
+		while (full) {
+			i++;
+			Cash cash = new Cash(user().getId(), new ChargingRequest("msg" + i, 5000 + i));
+			list.add(cash);
+			if (list.size() == 6) {
+				full = false;
+			}
+		}
+		return list;
+	}
+
+	public static List<Cash> onlyOneData() {
+		List<Cash> list = new ArrayList<>();
+		list.add(cash());
+		return list;
 	}
 
 	public static SignupRequest signupRequest() {
@@ -75,6 +99,13 @@ public class TestDataFactory {
 		return Stream.of(
 			Arguments.of( 1000, UserRole.ROLE_USER),
 			Arguments.of( 6000, UserRole.ROLE_PAID)
+		);
+	}
+
+	public static Stream<Arguments> chargingTestData() {
+		return Stream.of(
+			Arguments.of(cashList()),
+			Arguments.of(onlyOneData())
 		);
 	}
 
