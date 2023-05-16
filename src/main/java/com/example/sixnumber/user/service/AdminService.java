@@ -1,6 +1,7 @@
 package com.example.sixnumber.user.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -97,6 +98,10 @@ public class AdminService {
 	public ApiResponse setStatus(User user, Long userId, StatusRequest request) {
 		confirmationProcess(user, userId);
 		User target = findByUser(userId);
+		String[] statusStr = {"ACTIVE", "SUSPENDED", "DORMANT"};
+		List<String> statusList = Arrays.asList(statusStr);
+
+		if (!statusList.contains(request.getMsg())) throw new IllegalArgumentException("잘못된 입력값입니다");
 
 		if (request.getMsg().equals("SUSPENDED") || request.getMsg().equals("DORMANT")) {
 			if (redisTemplate.opsForValue().get("RT: " + target.getId()) != null) {
