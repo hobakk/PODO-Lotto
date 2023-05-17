@@ -15,10 +15,9 @@ import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.GetChargingResponse;
-import com.example.sixnumber.user.dto.ReleasePaidRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
-import com.example.sixnumber.user.dto.WithdrawRequest;
+import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
 
@@ -44,12 +43,12 @@ public class UserController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<ApiResponse> logout(@AuthenticationPrincipal User user, HttpServletResponse response) {
+	public ResponseEntity<ApiResponse> logout(@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.logout(user));
 	}
 
 	@PostMapping("/withdraw")
-	public ResponseEntity<ApiResponse> withdraw(@RequestBody WithdrawRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<ApiResponse> withdraw(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.withdraw(request, user.getEmail()));
 	}
 
@@ -71,7 +70,7 @@ public class UserController {
 	}
 
 	@PostMapping("/setPaid")
-	public ResponseEntity<ApiResponse> setPaid(@RequestBody ReleasePaidRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<ApiResponse> setPaid(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.setPaid(request ,user.getEmail()));
 	}
 }

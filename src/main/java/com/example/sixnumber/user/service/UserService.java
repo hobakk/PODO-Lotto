@@ -14,10 +14,9 @@ import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.GetChargingResponse;
-import com.example.sixnumber.user.dto.ReleasePaidRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
-import com.example.sixnumber.user.dto.WithdrawRequest;
+import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.CashRepository;
@@ -86,7 +85,7 @@ public class UserService {
 		return ApiResponse.ok("로그아웃 성공");
 	}
 
-	public ApiResponse withdraw(WithdrawRequest request, String email) {
+	public ApiResponse withdraw(OnlyMsgRequest request, String email) {
 		String withdrawMsg = "회원탈퇴";
 
 		if (!request.getMsg().equals(withdrawMsg)) {
@@ -98,7 +97,7 @@ public class UserService {
 		return ApiResponse.ok("회원 탈퇴 완료");
 	}
 
-	public ApiResponse setPaid(ReleasePaidRequest request, String email) {
+	public ApiResponse setPaid(OnlyMsgRequest request, String email) {
 		User user = findByUser(email);
 
 		if (request.getMsg().equals("월정액 해지")) {
@@ -122,6 +121,8 @@ public class UserService {
 		return user.getCash();
 	}
 
+
+	// redisTemplate 에 저장하여 관리하는 방식으로 변경 예정
 	public ApiResponse charging(ChargingRequest chargingRequest, Long userId) {
 		List<Cash> list = cashRepository.processingEqaulBefore();
 
