@@ -1,5 +1,6 @@
 package com.example.sixnumber.fixture;
 
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -136,6 +137,13 @@ public class TestDataFactory {
 		return Stream.of(
 			Arguments.of(20, 1000),
 			Arguments.of(5, 2000)
+		);
+	}
+
+	public static Stream<Arguments> cancellation() {
+		return Stream.of(
+			Arguments.of(String.valueOf(YearMonth.of(2023, 4)), "-", 4000),
+			Arguments.of("월정액 해지", "+", 1000)
 		);
 	}
 
