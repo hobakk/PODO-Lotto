@@ -50,7 +50,6 @@ public class AdminServiceTest {
 	private ValueOperations<String, String> valueOperations;
 	private User saveUser;
 	private User admin;
-	private Cash saveCash;
 
 	@BeforeEach
 	public void setup() {
@@ -58,7 +57,6 @@ public class AdminServiceTest {
 		valueOperations = mock(ValueOperations.class);
 		saveUser = TestDataFactory.user();
 		admin = TestDataFactory.Admin();
-		saveCash = TestDataFactory.cash();
 	}
 
 	@Test
@@ -96,9 +94,10 @@ public class AdminServiceTest {
 
 	@Test
 	void getAfterChargs() {
-		saveCash.setProcessingAfter();
+		Cash cash = TestDataFactory.cash();
+		cash.setProcessingAfter();
 
-		when(cashRepository.processingEqaulAfter()).thenReturn(List.of(saveCash));
+		when(cashRepository.processingEqaulAfter()).thenReturn(List.of(cash));
 
 		ListApiResponse<Cash> response = adminService.getAfterChargs();
 
@@ -109,7 +108,10 @@ public class AdminServiceTest {
 
 	@Test
 	void getBeforeChargs() {
-		when(cashRepository.processingEqaulBefore()).thenReturn(List.of(saveCash));
+		Cash cash = TestDataFactory.cash();
+		cash.setProcessingAfter();
+
+		when(cashRepository.processingEqaulBefore()).thenReturn(List.of(cash));
 
 		ListApiResponse<Cash> response = adminService.getBeforeChargs();
 
@@ -122,8 +124,11 @@ public class AdminServiceTest {
 	void upCash_success() {
 		CashRequest request = TestDataFactory.cashRequest();
 
+		Cash cash = TestDataFactory.cash();
+		cash.setProcessingAfter();
+
 		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
-		when(cashRepository.findById(anyLong())).thenReturn(Optional.of(saveCash));
+		when(cashRepository.findById(anyLong())).thenReturn(Optional.of(cash));
 
 		ApiResponse response = adminService.upCash(request);
 
