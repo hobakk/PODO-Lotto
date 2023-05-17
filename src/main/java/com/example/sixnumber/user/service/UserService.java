@@ -121,7 +121,6 @@ public class UserService {
 		return user.getCash();
 	}
 
-
 	// redisTemplate 에 저장하여 관리하는 방식으로 변경 예정
 	public ApiResponse charging(ChargingRequest chargingRequest, Long userId) {
 		List<Cash> list = cashRepository.processingEqaulBefore();

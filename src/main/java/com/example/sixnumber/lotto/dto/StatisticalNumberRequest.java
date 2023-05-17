@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BuyNumberRequest {
+public class StatisticalNumberRequest {
 	private int value;
+	private int repetition;
 }
