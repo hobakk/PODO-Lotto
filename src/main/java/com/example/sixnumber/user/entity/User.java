@@ -89,6 +89,11 @@ public class User implements UserDetails {
 		}
 	}
 
+	// test code
+	public void setId(Long userId) {
+		this.id = userId;
+	}
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Collection<GrantedAuthority> authorities = new HashSet<>();
