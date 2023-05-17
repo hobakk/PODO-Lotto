@@ -28,7 +28,7 @@ public class LottoService {
 	private final LottoRepository lottoRepository;
 
 	public ItemApiResponse<LottoResponse> mainTopNumbers() {
-		Lotto lotto = lottoRepository.findById(1L).orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
+		Lotto lotto = lottoRepository.findByMain().orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
 
 		List<Integer> countList = lotto.getCountList();
 		List<Integer> sortedIndices = new ArrayList<>();
