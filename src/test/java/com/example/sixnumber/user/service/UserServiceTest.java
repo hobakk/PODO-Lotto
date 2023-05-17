@@ -27,10 +27,9 @@ import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.GetChargingResponse;
-import com.example.sixnumber.user.dto.ReleasePaidRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
-import com.example.sixnumber.user.dto.WithdrawRequest;
+import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.CashRepository;
@@ -55,21 +54,19 @@ public class UserServiceTest {
 	private RedisTemplate<String, String> redisTemplate;
 
 	private User saveUser;
-	private SignupRequest signupRequest;
-	private SigninRequest signinRequest;
 	private ValueOperations<String, String> valueOperations;
 
 	@BeforeEach
 	public void setup() {
 		// MockitoAnnotations.openMocks(this);
 		saveUser = TestDataFactory.user();
-		signupRequest = TestDataFactory.signupRequest();
-		signinRequest = TestDataFactory.signinRequest();
 		valueOperations = mock(ValueOperations.class);
 	}
 
 	@Test
 	void signup_success() {
+		SignupRequest signupRequest = TestDataFactory.signupRequest();
+
 		when(userRepository.existsUserByEmail(anyString())).thenReturn(false);
 		when(userRepository.existsUserByNickname(anyString())).thenReturn(false);
 
@@ -90,6 +87,8 @@ public class UserServiceTest {
 
 	@Test
 	void signup_fail_overlapEmail() {
+		SignupRequest signupRequest = TestDataFactory.signupRequest();
+
 		when(userRepository.existsUserByEmail(anyString())).thenReturn(true);
 
 		Assertions.assertThrows(IllegalArgumentException.class,
@@ -100,6 +99,8 @@ public class UserServiceTest {
 
 	@Test
 	void signup_fail_overlapNickname() {
+		SignupRequest signupRequest = TestDataFactory.signupRequest();
+
 		when(userRepository.existsUserByNickname(anyString())).thenReturn(true);
 
 		Assertions.assertThrows(IllegalArgumentException.class,
@@ -110,6 +111,8 @@ public class UserServiceTest {
 
 	@Test
 	void signin_success() {
+		SigninRequest signinRequest = TestDataFactory.signinRequest();
+
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
 
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -133,6 +136,8 @@ public class UserServiceTest {
 
 	@Test
 	void signin_fail_overlapLogin() {
+		SigninRequest signinRequest = TestDataFactory.signinRequest();
+
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
 
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -149,6 +154,8 @@ public class UserServiceTest {
 	@ParameterizedTest
 	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#statusTestData")
 	void signin_fail_Status(Status status) {
+		SigninRequest signinRequest = TestDataFactory.signinRequest();
+
 		User user = mock(User.class);
 		when(user.getStatus()).thenReturn(status);
 
@@ -166,6 +173,8 @@ public class UserServiceTest {
 
 	@Test
 	void signin_fail_incorrectPW() {
+		SigninRequest signinRequest = TestDataFactory.signinRequest();
+
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
 
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -194,7 +203,7 @@ public class UserServiceTest {
 
 	@Test
 	void withdraw_success() {
-		WithdrawRequest request = mock(WithdrawRequest.class);
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("회원탈퇴");
 
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
@@ -208,7 +217,7 @@ public class UserServiceTest {
 
 	@Test
 	void withdraw_fail_incorrectMsg() {
-		WithdrawRequest request = mock(WithdrawRequest.class);
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("incorrectMsg");
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.withdraw(request, saveUser.getEmail()));
@@ -218,7 +227,7 @@ public class UserServiceTest {
 
 	@Test
 	void setUser_success() {
-		ReleasePaidRequest request = mock(ReleasePaidRequest.class);
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("월정액 해지");
 
 		saveUser.setRole("PAID");
@@ -233,7 +242,7 @@ public class UserServiceTest {
 
 	@Test
 	void setUser_fail_USER() {
-		ReleasePaidRequest request = mock(ReleasePaidRequest.class);
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("월정액 해지");
 
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
@@ -246,7 +255,7 @@ public class UserServiceTest {
 
 	@Test
 	void setPaid_success() {
-		ReleasePaidRequest request = mock(ReleasePaidRequest.class);
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("false");
 
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
@@ -261,7 +270,7 @@ public class UserServiceTest {
 	@ParameterizedTest
 	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#setPaidTestData")
 	void setPaid_fail_lowCash_Or_Role(int cash, UserRole role) {
-		ReleasePaidRequest request = mock(ReleasePaidRequest.class);
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("false");
 
 		User user = mock(User.class);
