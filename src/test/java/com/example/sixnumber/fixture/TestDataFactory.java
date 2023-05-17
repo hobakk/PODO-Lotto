@@ -19,6 +19,7 @@ public class TestDataFactory {
 
 	public static User user() {
 		User user = new User(signupRequest(), "ePassword");
+		user.setId(7L);
 		user.setCash("+", 5000);
 		user.setRole("USER");
 		user.setStatus("ACTIVE");
@@ -27,6 +28,7 @@ public class TestDataFactory {
 
 	public static User Admin() {
 		User user = new User(signupRequest(), "ePassword");
+		user.setId(1L);
 		user.setAdmin();
 		return user;
 	}
