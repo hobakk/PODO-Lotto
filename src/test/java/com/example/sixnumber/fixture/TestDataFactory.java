@@ -6,6 +6,8 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.params.provider.Arguments;
 
+import com.example.sixnumber.lotto.dto.BuyNumberRequest;
+import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -39,15 +41,15 @@ public class TestDataFactory {
 
 	public static List<Cash> cashList() {
 		List<Cash> list = new ArrayList<>();
-		boolean full = true;
+		boolean full = false;
 		int i = 1;
 
-		while (full) {
+		while (!full) {
 			i++;
 			Cash cash = new Cash(user().getId(), new ChargingRequest("msg" + i, 5000 + i));
 			list.add(cash);
 			if (list.size() == 6) {
-				full = false;
+				full = true;
 			}
 		}
 		return list;
@@ -89,6 +91,25 @@ public class TestDataFactory {
 		);
 	}
 
+	public static BuyNumberRequest buyNumberRequest() {
+		return new BuyNumberRequest(5);
+	}
+
+	public static StatisticalNumberRequest statisticalNumberRequest() {
+		return new StatisticalNumberRequest(
+			5,
+			1000
+		);
+	}
+
+	public static List<Integer> countList() {
+		List<Integer> list = new ArrayList<>();
+		for (int i = 0; i < 45; i++) {
+			list.add(1);
+		}
+		return list;
+	}
+
 	public static Stream<Arguments> statusTestData() {
 		return Stream.of(
 			Arguments.of(Status.SUSPENDED),
@@ -108,6 +129,13 @@ public class TestDataFactory {
 		return Stream.of(
 			Arguments.of(cashList()),
 			Arguments.of(onlyOneData())
+		);
+	}
+
+	public static Stream<Arguments> statisticalNumber() {
+		return Stream.of(
+			Arguments.of(20, 1000),
+			Arguments.of(5, 2000)
 		);
 	}
 
