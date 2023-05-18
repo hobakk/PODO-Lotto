@@ -1,7 +1,9 @@
 package com.example.sixnumber.user.service;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -41,6 +43,17 @@ public class UserService {
 	private final String RTK = "RT: ";
 
 	public ApiResponse signUp(SignupRequest request) {
+		Optional<User> dormantUser = userRepository.findByStatusAndEmail(Status.DORMANT, request.getEmail());
+		if (dormantUser.isPresent()) {
+			User user = dormantUser.get();
+			if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+				user.setStatus("ACTIVE");
+				user.setWithdrawExpiration(null);
+				userRepository.save(user);
+				return ApiResponse.ok("재가입 완료");
+			}
+		}
+
 		if (userRepository.existsUserByEmail(request.getEmail())) {
 			throw new IllegalArgumentException("이메일 중복");
 		}
@@ -93,6 +106,7 @@ public class UserService {
 		}
 		User user = findByUser(email);
 		user.setStatus("DORMANT");
+		user.setWithdrawExpiration(LocalDate.now().plusMonths(1));
 		redisTemplate.delete(RTK + user.getId());
 		return ApiResponse.ok("회원 탈퇴 완료");
 	}
