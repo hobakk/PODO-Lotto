@@ -18,6 +18,7 @@ import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
+import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
 
 import lombok.RequiredArgsConstructor;
@@ -66,6 +67,18 @@ public class GlobalScheduler {
 				throw new IllegalArgumentException("얘기치 않은 동작 및 오류");
 			}
 		}
+	}
+
+	@Scheduled(cron = "0 0 7 ? * MON-FRI")
+	public void	withdrawExpiration() {
+		System.out.println("탈퇴한 유저 정보 보유기간 만료 확인");
+
+		// 어느 정보까지 삭제할건지 생각해 봐야함
+		List<User> withdrawList = userRepository.findByStatusAndWithdrawExpiration(Status.DORMANT);
+		if (!withdrawList.isEmpty()) {
+			userRepository.deleteAll(withdrawList);
+		}
+
 	}
 
 	// 너무 많은 작업을 담당하기에 분리함
