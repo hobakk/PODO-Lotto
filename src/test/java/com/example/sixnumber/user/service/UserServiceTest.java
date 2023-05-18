@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -83,6 +84,27 @@ public class UserServiceTest {
 		verify(userRepository).save(any(User.class));
 		assertEquals(201, response.getCode());
 		assertEquals("회원가입 완료", response.getMsg());
+	}
+
+	@Test
+	void signup_success_setActive() {
+		SignupRequest request = TestDataFactory.signupRequest();
+
+		saveUser.setStatus("DORMANT");
+
+		when(userRepository.findByStatusAndEmail(eq(Status.DORMANT), anyString())).thenReturn(Optional.of(saveUser));
+
+		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+
+		ApiResponse response = userService.signUp(request);
+
+		verify(userRepository).findByStatusAndEmail(eq(Status.DORMANT), anyString());
+		verify(passwordEncoder).matches(anyString(), anyString());
+		verify(userRepository).save(any(User.class));
+		assertEquals(saveUser.getStatus(), Status.ACTIVE);
+		assertNull(saveUser.getWithdrawExpiration());
+		assertEquals(response.getCode(), 200);
+		assertEquals(response.getMsg(), "재가입 완료");
 	}
 
 	@Test
@@ -192,8 +214,6 @@ public class UserServiceTest {
 
 	@Test
 	void logout() {
-		User saveUser = TestDataFactory.user();
-
 		ApiResponse response = userService.logout(saveUser);
 
 		assertEquals(response.getCode(), 200);
@@ -211,6 +231,8 @@ public class UserServiceTest {
 		ApiResponse response = userService.withdraw(request, saveUser.getEmail());
 
 		verify(redisTemplate).delete(anyString());
+		assertEquals(saveUser.getStatus(), Status.DORMANT);
+		assertNotNull(saveUser.getWithdrawExpiration());
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "회원 탈퇴 완료");
 	}
@@ -236,6 +258,7 @@ public class UserServiceTest {
 
 		ApiResponse response = userService.setPaid(request, saveUser.getEmail());
 
+		assertEquals(saveUser.getPaymentDate(), "월정액 해지");
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "해지 신청 성공");
 	}
@@ -263,6 +286,9 @@ public class UserServiceTest {
 		ApiResponse response = userService.setPaid(request, saveUser.getEmail());
 
 		verify(userRepository).findByEmail(anyString());
+		assertEquals(saveUser.getCash(), 1000);
+		assertEquals(saveUser.getRole(), UserRole.ROLE_PAID);
+		assertNotNull(saveUser.getPaymentDate());
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "권한 변경 성공");
 	}
@@ -289,11 +315,9 @@ public class UserServiceTest {
 
 	@Test
 	void getCash() {
-		User user = TestDataFactory.user();
+		int response = userService.getCash(saveUser);
 
-		int response = userService.getCash(user);
-
-		assertEquals(user.getCash(), response);
+		assertEquals(saveUser.getCash(), response);
 	}
 
 	@Test
