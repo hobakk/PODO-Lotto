@@ -27,7 +27,9 @@ public class SixNumber extends TimeStamped {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
+	@Column(name = "userId")
 	private Long userId;
+	@Column(name = "buyDate", nullable = false)
 	private LocalDate buyDate;
 
 	@ElementCollection
