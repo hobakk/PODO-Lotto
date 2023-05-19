@@ -1,5 +1,6 @@
 package com.example.sixnumber.user.entity;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Collection;
 import java.util.HashSet;
@@ -51,6 +52,8 @@ public class User implements UserDetails {
 	private Status status;
 	@Column(name = "paymentDate")
 	private String paymentDate;
+	@Column(name = "withdrawExpiration")
+	private LocalDate withdrawExpiration;
 
 	public User(SignupRequest request, String password) {
 		this.email = request.getEmail();
@@ -87,6 +90,15 @@ public class User implements UserDetails {
 			case "SUSPENDED" -> this.status = Status.SUSPENDED;
 			case "DORMANT" -> this.status = Status.DORMANT;
 		}
+	}
+
+	public void setWithdrawExpiration(LocalDate localDate) {
+		this.withdrawExpiration = localDate;
+	}
+
+	// test code
+	public void setId(Long userId) {
+		this.id = userId;
 	}
 
 	@Override

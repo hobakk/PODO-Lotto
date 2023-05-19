@@ -1,4 +1,4 @@
-package com.example.sixnumber.user.dto;
+package com.example.sixnumber.lotto.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SigninRequest {
-	private String email;
-	private String password;
+public class StatisticalNumberRequest {
+	private int value;
+	private int repetition;
 }

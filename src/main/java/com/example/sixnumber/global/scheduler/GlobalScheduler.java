@@ -2,6 +2,7 @@ package com.example.sixnumber.global.scheduler;
 
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +18,7 @@ import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
+import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
 
 import lombok.RequiredArgsConstructor;
@@ -32,29 +34,30 @@ public class GlobalScheduler {
 
 	@Scheduled(cron = "0 0 11 ? * MON-FRI *")
 	public void findByTopNumberListForMonth() {
-		String ym = YearMonth.now().toString();
-		String[] yToM = ym.split("-");
-		int year = Integer.parseInt(yToM[0]);
-		int lastMonth = Integer.parseInt(yToM[1]) - 1;
+		String[] ym = YearMonth.now().minusMonths(1).toString().split("-");
+		int year = Integer.parseInt(ym[0]);
+		int lastMonth = Integer.parseInt(ym[1]);
+		YearMonth yLastMonth = YearMonth.of(year, lastMonth);
 
-		System.out.println(lastMonth+"월 통계 조회");
-		YearMonth findYm = YearMonth.of(year, lastMonth);
-		Optional<Lotto> lotto = lottoRepository.findByTopNumbersForMonth(findYm);
+		System.out.println(lastMonth + "월 통계 조회");
+		Optional<Lotto> lotto = lottoRepository.findByTopNumbersForMonth(yLastMonth);
 
 		if (lotto.isEmpty()) {
-			generatesStatistics(year, lastMonth, findYm);
+			generatesStatistics(year, lastMonth, yLastMonth);
 		}
 	}
 
+	// 월 말에 월정액 가입한 유저의 경우 몇일 지나고 다시 결제가 되는데 어떻게 처리할지 고민해야함 예: YearMonth -> LocalDate
 	@Scheduled(cron = "0 0 9 ? * MON-FRI *")
 	public void paymentAndCancellation() {
 		System.out.println("자동 결제 및 해지");
+		String lastMonth = YearMonth.now().minusMonths(1).toString();
 
 		List<User> userList = userRepository.findByRole(UserRole.ROLE_PAID);
 		for (User user : userList) {
 			String paymentDate = user.getPaymentDate();
 
-			if (!paymentDate.equals(YearMonth.now().toString())) {
+			if (paymentDate.equals(lastMonth) && user.getCash() > 5000 && !user.getPaymentDate().equals("월정액 해지")) {
 				user.setCash("-", 5000);
 				user.setPaymentDate(YearMonth.now().toString());
 			} else if (paymentDate.equals("월정액 해지") || user.getCash() < 5000) {
@@ -64,6 +67,18 @@ public class GlobalScheduler {
 				throw new IllegalArgumentException("얘기치 않은 동작 및 오류");
 			}
 		}
+	}
+
+	@Scheduled(cron = "0 0 7 ? * MON-FRI")
+	public void	withdrawExpiration() {
+		System.out.println("탈퇴한 유저 정보 보유기간 만료 확인");
+
+		// 어느 정보까지 삭제할건지 생각해 봐야함
+		List<User> withdrawList = userRepository.findByStatusAndWithdrawExpiration(Status.DORMANT);
+		if (!withdrawList.isEmpty()) {
+			userRepository.deleteAll(withdrawList);
+		}
+
 	}
 
 	// 너무 많은 작업을 담당하기에 분리함
@@ -87,7 +102,7 @@ public class GlobalScheduler {
 			}
 		}
 		for (int i = 0; i < countList.size(); i++) {
-			statistics = statistics + "(" + i+1 + " : " + countList.get(i) + "), ";
+			statistics = statistics + "(" + (i+1) + " : " + countList.get(i) + "), ";
 		}
 		statistics = statistics.substring(0, statistics.length() -2);
 

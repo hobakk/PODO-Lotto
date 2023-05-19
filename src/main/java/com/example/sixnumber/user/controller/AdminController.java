@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.user.dto.CashRequest;
-import com.example.sixnumber.user.dto.StatusRequest;
+import com.example.sixnumber.user.dto.OnlyMsgRequest;
+import com.example.sixnumber.user.dto.UsersReponse;
+import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.AdminService;
 
@@ -26,23 +28,23 @@ public class AdminController {
 	private final AdminService adminService;
 
 	@GetMapping("/users")
-	public ResponseEntity<ListApiResponse<?>> getUsers() {
+	public ResponseEntity<ListApiResponse<UsersReponse>> getUsers() {
 		return ResponseEntity.ok(adminService.getUsers());
 	}
 
 	@GetMapping("/chargs/before")
-	public ResponseEntity<ListApiResponse<?>> getBeforeChargs() {
+	public ResponseEntity<ListApiResponse<Cash>> getBeforeChargs() {
 		return ResponseEntity.ok(adminService.getBeforeChargs());
 	}
 
 	@GetMapping("/chargs/after")
-	public ResponseEntity<ListApiResponse<?>> getAfterChargs() {
+	public ResponseEntity<ListApiResponse<Cash>> getAfterChargs() {
 		return ResponseEntity.ok(adminService.getAfterChargs());
 	}
 
 	@PostMapping("/users/{userId}")
-	public ResponseEntity<ApiResponse> setAdmin(@PathVariable Long userId, @AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(adminService.setAdmin(user, userId));
+	public ResponseEntity<ApiResponse> setAdmin(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(adminService.setAdmin(request, user, userId));
 	}
 
 	@PostMapping("/users/upCash")
@@ -61,7 +63,7 @@ public class AdminController {
 	}
 
 	@PostMapping("/setStatus/{userId}")
-	public ResponseEntity<?> setStatus(@PathVariable Long userId, @RequestBody StatusRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<?> setStatus(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(adminService.setStatus(user, userId, request));
 	}
 }

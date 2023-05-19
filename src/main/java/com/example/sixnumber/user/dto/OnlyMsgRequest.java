@@ -3,6 +3,6 @@ package com.example.sixnumber.user.dto;
 import lombok.Getter;
 
 @Getter
-public class StatusRequest {
+public class OnlyMsgRequest {
 	private String msg;
 }

@@ -1,10 +1,12 @@
 package com.example.sixnumber.user.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,12 +15,13 @@ import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.CashRequest;
-import com.example.sixnumber.user.dto.StatusRequest;
+import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
 import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.CashRepository;
 import com.example.sixnumber.user.repository.UserRepository;
+import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
 
 import lombok.AllArgsConstructor;
@@ -33,10 +36,14 @@ public class AdminService {
 	private final CashRepository cashRepository;
 	private final UserRepository userRepository;
 	private final LottoRepository lottoRepository;
+	private final RedisTemplate<String, String> redisTemplate;
 
-	public ApiResponse setAdmin(User user, Long userId) {
-		confirmationProcess(user, userId);
-		User target = findByUser(userId);
+	// 보안관련 더 생각해봐야함
+	public ApiResponse setAdmin(OnlyMsgRequest request, User user, Long userId) {
+		String KEY = "AdminSecurityKey";
+		if (!request.getMsg().equals(KEY)) throw new IllegalArgumentException("설정된 KEY값이 아닙니다");
+
+		User target = confirmationProcess(user, userId);
 		target.setAdmin();
 		return ApiResponse.ok("변경 완료");
 	}
@@ -46,10 +53,10 @@ public class AdminService {
 		return ListApiResponse.ok("조회 성공", userRepository.findAll().stream().map(UsersReponse::new).collect(Collectors.toList()));
 	}
 
-	public ListApiResponse<?> getAfterChargs() {
+	public ListApiResponse<Cash> getAfterChargs() {
 		return ListApiResponse.ok("조회 성공", cashRepository.processingEqaulAfter());
 	}
-	public ListApiResponse<?> getBeforeChargs() {
+	public ListApiResponse<Cash> getBeforeChargs() {
 		return ListApiResponse.ok("조회 성공", cashRepository.processingEqaulBefore());
 	}
 
@@ -92,10 +99,24 @@ public class AdminService {
 		return ApiResponse.ok("생성 완료");
 	}
 
-	public ApiResponse setStatus(User user, Long userId, StatusRequest request) {
-		confirmationProcess(user, userId);
-		User target = findByUser(userId);
+	public ApiResponse setStatus(User user, Long userId, OnlyMsgRequest request) {
+		User target = confirmationProcess(user, userId);
+		String[] statusStr = {"ACTIVE", "SUSPENDED", "DORMANT"};
+		List<String> statusList = Arrays.asList(statusStr);
+
+		if (!statusList.contains(request.getMsg())) throw new IllegalArgumentException("잘못된 입력값입니다");
+
+		String targetStatusStr = target.getStatus().toString();
+
+		if (targetStatusStr.equals(request.getMsg())) throw new IllegalArgumentException("이미 적용되어 있는 상태코드 입니다");
+
 		target.setStatus(request.getMsg());
+
+		if (target.getStatus().equals(Status.SUSPENDED) || target.getStatus().equals(Status.DORMANT)) {
+			if (redisTemplate.opsForValue().get("RT: " + target.getId()) != null) {
+				redisTemplate.delete("RT: " + target.getId());
+			}
+		}
 		return ApiResponse.ok("상태 변경 완료");
 	}
 
@@ -104,7 +125,7 @@ public class AdminService {
 			.orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다"));
 	}
 
-	private void confirmationProcess(User user, Long userId) {
+	private User confirmationProcess(User user, Long userId) {
 		if (user.getId().equals(userId)) {
 			throw new IllegalArgumentException("본인 입니다");
 		}
@@ -113,5 +134,6 @@ public class AdminService {
 		if (target.getRole().equals(UserRole.ROLE_ADMIN)) {
 			throw new IllegalArgumentException("운영자 계정입니다");
 		}
+		return target;
 	}
 }

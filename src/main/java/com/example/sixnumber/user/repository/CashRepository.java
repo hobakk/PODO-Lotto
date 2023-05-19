@@ -16,4 +16,6 @@ public interface CashRepository extends JpaRepository<Cash, Long> {
 	@Modifying
 	@Query(value = "SELECT c FROM Cash c WHERE c.processing = 'AFTER'")
 	List<Cash> processingEqaulAfter();
+
+	List<Cash> findAllByUserId(Long userId);
 }
