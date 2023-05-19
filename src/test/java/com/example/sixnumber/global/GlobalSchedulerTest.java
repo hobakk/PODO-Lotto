@@ -2,7 +2,9 @@ package com.example.sixnumber.global;
 
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,6 +26,7 @@ import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
+import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
 
 @ExtendWith(MockitoExtension.class)
@@ -95,5 +98,18 @@ public class GlobalSchedulerTest {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> globalScheduler.paymentAndCancellation());
 
 		verify(userRepository).findByRole(UserRole.ROLE_PAID);
+	}
+
+	@Test
+	void withdrawExpiartion() {
+		saveUser.setStatus("DORMANT");
+		saveUser.setWithdrawExpiration(LocalDate.now().minusMonths(2));
+
+		when(userRepository.findByStatusAndWithdrawExpiration(eq(Status.DORMANT))).thenReturn(List.of(saveUser));
+
+		globalScheduler.withdrawExpiration();
+
+		verify(userRepository).findByStatusAndWithdrawExpiration(eq(Status.DORMANT));
+		verify(userRepository).deleteAll(anyList());
 	}
 }
