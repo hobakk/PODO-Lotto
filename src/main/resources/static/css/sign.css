@@ -1,0 +1,82 @@
+.container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    box-sizing: border-box;
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.title {
+    margin: 0;
+    margin-bottom: 20px;
+    color: #FFFFFF;
+    opacity: 0.75; /* 75% 불투명도 */
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 2rem 0;
+    background-color: #ff7f00;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+input[type="email"], input[type="password"], input[type="text"] {
+    width: 100%;
+    padding: 1rem 2rem;
+    margin: 1rem 0;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 20px;
+    background-color: #EEEEEE;
+    color: #33312E;
+    font-size: 1.2rem;
+    outline: none;
+}
+
+input[type=submit] {
+    background-color: #ff7f00;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 20px;
+    padding: 1rem 3rem;
+    margin: 1rem 0;
+    font-size: 1.4rem;
+    font-weight: bolder;
+    cursor: pointer;
+}
+
+a {
+    color: #BBBBBB;
+}
+
+footer {
+    background-color: #f8f8f8;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bottomlogo {
+    border: none;
+    padding: 10px 20px;
+}
+
+.bottomlogo a {
+    text-decoration: none;
+    color: #000000;
+    font-size: 2rem;
+}
+
+.bottomlogo:hover {
+    background-color: #ff7f00;
+}
+
+.bottomlogo:hover a {
+    color: #fff;
+}
