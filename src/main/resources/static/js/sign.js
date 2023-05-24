@@ -1,15 +1,15 @@
 function goToSignin() {
-    window.location.href = '/template/signin.html';
+    window.location.href = '/page/signin';
 }
 
 function goToSignup() {
-    window.location.href = '/template/signup.html';
+    window.location.href = '/signup.html';
 }
 
 function logout() {
     $.ajax({
         type: "POST",
-        url: `/api/users/signout`,
+        url: `/api/users/logout`,
         contentType: "application/json",
         headers: {
             "Authorization": getCookieValue('Authorization')
