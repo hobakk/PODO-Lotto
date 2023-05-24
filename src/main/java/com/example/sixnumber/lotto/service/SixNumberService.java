@@ -68,7 +68,7 @@ public class SixNumberService {
 		confirmationProcess(null, request, user);
 
 		// server 에 올렸을 때 비용문제가 발생할거라 이용에 제한을 줄 필요가 있음
-		if (request.getRepetition() != 1000) throw new IllegalArgumentException("규격을 벗어난 반복횟수 입니다");
+		// if (request.getRepetition() != 1000) throw new IllegalArgumentException("규격을 벗어난 반복횟수 입니다");
 
 		List<String> topNumbers = new ArrayList<>();
 		HashMap<Integer, Integer> countMap = new HashMap<>();
