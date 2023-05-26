@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sixnumber.global.dto.ApiResponse;
+import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
+import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
-import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.AdminService;
 
@@ -32,14 +34,14 @@ public class AdminController {
 		return ResponseEntity.ok(adminService.getUsers());
 	}
 
-	@GetMapping("/chargs/before")
-	public ResponseEntity<ListApiResponse<Cash>> getBeforeChargs() {
-		return ResponseEntity.ok(adminService.getBeforeChargs());
+	@GetMapping("/chargs")
+	public ResponseEntity<ListApiResponse<AdminGetChargingResponse>> getChargs() {
+		return ResponseEntity.ok(adminService.getChargs());
 	}
 
-	@GetMapping("/chargs/after")
-	public ResponseEntity<ListApiResponse<Cash>> getAfterChargs() {
-		return ResponseEntity.ok(adminService.getAfterChargs());
+	@GetMapping("/search")
+	public ResponseEntity<ItemApiResponse<AdminGetChargingResponse>> searchCharging(@RequestBody ChargingRequest request) {
+		return ResponseEntity.ok(adminService.searchCharging(request));
 	}
 
 	@PostMapping("/users/{userId}")
