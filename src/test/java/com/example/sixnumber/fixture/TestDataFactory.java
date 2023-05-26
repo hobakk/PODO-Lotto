@@ -2,7 +2,10 @@ package com.example.sixnumber.fixture;
 
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.params.provider.Arguments;
@@ -13,7 +16,6 @@ import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
-import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -34,32 +36,6 @@ public class TestDataFactory {
 		user.setId(1L);
 		user.setAdmin();
 		return user;
-	}
-
-	public static Cash cash() {
-		return new Cash(user().getId(), chargingRequest());
-	}
-
-	public static List<Cash> cashList() {
-		List<Cash> list = new ArrayList<>();
-		boolean full = false;
-		int i = 1;
-
-		while (!full) {
-			i++;
-			Cash cash = new Cash(user().getId(), new ChargingRequest("msg" + i, 5000 + i));
-			list.add(cash);
-			if (list.size() == 6) {
-				full = true;
-			}
-		}
-		return list;
-	}
-
-	public static List<Cash> onlyOneData() {
-		List<Cash> list = new ArrayList<>();
-		list.add(cash());
-		return list;
 	}
 
 	public static SignupRequest signupRequest() {
@@ -87,7 +63,7 @@ public class TestDataFactory {
 	public static CashRequest cashRequest() {
 		return new CashRequest(
 			7L,
-			7L,
+			"msg",
 			5000
 		);
 	}
@@ -123,13 +99,6 @@ public class TestDataFactory {
 		return Stream.of(
 			Arguments.of( 1000, UserRole.ROLE_USER),
 			Arguments.of( 6000, UserRole.ROLE_PAID)
-		);
-	}
-
-	public static Stream<Arguments> chargingTestData() {
-		return Stream.of(
-			Arguments.of(cashList()),
-			Arguments.of(onlyOneData())
 		);
 	}
 

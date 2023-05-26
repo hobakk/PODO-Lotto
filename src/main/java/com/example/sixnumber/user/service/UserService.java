@@ -143,8 +143,8 @@ public class UserService {
 		if (keys.size() >= 3) throw new IllegalArgumentException("처리되지 않은 요청사항이 많습니다");
 
 		String msgValue = chargingRequest.getMsg() + "-" + chargingRequest.getValue();
-		Set<String> checkIncorrect = redisTemplate.keys(msgValue);
-		if (!checkIncorrect.isEmpty()) throw new IllegalArgumentException("서버내에 중복된 문제가 확인되어 반려되었습니다. 다른 문자로 다시 시대해주세요");
+		Set<String> checkIncorrect = redisTemplate.keys("*" + msgValue + "*");
+		if (!checkIncorrect.isEmpty()) throw new IllegalArgumentException("서버내에 중복된 문자가 확인되어 반려되었습니다. 다른 문자로 다시 시대해주세요");
 
 		String value = userId + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getValue();
 		redisTemplate.opsForValue().set(STMT + value, value, 12, TimeUnit.HOURS);
