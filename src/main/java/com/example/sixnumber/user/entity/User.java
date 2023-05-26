@@ -2,16 +2,21 @@ package com.example.sixnumber.user.entity;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -54,6 +59,9 @@ public class User implements UserDetails {
 	private String paymentDate;
 	@Column(name = "withdrawExpiration")
 	private LocalDate withdrawExpiration;
+	@ElementCollection
+	@OrderColumn(name = "statement_index", nullable = false)
+	private List<String> statement;
 
 	public User(SignupRequest request, String password) {
 		this.email = request.getEmail();
@@ -62,6 +70,7 @@ public class User implements UserDetails {
 		this.role = UserRole.ROLE_USER;
 		this.status = Status.ACTIVE;
 		this.cash = 1000;
+		this.statement = new ArrayList<>();
 	}
 
 	public void setPaymentDate(String yearMonth) {
@@ -94,6 +103,10 @@ public class User implements UserDetails {
 
 	public void setWithdrawExpiration(LocalDate localDate) {
 		this.withdrawExpiration = localDate;
+	}
+
+	public void setStatement(String str) {
+		this.statement.add(str);
 	}
 
 	// test code

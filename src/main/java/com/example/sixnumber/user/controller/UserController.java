@@ -14,7 +14,7 @@ import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.user.dto.ChargingRequest;
-import com.example.sixnumber.user.dto.GetChargingResponse;
+import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
@@ -60,7 +60,7 @@ public class UserController {
 	}
 
 	@GetMapping("/charging")
-	public ResponseEntity<ListApiResponse<GetChargingResponse>> getChargings(@AuthenticationPrincipal User user) {
+	public ResponseEntity<ListApiResponse<ChargingResponse>> getChargings(@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.getCharges(user.getId()));
 	}
 
