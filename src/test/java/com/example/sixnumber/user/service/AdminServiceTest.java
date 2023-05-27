@@ -3,8 +3,13 @@ package com.example.sixnumber.user.service;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,17 +25,19 @@ import org.springframework.data.redis.core.ValueOperations;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.dto.ApiResponse;
+import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
+import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
+import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
-import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
-import com.example.sixnumber.user.repository.CashRepository;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
+import com.example.sixnumber.user.type.UserRole;
 
 @ExtendWith(MockitoExtension.class)
 public class AdminServiceTest {
@@ -40,8 +47,6 @@ public class AdminServiceTest {
 
 	@Mock
 	private UserRepository userRepository;
-	@Mock
-	private CashRepository cashRepository;
 	@Mock
 	private LottoRepository lottoRepository;
 	@Mock
@@ -69,6 +74,7 @@ public class AdminServiceTest {
 		ApiResponse response = adminService.setAdmin(request, admin, saveUser.getId());
 
 		verify(userRepository).findById(anyLong());
+		assertEquals(saveUser.getRole(), UserRole.ROLE_ADMIN);
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "변경 완료");
 	}
@@ -80,6 +86,7 @@ public class AdminServiceTest {
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.setAdmin(request, admin, saveUser.getId()));
 	}
+	// setAdmin confirmationProcess 에 대한 실패 test code 는 setStatus 에서 검증해서 불필요
 
 	@Test
 	void getUsers() {
@@ -93,66 +100,69 @@ public class AdminServiceTest {
 	}
 
 	@Test
-	void getAfterChargs() {
-		Cash cash = TestDataFactory.cash();
-		cash.setProcessingAfter();
+	void getCharges() {
+		Set<String> keys = TestDataFactory.keys();
+		List<String> values = TestDataFactory.values();
 
-		when(cashRepository.processingEqaulAfter()).thenReturn(List.of(cash));
+		when(redisTemplate.keys(anyString())).thenReturn(keys);
+		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+		when(valueOperations.multiGet(keys)).thenReturn(values);
 
-		ListApiResponse<Cash> response = adminService.getAfterChargs();
+		ListApiResponse<AdminGetChargingResponse> response = adminService.getChargs();
 
-		verify(cashRepository).processingEqaulAfter();
+		verify(redisTemplate).keys(anyString());
+		verify(valueOperations).multiGet(keys);
+		assertEquals(response.getData().size(), 3);
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "조회 성공");
 	}
 
 	@Test
-	void getBeforeChargs() {
-		Cash cash = TestDataFactory.cash();
-		cash.setProcessingAfter();
+	void searchCharging_success() {
+		ChargingRequest request = TestDataFactory.chargingRequest();
 
-		when(cashRepository.processingEqaulBefore()).thenReturn(List.of(cash));
+		Set<String> set = new HashSet<>(List.of("7-Msg-5000"));
 
-		ListApiResponse<Cash> response = adminService.getBeforeChargs();
+		when(redisTemplate.keys(anyString())).thenReturn(set);
+		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 
-		verify(cashRepository).processingEqaulBefore();
+		List<String> values = Collections.singletonList("7-Value1-5000");
+		when(valueOperations.multiGet(set)).thenReturn(values);
+
+		ItemApiResponse<AdminGetChargingResponse> response = adminService.searchCharging(request);
+
+		verify(redisTemplate).keys(anyString());
+		verify(valueOperations).multiGet(set);
+		assertNotNull(response.getData());
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "조회 성공");
+	}
+
+	@Test
+	void searchCharging_fail_notFound() {
+		ChargingRequest request = TestDataFactory.chargingRequest();
+
+		when(redisTemplate.keys(anyString())).thenReturn(Collections.emptySet());
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.searchCharging(request));
+
+		verify(redisTemplate).keys(anyString());
 	}
 
 	@Test
 	void upCash_success() {
 		CashRequest request = TestDataFactory.cashRequest();
 
-		Cash cash = TestDataFactory.cash();
-		cash.setProcessingAfter();
-
 		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
-		when(cashRepository.findById(anyLong())).thenReturn(Optional.of(cash));
 
 		ApiResponse response = adminService.upCash(request);
 
 		verify(userRepository).findById(anyLong());
-		verify(cashRepository).findById(anyLong());
+		verify(redisTemplate).delete(anyString());
+		assertEquals(saveUser.getCash(), 11000);
+		assertNotNull(saveUser.getStatement().get(0));
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "충전 완료");
-	}
-
-	@Test
-	void upCash_fail_incorrectUser() {
-		CashRequest request = mock(CashRequest.class);
-		when(request.getUserId()).thenReturn(4L);
-
-		Cash cash = mock(Cash.class);
-		when(cash.getUserId()).thenReturn(4L);
-
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
-		when(cashRepository.findById(anyLong())).thenReturn(Optional.of(cash));
-
-		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.upCash(request));
-
-		verify(userRepository).findById(anyLong());
-		verify(cashRepository).findById(anyLong());
 	}
 
 	@Test
@@ -164,6 +174,8 @@ public class AdminServiceTest {
 		ApiResponse response = adminService.downCash(request);
 
 		verify(userRepository).findById(anyLong());
+		assertEquals(saveUser.getCash(), 1000);
+		assertNotNull(saveUser.getStatement().get(0));
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "차감 완료");
 	}
@@ -188,6 +200,7 @@ public class AdminServiceTest {
 		ApiResponse response = adminService.createLotto("email");
 
 		verify(lottoRepository).findByMain();
+		verify(lottoRepository).save(any(Lotto.class));
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "생성 완료");
 	}

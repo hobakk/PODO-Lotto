@@ -4,9 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,13 +29,12 @@ import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.user.dto.ChargingRequest;
-import com.example.sixnumber.user.dto.GetChargingResponse;
+import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
-import com.example.sixnumber.user.entity.Cash;
+import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.entity.User;
-import com.example.sixnumber.user.repository.CashRepository;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -45,8 +46,6 @@ public class UserServiceTest {
 
 	@Mock
 	private UserRepository userRepository;
-	@Mock
-	private CashRepository cashRepository;
 	@Mock
 	private JwtProvider jwtProvider;
 	@Mock
@@ -73,9 +72,6 @@ public class UserServiceTest {
 
 		String encodedPassword = "ePassword";
 		when(passwordEncoder.encode(signupRequest.getPassword())).thenReturn(encodedPassword);
-
-		User saveUser = new User(signupRequest, encodedPassword);
-		when(userRepository.save(any(User.class))).thenReturn(saveUser);
 
 		ApiResponse response = userService.signUp(signupRequest);
 
@@ -138,7 +134,6 @@ public class UserServiceTest {
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
 
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-		when(valueOperations.get(anyString())).thenReturn(null);
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
@@ -154,6 +149,7 @@ public class UserServiceTest {
 		verify(jwtProvider).refreshToken(saveUser.getEmail(), saveUser.getId());
 		verify(jwtProvider).accessToken(saveUser.getEmail(), saveUser.getId());
 		assertEquals(accessToken, "sampleAT");
+		assertEquals(saveUser.getStatus(), Status.ACTIVE);
 	}
 
 	@Test
@@ -289,6 +285,7 @@ public class UserServiceTest {
 		assertEquals(saveUser.getCash(), 1000);
 		assertEquals(saveUser.getRole(), UserRole.ROLE_PAID);
 		assertNotNull(saveUser.getPaymentDate());
+		assertNotNull(saveUser.getStatement());
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "권한 변경 성공");
 	}
@@ -322,58 +319,93 @@ public class UserServiceTest {
 
 	@Test
 	void charging_success() {
-		ChargingRequest request = mock(ChargingRequest.class);
-		when(request.getMsg()).thenReturn("false");
+		ChargingRequest request = TestDataFactory.chargingRequest();
 
-		List<Cash> onlyOneData = TestDataFactory.onlyOneData();
-
-		when(cashRepository.processingEqaulBefore()).thenReturn(onlyOneData);
-
-		Cash cash = new Cash(saveUser.getId(), request);
-		when(cashRepository.save(any(Cash.class))).thenReturn(cash);
+		Set<String> set = new HashSet<>(List.of("STMT: 7-1"));
+		when(redisTemplate.keys("*STMT: 7-*")).thenReturn(set);
+		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 
 		ApiResponse response = userService.charging(request, saveUser.getId());
 
-		verify(cashRepository).processingEqaulBefore();
-		verify(cashRepository).save(any(Cash.class));
+		verify(redisTemplate, times(2)).keys(anyString());
+
+		verify(valueOperations).set(anyString(), anyString(), anyLong(), any());
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "요청 성공");
 	}
 
-	@ParameterizedTest
-	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#chargingTestData")
-	void charging_fail_manyCharges_Or_incorrectMsg(List<Cash> testList) {
+	@Test
+	void charging_fail_manyCharges() {
 		ChargingRequest request = TestDataFactory.chargingRequest();
 
-		when(cashRepository.processingEqaulBefore()).thenReturn(testList);
+		Set<String> keys = TestDataFactory.keys();
+		when(redisTemplate.keys(anyString())).thenReturn(keys);
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.charging(request, saveUser.getId()));
 
-		verify(cashRepository).processingEqaulBefore();
+		verify(redisTemplate).keys(anyString());
 	}
 
 	@Test
+	void charging_fail_incorrectKey() {
+		ChargingRequest request = TestDataFactory.chargingRequest();
+
+		Set<String> set = new HashSet<>(List.of("Msg-5000"));
+		when(redisTemplate.keys(anyString())).thenReturn(set);
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.charging(request, saveUser.getId()));
+
+		verify(redisTemplate, times(2)).keys(anyString());
+	}
+
+	// AdminServiceTest getCharges 와 성공 code가 동일함 삭제해도되나 ?
+	@Test
 	void getCharges_success() {
-		List<Cash> onlyOneData = TestDataFactory.onlyOneData();
+		Set<String> keys = TestDataFactory.keys();
+		List<String> values = TestDataFactory.values();
 
-		when(cashRepository.findAllByUserId(saveUser.getId())).thenReturn(onlyOneData);
+		when(redisTemplate.keys(anyString())).thenReturn(keys);
+		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+		when(valueOperations.multiGet(keys)).thenReturn(values);
 
-		ListApiResponse<GetChargingResponse> response = userService.getCharges(saveUser.getId());
+		ListApiResponse<ChargingResponse> response = userService.getCharges(saveUser.getId());
 
-		verify(cashRepository).findAllByUserId(saveUser.getId());
+		verify(redisTemplate).keys(anyString());
+		verify(valueOperations).multiGet(keys);
+		assertEquals(response.getData().size(), 3);
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "신청 리스트 조회 성공");
-		assertEquals(response.getData().size(), onlyOneData.size());
 	}
 
 	@Test
 	void getCharges_fail_noData() {
-		List<Cash> noData = new ArrayList<>();
-
-		when(cashRepository.findAllByUserId(anyLong())).thenReturn(noData);
+		when(redisTemplate.keys(anyString())).thenReturn(Collections.emptySet());
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getCharges(0L));
 
-		verify(cashRepository).findAllByUserId(anyLong());
+		verify(redisTemplate).keys(anyString());
+	}
+
+	@Test
+	void getStatement_success() {
+		saveUser.setStatement(LocalDate.now() + ",5000" );
+
+		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+
+		ListApiResponse<StatementResponse> response = userService.getStatement(saveUser.getId());
+
+		verify(userRepository).findById(anyLong());
+		assertEquals(response.getData().size(), 1);
+		assertEquals(response.getCode(), 200);
+		assertEquals(response.getMsg(), "거래내역 조회 완료");
+	}
+
+	@Test
+	void getStatement_fail_lowSize() {
+		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getStatement(saveUser.getId()));
+
+		verify(userRepository).findById(anyLong());
 	}
 }

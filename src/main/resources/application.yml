@@ -1,8 +1,8 @@
 spring:
   datasource:
-    username: c##minjae
-    password: db1234
-    url: jdbc:oracle:thin:@localhost:1521:XE
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
     driver-class-name: oracle.jdbc.OracleDriver
 
   jpa:
@@ -16,8 +16,17 @@ spring:
         format_sql: true
 
   redis:
-    host: localhost
-    port: 6379
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: profile,email
 
 server:
   error:

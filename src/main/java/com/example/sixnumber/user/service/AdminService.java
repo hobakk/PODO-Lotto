@@ -1,9 +1,13 @@
 package com.example.sixnumber.user.service;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -11,15 +15,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.dto.ApiResponse;
+import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
+import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
+import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
-import com.example.sixnumber.user.entity.Cash;
 import com.example.sixnumber.user.entity.User;
-import com.example.sixnumber.user.repository.CashRepository;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -33,7 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class AdminService {
 
-	private final CashRepository cashRepository;
 	private final UserRepository userRepository;
 	private final LottoRepository lottoRepository;
 	private final RedisTemplate<String, String> redisTemplate;
@@ -53,23 +57,31 @@ public class AdminService {
 		return ListApiResponse.ok("조회 성공", userRepository.findAll().stream().map(UsersReponse::new).collect(Collectors.toList()));
 	}
 
-	public ListApiResponse<Cash> getAfterChargs() {
-		return ListApiResponse.ok("조회 성공", cashRepository.processingEqaulAfter());
-	}
-	public ListApiResponse<Cash> getBeforeChargs() {
-		return ListApiResponse.ok("조회 성공", cashRepository.processingEqaulBefore());
+	public ListApiResponse<AdminGetChargingResponse> getChargs() {
+		Set<String> totalKeys = redisTemplate.keys("*STMT: *");
+		List<AdminGetChargingResponse> userChargesValues = redisTemplate.opsForValue().multiGet(totalKeys).stream().map(AdminGetChargingResponse::new).toList();
+		return ListApiResponse.ok("조회 성공", userChargesValues);
 	}
 
+	public ItemApiResponse<AdminGetChargingResponse> searchCharging(ChargingRequest request) {
+		String searchStr = request.getMsg() + "-" + request.getValue();
+		Set<String> keys = redisTemplate.keys("*" + searchStr + "*");
+		if (keys.isEmpty()) throw new IllegalArgumentException("해당 충전 요청이 없습니다");
+
+		List<String> value = redisTemplate.opsForValue().multiGet(keys);
+		AdminGetChargingResponse response = new AdminGetChargingResponse(value.get(0));
+		return ItemApiResponse.ok("조회 성공", response);
+	}
+
+	// 결제에 대해서 고민해봐야함 현재 로직은 특정 계좌에 msg 와 value 가 확인되면 수동으로 넣어주는 방식
 	public ApiResponse upCash(CashRequest cashRequest) {
 		User user = findByUser(cashRequest.getUserId());
-		Cash cash = cashRepository.findById(cashRequest.getCashId())
-			.orElseThrow(() -> new IllegalArgumentException("해당 정보가 존재하지 않습니다"));
+		String key = "STMT: " + cashRequest.getUserId() + "-" + cashRequest.getMsg() + "-" + cashRequest.getValue();
+		// searchCharging 에서 검증되어 넘어온 Request 이기에 값이 있는지에 대한 체크는 건너뛰어도 된다 생각함
+		redisTemplate.delete(key);
 
-		if (!user.getId().equals(cash.getUserId())) {
-			throw new IllegalArgumentException("충전 요청한 사용자 정보와 동일하지 않습니다");
-		}
+		user.setStatement(LocalDate.now() + "," + cashRequest.getValue() +"원 충전");
 		user.setCash("+", cashRequest.getValue());
-		cash.setProcessingAfter();
 		return ApiResponse.ok("충전 완료");
 	}
 
@@ -78,7 +90,9 @@ public class AdminService {
 		if (user.getCash() < cashRequest.getValue()) {
 			throw new IllegalArgumentException("해당 유저가 보유한 금액보다 많습니다");
 		}
+
 		user.setCash("-", cashRequest.getValue());
+		user.setStatement(LocalDate.now() + "," + cashRequest.getMsg() + ": " + cashRequest.getValue() + "원 차감");
 		return ApiResponse.ok("차감 완료");
 	}
 

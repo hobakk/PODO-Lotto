@@ -1,0 +1,56 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.top-area {
+    display: flex;
+    align-items: center;
+    /*justify-content: center;*/
+    background-color: black;
+    width: 100%;
+    height: 2cm;
+}
+
+.logo-image {
+    width: 50px;
+    height: 50px;
+    margin-right: 0.5cm;
+    margin-left: 0.5cm;
+}
+
+.logo-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+}
+
+.top-button-userIf {
+    margin-left: auto;
+}
+
+.top-button {
+    margin-left: 0.5cm;
+    margin-right: 1cm;
+}
+
+.sign-area {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    width: 50%;
+    margin: 0 auto;
+    background-color: bisque;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.signup {
+    display: none;
+}
+
+.signin {
+    display: none;
+}

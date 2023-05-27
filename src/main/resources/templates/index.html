@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>포도 로또</title>
+    <script src="../js/sign.js"></script>
+    <link rel="icon" type="image/x-icon" th:href="@{/path/to/favicon.ico}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <div class="top-area">
+        <img th:src="@{/path/to/logo.png}" alt="Logo" class="logo-image">
+        <h1 class="logo-text">포도 로또</h1>
+        <div class="top-button-userIf">
+            <button class="top-button" style="float: left;" onclick="goToSignin()">로그인</button>
+            <button class="top-button" style="float: left;" onclick="goToSignup()">회원가입</button>
+            <button class="top-button" style="float: left;" onclick="logout()">로그아웃</button>
+        </div>
+    </div>
+
+</body>
+</html>
