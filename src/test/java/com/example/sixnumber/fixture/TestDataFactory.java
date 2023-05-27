@@ -79,6 +79,14 @@ public class TestDataFactory {
 		);
 	}
 
+	public static Set<String> keys() {
+		return new HashSet<>(List.of("Msg-5000", "Msg-50001", "Msg-50002"));
+	}
+
+	public static List<String> values() {
+		return Arrays.asList("7-Msg-5000", "7-Msg-50001", "7-Msg-50002");
+	}
+
 	public static List<Integer> countList() {
 		List<Integer> list = new ArrayList<>();
 		for (int i = 0; i < 45; i++) {
@@ -111,8 +119,8 @@ public class TestDataFactory {
 
 	public static Stream<Arguments> cancellation() {
 		return Stream.of(
-			Arguments.of(String.valueOf(YearMonth.of(2023, 4)), "-", 4000),
-			Arguments.of("월정액 해지", "+", 1000)
+			Arguments.of(String.valueOf(YearMonth.of(2023, 4)), "-", 5000, 1000),
+			Arguments.of("월정액 해지", "+", 0, 6000)
 		);
 	}
 

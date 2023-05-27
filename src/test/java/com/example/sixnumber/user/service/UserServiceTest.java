@@ -73,9 +73,6 @@ public class UserServiceTest {
 		String encodedPassword = "ePassword";
 		when(passwordEncoder.encode(signupRequest.getPassword())).thenReturn(encodedPassword);
 
-		User user = new User(signupRequest, encodedPassword);
-		when(userRepository.save(any(User.class))).thenReturn(user);
-
 		ApiResponse response = userService.signUp(signupRequest);
 
 		verify(userRepository).existsUserByEmail(anyString());
@@ -137,7 +134,6 @@ public class UserServiceTest {
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
 
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-		when(valueOperations.get(anyString())).thenReturn(null);
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
@@ -153,6 +149,7 @@ public class UserServiceTest {
 		verify(jwtProvider).refreshToken(saveUser.getEmail(), saveUser.getId());
 		verify(jwtProvider).accessToken(saveUser.getEmail(), saveUser.getId());
 		assertEquals(accessToken, "sampleAT");
+		assertEquals(saveUser.getStatus(), Status.ACTIVE);
 	}
 
 	@Test
@@ -288,6 +285,7 @@ public class UserServiceTest {
 		assertEquals(saveUser.getCash(), 1000);
 		assertEquals(saveUser.getRole(), UserRole.ROLE_PAID);
 		assertNotNull(saveUser.getPaymentDate());
+		assertNotNull(saveUser.getStatement());
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "권한 변경 성공");
 	}
@@ -337,11 +335,11 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void charging_fail_manyCharges_Or_incorrectMsg() {
+	void charging_fail_manyCharges() {
 		ChargingRequest request = TestDataFactory.chargingRequest();
 
-		Set<String> set = new HashSet<>(List.of("STMT: 7-1", "STMT: 7-2", "STMT: 7-3"));
-		when(redisTemplate.keys("*STMT: 7-*")).thenReturn(set);
+		Set<String> keys = TestDataFactory.keys();
+		when(redisTemplate.keys(anyString())).thenReturn(keys);
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.charging(request, saveUser.getId()));
 
@@ -349,7 +347,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void charging_fail_incorrecKey() {
+	void charging_fail_incorrectKey() {
 		ChargingRequest request = TestDataFactory.chargingRequest();
 
 		Set<String> set = new HashSet<>(List.of("Msg-5000"));
@@ -360,17 +358,21 @@ public class UserServiceTest {
 		verify(redisTemplate, times(2)).keys(anyString());
 	}
 
+	// AdminServiceTest getCharges 와 성공 code가 동일함 삭제해도되나 ?
 	@Test
 	void getCharges_success() {
-		Set<String> set = new HashSet<>(List.of("Msg-5000", "Msg-50001", "Msg-50002"));
+		Set<String> keys = TestDataFactory.keys();
+		List<String> values = TestDataFactory.values();
 
-		when(redisTemplate.keys(anyString())).thenReturn(set);
+		when(redisTemplate.keys(anyString())).thenReturn(keys);
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+		when(valueOperations.multiGet(keys)).thenReturn(values);
 
 		ListApiResponse<ChargingResponse> response = userService.getCharges(saveUser.getId());
 
 		verify(redisTemplate).keys(anyString());
-		verify(valueOperations).multiGet(set);
+		verify(valueOperations).multiGet(keys);
+		assertEquals(response.getData().size(), 3);
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "신청 리스트 조회 성공");
 	}
@@ -393,6 +395,7 @@ public class UserServiceTest {
 		ListApiResponse<StatementResponse> response = userService.getStatement(saveUser.getId());
 
 		verify(userRepository).findById(anyLong());
+		assertEquals(response.getData().size(), 1);
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "거래내역 조회 완료");
 	}

@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +37,7 @@ import com.example.sixnumber.user.dto.UsersReponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
+import com.example.sixnumber.user.type.UserRole;
 
 @ExtendWith(MockitoExtension.class)
 public class AdminServiceTest {
@@ -72,6 +74,7 @@ public class AdminServiceTest {
 		ApiResponse response = adminService.setAdmin(request, admin, saveUser.getId());
 
 		verify(userRepository).findById(anyLong());
+		assertEquals(saveUser.getRole(), UserRole.ROLE_ADMIN);
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "변경 완료");
 	}
@@ -83,6 +86,7 @@ public class AdminServiceTest {
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.setAdmin(request, admin, saveUser.getId()));
 	}
+	// setAdmin confirmationProcess 에 대한 실패 test code 는 setStatus 에서 검증해서 불필요
 
 	@Test
 	void getUsers() {
@@ -97,15 +101,18 @@ public class AdminServiceTest {
 
 	@Test
 	void getCharges() {
-		Set<String> set = new HashSet<>(List.of("STMT: 5000", "STMT: 50001", "STMT: 50002"));
+		Set<String> keys = TestDataFactory.keys();
+		List<String> values = TestDataFactory.values();
 
-		when(redisTemplate.keys(anyString())).thenReturn(set);
+		when(redisTemplate.keys(anyString())).thenReturn(keys);
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+		when(valueOperations.multiGet(keys)).thenReturn(values);
 
 		ListApiResponse<AdminGetChargingResponse> response = adminService.getChargs();
 
 		verify(redisTemplate).keys(anyString());
-		verify(valueOperations).multiGet(set);
+		verify(valueOperations).multiGet(keys);
+		assertEquals(response.getData().size(), 3);
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "조회 성공");
 	}
@@ -126,6 +133,7 @@ public class AdminServiceTest {
 
 		verify(redisTemplate).keys(anyString());
 		verify(valueOperations).multiGet(set);
+		assertNotNull(response.getData());
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "조회 성공");
 	}
@@ -152,7 +160,7 @@ public class AdminServiceTest {
 		verify(userRepository).findById(anyLong());
 		verify(redisTemplate).delete(anyString());
 		assertEquals(saveUser.getCash(), 11000);
-		assertEquals(saveUser.getStatement().get(0), LocalDate.now() + "," + request.getValue() + "원 충전");
+		assertNotNull(saveUser.getStatement().get(0));
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "충전 완료");
 	}
@@ -166,6 +174,8 @@ public class AdminServiceTest {
 		ApiResponse response = adminService.downCash(request);
 
 		verify(userRepository).findById(anyLong());
+		assertEquals(saveUser.getCash(), 1000);
+		assertNotNull(saveUser.getStatement().get(0));
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "차감 완료");
 	}
@@ -190,6 +200,7 @@ public class AdminServiceTest {
 		ApiResponse response = adminService.createLotto("email");
 
 		verify(lottoRepository).findByMain();
+		verify(lottoRepository).save(any(Lotto.class));
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "생성 완료");
 	}

@@ -1,10 +1,10 @@
 package com.example.sixnumber.global;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -72,11 +72,14 @@ public class GlobalSchedulerTest {
 		globalScheduler.paymentAndCancellation();
 
 		verify(userRepository).findByRole(UserRole.ROLE_PAID);
+		assertEquals(saveUser.getCash(), 1000);
+		assertEquals(saveUser.getPaymentDate(), YearMonth.now().toString());
+		assertEquals(saveUser.getStatement().get(0), LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
 	}
 
 	@ParameterizedTest
 	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#cancellation")
-	void Cancellation(String yearMonth, String sign, int cash) {
+	void Cancellation(String yearMonth, String sign, int cash, int resultCash) {
 		saveUser.setStatus("PAID");
 		saveUser.setPaymentDate(yearMonth);
 		saveUser.setCash(sign, cash);
@@ -86,6 +89,7 @@ public class GlobalSchedulerTest {
 		globalScheduler.paymentAndCancellation();
 
 		verify(userRepository).findByRole(UserRole.ROLE_PAID);
+		assertEquals(saveUser.getCash(), resultCash);
 	}
 
 	@Test
