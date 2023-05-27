@@ -1,8 +1,8 @@
 package com.example.sixnumber.global.scheduler;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -57,9 +57,10 @@ public class GlobalScheduler {
 		for (User user : userList) {
 			String paymentDate = user.getPaymentDate();
 
-			if (paymentDate.equals(lastMonth) && user.getCash() > 5000 && !user.getPaymentDate().equals("월정액 해지")) {
+			if (paymentDate.equals(lastMonth) && user.getCash() >= 5000 && !user.getPaymentDate().equals("월정액 해지")) {
 				user.setCash("-", 5000);
 				user.setPaymentDate(YearMonth.now().toString());
+				user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
 			} else if (paymentDate.equals("월정액 해지") || user.getCash() < 5000) {
 				user.setRole("USER");
 				user.setPaymentDate("");

@@ -96,7 +96,7 @@ public class AdminServiceTest {
 	}
 
 	@Test
-	void getAfterChargs() {
+	void getCharges() {
 		Set<String> set = new HashSet<>(List.of("STMT: 5000", "STMT: 50001", "STMT: 50002"));
 
 		when(redisTemplate.keys(anyString())).thenReturn(set);
@@ -152,7 +152,7 @@ public class AdminServiceTest {
 		verify(userRepository).findById(anyLong());
 		verify(redisTemplate).delete(anyString());
 		assertEquals(saveUser.getCash(), 11000);
-		assertEquals(saveUser.getStatement().get(0), LocalDate.now() + " " + request.getValue() + "원 충전됨");
+		assertEquals(saveUser.getStatement().get(0), LocalDate.now() + "," + request.getValue() + "원 충전");
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "충전 완료");
 	}

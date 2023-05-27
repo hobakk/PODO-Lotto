@@ -18,6 +18,7 @@ import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
+import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
 
@@ -72,5 +73,10 @@ public class UserController {
 	@PostMapping("/setPaid")
 	public ResponseEntity<ApiResponse> setPaid(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.setPaid(request ,user.getEmail()));
+	}
+
+	@GetMapping("/statement")
+	public ResponseEntity<ListApiResponse<StatementResponse>> getStatement(@AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(userService.getStatement(user.getId()));
 	}
 }

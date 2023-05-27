@@ -3,6 +3,7 @@ package com.example.sixnumber.user.service;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -22,6 +23,7 @@ import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
+import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -64,6 +66,7 @@ public class UserService {
 
 		String password = passwordEncoder.encode(request.getPassword());
 		User user = new User(request, password);
+		user.setStatement(LocalDate.now() + "," + "회원가입 기념 1000원 증정");
 		userRepository.save(user);
 		return ApiResponse.create("회원가입 완료");
 	}
@@ -129,6 +132,7 @@ public class UserService {
 		user.setCash("-", 5000);
 		user.setRole("PAID");
 		user.setPaymentDate(YearMonth.now().toString());
+		user.setStatement(LocalDate.now() + ": " + YearMonth.now() + "월 정액 비용 5000원 차감");
 		return ApiResponse.ok("권한 변경 성공");
 	}
 
@@ -140,11 +144,13 @@ public class UserService {
 	public ApiResponse charging(ChargingRequest chargingRequest, Long userId) {
 		Set<String> keys = redisTemplate.keys("*" + STMT + userId + "-*");
 
-		if (keys.size() >= 3) throw new IllegalArgumentException("처리되지 않은 요청사항이 많습니다");
+		if (keys.size() >= 3)
+			throw new IllegalArgumentException("처리되지 않은 요청사항이 많습니다");
 
 		String msgValue = chargingRequest.getMsg() + "-" + chargingRequest.getValue();
 		Set<String> checkIncorrect = redisTemplate.keys("*" + msgValue + "*");
-		if (!checkIncorrect.isEmpty()) throw new IllegalArgumentException("서버내에 중복된 문자가 확인되어 반려되었습니다. 다른 문자로 다시 시대해주세요");
+		if (!checkIncorrect.isEmpty())
+			throw new IllegalArgumentException("서버내에 중복된 문자가 확인되어 반려되었습니다. 다른 문자로 다시 시대해주세요");
 
 		String value = userId + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getValue();
 		redisTemplate.opsForValue().set(STMT + value, value, 12, TimeUnit.HOURS);
@@ -154,7 +160,8 @@ public class UserService {
 	public ListApiResponse<ChargingResponse> getCharges(Long userId) {
 		Set<String> keys = redisTemplate.keys("*" + STMT + userId + "-*");
 
-		if (keys.size() == 0) throw new IllegalArgumentException("충전 요청이 존재하지 않습니다");
+		if (keys.size() == 0)
+			throw new IllegalArgumentException("충전 요청이 존재하지 않습니다");
 
 		List<String> values = redisTemplate.opsForValue().multiGet(keys);
 
@@ -162,9 +169,25 @@ public class UserService {
 		return ListApiResponse.ok("신청 리스트 조회 성공", responses);
 	}
 
+	public ListApiResponse<StatementResponse> getStatement(Long userId) {
+		User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다"));
+
+		if (user.getStatement().size() == 0)
+			throw new IllegalArgumentException("거래내역이 존재하지 않습니다");
+
+		List<StatementResponse> response = user.getStatement()
+			.stream()
+			.map(str -> {
+				String[] localDateMsg = str.split(",");
+				return new StatementResponse(localDateMsg);
+			})
+			.toList();
+		return ListApiResponse.ok("거래내역 조회 완료", response);
+	}
+
 	private User findByUser(String email) {
 		return userRepository.findByEmail(email)
-			.orElseThrow(()-> new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다"));
+			.orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다"));
 	}
 
 }

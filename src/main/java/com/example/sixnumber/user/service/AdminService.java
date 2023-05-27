@@ -70,7 +70,6 @@ public class AdminService {
 
 		List<String> value = redisTemplate.opsForValue().multiGet(keys);
 		AdminGetChargingResponse response = new AdminGetChargingResponse(value.get(0));
-
 		return ItemApiResponse.ok("조회 성공", response);
 	}
 
@@ -81,7 +80,7 @@ public class AdminService {
 		// searchCharging 에서 검증되어 넘어온 Request 이기에 값이 있는지에 대한 체크는 건너뛰어도 된다 생각함
 		redisTemplate.delete(key);
 
-		user.setStatement(LocalDate.now() + " " + cashRequest.getValue() +"원 충전됨");
+		user.setStatement(LocalDate.now() + "," + cashRequest.getValue() +"원 충전");
 		user.setCash("+", cashRequest.getValue());
 		return ApiResponse.ok("충전 완료");
 	}
@@ -91,7 +90,9 @@ public class AdminService {
 		if (user.getCash() < cashRequest.getValue()) {
 			throw new IllegalArgumentException("해당 유저가 보유한 금액보다 많습니다");
 		}
+
 		user.setCash("-", cashRequest.getValue());
+		user.setStatement(LocalDate.now() + "," + cashRequest.getMsg() + ": " + cashRequest.getValue() + "원 차감");
 		return ApiResponse.ok("차감 완료");
 	}
 
