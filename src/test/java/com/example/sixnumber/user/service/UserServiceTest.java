@@ -4,14 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,6 +33,7 @@ import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
+import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -74,8 +73,8 @@ public class UserServiceTest {
 		String encodedPassword = "ePassword";
 		when(passwordEncoder.encode(signupRequest.getPassword())).thenReturn(encodedPassword);
 
-		User saveUser = new User(signupRequest, encodedPassword);
-		when(userRepository.save(any(User.class))).thenReturn(saveUser);
+		User user = new User(signupRequest, encodedPassword);
+		when(userRepository.save(any(User.class))).thenReturn(user);
 
 		ApiResponse response = userService.signUp(signupRequest);
 
@@ -383,5 +382,27 @@ public class UserServiceTest {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getCharges(0L));
 
 		verify(redisTemplate).keys(anyString());
+	}
+
+	@Test
+	void getStatement_success() {
+		saveUser.setStatement(LocalDate.now() + ",5000" );
+
+		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+
+		ListApiResponse<StatementResponse> response = userService.getStatement(saveUser.getId());
+
+		verify(userRepository).findById(anyLong());
+		assertEquals(response.getCode(), 200);
+		assertEquals(response.getMsg(), "거래내역 조회 완료");
+	}
+
+	@Test
+	void getStatement_fail_lowSize() {
+		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getStatement(saveUser.getId()));
+
+		verify(userRepository).findById(anyLong());
 	}
 }
