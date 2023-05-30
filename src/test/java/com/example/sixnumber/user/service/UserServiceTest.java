@@ -324,12 +324,14 @@ public class UserServiceTest {
 		Set<String> set = new HashSet<>(List.of("STMT: 7-1"));
 		when(redisTemplate.keys("*STMT: 7-*")).thenReturn(set);
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
 
-		ApiResponse response = userService.charging(request, saveUser.getId());
+		ApiResponse response = userService.charging(request, saveUser);
 
 		verify(redisTemplate, times(2)).keys(anyString());
-
 		verify(valueOperations).set(anyString(), anyString(), anyLong(), any());
+		verify(userRepository).findByEmail(anyString());
+		assertEquals(saveUser.getChargingCount(), 1);
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "요청 성공");
 	}
@@ -341,7 +343,7 @@ public class UserServiceTest {
 		Set<String> keys = TestDataFactory.keys();
 		when(redisTemplate.keys(anyString())).thenReturn(keys);
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.charging(request, saveUser.getId()));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.charging(request, saveUser));
 
 		verify(redisTemplate).keys(anyString());
 	}
@@ -353,9 +355,21 @@ public class UserServiceTest {
 		Set<String> set = new HashSet<>(List.of("Msg-5000"));
 		when(redisTemplate.keys(anyString())).thenReturn(set);
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.charging(request, saveUser.getId()));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.charging(request, saveUser));
 
 		verify(redisTemplate, times(2)).keys(anyString());
+	}
+
+	@Test
+	void charging_fail_untreated() {
+		ChargingRequest request = TestDataFactory.chargingRequest();
+
+		saveUser.setChargingCount(4);
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.charging(request, saveUser));
+
+		verify(userRepository).findByEmail(anyString());
 	}
 
 	// AdminServiceTest getCharges 와 성공 code가 동일함 삭제해도되나 ?

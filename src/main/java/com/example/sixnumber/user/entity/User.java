@@ -114,7 +114,7 @@ public class User implements UserDetails {
 
 	public void setChargingCount(int num) {
 		if (num == 0) this.chargingCount = 0;
-		else this.chargingCount += 1;
+		else this.chargingCount += num;
 	}
 
 	// test code

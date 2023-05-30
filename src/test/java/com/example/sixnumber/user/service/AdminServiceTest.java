@@ -161,6 +161,7 @@ public class AdminServiceTest {
 		verify(redisTemplate).delete(anyString());
 		assertEquals(saveUser.getCash(), 11000);
 		assertNotNull(saveUser.getStatement().get(0));
+		assertEquals(saveUser.getChargingCount(), 0);
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "충전 완료");
 	}
