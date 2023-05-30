@@ -141,18 +141,23 @@ public class UserService {
 	}
 
 	// 요청을 최대 3번까지 할 수 있고 12시간 기준으로 삭제되기에 충전 요청 취소를 만들지 않아도 된다 판단함
-	public ApiResponse charging(ChargingRequest chargingRequest, Long userId) {
-		Set<String> keys = redisTemplate.keys("*" + STMT + userId + "-*");
+	public ApiResponse charging(ChargingRequest chargingRequest, User user) {
+		Set<String> keys = redisTemplate.keys("*" + STMT + user.getId() + "-*");
 
-		if (keys.size() >= 3)
-			throw new IllegalArgumentException("처리되지 않은 요청사항이 많습니다");
+		if (keys.size() >= 3) throw new IllegalArgumentException("처리되지 않은 요청사항이 많습니다");
 
 		String msgValue = chargingRequest.getMsg() + "-" + chargingRequest.getValue();
 		Set<String> checkIncorrect = redisTemplate.keys("*" + msgValue + "*");
 		if (!checkIncorrect.isEmpty())
 			throw new IllegalArgumentException("서버내에 중복된 문자가 확인되어 반려되었습니다. 다른 문자로 다시 시대해주세요");
 
-		String value = userId + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getValue();
+		// 비용문제로 DB SAVE 조회를 통한 영속성 컨텍스트를 UPDATE 를 이용
+		User userIf = findByUser(user.getEmail());
+		int untreated = userIf.getChargingCount();
+		if (untreated >= 4) throw new IllegalArgumentException("규정 위반으로 홈페이지를 이용할 수 없습니다");
+
+		userIf.setChargingCount(1);
+		String value = userIf.getId() + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getValue();
 		redisTemplate.opsForValue().set(STMT + value, value, 12, TimeUnit.HOURS);
 		return ApiResponse.ok("요청 성공");
 	}

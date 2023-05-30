@@ -67,7 +67,7 @@ public class UserController {
 
 	@PostMapping("/charging")
 	public ResponseEntity<ApiResponse> charging(@RequestBody ChargingRequest chargingRequest, @AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.charging(chargingRequest, user.getId()));
+		return ResponseEntity.ok(userService.charging(chargingRequest, user));
 	}
 
 	@PostMapping("/setPaid")
