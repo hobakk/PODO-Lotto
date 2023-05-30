@@ -111,11 +111,14 @@ public class SixNumberService {
 
 	private void confirmationProcess(BuyNumberRequest buyNumberRequest, StatisticalNumberRequest statisticalNumberRequest, User user) {
 		int requiredCash = 0;
+		String msg = "";
 
 		if (statisticalNumberRequest == null) {
 			requiredCash = buyNumberRequest.getValue() * 200;
+			msg = "추첨번호 " + buyNumberRequest.getValue() + "회 구매 : " + requiredCash + "원 차감";
 		} else if (buyNumberRequest == null) {
 			requiredCash = statisticalNumberRequest.getValue() * (statisticalNumberRequest.getRepetition() / 2);
+			msg = statisticalNumberRequest.getRepetition() + "번 반복 TOP 6 " + statisticalNumberRequest.getValue() + "회 구매 : " + requiredCash + "원 차감";
 		} else {
 			throw new IllegalArgumentException("정보가 옳바르지 않습니다");
 		}
@@ -125,6 +128,7 @@ public class SixNumberService {
 		}
 
 		user.setCash("-", requiredCash);
+		user.setStatement(LocalDate.now() + ": " + msg);
 		userRepository.save(user);
 	}
 

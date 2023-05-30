@@ -68,6 +68,7 @@ public class SixNumberServiceTest {
 		verify(lottoRepository).findByMain();
 		verify(sixNumberRepository).save(any(SixNumber.class));
 		List<String> data = response.getData();
+		assertNotNull(saveUser.getStatement());
 		assertEquals(data.size(), 5);
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "요청 성공");
@@ -97,6 +98,7 @@ public class SixNumberServiceTest {
 		verify(lottoRepository).findByMain();
 		verify(sixNumberRepository).save(any(SixNumber.class));
 		List<String> data = response.getData();
+		assertNotNull(saveUser.getStatement());
 		assertEquals(data.size(), 5);
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "요청 성공");
