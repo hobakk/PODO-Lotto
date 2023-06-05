@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.exception.InvalidInputException;
+import com.example.sixnumber.global.exception.UserNotFoundException;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
@@ -119,7 +121,7 @@ public class AdminService {
 		String[] statusStr = {"ACTIVE", "SUSPENDED", "DORMANT"};
 		List<String> statusList = Arrays.asList(statusStr);
 
-		if (!statusList.contains(request.getMsg())) throw new IllegalArgumentException("잘못된 입력값입니다");
+		if (!statusList.contains(request.getMsg())) throw new InvalidInputException();
 
 		String targetStatusStr = target.getStatus().toString();
 
@@ -136,8 +138,7 @@ public class AdminService {
 	}
 
 	private User findByUser(Long userId) {
-		return userRepository.findById(userId)
-			.orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다"));
+		return userRepository.findById(userId).orElseThrow((UserNotFoundException::new));
 	}
 
 	private User confirmationProcess(User user, Long userId) {

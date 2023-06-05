@@ -46,7 +46,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 				Long id = jwtProvider.getClaims(token).get("id", Long.class);
 				if (redisTemplate.opsForValue().get("RT: " + id) == null) {
 					jwtProvider.setExpire(token);
-					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
+					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "존재하지 않는 토큰 입니다");
 				}
 
 				Claims claims = jwtProvider.getClaims(token);

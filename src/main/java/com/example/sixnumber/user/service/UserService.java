@@ -2,8 +2,6 @@ package com.example.sixnumber.user.service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -17,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.exception.BreakTheRulesException;
+import com.example.sixnumber.global.exception.UserNotFoundException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
@@ -25,6 +25,8 @@ import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.entity.User;
+import com.example.sixnumber.user.exception.OverlapException;
+import com.example.sixnumber.user.exception.StatusNotActiveException;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -58,10 +60,10 @@ public class UserService {
 		}
 
 		if (userRepository.existsUserByEmail(request.getEmail())) {
-			throw new IllegalArgumentException("이메일 중복");
+			throw new OverlapException("중복된 이메일입니다");
 		}
 		if (userRepository.existsUserByNickname(request.getNickname())) {
-			throw new IllegalArgumentException("닉네임 중복");
+			throw new OverlapException("중복된 닉네임입니다");
 		}
 
 		String password = passwordEncoder.encode(request.getPassword());
@@ -76,15 +78,16 @@ public class UserService {
 
 		if (redisTemplate.opsForValue().get(RTK + user.getId()) != null) {
 			redisTemplate.delete(RTK + user.getId());
-			throw new IllegalArgumentException("중복 로그인입니다");
+			throw new OverlapException("중복된 로그인입니다");
 		}
 
 		if (!user.getStatus().equals(Status.ACTIVE)) {
+			String msg = "";
 			switch (user.getStatus()) {
-				case SUSPENDED -> throw new IllegalArgumentException("정지된 계정입니다");
-				case DORMANT -> throw new IllegalArgumentException("탈퇴한 계정입니다");
-				default -> throw new IllegalArgumentException("잘못된 상태정보입니다");
-			}
+				case SUSPENDED -> msg = "정지된 계정입니다";
+				case DORMANT -> msg = "탈퇴한 계정입니다";
+				default -> msg = "잘못된 상태정보입니다";
+			} throw new StatusNotActiveException(msg);
 		}
 
 		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -149,16 +152,14 @@ public class UserService {
 		String msgValue = chargingRequest.getMsg() + "-" + chargingRequest.getValue();
 		Set<String> checkIncorrect = redisTemplate.keys("*" + msgValue + "*");
 		if (!checkIncorrect.isEmpty())
-			throw new IllegalArgumentException("서버내에 중복된 문자가 확인되어 반려되었습니다. 다른 문자로 다시 시대해주세요");
+			throw new OverlapException("서버내에 중복된 문자가 확인되어 반려되었습니다. 다른 문자로 다시 시대해주세요");
 
-		// 비용문제로 DB SAVE 조회를 통한 영속성 컨텍스트를 UPDATE 를 이용
-		User userIf = findByUser(user.getEmail());
-		int untreated = userIf.getChargingCount();
-		if (untreated >= 4) throw new IllegalArgumentException("규정 위반으로 홈페이지를 이용할 수 없습니다");
+		if (user.getChargingCount() >= 4) throw new BreakTheRulesException();
 
-		userIf.setChargingCount(1);
-		String value = userIf.getId() + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getValue();
+		String value = user.getId() + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getValue();
 		redisTemplate.opsForValue().set(STMT + value, value, 12, TimeUnit.HOURS);
+		user.setChargingCount(1);
+		userRepository.save(user);
 		return ApiResponse.ok("요청 성공");
 	}
 
@@ -174,8 +175,8 @@ public class UserService {
 		return ListApiResponse.ok("신청 리스트 조회 성공", responses);
 	}
 
-	public ListApiResponse<StatementResponse> getStatement(Long userId) {
-		User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다"));
+	public ListApiResponse<StatementResponse> getStatement(String email) {
+		User user = findByUser(email);
 
 		if (user.getStatement().size() == 0)
 			throw new IllegalArgumentException("거래내역이 존재하지 않습니다");
@@ -191,8 +192,6 @@ public class UserService {
 	}
 
 	private User findByUser(String email) {
-		return userRepository.findByEmail(email)
-			.orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다"));
+		return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 	}
-
 }
