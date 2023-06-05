@@ -7,6 +7,7 @@ import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,7 +37,7 @@ public class LottoServiceTest {
 	}
 
 	@Test
-	void mainTopNimbers() {
+	void mainTopNumbers() {
 		when(lotto.getCountList()).thenReturn(Arrays.asList(4,5,6,7,8,9));
 
 		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
@@ -54,6 +55,15 @@ public class LottoServiceTest {
 	}
 
 	@Test
+	void mainTopNumber_fail() {
+		when(lottoRepository.findByMain()).thenReturn(Optional.empty());
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> lottoService.mainTopNumbers());
+
+		verify(lottoRepository).findByMain();
+	}
+
+	@Test
 	void getTopNumberForMonth() {
 		YearMonthRequest request = mock(YearMonthRequest.class);
 		when(request.getYearMonth()).thenReturn(YearMonth.now());
@@ -67,5 +77,17 @@ public class LottoServiceTest {
 		assertEquals(response.getMsg(), "조회 성공");
 		LottoResponse data = response.getData();
 		assertNotNull(data);
+	}
+
+	@Test
+	void getTopNumberForMonth_fail() {
+		YearMonthRequest request = mock(YearMonthRequest.class);
+		when(request.getYearMonth()).thenReturn(YearMonth.now());
+
+		when(lottoRepository.findByTopNumbersForMonth(request.getYearMonth())).thenReturn(Optional.empty());
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> lottoService.getTopNumberForMonth(request));
+
+		verify(lottoRepository).findByTopNumbersForMonth(request.getYearMonth());
 	}
 }
