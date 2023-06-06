@@ -13,8 +13,11 @@ CRUD 작성
 2. index, signup, in html 작성 ( html 이 복병.. )
 3. Oauth2 및 기타등의 이유로 환경변수 설정
 
+23.06.06
+1. Multi Thread 병렬 처리
+2. JS, React 공부중
 
 앞으로 남은 작업
-5. html 구현 및 연결
-6. controller test 코드 작성
-7. ci/cd
+1 html 구현 및 연결
+2 controller test 코드 작성
+3 ci/cd
