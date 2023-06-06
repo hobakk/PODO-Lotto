@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +32,9 @@ public class GlobalScheduler {
 	private final UserRepository userRepository;
 	private final LottoRepository lottoRepository;
 	private final SixNumberRepository sixNumberRepository;
+	private final RedisTemplate<String, String> redisTemplate;
 
-	@Scheduled(cron = "0 0 11 ? * MON-FRI *")
+	@Scheduled(cron = "0 0 11 ? * MON-FRI")
 	public void findByTopNumberListForMonth() {
 		String[] ym = YearMonth.now().minusMonths(1).toString().split("-");
 		int year = Integer.parseInt(ym[0]);
@@ -48,7 +50,7 @@ public class GlobalScheduler {
 	}
 
 	// 월 말에 월정액 가입한 유저의 경우 몇일 지나고 다시 결제가 되는데 어떻게 처리할지 고민해야함 예: YearMonth -> LocalDate
-	@Scheduled(cron = "0 0 9 ? * MON-FRI *")
+	@Scheduled(cron = "0 0 9 ? * MON-FRI")
 	public void paymentAndCancellation() {
 		System.out.println("자동 결제 및 해지");
 		String lastMonth = YearMonth.now().minusMonths(1).toString();
@@ -73,13 +75,24 @@ public class GlobalScheduler {
 	@Scheduled(cron = "0 0 7 ? * MON-FRI")
 	public void	withdrawExpiration() {
 		System.out.println("탈퇴한 유저 정보 보유기간 만료 확인");
-
-		// 어느 정보까지 삭제할건지 생각해 봐야함
 		List<User> withdrawList = userRepository.findByStatusAndWithdrawExpiration(Status.DORMANT);
 		if (!withdrawList.isEmpty()) {
 			userRepository.deleteAll(withdrawList);
 		}
+	}
 
+	@Scheduled(cron = "0 0 6,18 * * *")
+	public void	autoSetSuspended() {
+		System.out.println("미처리 누적에 대한 정지 처리");
+		List<User> untreatedUsers = userRepository.findUserByUntreated(4);
+		if (!untreatedUsers.isEmpty()) {
+			for (User user : untreatedUsers) {
+				user.setStatus("SUSPENDED");
+				String Key = "RT: " + user.getId();
+				String refreshToken = redisTemplate.opsForValue().get(Key);
+				if (refreshToken != null) redisTemplate.delete(refreshToken);
+			}
+		}
 	}
 
 	// 너무 많은 작업을 담당하기에 분리함

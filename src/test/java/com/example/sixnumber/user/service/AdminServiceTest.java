@@ -27,6 +27,7 @@ import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.exception.InvalidInputException;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
@@ -161,6 +162,7 @@ public class AdminServiceTest {
 		verify(redisTemplate).delete(anyString());
 		assertEquals(saveUser.getCash(), 11000);
 		assertNotNull(saveUser.getStatement().get(0));
+		assertEquals(saveUser.getChargingCount(), 0);
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "충전 완료");
 	}
@@ -259,7 +261,8 @@ public class AdminServiceTest {
 
 		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.setStatus(admin, saveUser.getId(), request));
+		Assertions.assertThrows(
+			InvalidInputException.class, () -> adminService.setStatus(admin, saveUser.getId(), request));
 
 		verify(userRepository).findById(anyLong());
 	}

@@ -62,6 +62,8 @@ public class User implements UserDetails {
 	@ElementCollection
 	@OrderColumn(name = "statement_index", nullable = false)
 	private List<String> statement;
+	@Column(name = "chargingCount")
+	private int chargingCount;
 
 	public User(SignupRequest request, String password) {
 		this.email = request.getEmail();
@@ -71,6 +73,7 @@ public class User implements UserDetails {
 		this.status = Status.ACTIVE;
 		this.cash = 1000;
 		this.statement = new ArrayList<>();
+		this.chargingCount = 0;
 	}
 
 	public void setPaymentDate(String yearMonth) {
@@ -107,6 +110,11 @@ public class User implements UserDetails {
 
 	public void setStatement(String str) {
 		this.statement.add(str);
+	}
+
+	public void setChargingCount(int num) {
+		if (num == 0) this.chargingCount = 0;
+		else this.chargingCount += num;
 	}
 
 	// test code

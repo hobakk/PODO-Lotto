@@ -27,6 +27,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.exception.BreakTheRulesException;
+import com.example.sixnumber.global.exception.UserNotFoundException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
@@ -35,6 +37,8 @@ import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.entity.User;
+import com.example.sixnumber.user.exception.OverlapException;
+import com.example.sixnumber.user.exception.StatusNotActiveException;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -104,27 +108,29 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void signup_fail_overlapEmail() {
+	void signup_EmailOverlapException() {
 		SignupRequest signupRequest = TestDataFactory.signupRequest();
 
 		when(userRepository.existsUserByEmail(anyString())).thenReturn(true);
 
-		Assertions.assertThrows(IllegalArgumentException.class,
+		Exception exception = assertThrows(OverlapException.class,
 			() -> userService.signUp(signupRequest));
 
 		verify(userRepository).existsUserByEmail(anyString());
+		assertEquals(exception.getMessage(), "중복된 이메일입니다");
 	}
 
 	@Test
-	void signup_fail_overlapNickname() {
+	void signup_NicknameOverlapException() {
 		SignupRequest signupRequest = TestDataFactory.signupRequest();
 
 		when(userRepository.existsUserByNickname(anyString())).thenReturn(true);
 
-		Assertions.assertThrows(IllegalArgumentException.class,
+		Exception exception = assertThrows(OverlapException.class,
 			() -> userService.signUp(signupRequest));
 
 		verify(userRepository).existsUserByNickname(anyString());
+		assertEquals(exception.getMessage(), "중복된 닉네임입니다");
 	}
 
 	@Test
@@ -153,7 +159,18 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void signin_fail_overlapLogin() {
+	void signin_UserNotFoundException() {
+		SigninRequest signinRequest = TestDataFactory.signinRequest();
+
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+
+		Assertions.assertThrows(UserNotFoundException.class, () -> userService.signIn(signinRequest));
+
+		verify(userRepository).findByEmail(anyString());
+	}
+
+	@Test
+	void signin_LoginOverlapException() {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
@@ -161,7 +178,7 @@ public class UserServiceTest {
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 		when(valueOperations.get(anyString())).thenReturn("RTV");
 
-		Assertions.assertThrows(IllegalArgumentException.class,
+		Assertions.assertThrows(OverlapException.class,
 			() -> userService.signIn(signinRequest));
 
 		verify(userRepository).findByEmail(anyString());
@@ -182,7 +199,7 @@ public class UserServiceTest {
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 		when(valueOperations.get(anyString())).thenReturn(null);
 
-		Assertions.assertThrows(IllegalArgumentException.class,
+		Assertions.assertThrows(StatusNotActiveException.class,
 			() -> userService.signIn(signinRequest));
 
 		verify(userRepository).findByEmail(anyString());
@@ -264,6 +281,7 @@ public class UserServiceTest {
 		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("월정액 해지");
 
+		// saveUser.getRole() = UserRole.USER
 		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.setPaid(request, saveUser.getEmail()));
@@ -324,12 +342,14 @@ public class UserServiceTest {
 		Set<String> set = new HashSet<>(List.of("STMT: 7-1"));
 		when(redisTemplate.keys("*STMT: 7-*")).thenReturn(set);
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
 
-		ApiResponse response = userService.charging(request, saveUser.getId());
+		ApiResponse response = userService.charging(request, saveUser);
 
 		verify(redisTemplate, times(2)).keys(anyString());
-
 		verify(valueOperations).set(anyString(), anyString(), anyLong(), any());
+		verify(userRepository).findByEmail(anyString());
+		assertEquals(saveUser.getChargingCount(), 1);
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "요청 성공");
 	}
@@ -341,21 +361,33 @@ public class UserServiceTest {
 		Set<String> keys = TestDataFactory.keys();
 		when(redisTemplate.keys(anyString())).thenReturn(keys);
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.charging(request, saveUser.getId()));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.charging(request, saveUser));
 
 		verify(redisTemplate).keys(anyString());
 	}
 
 	@Test
-	void charging_fail_incorrectKey() {
+	void charging_fail_KeyOverlapException() {
 		ChargingRequest request = TestDataFactory.chargingRequest();
 
 		Set<String> set = new HashSet<>(List.of("Msg-5000"));
 		when(redisTemplate.keys(anyString())).thenReturn(set);
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.charging(request, saveUser.getId()));
+		Assertions.assertThrows(OverlapException.class, () -> userService.charging(request, saveUser));
 
 		verify(redisTemplate, times(2)).keys(anyString());
+	}
+
+	@Test
+	void charging_BreakTheRulesException() {
+		ChargingRequest request = TestDataFactory.chargingRequest();
+
+		saveUser.setChargingCount(4);
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+
+		Assertions.assertThrows(BreakTheRulesException.class, () -> userService.charging(request, saveUser));
+
+		verify(userRepository).findByEmail(anyString());
 	}
 
 	// AdminServiceTest getCharges 와 성공 code가 동일함 삭제해도되나 ?
@@ -392,7 +424,7 @@ public class UserServiceTest {
 
 		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
 
-		ListApiResponse<StatementResponse> response = userService.getStatement(saveUser.getId());
+		ListApiResponse<StatementResponse> response = userService.getStatement(saveUser.getEmail());
 
 		verify(userRepository).findById(anyLong());
 		assertEquals(response.getData().size(), 1);
@@ -404,7 +436,7 @@ public class UserServiceTest {
 	void getStatement_fail_lowSize() {
 		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getStatement(saveUser.getId()));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getStatement(saveUser.getEmail()));
 
 		verify(userRepository).findById(anyLong());
 	}

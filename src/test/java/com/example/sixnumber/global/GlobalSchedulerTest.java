@@ -17,6 +17,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.scheduler.GlobalScheduler;
@@ -40,12 +42,16 @@ public class GlobalSchedulerTest {
 	private LottoRepository lottoRepository;
 	@Mock
 	private SixNumberRepository sixNumberRepository;
+	@Mock
+	private RedisTemplate<String, String> redisTemplate;
 
 	private User saveUser;
+	private ValueOperations<String, String> valueOperations;
 
 	@BeforeEach
 	public void setup() {
 		saveUser = TestDataFactory.user();
+		valueOperations = mock(ValueOperations.class);
 	}
 
 	@Test
@@ -115,5 +121,18 @@ public class GlobalSchedulerTest {
 
 		verify(userRepository).findByStatusAndWithdrawExpiration(eq(Status.DORMANT));
 		verify(userRepository).deleteAll(anyList());
+	}
+
+	@Test
+	void autoSetSuspended() {
+		saveUser.setChargingCount(4);
+		when(userRepository.findUserByUntreated(4)).thenReturn(List.of(saveUser));
+		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
+
+		globalScheduler.autoSetSuspended();
+
+		verify(userRepository).findUserByUntreated(4);
+		verify(valueOperations).get(anyString());
+		assertEquals(saveUser.getStatus(), Status.SUSPENDED);
 	}
 }
