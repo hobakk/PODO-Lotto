@@ -6,8 +6,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -15,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.InvalidInputException;
+import com.example.sixnumber.global.exception.UserNotFoundException;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
@@ -77,31 +82,44 @@ public class SixNumberService {
 			countMap.put(x, 0);
 		}
 
+		int value = request.getValue();
 		int repetition = request.getRepetition();
-		for (int i = 0; i < request.getValue(); i++) {
+		ExecutorService executorService = Executors.newFixedThreadPool(value);
 
-			for (int j = 0; j < repetition; j++) {
-				Set<Integer> set = new HashSet<>();
+		for (int i = 0; i < value; i++) {
+			executorService.execute(() -> {
+				Map<Integer, Integer> localCountMap = new HashMap<>(countMap);
+				for (int j = 0; j < repetition; j++) {
+					Set<Integer> set = new HashSet<>();
 
-				while (set.size() < 6) {
-					int num = rd.nextInt(45) + 1;
-					set.add(num);
+					while (set.size() < 6) {
+						int num = rd.nextInt(45) + 1;
+						set.add(num);
+					}
+
+					for (int num : set) {
+						int count = localCountMap.get(num);
+						localCountMap.put(num, count + 1);
+					}
 				}
 
-				for (int num : set) {
-					int count = countMap.get(num);
-					countMap.put(num, count + 1);
+				List<Integer> list = new ArrayList<>(localCountMap.keySet());
+				list.sort((num1, num2) -> localCountMap.get(num2).compareTo(localCountMap.get(num1)));
+
+				List<Integer> checkLotto = list.subList(0, 6);
+				Collections.sort(checkLotto);
+				String result = checkLotto.stream().map(Object::toString).collect(Collectors.joining(" "));
+				synchronized (topNumbers) {
+					topNumbers.add(result);
 				}
-			}
+			});
+		}
+		executorService.shutdown();
 
-			List<Integer> list = new ArrayList<>(countMap.keySet());
-			list.sort((num1, num2) -> countMap.get(num2).compareTo(countMap.get(num1)));
-
-			List<Integer> checkLotto = list.subList(0, 6);
-			Collections.sort(checkLotto);
-			String result = checkLotto.stream().map(Object::toString).collect(Collectors.joining(" "));
-			topNumbers.add(result);
-			countMap.replaceAll((key, value) -> 0);
+		try {
+			executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
 
 		SixNumber sixNumber = new SixNumber(user.getId(), LocalDate.now(), topNumbers);
@@ -110,7 +128,8 @@ public class SixNumberService {
 		return ListApiResponse.ok("요청 성공", topNumbers);
 	}
 
-	private void confirmationProcess(BuyNumberRequest buyNumberRequest, StatisticalNumberRequest statisticalNumberRequest, User user) {
+	private void confirmationProcess(BuyNumberRequest buyNumberRequest, StatisticalNumberRequest statisticalNumberRequest, User userIf) {
+		User user = userRepository.findById(userIf.getId()).orElseThrow(UserNotFoundException::new);
 		int requiredCash = 0;
 		String msg = "";
 
@@ -130,11 +149,8 @@ public class SixNumberService {
 
 		user.setCash("-", requiredCash);
 		user.setStatement(LocalDate.now() + ": " + msg);
-		userRepository.save(user);
 	}
 
-	// 스캐줄러로 뺄지 말지 고민중 이유 : 한개의 서비스 로직에서 너무 많은 저장이 이루어짐. 영속성 컨텍스트 각이 나오는지도 보고있음
-	// 방법 : 저장된 sixNumber 를 시간단위로 모아 한번에 스케줄러로 처리 병렬을 지원하는 java.util.concurrent.ScheduledExecutorService 사용
 	private void saveMainLottoList(List<String> list) {
 		Lotto lotto = lottoRepository.findByMain()
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 정보"));
