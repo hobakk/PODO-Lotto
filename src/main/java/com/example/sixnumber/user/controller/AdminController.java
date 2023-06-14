@@ -3,6 +3,7 @@ package com.example.sixnumber.user.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,17 +45,17 @@ public class AdminController {
 		return ResponseEntity.ok(adminService.searchCharging(request));
 	}
 
-	@PostMapping("/users/{userId}")
+	@PatchMapping("/users/{userId}")
 	public ResponseEntity<ApiResponse> setAdmin(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(adminService.setAdmin(request, user, userId));
 	}
 
-	@PostMapping("/users/upCash")
+	@PatchMapping("/users/up-cash")
 	public ResponseEntity<ApiResponse> upCash(@RequestBody CashRequest cashRequest) {
 		return ResponseEntity.ok(adminService.upCash(cashRequest));
 	}
 
-	@PostMapping("/users/downCash")
+	@PatchMapping("/users/down-cash")
 	public ResponseEntity<ApiResponse> downCash(@RequestBody CashRequest cashRequest) {
 		return ResponseEntity.ok(adminService.downCash(cashRequest));
 	}
@@ -64,7 +65,7 @@ public class AdminController {
 		return ResponseEntity.ok(adminService.createLotto(user.getEmail()));
 	}
 
-	@PostMapping("/setStatus/{userId}")
+	@PatchMapping("/status/{userId}")
 	public ResponseEntity<?> setStatus(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(adminService.setStatus(user, userId, request));
 	}

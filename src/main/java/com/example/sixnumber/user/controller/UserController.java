@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,7 +49,7 @@ public class UserController {
 		return ResponseEntity.ok(userService.logout(user));
 	}
 
-	@PostMapping("/withdraw")
+	@PatchMapping("/withdraw")
 	public ResponseEntity<ApiResponse> withdraw(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.withdraw(request, user.getEmail()));
 	}
@@ -70,7 +71,7 @@ public class UserController {
 		return ResponseEntity.ok(userService.charging(chargingRequest, user));
 	}
 
-	@PostMapping("/setPaid")
+	@PostMapping("/paid")
 	public ResponseEntity<ApiResponse> setPaid(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.setPaid(request ,user.getEmail()));
 	}
