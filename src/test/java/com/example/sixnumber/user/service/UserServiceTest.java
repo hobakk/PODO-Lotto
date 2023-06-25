@@ -19,10 +19,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.verification.VerificationMode;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.client.ExpectedCount;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.dto.ApiResponse;
@@ -439,5 +442,30 @@ public class UserServiceTest {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getStatement(saveUser.getEmail()));
 
 		verify(userRepository).findById(anyLong());
+	}
+
+	@Test
+	void update_success() {
+		SignupRequest request = new SignupRequest("testE", "testP", "testN");
+
+		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+		when(passwordEncoder.encode(anyString())).thenReturn("passwordE");
+
+		ApiResponse response = userService.update(request, saveUser);
+
+		verify(passwordEncoder).matches(anyString(), anyString());
+		verify(passwordEncoder).encode(anyString());
+		assertEquals(response.getCode(), 200);
+		assertEquals(response.getMsg(), "수정 완료");
+	}
+
+	@Test
+	void update_fail_incorrectValue() {
+		SignupRequest request = mock(SignupRequest.class);
+		when(request.getEmail()).thenReturn("test@email.com");
+		when(request.getPassword()).thenReturn("ePassword");
+		when(request.getNickname()).thenReturn("nickname");
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.update(request, saveUser));
 	}
 }
