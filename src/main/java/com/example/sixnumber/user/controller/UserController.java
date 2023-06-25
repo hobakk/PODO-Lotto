@@ -84,4 +84,9 @@ public class UserController {
 	public ResponseEntity<ListApiResponse<StatementResponse>> getStatement(@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.getStatement(user.getEmail()));
 	}
+
+	@PatchMapping("/update")
+	public ResponseEntity<ApiResponse> updata(@RequestBody SignupRequest request, @AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(userService.update(request, user));
+	}
 }

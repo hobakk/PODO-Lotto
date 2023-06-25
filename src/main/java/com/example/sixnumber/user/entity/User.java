@@ -76,6 +76,12 @@ public class User implements UserDetails {
 		this.chargingCount = 0;
 	}
 
+	public void update(List<String> list) {
+		this.email = list.get(0);
+		this.password = list.get(1);
+		this.nickname = list.get(2);
+	}
+
 	public void setPaymentDate(String yearMonth) {
 		this.paymentDate = yearMonth;
 	}
@@ -115,6 +121,10 @@ public class User implements UserDetails {
 	public void setChargingCount(int num) {
 		if (num == 0) this.chargingCount = 0;
 		else this.chargingCount += num;
+	}
+
+	public void setNickname(String str) {
+		this.nickname = str;
 	}
 
 	// test code

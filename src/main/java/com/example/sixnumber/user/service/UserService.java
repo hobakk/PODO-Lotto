@@ -2,7 +2,10 @@ package com.example.sixnumber.user.service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -173,6 +176,27 @@ public class UserService {
 
 		List<ChargingResponse> responses = values.stream().map(ChargingResponse::new).collect(Collectors.toList());
 		return ListApiResponse.ok("신청 리스트 조회 성공", responses);
+	}
+
+	public ApiResponse update(SignupRequest request, User user) {
+		List<String> userIf = Arrays.asList(user.getEmail(), user.getPassword(), user.getNickname());
+		List<String> inputData = Arrays.asList(request.getEmail(), request.getPassword(), request.getNickname());
+
+		if (userIf.equals(inputData)) throw new IllegalArgumentException("변경된 부분이 없습니다");
+
+		for (int i = 0; i < userIf.size(); i++) {
+			if (i == 1) {
+				if (passwordEncoder.matches(inputData.get(i), userIf.get(i))) continue;
+				else inputData.set(i, passwordEncoder.encode(inputData.get(i)));
+			}
+			if (userIf.get(i).equals(inputData.get(i))) continue;
+			userIf.set(i, inputData.get(i));
+		}
+
+		user.update(userIf);
+		userRepository.save(user);
+		logout(user);
+		return ApiResponse.ok("수정 완료");
 	}
 
 	public ListApiResponse<StatementResponse> getStatement(String email) {
