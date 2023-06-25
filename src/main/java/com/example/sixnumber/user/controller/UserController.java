@@ -1,5 +1,6 @@
 package com.example.sixnumber.user.controller;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseEntity;
@@ -39,8 +40,11 @@ public class UserController {
 
 	@PostMapping("/signin")
 	public ResponseEntity<ApiResponse> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
-		String generatedToken = userService.signIn(request);
-		response.addHeader(JwtProvider.AUTHORIZATION_HEADER, generatedToken);
+		Cookie jwtCookie = new Cookie("JWT", userService.signIn(request));
+		jwtCookie.setPath("/");
+		jwtCookie.setHttpOnly(true);
+		jwtCookie.setMaxAge(1800);
+		response.addCookie(jwtCookie);
 		return ResponseEntity.ok(ApiResponse.ok("로그인 성공"));
 	}
 
