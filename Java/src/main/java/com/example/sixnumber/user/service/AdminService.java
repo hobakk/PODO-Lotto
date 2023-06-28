@@ -19,6 +19,7 @@ import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.InvalidInputException;
 import com.example.sixnumber.global.exception.UserNotFoundException;
+import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
@@ -43,6 +44,7 @@ public class AdminService {
 	private final UserRepository userRepository;
 	private final LottoRepository lottoRepository;
 	private final RedisTemplate<String, String> redisTemplate;
+	private final Manager manager;
 
 	// 보안관련 더 생각해봐야함
 	public ApiResponse setAdmin(OnlyMsgRequest request, User user, Long userId) {
@@ -77,7 +79,7 @@ public class AdminService {
 
 	// 결제에 대해서 고민해봐야함 현재 로직은 특정 계좌에 msg 와 value 가 확인되면 수동으로 넣어주는 방식
 	public ApiResponse upCash(CashRequest cashRequest) {
-		User user = findByUser(cashRequest.getUserId());
+		User user = manager.findUser(cashRequest.getUserId());
 		String key = "STMT: " + cashRequest.getUserId() + "-" + cashRequest.getMsg() + "-" + cashRequest.getValue();
 		// searchCharging 에서 검증되어 넘어온 Request 이기에 값이 있는지에 대한 체크는 건너뛰어도 된다 생각함
 		redisTemplate.delete(key);
@@ -89,7 +91,7 @@ public class AdminService {
 	}
 
 	public ApiResponse downCash(CashRequest cashRequest) {
-		User user = findByUser(cashRequest.getUserId());
+		User user = manager.findUser(cashRequest.getUserId());
 		if (user.getCash() < cashRequest.getValue()) {
 			throw new IllegalArgumentException("해당 유저가 보유한 금액보다 많습니다");
 		}
@@ -137,16 +139,12 @@ public class AdminService {
 		return ApiResponse.ok("상태 변경 완료");
 	}
 
-	private User findByUser(Long userId) {
-		return userRepository.findById(userId).orElseThrow((UserNotFoundException::new));
-	}
-
 	private User confirmationProcess(User user, Long userId) {
 		if (user.getId().equals(userId)) {
 			throw new IllegalArgumentException("본인 입니다");
 		}
 
-		User target = findByUser(userId);
+		User target = manager.findUser(userId);
 		if (target.getRole().equals(UserRole.ROLE_ADMIN)) {
 			throw new IllegalArgumentException("운영자 계정입니다");
 		}

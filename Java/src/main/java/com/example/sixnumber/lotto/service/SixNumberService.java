@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.InvalidInputException;
 import com.example.sixnumber.global.exception.UserNotFoundException;
+import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
@@ -41,6 +42,7 @@ public class SixNumberService {
 	private final UserRepository userRepository;
 	private final SixNumberRepository sixNumberRepository;
 	private final LottoRepository lottoRepository;
+	private final Manager manager;
 	private final Random rd = new Random();
 
 	public ListApiResponse<String> buyNumber(BuyNumberRequest request, User user) {
@@ -129,7 +131,7 @@ public class SixNumberService {
 	}
 
 	private void confirmationProcess(BuyNumberRequest buyNumberRequest, StatisticalNumberRequest statisticalNumberRequest, User userIf) {
-		User user = userRepository.findById(userIf.getId()).orElseThrow(UserNotFoundException::new);
+		User user = manager.findUser(userIf.getId());
 		int requiredCash = 0;
 		String msg = "";
 
@@ -139,13 +141,9 @@ public class SixNumberService {
 		} else if (buyNumberRequest == null) {
 			requiredCash = statisticalNumberRequest.getValue() * (statisticalNumberRequest.getRepetition() / 2);
 			msg = statisticalNumberRequest.getRepetition() + "번 반복 TOP 6 " + statisticalNumberRequest.getValue() + "회 구매 : " + requiredCash + "원 차감";
-		} else {
-			throw new InvalidInputException();
-		}
+		} else throw new InvalidInputException();
 
-		if (user.getCash() < requiredCash) {
-			throw new IllegalArgumentException("금액이 부족합니다");
-		}
+		if (user.getCash() < requiredCash) throw new IllegalArgumentException("금액이 부족합니다");
 
 		user.setCash("-", requiredCash);
 		user.setStatement(LocalDate.now() + ": " + msg);

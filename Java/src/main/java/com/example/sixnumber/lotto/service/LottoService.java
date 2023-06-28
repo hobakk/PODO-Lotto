@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
+import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.LottoResponse;
 import com.example.sixnumber.lotto.dto.YearMonthRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
@@ -26,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LottoService {
 
 	private final LottoRepository lottoRepository;
+	private final Manager manager;
 
 	public ItemApiResponse<LottoResponse> mainTopNumbers() {
 		Lotto lotto = lottoRepository.findByMain().orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
@@ -40,12 +42,7 @@ public class LottoService {
 		}
 		statistics = statistics.substring(0, statistics.length() -2);
 
-		sortedIndices.sort((index1, index2) -> countList.get(index2).compareTo(countList.get(index1)));
-		List<Integer> topIndices = sortedIndices.subList(0, Math.min(sortedIndices.size(), 6));
-		Collections.sort(topIndices);
-		topIndices.replaceAll(integer -> integer + 1);
-		String result = topIndices.stream().map(Object::toString).collect(Collectors.joining(" "));
-
+		String result = manager.reviseResult(sortedIndices, countList);
 		return ItemApiResponse.ok("조회 성공", new LottoResponse(statistics, result));
 	}
 

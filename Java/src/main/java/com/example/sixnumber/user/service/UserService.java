@@ -2,10 +2,8 @@ package com.example.sixnumber.user.service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -19,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.BreakTheRulesException;
-import com.example.sixnumber.global.exception.UserNotFoundException;
 import com.example.sixnumber.global.util.JwtProvider;
+import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -47,6 +45,7 @@ public class UserService {
 	private final JwtProvider jwtProvider;
 	private final PasswordEncoder passwordEncoder;
 	private final RedisTemplate<String, String> redisTemplate;
+	private final Manager manager;
 	private final String RTK = "RT: ";
 	private final String STMT = "STMT: ";
 
@@ -77,7 +76,7 @@ public class UserService {
 	}
 
 	public String signIn(SigninRequest request) {
-		User user = findByUser(request.getEmail());
+		User user = manager.findUser(request.getEmail());
 
 		if (redisTemplate.opsForValue().get(RTK + user.getId()) != null) {
 			redisTemplate.delete(RTK + user.getId());
@@ -114,7 +113,7 @@ public class UserService {
 		if (!request.getMsg().equals(withdrawMsg)) {
 			throw new IllegalArgumentException("잘못된 문자열 입력");
 		}
-		User user = findByUser(email);
+		User user = manager.findUser(email);
 		user.setStatus("DORMANT");
 		user.setWithdrawExpiration(LocalDate.now().plusMonths(1));
 		redisTemplate.delete(RTK + user.getId());
@@ -122,7 +121,7 @@ public class UserService {
 	}
 
 	public ApiResponse setPaid(OnlyMsgRequest request, String email) {
-		User user = findByUser(email);
+		User user = manager.findUser(email);
 
 		if (request.getMsg().equals("월정액 해지")) {
 			if (!user.getRole().equals(UserRole.ROLE_PAID)) {
@@ -200,7 +199,7 @@ public class UserService {
 	}
 
 	public ListApiResponse<StatementResponse> getStatement(String email) {
-		User user = findByUser(email);
+		User user = manager.findUser(email);
 
 		if (user.getStatement().size() == 0)
 			throw new IllegalArgumentException("거래내역이 존재하지 않습니다");
@@ -213,9 +212,5 @@ public class UserService {
 			})
 			.toList();
 		return ListApiResponse.ok("거래내역 조회 완료", response);
-	}
-
-	private User findByUser(String email) {
-		return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 	}
 }

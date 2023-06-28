@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
@@ -33,6 +34,7 @@ public class GlobalScheduler {
 	private final LottoRepository lottoRepository;
 	private final SixNumberRepository sixNumberRepository;
 	private final RedisTemplate<String, String> redisTemplate;
+	private final Manager manager;
 
 	@Scheduled(cron = "0 0 11 ? * MON-FRI")
 	public void findByTopNumberListForMonth() {
@@ -125,15 +127,8 @@ public class GlobalScheduler {
 			sortedIndices.add(i);
 		}
 
-		// 중복코드를 어떻게 처리할지 고민해봐야함
-		sortedIndices.sort((index1, index2) -> countList.get(index2).compareTo(countList.get(index1)));
-		List<Integer> topIndices = sortedIndices.subList(0, Math.min(sortedIndices.size(), 6));
-		Collections.sort(topIndices);
-		topIndices.replaceAll(Integer -> Integer + 1);
-		String value = topIndices.stream().map(Object::toString).collect(Collectors.joining(" "));
-
-		// 새로운 db에 statistics, value 를 저장하는게 좋을지 고민해봐야함
-		Lotto lotto = new Lotto(lastMonth + "월 통계", "Scheduler", findYm, countList, statistics, value);
+		String result = manager.reviseResult(sortedIndices, countList);
+		Lotto lotto = new Lotto(lastMonth + "월 통계", "Scheduler", findYm, countList, statistics, result);
 		lottoRepository.save(lotto);
 	}
 }
