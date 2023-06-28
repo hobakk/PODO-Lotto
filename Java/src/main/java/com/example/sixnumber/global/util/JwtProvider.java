@@ -3,6 +3,7 @@ package com.example.sixnumber.global.util;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,10 +31,9 @@ public class JwtProvider {
 	private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	private static final int expire = 1000 * 60 * 30;
 	private static final Long refreshExpire = 7 * 24 * 60 * 60 * 1000L;
+	private static final Date curDate = new Date();
 
 	public String accessToken(String email, Long userId) {
-		Date curDate = new Date();
-		Date expireDate = new Date(curDate.getTime() + expire);
 		HashMap<String, Object> headers = new HashMap<>();
 		headers.put("typ", "JWT");
 		headers.put("alg", "HS256");
@@ -42,14 +42,12 @@ public class JwtProvider {
 			.setSubject(email)
 			.claim("id", userId)
 			.setIssuedAt(curDate)
-			.setExpiration(expireDate)
+			.setExpiration(setExpireDate((long) expire))
 			.signWith(KEY)
 			.compact();
 	}
 
 	public String refreshToken(String email, Long userId) {
-		Date curDate = new Date();
-		Date refreshExpireDate = new Date(curDate.getTime() + refreshExpire);
 		HashMap<String, Object> headers = new HashMap<>();
 		headers.put("typ", "JWT");
 		headers.put("alg", "HS256");
@@ -58,7 +56,7 @@ public class JwtProvider {
 			.setSubject(email)
 			.claim("id", userId)
 			.setIssuedAt(curDate)
-			.setExpiration(refreshExpireDate)
+			.setExpiration(setExpireDate(refreshExpire))
 			.signWith(KEY)
 			.compact();
 	}
@@ -101,5 +99,9 @@ public class JwtProvider {
 	public Boolean isTokenExpired(String token) {
 		Date expirationDate = getClaims(token).getExpiration();
 		return expirationDate.before(new Date());
+	}
+
+	public Date setExpireDate(Long data) {
+		return new Date(curDate.getTime() + data);
 	}
 }
