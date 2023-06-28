@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sixnumber.global.dto.ApiResponse;
+import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
-import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -40,16 +40,20 @@ public class UserController {
 
 	@PostMapping("/signin")
 	public ResponseEntity<ApiResponse> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
-		Cookie jwtCookie = new Cookie("JWT", userService.signIn(request));
+		String accessToken = userService.signIn(request);
+		Cookie jwtCookie = new Cookie("accessToken", accessToken);
 		jwtCookie.setPath("/");
 		jwtCookie.setHttpOnly(true);
-		jwtCookie.setMaxAge(1800);
 		response.addCookie(jwtCookie);
 		return ResponseEntity.ok(ApiResponse.ok("로그인 성공"));
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<ApiResponse> logout(@AuthenticationPrincipal User user) {
+	public ResponseEntity<ApiResponse> logout(@AuthenticationPrincipal User user, HttpServletResponse response) {
+		Cookie jwtCookie = new Cookie("accessToken", "");
+		jwtCookie.setPath("/");
+		jwtCookie.setHttpOnly(true);
+		response.addCookie(jwtCookie);
 		return ResponseEntity.ok(userService.logout(user));
 	}
 
@@ -60,9 +64,9 @@ public class UserController {
 
 	// 로그인 후 화면에 바로 띄울지에 대한 고민
 	@GetMapping("/cash")
-	public ResponseEntity<ApiResponse> getCash(@AuthenticationPrincipal User user) {
+	public ResponseEntity<ItemApiResponse<Integer>> getCash(@AuthenticationPrincipal User user) {
 		int cash = userService.getCash(user);
-		return ResponseEntity.ok().body(ApiResponse.ok("조회 성공" + cash));
+		return ResponseEntity.ok().body(ItemApiResponse.ok("조회 성공", cash));
 	}
 
 	@GetMapping("/charging")
