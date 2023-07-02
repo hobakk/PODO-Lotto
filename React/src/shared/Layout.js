@@ -100,12 +100,21 @@ function Header() {
 
   return (
     <div style={{ ...HeaderStyles }}>
-        <div id='LogoTitle' onClick={()=>{navigate("/lotto")}}>
+        <div id='LogoTitle' onClick={()=>{navigate("/")}}>
             <img src={process.env.PUBLIC_URL + `/logo.png`} alt='Logo' style={{ width: "30px", height: "30px", }} />
             <span>포도 로또</span>
         </div>
           <div className='navigation-links' style={navigationLinksStyles}>
             <DropdownMenu />
+          </div>
+          <div style={{ marginLeft: "auto", marginRight: "10px" }}>
+            <div id='sign'>
+              <Link to={"/signin"}>로그인 </Link>/
+              <Link to={"/signup"}> 회원가입</Link>
+            </div>
+            {/* <div id='userIf'>
+
+            </div> */}
           </div>
     </div>
   );
