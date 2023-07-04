@@ -22,6 +22,7 @@ import org.springframework.data.redis.core.ValueOperations;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.scheduler.GlobalScheduler;
+import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
@@ -44,6 +45,8 @@ public class GlobalSchedulerTest {
 	private SixNumberRepository sixNumberRepository;
 	@Mock
 	private RedisTemplate<String, String> redisTemplate;
+	@Mock
+	private Manager manager;
 
 	private User saveUser;
 	private ValueOperations<String, String> valueOperations;
@@ -61,17 +64,20 @@ public class GlobalSchedulerTest {
 		when(sixNumber.getNumberList()).thenReturn(Arrays.asList("1 2 3", "4 5 6"));
 		when(sixNumberRepository.findAllByBuyDate(anyInt(), anyInt())).thenReturn(List.of(sixNumber));
 
+		when(manager.reviseResult(anyList(), anyList())).thenReturn("1 2 3 4 5 6");
+
 		globalScheduler.findByTopNumberListForMonth();
 
 		verify(sixNumber).getNumberList();
 		verify(sixNumberRepository).findAllByBuyDate(anyInt(), anyInt());
 		verify(lottoRepository).save(any(Lotto.class));
+		verify(manager).reviseResult(anyList(), anyList());
 	}
 
 	@Test
 	void payment() {
 		saveUser.setStatus("PAID");
-		saveUser.setPaymentDate(String.valueOf(YearMonth.of(2023, 4)));
+		saveUser.setPaymentDate(String.valueOf(YearMonth.now().minusMonths(1)));
 
 		when(userRepository.findByRole(UserRole.ROLE_PAID)).thenReturn(List.of(saveUser));
 
