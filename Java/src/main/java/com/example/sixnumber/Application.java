@@ -33,11 +33,8 @@ public class Application {
 			User admin = new User(signupRequest, password);
 			admin.setAdmin();
 			admin.setCash("+", 999998999);
+			admin.setStatement("테스트");
 			userRepository.save(admin);
-
-			SigninRequest signinRequest = new SigninRequest("test", "react 공부하기");
-			TestUser tUser = new TestUser(signinRequest.getEmail(), signinRequest.getPassword());
-			testUserRepository.save(tUser);
 		};
 	}
 }

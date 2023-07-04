@@ -18,6 +18,7 @@ import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
+import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
@@ -93,5 +94,10 @@ public class UserController {
 	@PatchMapping("/update")
 	public ResponseEntity<ApiResponse> updata(@RequestBody SignupRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.update(request, user));
+	}
+
+	@GetMapping("/my-information")
+	public ResponseEntity<ItemApiResponse<MyInformationResponse>> getMyInformation(@AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(userService.getMyInformation(user.getId()));
 	}
 }
