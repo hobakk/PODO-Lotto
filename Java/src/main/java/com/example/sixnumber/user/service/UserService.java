@@ -15,10 +15,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.dto.ApiResponse;
+import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.BreakTheRulesException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
+import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -141,8 +143,8 @@ public class UserService {
 		return ApiResponse.ok("권한 변경 성공");
 	}
 
-	public int getCash(User user) {
-		return user.getCash();
+	public ItemApiResponse<CashNicknameResponse> getCashNickname(User user) {
+		return ItemApiResponse.ok("조회 성공", new CashNicknameResponse(user)) ;
 	}
 
 	// 요청을 최대 3번까지 할 수 있고 12시간 기준으로 삭제되기에 충전 요청 취소를 만들지 않아도 된다 판단함

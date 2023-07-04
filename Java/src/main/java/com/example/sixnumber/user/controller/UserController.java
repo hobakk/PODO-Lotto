@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -28,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping( "/api/users")
+@RequestMapping("/api/users")
 public class UserController {
 
 	private final UserService userService;
@@ -43,7 +44,6 @@ public class UserController {
 		String accessToken = userService.signIn(request);
 		Cookie jwtCookie = new Cookie("accessToken", accessToken);
 		jwtCookie.setPath("/");
-		jwtCookie.setHttpOnly(true);
 		response.addCookie(jwtCookie);
 		return ResponseEntity.ok(ApiResponse.ok("로그인 성공"));
 	}
@@ -52,21 +52,20 @@ public class UserController {
 	public ResponseEntity<ApiResponse> logout(@AuthenticationPrincipal User user, HttpServletResponse response) {
 		Cookie jwtCookie = new Cookie("accessToken", "");
 		jwtCookie.setPath("/");
-		jwtCookie.setHttpOnly(true);
 		response.addCookie(jwtCookie);
 		return ResponseEntity.ok(userService.logout(user));
 	}
 
 	@PatchMapping("/withdraw")
-	public ResponseEntity<ApiResponse> withdraw(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<ApiResponse> withdraw(@RequestBody OnlyMsgRequest request,
+		@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.withdraw(request, user.getEmail()));
 	}
 
 	// 로그인 후 화면에 바로 띄울지에 대한 고민
 	@GetMapping("/cash")
-	public ResponseEntity<ItemApiResponse<Integer>> getCash(@AuthenticationPrincipal User user) {
-		int cash = userService.getCash(user);
-		return ResponseEntity.ok().body(ItemApiResponse.ok("조회 성공", cash));
+	public ResponseEntity<ItemApiResponse<CashNicknameResponse>> getCashNickname(@AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(userService.getCashNickname(user));
 	}
 
 	@GetMapping("/charging")
@@ -75,13 +74,15 @@ public class UserController {
 	}
 
 	@PostMapping("/charging")
-	public ResponseEntity<ApiResponse> charging(@RequestBody ChargingRequest chargingRequest, @AuthenticationPrincipal User user) {
+	public ResponseEntity<ApiResponse> charging(@RequestBody ChargingRequest chargingRequest,
+		@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.charging(chargingRequest, user));
 	}
 
 	@PostMapping("/paid")
-	public ResponseEntity<ApiResponse> setPaid(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.setPaid(request ,user.getEmail()));
+	public ResponseEntity<ApiResponse> setPaid(@RequestBody OnlyMsgRequest request,
+		@AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(userService.setPaid(request, user.getEmail()));
 	}
 
 	@GetMapping("/statement")
