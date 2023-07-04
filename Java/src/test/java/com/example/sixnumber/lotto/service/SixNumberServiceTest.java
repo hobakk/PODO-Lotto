@@ -27,14 +27,11 @@ import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.user.entity.User;
-import com.example.sixnumber.user.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class SixNumberServiceTest {
 	@InjectMocks SixNumberService sixNumberService;
 
-	@Mock
-	private UserRepository userRepository;
 	@Mock
 	private SixNumberRepository sixNumberRepository;
 	@Mock
@@ -44,12 +41,10 @@ public class SixNumberServiceTest {
 
 	private Lotto lotto;
 	private User saveUser;
-	private SixNumber sixNumber;
 
 	@BeforeEach
 	public void setup() {
 		lotto = mock(Lotto.class);
-		sixNumber = mock(SixNumber.class);
 		saveUser = TestDataFactory.user();
 	}
 
