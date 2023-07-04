@@ -24,10 +24,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import com.example.sixnumber.fixture.TestDataFactory;
+import com.example.sixnumber.fixture.TestUtil;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.InvalidInputException;
+import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
@@ -52,6 +54,8 @@ public class AdminServiceTest {
 	private LottoRepository lottoRepository;
 	@Mock
 	private RedisTemplate<String, String> redisTemplate;
+	@Mock
+	private Manager manager;
 
 	private ValueOperations<String, String> valueOperations;
 	private User saveUser;
@@ -70,14 +74,13 @@ public class AdminServiceTest {
 		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("AdminSecurityKey");
 
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
 		ApiResponse response = adminService.setAdmin(request, admin, saveUser.getId());
 
-		verify(userRepository).findById(anyLong());
+		verify(manager).findUser(anyLong());
 		assertEquals(saveUser.getRole(), UserRole.ROLE_ADMIN);
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "변경 완료");
+		TestUtil.ApiAsserEquals(response, 200, "변경 완료");
 	}
 
 	@Test
@@ -96,8 +99,7 @@ public class AdminServiceTest {
 		ListApiResponse<UsersReponse> response = adminService.getUsers();
 
 		verify(userRepository).findAll();
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "조회 성공");
+		TestUtil.ListApiAssertEquals(response, 200, "조회 성공");
 	}
 
 	@Test
@@ -114,8 +116,7 @@ public class AdminServiceTest {
 		verify(redisTemplate).keys(anyString());
 		verify(valueOperations).multiGet(keys);
 		assertEquals(response.getData().size(), 3);
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "조회 성공");
+		TestUtil.ListApiAssertEquals(response, 200, "조회 성공");
 	}
 
 	@Test
@@ -134,9 +135,7 @@ public class AdminServiceTest {
 
 		verify(redisTemplate).keys(anyString());
 		verify(valueOperations).multiGet(set);
-		assertNotNull(response.getData());
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "조회 성공");
+		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");
 	}
 
 	@Test
@@ -154,32 +153,30 @@ public class AdminServiceTest {
 	void upCash_success() {
 		CashRequest request = TestDataFactory.cashRequest();
 
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
 		ApiResponse response = adminService.upCash(request);
 
-		verify(userRepository).findById(anyLong());
+		verify(manager).findUser(anyLong());
 		verify(redisTemplate).delete(anyString());
 		assertEquals(saveUser.getCash(), 11000);
 		assertNotNull(saveUser.getStatement().get(0));
 		assertEquals(saveUser.getChargingCount(), 0);
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "충전 완료");
+		TestUtil.ApiAsserEquals(response, 200, "충전 완료");
 	}
 
 	@Test
 	void downCash_success() {
 		CashRequest request = TestDataFactory.cashRequest();
 
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
 		ApiResponse response = adminService.downCash(request);
 
-		verify(userRepository).findById(anyLong());
+		verify(manager).findUser(anyLong());
 		assertEquals(saveUser.getCash(), 1000);
 		assertNotNull(saveUser.getStatement().get(0));
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "차감 완료");
+		TestUtil.ApiAsserEquals(response, 200, "차감 완료");
 	}
 
 	@Test
@@ -187,11 +184,11 @@ public class AdminServiceTest {
 		CashRequest request = mock(CashRequest.class);
 		when(request.getValue()).thenReturn(10000);
 
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.downCash(request));
 
-		verify(userRepository).findById(anyLong());
+		verify(manager).findUser(anyLong());
 	}
 
 	@Test
@@ -203,8 +200,7 @@ public class AdminServiceTest {
 
 		verify(lottoRepository).findByMain();
 		verify(lottoRepository).save(any(Lotto.class));
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "생성 완료");
+		TestUtil.ApiAsserEquals(response, 200, "생성 완료");
 	}
 
 	@Test
@@ -225,13 +221,13 @@ public class AdminServiceTest {
 
 		saveUser.setStatus("SUSPENDED");
 
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
 		ApiResponse response = adminService.setStatus(admin, saveUser.getId(), request);
 
+		verify(manager).findUser(anyLong());
 		assertEquals(saveUser.getStatus(), Status.ACTIVE);
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "상태 변경 완료");
+		TestUtil.ApiAsserEquals(response, 200, "상태 변경 완료");
 	}
 
 	@ParameterizedTest
@@ -240,7 +236,7 @@ public class AdminServiceTest {
 		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn(statusStr);
 
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
 		// setStatus_success_active 에서 redisTemlate 값이 없을 때 검증되서 값이 있을 경우만 검증함
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
@@ -248,10 +244,10 @@ public class AdminServiceTest {
 
 		ApiResponse response = adminService.setStatus(admin, saveUser.getId(), request);
 
+		verify(manager).findUser(anyLong());
 		verify(redisTemplate).delete(anyString());
 		assertEquals(saveUser.getStatus(), Status.valueOf(statusStr));
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "상태 변경 완료");
+		TestUtil.ApiAsserEquals(response, 200, "상태 변경 완료");
 	}
 
 	@Test
@@ -259,12 +255,12 @@ public class AdminServiceTest {
 		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("false");
 
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
 		Assertions.assertThrows(
 			InvalidInputException.class, () -> adminService.setStatus(admin, saveUser.getId(), request));
 
-		verify(userRepository).findById(anyLong());
+		verify(manager).findUser(anyLong());
 	}
 
 	@Test
@@ -272,11 +268,11 @@ public class AdminServiceTest {
 		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("ACTIVE");
 
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.setStatus(admin, saveUser.getId(), request));
 
-		verify(userRepository).findById(anyLong());
+		verify(manager).findUser(anyLong());
 	}
 
 }

@@ -17,7 +17,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.sixnumber.fixture.TestDataFactory;
+import com.example.sixnumber.fixture.TestUtil;
 import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
@@ -25,27 +27,24 @@ import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.user.entity.User;
-import com.example.sixnumber.user.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class SixNumberServiceTest {
 	@InjectMocks SixNumberService sixNumberService;
 
 	@Mock
-	private UserRepository userRepository;
-	@Mock
 	private SixNumberRepository sixNumberRepository;
 	@Mock
 	private LottoRepository lottoRepository;
+	@Mock
+	private Manager manager;
 
 	private Lotto lotto;
 	private User saveUser;
-	private SixNumber sixNumber;
 
 	@BeforeEach
 	public void setup() {
 		lotto = mock(Lotto.class);
-		sixNumber = mock(SixNumber.class);
 		saveUser = TestDataFactory.user();
 	}
 
@@ -53,22 +52,22 @@ public class SixNumberServiceTest {
 	void buyNumber_success() {
 		BuyNumberRequest buyNumberRequest = TestDataFactory.buyNumberRequest();
 
-		List<Integer> countList = TestDataFactory.countList();
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
+		List<Integer> countList = TestDataFactory.countList();
 		when(lotto.getCountList()).thenReturn(countList);
 
 		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
 
 		ListApiResponse<String> response = sixNumberService.buyNumber(buyNumberRequest, saveUser);
 
-		verify(userRepository).save(any(User.class));
+		verify(manager).findUser(anyLong());
 		verify(lottoRepository).findByMain();
 		verify(sixNumberRepository).save(any(SixNumber.class));
 		List<String> data = response.getData();
 		assertNotNull(saveUser.getStatement());
 		assertEquals(data.size(), 5);
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "요청 성공");
+		TestUtil.ListApiAssertEquals(response, 200, "요청 성공");
 	}
 
 	@Test
@@ -76,29 +75,33 @@ public class SixNumberServiceTest {
 		BuyNumberRequest request = mock(BuyNumberRequest.class);
 		when(request.getValue()).thenReturn(50);
 
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
+
 		Assertions.assertThrows(IllegalArgumentException.class, () -> sixNumberService.buyNumber(request, saveUser));
+
+		verify(manager).findUser(anyLong());
 	}
 
 	@Test
 	void statisticalNumber_success() {
 		StatisticalNumberRequest request = TestDataFactory.statisticalNumberRequest();
 
-		List<Integer> countList = TestDataFactory.countList();
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
+		List<Integer> countList = TestDataFactory.countList();
 		when(lotto.getCountList()).thenReturn(countList);
 
 		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
 
 		ListApiResponse<String> response = sixNumberService.statisticalNumber(request, saveUser);
 
-		verify(userRepository).save(any(User.class));
+		verify(manager).findUser(anyLong());
 		verify(lottoRepository).findByMain();
 		verify(sixNumberRepository).save(any(SixNumber.class));
 		List<String> data = response.getData();
 		assertNotNull(saveUser.getStatement());
 		assertEquals(data.size(), 5);
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "요청 성공");
+		TestUtil.ListApiAssertEquals(response, 200, "요청 성공");
 	}
 
 	@ParameterizedTest
@@ -108,10 +111,10 @@ public class SixNumberServiceTest {
 		when(request.getValue()).thenReturn(value);
 		when(request.getRepetition()).thenReturn(repetition);
 
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> sixNumberService.statisticalNumber(request, saveUser));
 
-		verify(userRepository).findById(anyLong());
+		verify(manager).findUser(anyLong());
 	}
 }

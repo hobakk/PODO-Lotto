@@ -23,6 +23,7 @@ import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
+import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
@@ -214,5 +215,11 @@ public class UserService {
 			})
 			.toList();
 		return ListApiResponse.ok("거래내역 조회 완료", response);
+	}
+
+	public ItemApiResponse<MyInformationResponse> getMyInformation(Long userId) {
+		User user = manager.findUser(userId);
+		MyInformationResponse response = new MyInformationResponse(user);
+		return ItemApiResponse.ok("조회 성공", response);
 	}
 }
