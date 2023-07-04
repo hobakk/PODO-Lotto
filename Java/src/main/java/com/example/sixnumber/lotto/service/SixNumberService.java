@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.InvalidInputException;
-import com.example.sixnumber.global.exception.UserNotFoundException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
@@ -28,7 +27,6 @@ import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.user.entity.User;
-import com.example.sixnumber.user.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +37,6 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class SixNumberService {
 
-	private final UserRepository userRepository;
 	private final SixNumberRepository sixNumberRepository;
 	private final LottoRepository lottoRepository;
 	private final Manager manager;
