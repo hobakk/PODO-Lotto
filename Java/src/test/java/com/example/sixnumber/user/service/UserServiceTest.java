@@ -19,22 +19,24 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.verification.VerificationMode;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.web.client.ExpectedCount;
 
 import com.example.sixnumber.fixture.TestDataFactory;
+import com.example.sixnumber.fixture.TestUtil;
 import com.example.sixnumber.global.dto.ApiResponse;
+import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.BreakTheRulesException;
 import com.example.sixnumber.global.exception.UserNotFoundException;
 import com.example.sixnumber.global.util.JwtProvider;
+import com.example.sixnumber.global.util.Manager;
+import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
+import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
@@ -59,6 +61,8 @@ public class UserServiceTest {
 	private PasswordEncoder passwordEncoder;
 	@Mock
 	private RedisTemplate<String, String> redisTemplate;
+	@Mock
+	private Manager manager;
 
 	private User saveUser;
 	private ValueOperations<String, String> valueOperations;
@@ -140,7 +144,7 @@ public class UserServiceTest {
 	void signin_success() {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 
@@ -151,7 +155,7 @@ public class UserServiceTest {
 
 		String accessToken = userService.signIn(signinRequest);
 
-		verify(userRepository).findByEmail(signinRequest.getEmail());
+		verify(manager).findUser(anyString());
 		verify(valueOperations).get(anyString());
 		verify(valueOperations).set(anyString(), anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
@@ -165,18 +169,18 @@ public class UserServiceTest {
 	void signin_UserNotFoundException() {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
+		when(manager.findUser(anyString())).thenThrow(new UserNotFoundException());
 
 		Assertions.assertThrows(UserNotFoundException.class, () -> userService.signIn(signinRequest));
 
-		verify(userRepository).findByEmail(anyString());
+		verify(manager).findUser(anyString());
 	}
 
 	@Test
 	void signin_LoginOverlapException() {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 		when(valueOperations.get(anyString())).thenReturn("RTV");
@@ -184,7 +188,7 @@ public class UserServiceTest {
 		Assertions.assertThrows(OverlapException.class,
 			() -> userService.signIn(signinRequest));
 
-		verify(userRepository).findByEmail(anyString());
+		verify(manager).findUser(anyString());
 		verify(valueOperations).get(anyString());
 		verify(redisTemplate).delete(anyString());
 	}
@@ -197,7 +201,7 @@ public class UserServiceTest {
 		User user = mock(User.class);
 		when(user.getStatus()).thenReturn(status);
 
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+		when(manager.findUser(anyString())).thenReturn(user);
 
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 		when(valueOperations.get(anyString())).thenReturn(null);
@@ -205,7 +209,7 @@ public class UserServiceTest {
 		Assertions.assertThrows(StatusNotActiveException.class,
 			() -> userService.signIn(signinRequest));
 
-		verify(userRepository).findByEmail(anyString());
+		verify(manager).findUser(anyString());
 		verify(valueOperations).get(anyString());
 	}
 
@@ -213,7 +217,7 @@ public class UserServiceTest {
 	void signin_fail_incorrectPW() {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 		when(valueOperations.get(anyString())).thenReturn(null);
@@ -223,7 +227,7 @@ public class UserServiceTest {
 		Assertions.assertThrows(IllegalArgumentException.class,
 			() -> userService.signIn(signinRequest));
 
-		verify(userRepository).findByEmail(anyString());
+		verify(manager).findUser(anyString());
 		verify(valueOperations).get(anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
 	}
@@ -242,15 +246,15 @@ public class UserServiceTest {
 		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("회원탈퇴");
 
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		ApiResponse response = userService.withdraw(request, saveUser.getEmail());
 
+		verify(manager).findUser(anyString());
 		verify(redisTemplate).delete(anyString());
 		assertEquals(saveUser.getStatus(), Status.DORMANT);
 		assertNotNull(saveUser.getWithdrawExpiration());
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "회원 탈퇴 완료");
+		TestUtil.ApiAsserEquals(response, 200, "회원 탈퇴 완료");
 	}
 
 	@Test
@@ -270,13 +274,13 @@ public class UserServiceTest {
 
 		saveUser.setRole("PAID");
 
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		ApiResponse response = userService.setPaid(request, saveUser.getEmail());
 
+		verify(manager).findUser(anyString());
 		assertEquals(saveUser.getPaymentDate(), "월정액 해지");
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "해지 신청 성공");
+		TestUtil.ApiAsserEquals(response, 200, "해지 신청 성공");
 	}
 
 	@Test
@@ -285,12 +289,12 @@ public class UserServiceTest {
 		when(request.getMsg()).thenReturn("월정액 해지");
 
 		// saveUser.getRole() = UserRole.USER
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.setPaid(request, saveUser.getEmail()));
 
 		verify(request).getMsg();
-		verify(userRepository).findByEmail(anyString());
+		verify(manager).findUser(anyString());
 	}
 
 	@Test
@@ -298,17 +302,16 @@ public class UserServiceTest {
 		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("false");
 
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		ApiResponse response = userService.setPaid(request, saveUser.getEmail());
 
-		verify(userRepository).findByEmail(anyString());
+		verify(manager).findUser(anyString());
 		assertEquals(saveUser.getCash(), 1000);
 		assertEquals(saveUser.getRole(), UserRole.ROLE_PAID);
 		assertNotNull(saveUser.getPaymentDate());
 		assertNotNull(saveUser.getStatement());
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "권한 변경 성공");
+		TestUtil.ApiAsserEquals(response, 200, "권한 변경 성공");
 	}
 
 	@ParameterizedTest
@@ -323,19 +326,19 @@ public class UserServiceTest {
 		// 분명하게 필요한 정보인데 스터빙 오류가 계속 떠서 lenient() 적용함
 		lenient().when(user.getRole()).thenReturn(role);
 
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(user));
+		when(manager.findUser(anyString())).thenReturn(user);
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.setPaid(request, user.getEmail()));
 
 		verify(request).getMsg();
-		verify(userRepository).findByEmail(anyString());
+		verify(manager).findUser(anyString());
 	}
 
 	@Test
-	void getCash() {
-		int response = userService.getCash(saveUser);
+	void getCashNickname() {
+		ItemApiResponse<CashNicknameResponse> response = userService.getCashNickname(saveUser);
 
-		assertEquals(saveUser.getCash(), response);
+		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");
 	}
 
 	@Test
@@ -345,16 +348,14 @@ public class UserServiceTest {
 		Set<String> set = new HashSet<>(List.of("STMT: 7-1"));
 		when(redisTemplate.keys("*STMT: 7-*")).thenReturn(set);
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
 
 		ApiResponse response = userService.charging(request, saveUser);
 
 		verify(redisTemplate, times(2)).keys(anyString());
 		verify(valueOperations).set(anyString(), anyString(), anyLong(), any());
-		verify(userRepository).findByEmail(anyString());
+		verify(userRepository).save(saveUser);
 		assertEquals(saveUser.getChargingCount(), 1);
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "요청 성공");
+		TestUtil.ApiAsserEquals(response, 200, "요청 성공");
 	}
 
 	@Test
@@ -386,11 +387,8 @@ public class UserServiceTest {
 		ChargingRequest request = TestDataFactory.chargingRequest();
 
 		saveUser.setChargingCount(4);
-		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
 
 		Assertions.assertThrows(BreakTheRulesException.class, () -> userService.charging(request, saveUser));
-
-		verify(userRepository).findByEmail(anyString());
 	}
 
 	// AdminServiceTest getCharges 와 성공 code가 동일함 삭제해도되나 ?
@@ -408,12 +406,11 @@ public class UserServiceTest {
 		verify(redisTemplate).keys(anyString());
 		verify(valueOperations).multiGet(keys);
 		assertEquals(response.getData().size(), 3);
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "신청 리스트 조회 성공");
+		TestUtil.ListApiAssertEquals(response, 200, "신청 리스트 조회 성공");
 	}
 
 	@Test
-	void getCharges_fail_noData() {
+	void getCharges_fail_isNull() {
 		when(redisTemplate.keys(anyString())).thenReturn(Collections.emptySet());
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getCharges(0L));
@@ -425,23 +422,22 @@ public class UserServiceTest {
 	void getStatement_success() {
 		saveUser.setStatement(LocalDate.now() + ",5000" );
 
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		ListApiResponse<StatementResponse> response = userService.getStatement(saveUser.getEmail());
 
-		verify(userRepository).findById(anyLong());
+		verify(manager).findUser(anyString());
 		assertEquals(response.getData().size(), 1);
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "거래내역 조회 완료");
+		TestUtil.ListApiAssertEquals(response, 200, "거래내역 조회 완료");
 	}
 
 	@Test
 	void getStatement_fail_lowSize() {
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getStatement(saveUser.getEmail()));
 
-		verify(userRepository).findById(anyLong());
+		verify(manager).findUser(anyString());
 	}
 
 	@Test
@@ -455,8 +451,7 @@ public class UserServiceTest {
 
 		verify(passwordEncoder).matches(anyString(), anyString());
 		verify(passwordEncoder).encode(anyString());
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "수정 완료");
+		TestUtil.ApiAsserEquals(response, 200, "수정 완료");
 	}
 
 	@Test
@@ -467,5 +462,15 @@ public class UserServiceTest {
 		when(request.getNickname()).thenReturn("nickname");
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.update(request, saveUser));
+	}
+
+	@Test
+	void getMyInformation() {
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
+
+		ItemApiResponse<MyInformationResponse> response = userService.getMyInformation(saveUser.getId());
+
+		verify(manager).findUser(anyLong());
+		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");
 	}
 }
