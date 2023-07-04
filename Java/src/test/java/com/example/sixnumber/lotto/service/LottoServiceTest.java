@@ -4,7 +4,9 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -15,7 +17,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.sixnumber.fixture.TestUtil;
 import com.example.sixnumber.global.dto.ItemApiResponse;
+import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.LottoResponse;
 import com.example.sixnumber.lotto.dto.YearMonthRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
@@ -28,6 +32,8 @@ public class LottoServiceTest {
 
 	@Mock
 	private LottoRepository lottoRepository;
+	@Mock
+	private Manager manager;
 
 	private Lotto lotto;
 
@@ -42,14 +48,15 @@ public class LottoServiceTest {
 
 		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
 
+		when(manager.reviseResult(anyList(), anyList())).thenReturn("1 2 3 4 5 6");
+
 		ItemApiResponse<LottoResponse> response = lottoService.mainTopNumbers();
 
 		verify(lottoRepository).findByMain();
 		verify(lotto).getCountList();
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "조회 성공");
+		verify(manager).reviseResult(anyList(), anyList());
+		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");
 		LottoResponse data = response.getData();
-		assertNotNull(data);
 		assertEquals(data.getStatistics(), "(1번 : 4), (2번 : 5), (3번 : 6), (4번 : 7), (5번 : 8), (6번 : 9)");
 		assertEquals(data.getValue(), "1 2 3 4 5 6");
 	}
@@ -73,10 +80,7 @@ public class LottoServiceTest {
 		ItemApiResponse<LottoResponse> response = lottoService.getTopNumberForMonth(request);
 
 		verify(lottoRepository).findByTopNumbersForMonth(request.getYearMonth());
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "조회 성공");
-		LottoResponse data = response.getData();
-		assertNotNull(data);
+		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");
 	}
 
 	@Test
