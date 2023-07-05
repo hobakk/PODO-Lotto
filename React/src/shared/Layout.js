@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import styled from "styled-components"
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutUser } from '../modules/userIfSlice';
+import { logout } from '../api/users';
+import { logoutToken, setAccessToken } from '../modules/accessTokenSlice';
+import { useCookies } from 'react-cookie';
+import { useMutation } from 'react-query';
 
 const HeaderStyles = {
   margin: `0`,
@@ -40,11 +45,6 @@ const navigationLinksStyles  = {
   alignItems: 'center',
 }
 
-const LiBox =styled.div`
-  display: inline-block;
-  margin-left: 10px;
-`
-
 function DropdownMenu() {
   const [isDropdown, setDropdown] = useState(false);
   const navigate = useNavigate();
@@ -72,15 +72,15 @@ function DropdownMenu() {
             position: 'absolute',
             top: '100%',
             left: '0',
-            backgroundColor: '#f2f2f2',
-            border: `1px solid red`,
+            backgroundColor: 'white',
+            border: `3px solid #FFB6C1`,
             padding: '10px',
             zIndex: '1',
           }}
         >
           <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
             <li>
-              <a href="/my-page">My Page</a>
+              <Link to={"/my-page"}>My Page</Link>
             </li>
             <li>
               <a href="/recommendation">Recommendation Number</a>
@@ -96,12 +96,55 @@ function DropdownMenu() {
 }
 
 function Header() {
+    const [cookies, setCookie, removeCookie] = useCookies([]);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const accessToken = useSelector((state)=>state.accessToken.accessToken);
+    const mutation = useMutation(logout, {
+      onSuccess: () => {
+        dispatch(logoutUser());
+        dispatch(logoutToken());
+        removeCookie('accessToken');
+      }
+    });
+
+    const [cash, setCash] = useState(0);
+    const [nickname, setNickname] = useState("");
+    const userIf = useSelector((state)=>state.userIf);
+    
+
+    const logoutHandler = () => {
+      dispatch(setAccessToken(accessToken))
+      mutation.mutate();
+    }
+    
+    useEffect(()=>{
+        if (userIf.cash !== cash) {
+          setCash(userIf.cash);
+        }
+        if (userIf.nickname !== nickname) {
+          setNickname(userIf.nickname);
+        }
+    }, [userIf])
+
+    useEffect(()=>{
+      console.log("cash, nickname 이 랜더링 되었습니다")
+      const signElement = document.getElementById("sign");
+      const userIfDivElement = document.getElementById("userIfDiv");
+
+      if(userIf.cash !== 0 || userIf.nickname !== "") {
+        signElement.style.display = "none";
+        userIfDivElement.style.display = "block";
+      } else {
+        signElement.style.display = "block";
+        userIfDivElement.style.display = "none";
+      }
+    }, [cash, nickname])
 
   return (
     <div style={{ ...HeaderStyles }}>
         <div id='LogoTitle' onClick={()=>{navigate("/")}}>
-            <img src={process.env.PUBLIC_URL + `/logo.png`} alt='Logo' style={{ width: "30px", height: "30px", }} />
+            <img src={process.env.PUBLIC_URL + `/logo.png`} alt='Logo' style={{ width: "30px", height: "30px", marginRight: "5px" }} />
             <span>포도 로또</span>
         </div>
           <div className='navigation-links' style={navigationLinksStyles}>
@@ -112,9 +155,14 @@ function Header() {
               <Link to={"/signin"}>로그인 </Link>/
               <Link to={"/signup"}> 회원가입</Link>
             </div>
-            {/* <div id='userIf'>
-
-            </div> */}
+            <div id='userIfDiv' style={{ display: "flex", color: "black", fontSize: "16px"}}>
+              <p>
+                <span style={{color:"#FF7F50"}}>{cash}</span> 원  
+                <Link to={"/mypage"} style={{color:"#BDFCC9", marginLeft: "10px"}}>{nickname}</Link> 님 반갑습니다
+                <Link to={"/"} style={{marginLeft: "10px"}} onClick={logoutHandler}>로그아웃</Link>
+              </p>
+              
+            </div>
           </div>
     </div>
   );
@@ -133,7 +181,7 @@ function Footer() {
 function Layout({ children }) {
   return (
     <div>
-      <Header />
+      <Header/>
         <div style={{...layoutStyles}}>
             {children}
         </div>
