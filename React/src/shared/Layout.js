@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logoutUser } from '../modules/userIfSlice';
-import { logout } from '../api/users';
-import { logoutToken, setAccessToken } from '../modules/accessTokenSlice';
+import { logout } from '../api/useUserApi';
 import { useCookies } from 'react-cookie';
 import { useMutation } from 'react-query';
+import { logoutUser } from '../modules/userIfSlice';
 
 const HeaderStyles = {
   margin: `0`,
@@ -99,32 +98,28 @@ function Header() {
     const [cookies, setCookie, removeCookie] = useCookies([]);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const accessToken = useSelector((state)=>state.accessToken.accessToken);
     const mutation = useMutation(logout, {
       onSuccess: () => {
         dispatch(logoutUser());
-        dispatch(logoutToken());
         removeCookie('accessToken');
+        removeCookie('refreshToken');
       }
     });
 
     const [cash, setCash] = useState(0);
     const [nickname, setNickname] = useState("");
-    const userIf = useSelector((state)=>state.userIf);
-    
-
+    const userIf = useSelector((state) => state.userIf);
     const logoutHandler = () => {
-      dispatch(setAccessToken(accessToken))
       mutation.mutate();
     }
     
     useEffect(()=>{
-        if (userIf.cash !== cash) {
-          setCash(userIf.cash);
-        }
-        if (userIf.nickname !== nickname) {
-          setNickname(userIf.nickname);
-        }
+      if (userIf.cash !== cash) {
+        setCash(userIf.cash);
+      }
+      if (userIf.nickname !== nickname) {
+        setNickname(userIf.nickname);
+      }
     }, [userIf])
 
     useEffect(()=>{

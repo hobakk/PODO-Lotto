@@ -1,8 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    cash: 0,
+    email: "",
     nickname: "",
+    cash: 0,
+    role: "",
+    statement: {},
 }
 
 const userIfSlice = createSlice({
@@ -10,13 +13,14 @@ const userIfSlice = createSlice({
     initialState,
     reducers: {
         setUserIf: (state, action) => {
-            state.cash = action.payload.cash;
-            state.nickname = action.payload.nickname;
+            const { email, nickname, cash, role, statement } = action.payload;
+            state.email = email;
+            state.nickname = nickname;
+            state.cash = cash;
+            state.role = role;
+            state.statement = statement;
         },
-        logoutUser: (state) => {
-            state.cash = 0;
-            state.nickname = "";
-        }
+        logoutUser: () => initialState,
     }
 })
 

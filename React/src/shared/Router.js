@@ -5,7 +5,7 @@ import Home from '../pages/Home'
 import GlobalStyle from './GlobalStyle'
 import Lotto from '../pages/Lotto'
 import Signin from '../pages/Signin'
-import Signiup from '../pages/Signiup'
+import Signup from '../pages/Signup'
 
 const Router = () => {
   return (
@@ -16,7 +16,7 @@ const Router = () => {
                 <Route path='/' element={<Home />} />
                 <Route path='/lotto' element={<Lotto />} />
                 <Route path='/signin' element={<Signin />} />
-                <Route path='/signup' element={<Signiup />} />
+                <Route path='/signup' element={<Signup />} />
             </Routes>
         </Layout>
     </BrowserRouter>

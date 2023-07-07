@@ -14,3 +14,8 @@ export const SignBorder = {
   border: "3px solid black",
   margin: "3px"
 }
+
+export const InputBox =styled.input`
+  width: 5cm;
+  height: 25px;
+`

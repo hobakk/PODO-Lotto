@@ -2,37 +2,26 @@ import React, { useEffect, useRef, useState } from 'react'
 import { CommonStyle, SignBorder } from '../components/Styles'
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
-import { getCash, signin, getAccessToken } from '../api/users';
+import { signin } from '../api/noneUserApi';
 import { useDispatch } from 'react-redux';
 import { setUserIf } from '../modules/userIfSlice';
-import { setAccessToken } from '../modules/accessTokenSlice';
+import { getInformation } from '../api/useUserApi';
+import { InputBox } from '../components/Styles';
 
 function Signin() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const signinMutation = useMutation(signin, {
-      onSuccess: async ()=>{
-        console.log("로그인 성공");
-        getTokenMutation.mutate();
-      }
-    })
-
-    const getTokenMutation = useMutation(getAccessToken, {
-        onSuccess: async (accessToken)=>{
-            dispatch(setAccessToken(accessToken));
-            await new Promise((resolve) => setTimeout(resolve));
-
+    const signinMutation = useMutation(signin,{
+        onSuccess: ()=>{
+            console.log("로그인 완료")
             getUserIfMutation.mutate();
         }
-    })
+    });
 
-    const getUserIfMutation = useMutation(getCash, {
+    const getUserIfMutation = useMutation(getInformation, {
         onSuccess: (userIf)=>{
-            dispatch(setUserIf({
-                cash: userIf.cash,
-                nickname: userIf.nickname,
-            }));
+            dispatch(setUserIf(userIf));
             navigate("/");
         }
     })
@@ -47,7 +36,7 @@ function Signin() {
             [e.target.name]: e.target.value,
         })
     }
-    const submitHandler = (e) => {
+    const submitHandler =  (e) => {
         e.preventDefault();
         signinMutation.mutate(inputValue);
     }
@@ -57,21 +46,16 @@ function Signin() {
         emailRef.current.focus();
     }, [])
 
-    const inputStyle = {
-        width: "5cm",
-        height: "25px"
-    }
-
   return (
     <div style={ SignBorder }>
         <div style={ CommonStyle }>
             <h3 style={{ fontSize: "80px"}}>Login</h3>
             <form onSubmit={submitHandler} style={{ fontSize: "30px", display: "flex", flexDirection: "column", }}>
                 <div style={{ marginBottom: "15px"}}>
-                    Email: <input type='text' name="email" ref={emailRef} placeholder='test@email.com' onChange={onChangeHandler} style={{ marginLeft: "56px", ...inputStyle }}></input>
+                    Email: <InputBox type='text' name="email" ref={emailRef} placeholder='test@email.com' onChange={onChangeHandler} style={{ marginLeft: "56px"}}></InputBox>
                 </div>
                 <div>
-                    Password: <input type='password' name='password' placeholder='********' onChange={onChangeHandler} style={{marginBottom: "2cm", ...inputStyle}}></input>
+                    Password: <InputBox type='password' name='password' placeholder='********' onChange={onChangeHandler} style={{marginBottom: "2cm"}}></InputBox>
                 </div>
                 <div style={{ fontSize: "18px", margin: "auto", marginBottom: "1cm"}}>
                     <div>
