@@ -42,10 +42,14 @@ public class UserController {
 
 	@PostMapping("/signin")
 	public ResponseEntity<ApiResponse> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
-		String accessToken = userService.signIn(request);
-		Cookie jwtCookie = new Cookie("accessToken", accessToken);
-		jwtCookie.setPath("/");
-		response.addCookie(jwtCookie);
+		String[] token = userService.signIn(request).split(",");
+		Cookie accessToken = new Cookie("accessToken", token[0]);
+		accessToken.setPath("/");
+		response.addCookie(accessToken);
+		Cookie refreshToken = new Cookie("refreshToken", token[1]);
+		refreshToken.setPath("/");
+		refreshToken.setMaxAge(1000*60*24*3);
+		response.addCookie(refreshToken);
 		return ResponseEntity.ok(ApiResponse.ok("로그인 성공"));
 	}
 

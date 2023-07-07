@@ -99,10 +99,11 @@ public class UserService {
 			throw new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다");
 		}
 
+		String accessToken = jwtProvider.accessToken(user.getEmail(), user.getId());
 		String refreshToken = jwtProvider.refreshToken(user.getEmail(), user.getId());
 		redisTemplate.opsForValue().set(RTK + user.getId(), refreshToken);
 
-		return jwtProvider.accessToken(user.getEmail(), user.getId());
+		return accessToken + "," + refreshToken;
 	}
 
 	public ApiResponse logout(User user) {
