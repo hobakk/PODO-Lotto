@@ -55,9 +55,6 @@ public class UserController {
 
 	@PostMapping("/logout")
 	public ResponseEntity<ApiResponse> logout(@AuthenticationPrincipal User user, HttpServletResponse response) {
-		Cookie jwtCookie = new Cookie("accessToken", "");
-		jwtCookie.setPath("/");
-		response.addCookie(jwtCookie);
 		return ResponseEntity.ok(userService.logout(user));
 	}
 
