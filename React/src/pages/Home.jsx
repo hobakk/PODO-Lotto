@@ -5,7 +5,9 @@ function Home() {
     const navigate = useNavigate();
 
   return (
-    <div>Home</div>
+    <div style={{ fontSize: "50px"}}>
+      Home
+    </div>
   )
 }
 

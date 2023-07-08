@@ -41,13 +41,13 @@ function Signiup() {
         <h3 style={{ fontSize: "80px"}}>Signup</h3>
         <form onSubmit={sunmitHandler} style={{ fontSize: "30px", display: "flex", flexDirection: "column", }}>
           <div>
-            email : <InputBox onChange={onChangeHandler} placeholder='test@email.com' style={{ marginLeft: "55px" }} value={inputValue.email} ref={emailRef} name='email'></InputBox>
+            Email : <InputBox onChange={onChangeHandler} placeholder='test@email.com' style={{ marginLeft: "55px" }} value={inputValue.email} ref={emailRef} name='email'></InputBox>
           </div>
           <div style={{ marginTop: "20px", marginBottom: "20px" }}>
-            password : <InputBox onChange={onChangeHandler} type="password" placeholder='******' value={inputValue.password} name="password"></InputBox>
+            Password : <InputBox onChange={onChangeHandler} type="password" placeholder='******' value={inputValue.password} name="password"></InputBox>
           </div>
           <div>
-            nickname : <InputBox onChange={onChangeHandler} type="text" placeholder='홍길동' value={inputValue.nickname} name="nickname"></InputBox>
+            Nickname : <InputBox onChange={onChangeHandler} type="text" placeholder='홍길동' value={inputValue.nickname} name="nickname"></InputBox>
           </div>
           <div style={{ fontSize: "18px", margin: "auto", marginBottom: "1cm", marginTop: "1cm"}}>
           <div>
