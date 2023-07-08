@@ -5,11 +5,15 @@ import { logout } from '../api/useUserApi';
 import { useCookies } from 'react-cookie';
 import { useMutation } from 'react-query';
 import { logoutUser } from '../modules/userIfSlice';
+import { OnOff, UlBox, DividingLine, MenuTitle, Dropdown } from '../components/Styles';
+import { setAdminMode } from '../modules/adminMode';
+
+const mainColor = `#D8B2D8`;
 
 const HeaderStyles = {
   margin: `0`,
   width: '100%',
-  background: `#D8B2D8`,
+  background: mainColor,
   height: '60px',
   display: 'flex',
   alignItems: 'center',
@@ -47,6 +51,7 @@ const navigationLinksStyles  = {
 function DropdownMenu() {
   const [isDropdown, setDropdown] = useState(false);
   const navigate = useNavigate();
+  const [onOff, setOnOff] = useState(false);
 
   const handleMouseEnter = () => {
     setDropdown(true);
@@ -56,6 +61,10 @@ function DropdownMenu() {
     setDropdown(false);
   };
 
+  const adminMode = useSelector((state)=>state.adminMode.mode)
+  useEffect(()=>{
+  }, [adminMode])
+
   return (
     <div
       className="dropdown-menu"
@@ -63,32 +72,86 @@ function DropdownMenu() {
       onMouseLeave={handleMouseLeave}
       style={{ position: 'relative' }}
     >
-      <div className="menu-trigger" style={{ cursor: 'pointer' }}>
+      <div className="menu-trigger" style={{ cursor: 'pointer', marginLeft: "80px" }}>
         <span>Menu</span>
       </div>
       {isDropdown && (
-        <div className="dropdown-content" style={{
-            position: 'absolute',
-            top: '100%',
-            left: '0',
-            backgroundColor: 'white',
-            border: `3px solid #FFB6C1`,
-            padding: '10px',
-            zIndex: '1',
-          }}
-        >
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+      <div style={navigationLinksStyles}>
+        {adminMode ? (
+        <Dropdown id='dropdown-user'>
+          <UlBox>
+            <MenuTitle>회원 관리</MenuTitle>
+            <DividingLine />
+            <li>
+              <Link to={"/my-page"}>마이페이지</Link>
+            </li>
+            <li>
+              <Link to={"/"}>충전 요청</Link>
+            </li>
+            <li>
+              <Link to={"/"}>충전 요청 확인</Link>
+            </li>
+            <li>
+              <Link to={"/"}>월정액 신청</Link>
+            </li>
+            <li>
+              <Link to={"/"}>결재 내역</Link>
+            </li>
+          </UlBox>
+          <UlBox style={{ marginLeft: "10px", marginRight: "10px" }}>
+            <MenuTitle>추천 번호</MenuTitle>
+            <DividingLine />
             <li>
               <Link to={"/my-page"}>My Page</Link>
             </li>
             <li>
-              <a href="/recommendation">Recommendation Number</a>
+              <Link to={"/my-page"}>My Page</Link>
+            </li>
+          </UlBox>
+          <UlBox>
+            <MenuTitle>통계</MenuTitle>
+            <DividingLine />
+            <li>
+              <Link to={"/my-page"}>My Page</Link>
             </li>
             <li>
-              <a href="/statistics">Statistics</a>
+              <Link to={"/my-page"}>My Page</Link>
             </li>
-          </ul>
-        </div>
+          </UlBox>
+        </Dropdown>
+        ) : (
+        <Dropdown id='dropdown-admin' >
+          <UlBox>
+            <MenuTitle>관리자 설정</MenuTitle>
+            <DividingLine />
+            <li>
+              <Link to={"/my-page"}>마이페이지</Link>
+            </li>
+            <li>
+              <Link to={"/"}>충전 요청</Link>
+            </li>
+            <li>
+              <Link to={"/"}>충전 요청 확인</Link>
+            </li>
+            <li>
+              <Link to={"/"}>월정액 신청</Link>
+            </li>
+            <li>
+              <Link to={"/"}>결재 내역</Link>
+            </li>
+          </UlBox>
+          <UlBox style={{ marginLeft: "10px", marginRight: "10px" }}>
+            <DividingLine />
+            <li>
+              <Link to={"/my-page"}>My Page</Link>
+            </li>
+            <li>
+              <Link to={"/my-page"}>My Page</Link>
+            </li>
+          </UlBox>
+        </Dropdown>
+        )}
+      </div>
       )}
     </div>
   );
@@ -108,6 +171,12 @@ function Header() {
 
     const [cash, setCash] = useState(0);
     const [nickname, setNickname] = useState("");
+    const [userRole, setUserRole] = useState("");
+    const [tFMode, setTFMode] = useState(false);
+    const [onOff, setOnOff] = useState({
+      color: "",
+      text: "",
+    });
     const userIf = useSelector((state) => state.userIf);
     const logoutHandler = () => {
       mutation.mutate();
@@ -119,6 +188,9 @@ function Header() {
       }
       if (userIf.nickname !== nickname) {
         setNickname(userIf.nickname);
+      }
+      if (userIf.role !== userRole) {
+        setUserRole(userIf.role);
       }
     }, [userIf])
 
@@ -136,6 +208,35 @@ function Header() {
       }
     }, [cash, nickname])
 
+    useEffect(()=>{
+      const adminElement = document.getElementById("showOrHideforAdmin");
+
+      if (userRole == "ROLE_ADMIN") {
+        adminElement.style.display = "block";
+      } else {
+        adminElement.style.display = "none";
+      }
+    }, [userRole])
+    
+    const adminModeHandler = () => {
+      setTFMode(!tFMode);
+    }
+
+    useEffect(()=>{
+      dispatch(setAdminMode(tFMode));
+      if  (tFMode === true) {
+        setOnOff({
+          color: "green",
+          text: "ON",
+        })
+      } else {
+        setOnOff({
+          color: "red",
+          text: "OFF",
+        })
+      }
+    }, [tFMode])
+
   return (
     <div style={{ ...HeaderStyles }}>
         <div id='LogoTitle' onClick={()=>{navigate("/")}}>
@@ -143,7 +244,17 @@ function Header() {
             <span>포도 로또</span>
         </div>
           <div className='navigation-links' style={navigationLinksStyles}>
-            <DropdownMenu />
+            <DropdownMenu/>
+            <div id="showOrHideforAdmin" style={{ display: "none", marginLeft: "20px", marginRight: "10px" }}>
+              <div style={{ display: "flex"}}>
+                <div>
+                  <button onClick={adminModeHandler} style={{ width: "2.5cm", height: "30px", marginRight: "15px" }} >관리자 모드</button>
+                </div>
+                <div>
+                  <OnOff color={onOff.color}>{onOff.text}</OnOff>
+                </div>
+              </div>
+            </div>
           </div>
           <div style={{ marginLeft: "auto", marginRight: "10px" }}>
             <div id='sign'>
@@ -152,11 +263,10 @@ function Header() {
             </div>
             <div id='userIfDiv' style={{ display: "flex", color: "black", fontSize: "16px"}}>
               <p>
-                <span style={{color:"#FF7F50"}}>{cash}</span> 원  
-                <Link to={"/mypage"} style={{color:"#BDFCC9", marginLeft: "10px"}}>{nickname}</Link> 님 반갑습니다
-                <Link to={"/"} style={{marginLeft: "10px"}} onClick={logoutHandler}>로그아웃</Link>
+                <Link to={"/set-charging"} style={{color:"#FF7F50"}}>{cash}</Link> 원  
+                <Link to={"/my-page"} style={{color:"#BDFCC9", marginLeft: "10px"}}>{nickname}</Link> 님 반갑습니다
+                <Link style={{marginLeft: "10px"}} onClick={logoutHandler}>로그아웃</Link>
               </p>
-              
             </div>
           </div>
     </div>
