@@ -9,7 +9,6 @@ const adminModeSlice = createSlice({
     initialState,
     reducers: {
         setAdminMode: (state, action) => {
-            console.log(action.payload)
             state.mode = action.payload;
         }
     }

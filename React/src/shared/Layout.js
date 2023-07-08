@@ -5,29 +5,29 @@ import { logout } from '../api/useUserApi';
 import { useCookies } from 'react-cookie';
 import { useMutation } from 'react-query';
 import { logoutUser } from '../modules/userIfSlice';
-import { OnOff, UlBox, DividingLine, MenuTitle, Dropdown } from '../components/Styles';
+import { OnOff, UlBox, DividingLine, MenuTitle, Dropdown, LiBox } from '../components/Styles';
 import { setAdminMode } from '../modules/adminMode';
 
-const mainColor = `#D8B2D8`;
+const mainColor = `#9957F0`;
 
 const HeaderStyles = {
   margin: `0`,
   width: '100%',
-  background: mainColor,
+  background: `linear-gradient(to bottom, white 90%, ${mainColor} 90%)`,
   height: '60px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center', // 중앙 배치
-  color: 'white',
+  color: 'black',
   fontWeight: '600',
   fontSize: `22px`
 };
 
 const FooterStyles = {
   width: '100%',
-  height: '50px',
+  height: '40px',
   display: 'flex',
-  background: '#D8B2D8',
+  background: mainColor,
   color: 'white',
   alignItems: 'center',
   justifyContent: 'center',
@@ -39,19 +39,20 @@ const layoutStyles = {
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  minHeight: '90vh',
+  minHeight: '88.7vh',
+  backgroundColor: "white",
+  overflow: "hidden",
 }
 
 const navigationLinksStyles  = {
-  marginLeft: '20px',
+  marginLeft: '30px',
   display: 'flex',
   alignItems: 'center',
 }
 
 function DropdownMenu() {
   const [isDropdown, setDropdown] = useState(false);
-  const navigate = useNavigate();
-  const [onOff, setOnOff] = useState(false);
+  const [tF, setTF] = useState(false);
 
   const handleMouseEnter = () => {
     setDropdown(true);
@@ -61,8 +62,14 @@ function DropdownMenu() {
     setDropdown(false);
   };
 
+  const userRole = useSelector((state)=>state.userIf.role);
   const adminMode = useSelector((state)=>state.adminMode.mode)
   useEffect(()=>{
+    if  (userRole == "ROLE_ADMIN") {
+      setTF(adminMode);
+    } else if (adminMode === false) {
+      setTF(false);
+    }
   }, [adminMode])
 
   return (
@@ -73,81 +80,87 @@ function DropdownMenu() {
       style={{ position: 'relative' }}
     >
       <div className="menu-trigger" style={{ cursor: 'pointer', marginLeft: "80px" }}>
-        <span>Menu</span>
+        <span style={{ color: "black", fontSize: "28px" }}>Menu</span>
       </div>
       {isDropdown && (
       <div style={navigationLinksStyles}>
-        {adminMode ? (
-        <Dropdown id='dropdown-user'>
-          <UlBox>
-            <MenuTitle>회원 관리</MenuTitle>
+        {tF ? (
+        <Dropdown id='dropdown-admin' >
+          <UlBox width="12cm" height="9cm">
+            <MenuTitle>관리자 설정</MenuTitle>
             <DividingLine />
-            <li>
-              <Link to={"/my-page"}>마이페이지</Link>
-            </li>
-            <li>
-              <Link to={"/"}>충전 요청</Link>
-            </li>
-            <li>
-              <Link to={"/"}>충전 요청 확인</Link>
-            </li>
-            <li>
-              <Link to={"/"}>월정액 신청</Link>
-            </li>
-            <li>
-              <Link to={"/"}>결재 내역</Link>
-            </li>
-          </UlBox>
-          <UlBox style={{ marginLeft: "10px", marginRight: "10px" }}>
-            <MenuTitle>추천 번호</MenuTitle>
-            <DividingLine />
-            <li>
-              <Link to={"/my-page"}>My Page</Link>
-            </li>
-            <li>
-              <Link to={"/my-page"}>My Page</Link>
-            </li>
-          </UlBox>
-          <UlBox>
-            <MenuTitle>통계</MenuTitle>
-            <DividingLine />
-            <li>
-              <Link to={"/my-page"}>My Page</Link>
-            </li>
-            <li>
-              <Link to={"/my-page"}>My Page</Link>
-            </li>
+            <div style={{ display: "flex", margin: "25px" }}>
+              <div style={{marginRight: "20px"}} >
+                <LiBox>
+                  <Link to={"/"} style={{ color: "black" }}>전체 유저 조회</Link>
+                </LiBox>
+                <LiBox>
+                  <Link to={"/"} style={{ color: "black" }}>충전 요청 조회</Link>
+                </LiBox>
+                <LiBox>
+                  <Link to={"/"} style={{ color: "black" }}>충전 요청 검색</Link>
+                </LiBox>
+                <LiBox>
+                  <Link to={"/"} style={{ color: "black" }}>관리자 권한 부여</Link>
+                </LiBox>
+                <LiBox>
+                  <Link to={"/"} style={{ color: "black" }}>포인트 지급</Link>
+                </LiBox>
+              </div>
+              <div style={{ marginLeft: "40px" }}>
+                <LiBox>
+                  <Link to={"/my-page"} style={{ color: "black" }}>포인트 차감</Link>
+                </LiBox>
+                <LiBox>
+                  <Link to={"/"} style={{ color: "black" }}>메인 로또 생성</Link>
+                </LiBox>
+                <LiBox>
+                  <Link to={"/"} style={{ color: "black" }}>유저 상태 변경</Link>
+                </LiBox>
+              </div>
+            </div>
           </UlBox>
         </Dropdown>
         ) : (
-        <Dropdown id='dropdown-admin' >
-          <UlBox>
-            <MenuTitle>관리자 설정</MenuTitle>
+        <Dropdown id='dropdown-user'>
+          <UlBox width="8cm" height="9cm">
+            <MenuTitle>회원 관리</MenuTitle>
             <DividingLine />
-            <li>
-              <Link to={"/my-page"}>마이페이지</Link>
-            </li>
-            <li>
-              <Link to={"/"}>충전 요청</Link>
-            </li>
-            <li>
-              <Link to={"/"}>충전 요청 확인</Link>
-            </li>
-            <li>
-              <Link to={"/"}>월정액 신청</Link>
-            </li>
-            <li>
-              <Link to={"/"}>결재 내역</Link>
-            </li>
+            <LiBox>
+              <Link to={"/my-page"} style={{ color: "black" }}>마이페이지</Link>
+            </LiBox>
+            <LiBox>
+              <Link to={"/"} style={{ color: "black" }}>충전 요청</Link>
+            </LiBox>
+            <LiBox>
+              <Link to={"/"} style={{ color: "black" }}>충전 요청 확인</Link>
+            </LiBox>
+            <LiBox>
+              <Link to={"/"} style={{ color: "black" }}>월정액 신청</Link>
+            </LiBox>
+            <LiBox>
+              <Link to={"/"} style={{ color: "black" }}>결재 내역</Link>
+            </LiBox>
           </UlBox>
-          <UlBox style={{ marginLeft: "10px", marginRight: "10px" }}>
+          <UlBox width="8cm" height="9cm" style={{ marginLeft: "10px", marginRight: "10px" }}>
+            <MenuTitle>추천 번호</MenuTitle>
             <DividingLine />
-            <li>
-              <Link to={"/my-page"}>My Page</Link>
-            </li>
-            <li>
-              <Link to={"/my-page"}>My Page</Link>
-            </li>
+            <LiBox>
+              <Link to={"/"} style={{ color: "black" }}>랜덤 번호 구매</Link>
+            </LiBox>
+            <LiBox>
+              <Link to={"/"} style={{ color: "black" }}>n회 반복 처리 된 번호 구매</Link>
+            </LiBox>
+          </UlBox>
+          <UlBox width="8cm" height="9cm">
+            <MenuTitle>통계</MenuTitle>
+            <DividingLine />
+            <LiBox>
+              <Link to={"/"} style={{ color: "black" }}>서버 통계</Link>
+            </LiBox>
+            <LiBox>
+              <Link to={"/"} style={{ color: "black" }}>월별 통계</Link>
+            </LiBox>
           </UlBox>
         </Dropdown>
         )}
@@ -166,6 +179,7 @@ function Header() {
         dispatch(logoutUser());
         removeCookie('accessToken');
         removeCookie('refreshToken');
+        setTFMode(false);
       }
     });
 
@@ -226,12 +240,12 @@ function Header() {
       dispatch(setAdminMode(tFMode));
       if  (tFMode === true) {
         setOnOff({
-          color: "green",
+          color: "#ABDB3B",
           text: "ON",
         })
       } else {
         setOnOff({
-          color: "red",
+          color: "#F29135",
           text: "OFF",
         })
       }
@@ -240,15 +254,17 @@ function Header() {
   return (
     <div style={{ ...HeaderStyles }}>
         <div id='LogoTitle' onClick={()=>{navigate("/")}}>
-            <img src={process.env.PUBLIC_URL + `/logo.png`} alt='Logo' style={{ width: "30px", height: "30px", marginRight: "5px" }} />
-            <span>포도 로또</span>
+          <img src={process.env.PUBLIC_URL + `/logo.png`} alt='Logo' style={{ width: "30px", height: "30px", marginRight: "5px", marginLeft: "20px" }} />
+        </div>
+        <div onClick={()=>{navigate("/")}}>
+          <span style={{ fontSize: "26px" }}>PODO Lotto</span>
         </div>
           <div className='navigation-links' style={navigationLinksStyles}>
             <DropdownMenu/>
             <div id="showOrHideforAdmin" style={{ display: "none", marginLeft: "20px", marginRight: "10px" }}>
               <div style={{ display: "flex"}}>
                 <div>
-                  <button onClick={adminModeHandler} style={{ width: "2.5cm", height: "30px", marginRight: "15px" }} >관리자 모드</button>
+                  <button onClick={adminModeHandler} style={{ width: "2.3cm", height: "25px", marginRight: "15px" }} >관리자 모드</button>
                 </div>
                 <div>
                   <OnOff color={onOff.color}>{onOff.text}</OnOff>
@@ -256,16 +272,16 @@ function Header() {
               </div>
             </div>
           </div>
-          <div style={{ marginLeft: "auto", marginRight: "10px" }}>
+          <div style={{ marginLeft: "auto", marginRight: "10px", fontSize: "20px" }}>
             <div id='sign'>
-              <Link to={"/signin"}>로그인 </Link>/
+              <Link to={"/signin"}> 로그인 </Link> /
               <Link to={"/signup"}> 회원가입</Link>
             </div>
             <div id='userIfDiv' style={{ display: "flex", color: "black", fontSize: "16px"}}>
-              <p>
-                <Link to={"/set-charging"} style={{color:"#FF7F50"}}>{cash}</Link> 원  
-                <Link to={"/my-page"} style={{color:"#BDFCC9", marginLeft: "10px"}}>{nickname}</Link> 님 반갑습니다
-                <Link style={{marginLeft: "10px"}} onClick={logoutHandler}>로그아웃</Link>
+              <p style={{ marginRight: "30px" }}>
+                <Link to={"/set-charging"} style={{color:"#3E1F80"}}>{cash}</Link> 원  
+                <Link to={"/my-page"} style={{color:"#F29135", marginLeft: "20px"}}>{nickname}</Link> 님 반갑습니다
+                <Link style={{marginLeft: "10px", color: "#3E1F80"}} onClick={logoutHandler}>로그아웃</Link>
               </p>
             </div>
           </div>
@@ -276,8 +292,8 @@ function Header() {
 function Footer() {
   return (
     <div style={{ ...FooterStyles }}>
-      <a href='https://github.com/hobakk/'>Github</a>
-      <a style={{paddingLeft: `20px`}} href='https://holloweyed-snail.tistory.com/'>Blog</a>
+      <a href='https://github.com/hobakk/' style={{ color: "white", fontSize: "14px" }}>Github</a>
+      <a style={{paddingLeft: `20px`, color: "white", fontSize: "14px", }} href='https://holloweyed-snail.tistory.com/'>Blog</a>
     </div>
   );
 }
@@ -287,7 +303,7 @@ function Layout({ children }) {
   return (
     <div>
       <Header/>
-        <div style={{...layoutStyles}}>
+        <div style={{...layoutStyles, backdropFilter: "blur(20000px)"}}>
             {children}
         </div>
       <Footer />
