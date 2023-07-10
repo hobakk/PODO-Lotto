@@ -16,6 +16,7 @@ import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
+import com.example.sixnumber.user.dto.WinNumberRequest;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -65,6 +66,16 @@ public class TestDataFactory {
 			7L,
 			"msg",
 			5000
+		);
+	}
+
+	public static WinNumberRequest winNumberRequest() {
+		return new WinNumberRequest(
+			"2023-07-11",
+			1075,
+			10000L,
+			1,
+			"1 2 3 4 5 6 7"
 		);
 	}
 

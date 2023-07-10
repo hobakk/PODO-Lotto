@@ -18,6 +18,8 @@ import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
+import com.example.sixnumber.user.dto.WinNumberRequest;
+import com.example.sixnumber.user.dto.WinNumberResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.AdminService;
 
@@ -71,7 +73,12 @@ public class AdminController {
 	}
 
 	@PostMapping("/winnumber")
-	public ResponseEntity<ApiResponse> setWinNumber(@RequestBody OnlyMsgRequest request) {
+	public ResponseEntity<ApiResponse> setWinNumber(@RequestBody WinNumberRequest request) {
 		return ResponseEntity.ok(adminService.setWinNumber(request));
+	}
+
+	@GetMapping("/winnumber")
+	public ResponseEntity<ListApiResponse<WinNumberResponse>> getWinNumber() {
+		return ResponseEntity.ok(adminService.getWinNumber());
 	}
 }
