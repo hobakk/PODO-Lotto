@@ -69,4 +69,9 @@ public class AdminController {
 	public ResponseEntity<?> setStatus(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(adminService.setStatus(user, userId, request));
 	}
+
+	@PostMapping("/winnumber")
+	public ResponseEntity<ApiResponse> setWinNumber(@RequestBody OnlyMsgRequest request) {
+		return ResponseEntity.ok(adminService.setWinNumber(request));
+	}
 }
