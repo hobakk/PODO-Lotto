@@ -5,8 +5,10 @@ import { logout } from '../api/useUserApi';
 import { useCookies } from 'react-cookie';
 import { useMutation } from 'react-query';
 import { logoutUser } from '../modules/userIfSlice';
-import { OnOff, UlBox, DividingLine, MenuTitle, Dropdown, LiBox } from '../components/Styles';
+import { OnOff, UlBox, DividingLine, MenuTitle, Dropdown, LiBox, CustomLink, 
+  CommonLink, MenuDiv, MenuSpan, } from '../components/Styles';
 import { setAdminMode } from '../modules/adminMode';
+import { hover } from '@testing-library/user-event/dist/hover';
 
 const mainColor = `#9957F0`;
 
@@ -52,6 +54,8 @@ const navigationLinksStyles  = {
 
 function DropdownMenu() {
   const [isDropdown, setDropdown] = useState(false);
+  const [backColor, setBackColor] = useState("white");
+  const [spanColor, setSpanColor] = useState("black");
   const [tF, setTF] = useState(false);
 
   const handleMouseEnter = () => {
@@ -72,6 +76,16 @@ function DropdownMenu() {
     }
   }, [adminMode])
 
+  useEffect(()=>{
+    if (isDropdown) {
+      setBackColor("#9957F0");
+      setSpanColor("white")
+    } else {
+      setBackColor("white");
+      setSpanColor("black");
+    }
+  }, [isDropdown])
+
   return (
     <div
       className="dropdown-menu"
@@ -79,9 +93,9 @@ function DropdownMenu() {
       onMouseLeave={handleMouseLeave}
       style={{ position: 'relative' }}
     >
-      <div className="menu-trigger" style={{ cursor: 'pointer', marginLeft: "80px" }}>
-        <span style={{ color: "black", fontSize: "28px" }}>Menu</span>
-      </div>
+      <MenuDiv color={backColor}>
+        <MenuSpan color={spanColor}>Menu</MenuSpan>
+      </MenuDiv>
       {isDropdown && (
       <div style={navigationLinksStyles}>
         {tF ? (
@@ -92,30 +106,30 @@ function DropdownMenu() {
             <div style={{ display: "flex", margin: "25px" }}>
               <div style={{marginRight: "20px"}} >
                 <LiBox>
-                  <Link to={"/"} style={{ color: "black" }}>전체 유저 조회</Link>
+                  <CustomLink to={"/"}>전체 유저 조회</CustomLink>
                 </LiBox>
                 <LiBox>
-                  <Link to={"/"} style={{ color: "black" }}>충전 요청 조회</Link>
+                  <CustomLink to={"/"}>충전 요청 조회</CustomLink>
                 </LiBox>
                 <LiBox>
-                  <Link to={"/"} style={{ color: "black" }}>충전 요청 검색</Link>
+                  <CustomLink to={"/"}>충전 요청 검색</CustomLink>
                 </LiBox>
                 <LiBox>
-                  <Link to={"/"} style={{ color: "black" }}>관리자 권한 부여</Link>
+                  <CustomLink to={"/"}>관리자 권한 부여</CustomLink>
                 </LiBox>
                 <LiBox>
-                  <Link to={"/"} style={{ color: "black" }}>포인트 지급</Link>
+                  <CustomLink to={"/"}>포인트 지급</CustomLink>
                 </LiBox>
               </div>
               <div style={{ marginLeft: "40px" }}>
                 <LiBox>
-                  <Link to={"/my-page"} style={{ color: "black" }}>포인트 차감</Link>
+                  <CustomLink to={"/"}>포인트 차감</CustomLink>
                 </LiBox>
                 <LiBox>
-                  <Link to={"/"} style={{ color: "black" }}>메인 로또 생성</Link>
+                  <CustomLink to={"/"}>메인 로또 생성</CustomLink>
                 </LiBox>
                 <LiBox>
-                  <Link to={"/"} style={{ color: "black" }}>유저 상태 변경</Link>
+                  <CustomLink to={"/"}>유저 상태 변경</CustomLink>
                 </LiBox>
               </div>
             </div>
@@ -127,39 +141,39 @@ function DropdownMenu() {
             <MenuTitle>회원 관리</MenuTitle>
             <DividingLine />
             <LiBox>
-              <Link to={"/my-page"} style={{ color: "black" }}>마이페이지</Link>
+              <CustomLink to={"/"}>마이페이지</CustomLink>
             </LiBox>
             <LiBox>
-              <Link to={"/"} style={{ color: "black" }}>충전 요청</Link>
+              <CustomLink to={"/"}>충전 요청</CustomLink>
             </LiBox>
             <LiBox>
-              <Link to={"/"} style={{ color: "black" }}>충전 요청 확인</Link>
+              <CustomLink to={"/"}>충전 요청 확인</CustomLink>
             </LiBox>
             <LiBox>
-              <Link to={"/"} style={{ color: "black" }}>월정액 신청</Link>
+              <CustomLink to={"/"}>월정액 신청</CustomLink>
             </LiBox>
             <LiBox>
-              <Link to={"/"} style={{ color: "black" }}>결재 내역</Link>
+              <CustomLink to={"/"}>결재 내역</CustomLink>
             </LiBox>
           </UlBox>
-          <UlBox width="8cm" height="9cm" style={{ marginLeft: "10px", marginRight: "10px" }}>
+          <UlBox width="8cm" height="9cm" >
             <MenuTitle>추천 번호</MenuTitle>
             <DividingLine />
             <LiBox>
-              <Link to={"/"} style={{ color: "black" }}>랜덤 번호 구매</Link>
+              <CustomLink to={"/"}>랜덤 번호 구매</CustomLink>
             </LiBox>
             <LiBox>
-              <Link to={"/"} style={{ color: "black" }}>n회 반복 처리 된 번호 구매</Link>
+              <CustomLink to={"/"}>n회 반복 처리 된 번호 구매</CustomLink>
             </LiBox>
           </UlBox>
           <UlBox width="8cm" height="9cm">
             <MenuTitle>통계</MenuTitle>
             <DividingLine />
             <LiBox>
-              <Link to={"/"} style={{ color: "black" }}>서버 통계</Link>
+              <CustomLink to={"/"}>서버 통계</CustomLink>
             </LiBox>
             <LiBox>
-              <Link to={"/"} style={{ color: "black" }}>월별 통계</Link>
+              <CustomLink to={"/"}>월별 통계</CustomLink>
             </LiBox>
           </UlBox>
         </Dropdown>
@@ -240,12 +254,12 @@ function Header() {
       dispatch(setAdminMode(tFMode));
       if  (tFMode === true) {
         setOnOff({
-          color: "#ABDB3B",
+          color: "green",
           text: "ON",
         })
       } else {
         setOnOff({
-          color: "#F29135",
+          color: "red",
           text: "OFF",
         })
       }
@@ -264,7 +278,7 @@ function Header() {
             <div id="showOrHideforAdmin" style={{ display: "none", marginLeft: "20px", marginRight: "10px" }}>
               <div style={{ display: "flex"}}>
                 <div>
-                  <button onClick={adminModeHandler} style={{ width: "2.3cm", height: "25px", marginRight: "15px" }} >관리자 모드</button>
+                  <button onClick={adminModeHandler} style={{ width: "2.3cm", height: "25px", marginRight: "15px",}} >관리자 모드</button>
                 </div>
                 <div>
                   <OnOff color={onOff.color}>{onOff.text}</OnOff>
@@ -279,9 +293,9 @@ function Header() {
             </div>
             <div id='userIfDiv' style={{ display: "flex", color: "black", fontSize: "16px"}}>
               <p style={{ marginRight: "30px" }}>
-                <Link to={"/set-charging"} style={{color:"#3E1F80"}}>{cash}</Link> 원  
-                <Link to={"/my-page"} style={{color:"#F29135", marginLeft: "20px"}}>{nickname}</Link> 님 반갑습니다
-                <Link style={{marginLeft: "10px", color: "#3E1F80"}} onClick={logoutHandler}>로그아웃</Link>
+                <CommonLink to={"/set-charging"} color={"#3E1F80"}>{cash}</CommonLink> 원  
+                <CommonLink to={"/my-page"} color={"#F29135"}>{nickname}</CommonLink> 님 반갑습니다
+                <CommonLink to={"/"} color={"black"} onClick={logoutHandler}>로그아웃</CommonLink>
               </p>
             </div>
           </div>

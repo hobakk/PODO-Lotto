@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
@@ -37,6 +39,8 @@ import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
+import com.example.sixnumber.user.dto.WinNumberRequest;
+import com.example.sixnumber.user.dto.WinNumberResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -58,6 +62,7 @@ public class AdminServiceTest {
 	private Manager manager;
 
 	private ValueOperations<String, String> valueOperations;
+	private ListOperations<String, String> listOperations;
 	private User saveUser;
 	private User admin;
 
@@ -273,6 +278,49 @@ public class AdminServiceTest {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.setStatus(admin, saveUser.getId(), request));
 
 		verify(manager).findUser(anyLong());
+	}
+
+	@Test
+	void setWinNumber() {
+		WinNumberRequest winNumberRequest = TestDataFactory.winNumberRequest();
+		listOperations = mock(ListOperations.class);
+
+		when(redisTemplate.opsForList()).thenReturn(listOperations);
+		when(listOperations.size(anyString())).thenReturn(1L);
+		when(listOperations.rightPush(anyString(), anyString())).thenReturn(1L);
+
+		ApiResponse response = adminService.setWinNumber(winNumberRequest);
+
+		verify(listOperations).size(anyString());
+		verify(listOperations).rightPush(anyString(), anyString());
+		TestUtil.ApiAsserEquals(response, 200, "생성 완료");
+	}
+
+	@Test
+	void getWinNumber_success() {
+		listOperations = mock(ListOperations.class);
+		List<String> list = List.of("1075,2023-07-11,1000000,1,1 2 3 4 5 6 7");
+
+		when(redisTemplate.opsForList()).thenReturn(listOperations);
+		when(listOperations.range(anyString(), anyLong(), anyLong())).thenReturn(list);
+
+		ListApiResponse<WinNumberResponse> response = adminService.getWinNumber();
+
+		verify(listOperations).range(anyString(), anyLong(), anyLong());
+		TestUtil.ListApiAssertEquals(response, 200, "조회 성공");
+	}
+
+	@Test
+	void getWinNumber_fail_isNull() {
+		listOperations = mock(ListOperations.class);
+		List<String> list = new ArrayList<>();
+
+		when(redisTemplate.opsForList()).thenReturn(listOperations);
+		when(listOperations.range(anyString(), anyLong(), anyLong())).thenReturn(list);
+
+		Assertions.assertThrows(IllegalArgumentException.class, ()->adminService.getWinNumber());
+
+		verify(listOperations).range(anyString(), anyLong(), anyLong());
 	}
 
 }
