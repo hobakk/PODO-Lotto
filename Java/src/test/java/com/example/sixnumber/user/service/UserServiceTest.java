@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,6 +43,7 @@ import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
+import com.example.sixnumber.user.dto.WinNumberResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.exception.OverlapException;
 import com.example.sixnumber.user.exception.StatusNotActiveException;
@@ -66,6 +69,7 @@ public class UserServiceTest {
 
 	private User saveUser;
 	private ValueOperations<String, String> valueOperations;
+	private ListOperations<String, String>	listOperations;
 
 	@BeforeEach
 	public void setup() {
@@ -472,5 +476,32 @@ public class UserServiceTest {
 
 		verify(manager).findUser(anyLong());
 		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");
+	}
+
+	@Test
+	void getWinNumber_success() {
+		listOperations = mock(ListOperations.class);
+		List<String> list = List.of("1075,2023-07-11,1000000,1,1 2 3 4 5 6 7");
+
+		when(redisTemplate.opsForList()).thenReturn(listOperations);
+		when(listOperations.range(anyString(), anyLong(), anyLong())).thenReturn(list);
+
+		ListApiResponse<WinNumberResponse> response = userService.getWinNumber();
+
+		verify(listOperations).range(anyString(), anyLong(), anyLong());
+		TestUtil.ListApiAssertEquals(response, 200, "조회 성공");
+	}
+
+	@Test
+	void getWinNumber_fail_isNull() {
+		listOperations = mock(ListOperations.class);
+		List<String> list = new ArrayList<>();
+
+		when(redisTemplate.opsForList()).thenReturn(listOperations);
+		when(listOperations.range(anyString(), anyLong(), anyLong())).thenReturn(list);
+
+		Assertions.assertThrows(IllegalArgumentException.class, ()->userService.getWinNumber());
+
+		verify(listOperations).range(anyString(), anyLong(), anyLong());
 	}
 }

@@ -295,32 +295,4 @@ public class AdminServiceTest {
 		verify(listOperations).rightPush(anyString(), anyString());
 		TestUtil.ApiAsserEquals(response, 200, "생성 완료");
 	}
-
-	@Test
-	void getWinNumber_success() {
-		listOperations = mock(ListOperations.class);
-		List<String> list = List.of("1075,2023-07-11,1000000,1,1 2 3 4 5 6 7");
-
-		when(redisTemplate.opsForList()).thenReturn(listOperations);
-		when(listOperations.range(anyString(), anyLong(), anyLong())).thenReturn(list);
-
-		ListApiResponse<WinNumberResponse> response = adminService.getWinNumber();
-
-		verify(listOperations).range(anyString(), anyLong(), anyLong());
-		TestUtil.ListApiAssertEquals(response, 200, "조회 성공");
-	}
-
-	@Test
-	void getWinNumber_fail_isNull() {
-		listOperations = mock(ListOperations.class);
-		List<String> list = new ArrayList<>();
-
-		when(redisTemplate.opsForList()).thenReturn(listOperations);
-		when(listOperations.range(anyString(), anyLong(), anyLong())).thenReturn(list);
-
-		Assertions.assertThrows(IllegalArgumentException.class, ()->adminService.getWinNumber());
-
-		verify(listOperations).range(anyString(), anyLong(), anyLong());
-	}
-
 }

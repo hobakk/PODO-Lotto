@@ -76,9 +76,4 @@ public class AdminController {
 	public ResponseEntity<ApiResponse> setWinNumber(@RequestBody WinNumberRequest request) {
 		return ResponseEntity.ok(adminService.setWinNumber(request));
 	}
-
-	@GetMapping("/winnumber")
-	public ResponseEntity<ListApiResponse<WinNumberResponse>> getWinNumber() {
-		return ResponseEntity.ok(adminService.getWinNumber());
-	}
 }
