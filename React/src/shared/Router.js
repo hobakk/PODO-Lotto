@@ -6,6 +6,7 @@ import GlobalStyle from './GlobalStyle'
 import Lotto from '../pages/Lotto'
 import Signin from '../pages/Signin'
 import Signup from '../pages/Signup'
+import MyPage from '../pages/MyPage'
 
 const Router = () => {
   return (
@@ -17,6 +18,7 @@ const Router = () => {
                 <Route path='/lotto' element={<Lotto />} />
                 <Route path='/signin' element={<Signin />} />
                 <Route path='/signup' element={<Signup />} />
+                <Route path='/my-page' element={<MyPage />} />
             </Routes>
         </Layout>
     </BrowserRouter>

@@ -46,6 +46,12 @@ export const DividingLine =styled.div`
   width: 4cm;
 `
 
+export const CommonP =styled.p`
+  color: black;
+  font-size: 18px;
+  margin-bottom: "10px";
+`
+
 export const MenuTitle =styled.p`
   color: black;
   text-align: center;

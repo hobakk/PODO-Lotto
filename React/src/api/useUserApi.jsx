@@ -9,4 +9,9 @@ const logout = async () => {
     await api.post(`/users/logout`)
 }
 
-export { getInformation, logout };
+const withdraw = async (msg) => {
+    console.log(msg)
+    await api.patch("/users/withdraw", msg);
+}
+
+export { getInformation, logout, withdraw };
