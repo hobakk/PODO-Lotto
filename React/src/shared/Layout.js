@@ -8,7 +8,6 @@ import { logoutUser } from '../modules/userIfSlice';
 import { OnOff, UlBox, DividingLine, MenuTitle, Dropdown, LiBox, CustomLink, 
   CommonLink, MenuDiv, MenuSpan, } from '../components/Styles';
 import { setAdminMode } from '../modules/adminMode';
-import { hover } from '@testing-library/user-event/dist/hover';
 
 const mainColor = `#9957F0`;
 
@@ -141,7 +140,7 @@ function DropdownMenu() {
             <MenuTitle>회원 관리</MenuTitle>
             <DividingLine />
             <LiBox>
-              <CustomLink to={"/"}>마이페이지</CustomLink>
+              <CustomLink to={"/my-page"}>마이페이지</CustomLink>
             </LiBox>
             <LiBox>
               <CustomLink to={"/"}>충전 요청</CustomLink>
@@ -219,6 +218,10 @@ function Header() {
       }
       if (userIf.role !== userRole) {
         setUserRole(userIf.role);
+      }
+      if  (userIf.status == "DORMNAT") {
+        console.log(userIf.status)
+        mutation.mutate();
       }
     }, [userIf])
 

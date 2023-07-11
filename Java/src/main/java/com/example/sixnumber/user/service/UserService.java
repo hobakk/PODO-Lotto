@@ -28,6 +28,7 @@ import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
+import com.example.sixnumber.user.dto.WinNumberResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.exception.OverlapException;
 import com.example.sixnumber.user.exception.StatusNotActiveException;
@@ -216,6 +217,16 @@ public class UserService {
 			})
 			.toList();
 		return ListApiResponse.ok("거래내역 조회 완료", response);
+	}
+
+	public ListApiResponse<WinNumberResponse> getWinNumber() {
+		List<String> value = redisTemplate.opsForList().range("WNL", 0, -1);
+		if (value.isEmpty()) {
+			throw new IllegalArgumentException("당첨 번호 정보가 존재하지 않습니다");
+		}
+
+		List<WinNumberResponse> responses = value.stream().map(WinNumberResponse::new).toList();
+		return ListApiResponse.ok("조회 성공", responses);
 	}
 
 	public ItemApiResponse<MyInformationResponse> getMyInformation(Long userId) {

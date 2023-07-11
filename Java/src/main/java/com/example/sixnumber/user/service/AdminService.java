@@ -155,16 +155,6 @@ public class AdminService {
 		return ApiResponse.ok("생성 완료");
 	}
 
-	public ListApiResponse<WinNumberResponse> getWinNumber() {
-		List<String> value = redisTemplate.opsForList().range("WNL", 0, -1);
-		if (value.isEmpty()) {
-			throw new IllegalArgumentException("당첨 번호 정보가 존재하지 않습니다");
-		}
-
-		List<WinNumberResponse> responses = value.stream().map(WinNumberResponse::new).toList();
-		return ListApiResponse.ok("조회 성공", responses);
-	}
-
 	private User confirmationProcess(User user, Long userId) {
 		if (user.getId().equals(userId)) {
 			throw new IllegalArgumentException("본인 입니다");
