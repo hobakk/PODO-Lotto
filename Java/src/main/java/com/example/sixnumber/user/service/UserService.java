@@ -121,7 +121,6 @@ public class UserService {
 		User user = manager.findUser(email);
 		user.setStatus("DORMANT");
 		user.setWithdrawExpiration(LocalDate.now().plusMonths(1));
-		redisTemplate.delete(RTK + user.getId());
 		return ApiResponse.ok("회원 탈퇴 완료");
 	}
 

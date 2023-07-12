@@ -255,7 +255,6 @@ public class UserServiceTest {
 		ApiResponse response = userService.withdraw(request, saveUser.getEmail());
 
 		verify(manager).findUser(anyString());
-		verify(redisTemplate).delete(anyString());
 		assertEquals(saveUser.getStatus(), Status.DORMANT);
 		assertNotNull(saveUser.getWithdrawExpiration());
 		TestUtil.ApiAsserEquals(response, 200, "회원 탈퇴 완료");
