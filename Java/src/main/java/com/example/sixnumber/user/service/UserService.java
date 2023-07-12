@@ -233,4 +233,12 @@ public class UserService {
 		MyInformationResponse response = new MyInformationResponse(user);
 		return ItemApiResponse.ok("조회 성공", response);
 	}
+
+	public ApiResponse checkPW(OnlyMsgRequest request, String password) {
+		if (!passwordEncoder.matches(request.getMsg(), password)) {
+			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+		}
+
+		return ApiResponse.ok("본인확인 성공");
+	}
 }

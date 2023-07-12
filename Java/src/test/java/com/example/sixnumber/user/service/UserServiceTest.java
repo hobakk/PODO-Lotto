@@ -503,4 +503,29 @@ public class UserServiceTest {
 
 		verify(listOperations).range(anyString(), anyLong(), anyLong());
 	}
+
+	@Test
+	void checkPW_success() {
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
+		when(request.getMsg()).thenReturn("ePassword");
+
+		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+
+		ApiResponse response = userService.checkPW(request, saveUser.getPassword());
+
+		verify(passwordEncoder).matches(anyString(), anyString());
+		TestUtil.ApiAsserEquals(response, 200, "본인확인 성공");
+	}
+
+	@Test
+	void checkPW_fail_incorrectPW() {
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
+		when(request.getMsg()).thenReturn("false");
+
+		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+
+		Assertions.assertThrows(IllegalArgumentException.class, ()->userService.checkPW(request, saveUser.getPassword()));
+
+		verify(passwordEncoder).matches(anyString(), anyString());
+	}
 }
