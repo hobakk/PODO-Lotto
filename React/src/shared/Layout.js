@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../api/useUserApi';
-import { useCookies } from 'react-cookie';
+import { deleteToken } from './Cookie';
 import { useMutation } from 'react-query';
 import { logoutUser } from '../modules/userIfSlice';
 import { OnOff, UlBox, DividingLine, MenuTitle, Dropdown, LiBox, CustomLink, 
@@ -184,15 +184,14 @@ function DropdownMenu() {
 }
 
 function Header() {
-    const [cookies, setCookie, removeCookie] = useCookies([]);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const mutation = useMutation(logout, {
+
+    const logoutMutation = useMutation(logout, {
       onSuccess: () => {
         dispatch(logoutUser());
-        removeCookie('accessToken');
-        removeCookie('refreshToken');
         setTFMode(false);
+        deleteToken();
       }
     });
 
@@ -206,7 +205,7 @@ function Header() {
     });
     const userIf = useSelector((state) => state.userIf);
     const logoutHandler = () => {
-      mutation.mutate();
+      logoutMutation.mutate();
     }
     
     useEffect(()=>{
@@ -219,9 +218,9 @@ function Header() {
       if (userIf.role !== userRole) {
         setUserRole(userIf.role);
       }
-      if  (userIf.status == "DORMNAT") {
+      if  (userIf.status == "DORMANT") {
         console.log(userIf.status)
-        mutation.mutate();
+        logoutMutation.mutate();
       }
     }, [userIf])
 
@@ -255,17 +254,13 @@ function Header() {
 
     useEffect(()=>{
       dispatch(setAdminMode(tFMode));
-      if  (tFMode === true) {
-        setOnOff({
-          color: "green",
-          text: "ON",
-        })
-      } else {
-        setOnOff({
-          color: "red",
-          text: "OFF",
-        })
-      }
+      tFMode ? (setOnOff({
+        color: "green",
+        text: "ON",
+      })) : (setOnOff({
+        color: "red",
+        text: "OFF",
+      }))
     }, [tFMode])
 
   return (

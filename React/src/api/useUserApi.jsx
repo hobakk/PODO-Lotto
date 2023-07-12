@@ -14,4 +14,14 @@ const withdraw = async (msg) => {
     await api.patch("/users/withdraw", msg);
 }
 
-export { getInformation, logout, withdraw };
+const checkPW = async (msg) => {
+    const { data } = await api.post("/users/check-pw", msg);
+    return data.code;
+}
+
+const update = async (inputValue) => {
+    const { data } = await api.patch("/users/update", inputValue);
+    return data.code;
+}
+
+export { getInformation, logout, withdraw, checkPW, update };

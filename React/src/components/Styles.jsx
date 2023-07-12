@@ -48,7 +48,7 @@ export const DividingLine =styled.div`
 
 export const CommonP =styled.p`
   color: black;
-  font-size: 18px;
+  font-size: 30px;
   margin-bottom: "10px";
 `
 
