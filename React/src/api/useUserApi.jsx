@@ -24,4 +24,9 @@ const update = async (inputValue) => {
     return data.code;
 }
 
-export { getInformation, logout, withdraw, checkPW, update };
+const setCharges = async (inputValue) => {
+    const { data }= await api.post("/users/charging", inputValue);
+    return data;
+}
+
+export { getInformation, logout, withdraw, checkPW, update, setCharges };
