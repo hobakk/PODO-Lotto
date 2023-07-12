@@ -8,6 +8,8 @@ import Signin from '../pages/Signin'
 import Signup from '../pages/Signup'
 import MyPage from '../pages/MyPage'
 import InformationUpdate from '../pages/InformationUpdate'
+import SetCharging from '../pages/SetCharging'
+import GetCharging from '../pages/GetCharging'
 
 const Router = () => {
   return (
@@ -21,6 +23,8 @@ const Router = () => {
                 <Route path='/signup' element={<Signup />} />
                 <Route path='/my-page' element={<MyPage />} />
                 <Route path='/my-page/update' element={<InformationUpdate />} />
+                <Route path='/set-charging' element={<SetCharging />} />
+                <Route path='/get-charging' element={<GetCharging />} />
             </Routes>
         </Layout>
     </BrowserRouter>

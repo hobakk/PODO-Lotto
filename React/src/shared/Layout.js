@@ -40,7 +40,7 @@ const layoutStyles = {
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  minHeight: '88.7vh',
+  minHeight: '90.1vh',
   backgroundColor: "white",
   overflow: "hidden",
 }
@@ -143,7 +143,7 @@ function DropdownMenu() {
               <CustomLink to={"/my-page"}>마이페이지</CustomLink>
             </LiBox>
             <LiBox>
-              <CustomLink to={"/"}>충전 요청</CustomLink>
+              <CustomLink to={"/set-charging"}>충전 요청</CustomLink>
             </LiBox>
             <LiBox>
               <CustomLink to={"/"}>충전 요청 확인</CustomLink>
