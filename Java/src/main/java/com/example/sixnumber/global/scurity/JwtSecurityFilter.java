@@ -49,8 +49,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "존재하지 않는 토큰 입니다");
 				}
 
-				Claims claims = jwtProvider.getClaims(token);
-				createAuthentication(claims.getSubject());
+				createAuthentication(id);
 			}
 		} catch (ExpiredJwtException e) {
 			Long id = e.getClaims().get("id", Long.class);
@@ -65,14 +64,14 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 			String newAccessToken = jwtProvider.accessToken(email, id);
 
 			response.setHeader(JwtProvider.AUTHORIZATION_HEADER, "Bearer " + newAccessToken);
-			createAuthentication(email);
+			createAuthentication(id);
 		}
 
 		filterChain.doFilter(request, response);
 	}
 
-	private void createAuthentication(String email) {
-		UserDetails user = userDetailsService.loadUserByUsername(email);
+	private void createAuthentication(Long userId) {
+		UserDetails user = userDetailsService.loadUserById(userId);
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 		Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 		context.setAuthentication(authentication);

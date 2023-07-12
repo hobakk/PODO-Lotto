@@ -20,4 +20,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		return userRepository.findByEmail(email)
 			.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다"));
 	}
+
+	public UserDetails loadUserById(Long userId) throws UsernameNotFoundException {
+		return userRepository.findById(userId)
+			.orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다"));
+	}
 }
