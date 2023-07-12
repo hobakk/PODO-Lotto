@@ -18,7 +18,7 @@ function Home() {
   }, [])
 
   useEffect(()=>{
-    if (value !== null) {
+    if (value !== null || value !== "") {
       console.log(value);
     }
   }, [value])

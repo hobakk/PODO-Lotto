@@ -31,10 +31,6 @@ function Signiup() {
     signupMutation.mutate(inputValue);
   }
 
-  useEffect(()=>{
-    console.log(inputValue)
-  }, [inputValue])
-
   return (
     <div style={ SignBorder }>
       <div style={ CommonStyle }>

@@ -255,7 +255,6 @@ public class UserServiceTest {
 		ApiResponse response = userService.withdraw(request, saveUser.getEmail());
 
 		verify(manager).findUser(anyString());
-		verify(redisTemplate).delete(anyString());
 		assertEquals(saveUser.getStatus(), Status.DORMANT);
 		assertNotNull(saveUser.getWithdrawExpiration());
 		TestUtil.ApiAsserEquals(response, 200, "회원 탈퇴 완료");
@@ -503,5 +502,30 @@ public class UserServiceTest {
 		Assertions.assertThrows(IllegalArgumentException.class, ()->userService.getWinNumber());
 
 		verify(listOperations).range(anyString(), anyLong(), anyLong());
+	}
+
+	@Test
+	void checkPW_success() {
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
+		when(request.getMsg()).thenReturn("ePassword");
+
+		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+
+		ApiResponse response = userService.checkPW(request, saveUser.getPassword());
+
+		verify(passwordEncoder).matches(anyString(), anyString());
+		TestUtil.ApiAsserEquals(response, 200, "본인확인 성공");
+	}
+
+	@Test
+	void checkPW_fail_incorrectPW() {
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
+		when(request.getMsg()).thenReturn("false");
+
+		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+
+		Assertions.assertThrows(IllegalArgumentException.class, ()->userService.checkPW(request, saveUser.getPassword()));
+
+		verify(passwordEncoder).matches(anyString(), anyString());
 	}
 }

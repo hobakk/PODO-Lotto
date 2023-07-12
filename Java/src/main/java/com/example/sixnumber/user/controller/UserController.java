@@ -107,4 +107,9 @@ public class UserController {
 	public ResponseEntity<ListApiResponse<WinNumberResponse>> getWinNumber() {
 		return ResponseEntity.ok(userService.getWinNumber());
 	}
+
+	@PostMapping("/check-pw")
+	public ResponseEntity<ApiResponse> checkPW(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(userService.checkPW(request, user.getPassword()));
+	}
 }

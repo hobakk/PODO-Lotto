@@ -121,7 +121,6 @@ public class UserService {
 		User user = manager.findUser(email);
 		user.setStatus("DORMANT");
 		user.setWithdrawExpiration(LocalDate.now().plusMonths(1));
-		redisTemplate.delete(RTK + user.getId());
 		return ApiResponse.ok("회원 탈퇴 완료");
 	}
 
@@ -183,14 +182,21 @@ public class UserService {
 	}
 
 	public ApiResponse update(SignupRequest request, User user) {
+		// password 를 프론트로 보내지 않기로 결정함 (보안 문제)
+		String password = request.getPassword();
+		if (password.equals("")) {
+			password = user.getPassword();
+		}
+
 		List<String> userIf = Arrays.asList(user.getEmail(), user.getPassword(), user.getNickname());
-		List<String> inputData = Arrays.asList(request.getEmail(), request.getPassword(), request.getNickname());
+		List<String> inputData = Arrays.asList(request.getEmail(), password, request.getNickname());
 
 		if (userIf.equals(inputData)) throw new IllegalArgumentException("변경된 부분이 없습니다");
 
 		for (int i = 0; i < userIf.size(); i++) {
 			if (i == 1) {
 				if (passwordEncoder.matches(inputData.get(i), userIf.get(i))) continue;
+				else if (inputData.get(i).equals(userIf.get(i))) continue;
 				else inputData.set(i, passwordEncoder.encode(inputData.get(i)));
 			}
 			if (userIf.get(i).equals(inputData.get(i))) continue;
@@ -199,7 +205,6 @@ public class UserService {
 
 		user.update(userIf);
 		userRepository.save(user);
-		logout(user);
 		return ApiResponse.ok("수정 완료");
 	}
 
@@ -233,5 +238,13 @@ public class UserService {
 		User user = manager.findUser(userId);
 		MyInformationResponse response = new MyInformationResponse(user);
 		return ItemApiResponse.ok("조회 성공", response);
+	}
+
+	public ApiResponse checkPW(OnlyMsgRequest request, String password) {
+		if (!passwordEncoder.matches(request.getMsg(), password)) {
+			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+		}
+
+		return ApiResponse.ok("본인확인 성공");
 	}
 }
