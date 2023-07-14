@@ -34,7 +34,7 @@ function SetCharging() {
   return (
     <div style={ SignBorder }>
         <form onSubmit={submitHandler} style={ CommonStyle }>
-            <h1 style={{  fontSize: "80px" }}>Chargin</h1>
+            <h1 style={{  fontSize: "80px" }}>Charging</h1>
             <p>금액과 입금 메세지를 적어주세요</p>
             <div style={{ display: "flex", alignItems: "center", fontSize: "22px", marginTop: "1cm" }}>
                 <p style={{ marginRight: "20px"}}>Cash: </p>
