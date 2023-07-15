@@ -10,6 +10,7 @@ import MyPage from '../pages/MyPage'
 import InformationUpdate from '../pages/InformationUpdate'
 import SetCharging from '../pages/SetCharging'
 import GetCharging from '../pages/GetCharging'
+import Premium from '../pages/Premium'
 
 const Router = () => {
   return (
@@ -25,6 +26,7 @@ const Router = () => {
                 <Route path='/my-page/update' element={<InformationUpdate />} />
                 <Route path='/set-charging' element={<SetCharging />} />
                 <Route path='/get-charging' element={<GetCharging />} />
+                <Route path='/premium' element={<Premium />} />
             </Routes>
         </Layout>
     </BrowserRouter>
