@@ -23,12 +23,14 @@ const userIfSlice = createSlice({
             state.statement = statement;
         },
         setStatus: (state, action) => {
-            console.log(action.payload)
             state.status = action.payload;
+        },
+        setRole: (state, action) => {
+            state.role = action.payload;
         },
         logoutUser: () => initialState,
     }
 })
 
-export const { setUserIf, logoutUser, setStatus } = userIfSlice.actions;
+export const { setUserIf, logoutUser, setStatus, setRole } = userIfSlice.actions;
 export default userIfSlice.reducer;

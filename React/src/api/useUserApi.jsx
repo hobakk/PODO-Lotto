@@ -90,8 +90,31 @@ const setWinNumber = async (inputValue) => {
     return data.code;
 }
 
+// Lotto ( 통계 )
+const getMainTopNumber = async () => {
+    const { data } = await api.get("/lotto/main");
+    return data.data;
+}
+
+const getTopNumberForMonth = async (yearMonth) => {
+    const { data } = await api.get("/lotto/yearMonth", yearMonth);
+    return data.data;
+}
+
+// SixNumber ( 추천 번호 구매 )
+const buyNumber = async (inputValue) => {
+    const { data } = await api.post("/sixnum", inputValue);
+    return data.data;
+}
+
+const statisticalNumber = async (inputValue) => {
+    const { data } = await api.post("/sixnum/repetition", inputValue);
+    return data.data;
+}
+
 export { 
     getInformation, logout, withdraw, checkPW, update, setCharges, getCharges, 
     setPaid, getStatement, getUsers, getAdminCharges, getSearch, setAdmin, upCash,
-    downCash, createLotto, setStatus, setWinNumber,
+    downCash, createLotto, setStatus, setWinNumber, getMainTopNumber, 
+    getTopNumberForMonth, buyNumber, statisticalNumber
 };

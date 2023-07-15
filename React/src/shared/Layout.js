@@ -149,7 +149,7 @@ function DropdownMenu() {
               <CustomLink to={"/get-charging"}>충전 요청 확인</CustomLink>
             </LiBox>
             <LiBox>
-              <CustomLink to={"/"}>월정액 신청</CustomLink>
+              <CustomLink to={"/premium"}>월정액 신청</CustomLink>
             </LiBox>
             <LiBox>
               <CustomLink to={"/"}>결재 내역</CustomLink>
