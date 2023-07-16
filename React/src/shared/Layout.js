@@ -152,14 +152,14 @@ function DropdownMenu() {
               <CustomLink to={"/premium"}>월정액 신청</CustomLink>
             </LiBox>
             <LiBox>
-              <CustomLink to={"/"}>결재 내역</CustomLink>
+              <CustomLink to={"/statement"}>결재 내역</CustomLink>
             </LiBox>
           </UlBox>
           <UlBox width="8cm" height="9cm" >
             <MenuTitle>추천 번호</MenuTitle>
             <DividingLine />
             <LiBox>
-              <CustomLink to={"/"}>랜덤 번호 구매</CustomLink>
+              <CustomLink to={"/buynum"}>랜덤 번호 구매</CustomLink>
             </LiBox>
             <LiBox>
               <CustomLink to={"/"}>n회 반복 처리 된 번호 구매</CustomLink>

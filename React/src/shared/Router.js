@@ -1,16 +1,19 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Layout from './Layout'
-import Home from '../pages/Home'
+import Home from "../pages/users/Home"
 import GlobalStyle from './GlobalStyle'
-import Lotto from '../pages/Lotto'
-import Signin from '../pages/Signin'
-import Signup from '../pages/Signup'
-import MyPage from '../pages/MyPage'
-import InformationUpdate from '../pages/InformationUpdate'
-import SetCharging from '../pages/SetCharging'
-import GetCharging from '../pages/GetCharging'
-import Premium from '../pages/Premium'
+import Lotto from '../pages/lotto/Lotto'
+import Signin from '../pages/users/Signin'
+import Signup from '../pages/users/Signup'
+import MyPage from '../pages/users/MyPage'
+import InformationUpdate from '../pages/users/InformationUpdate'
+import SetCharging from '../pages/users/SetCharging'
+import GetCharging from '../pages/users/GetCharging'
+import Premium from '../pages/users/Premium'
+import Statement from '../pages/users/Statement'
+import BuyNumber from '../pages/sixnum/BuyNumber'
+
 
 const Router = () => {
   return (
@@ -27,6 +30,8 @@ const Router = () => {
                 <Route path='/set-charging' element={<SetCharging />} />
                 <Route path='/get-charging' element={<GetCharging />} />
                 <Route path='/premium' element={<Premium />} />
+                <Route path='/statement' element={<Statement />} />
+                <Route path='/buynum' element={<BuyNumber />} />
             </Routes>
         </Layout>
     </BrowserRouter>

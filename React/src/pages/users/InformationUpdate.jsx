@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CommonStyle, CommonP, InputBox } from '../components/Styles'
-import { checkPW, update, logout } from '../api/useUserApi';
+import { CommonStyle, CommonP, InputBox } from '../../components/Styles'
+import { checkPW, update, logout } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { logoutUser } from '../modules/userIfSlice';
-import { deleteToken } from '../shared/Cookie';
+import { logoutUser } from '../../modules/userIfSlice';
+import { deleteToken } from '../../shared/Cookie';
 import { useDispatch, useSelector } from 'react-redux';
 
 function InformationUpdate() {

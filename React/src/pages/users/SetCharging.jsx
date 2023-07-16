@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { InputBox, SignBorder, CommonStyle } from '../components/Styles'
-import { setCharges } from '../api/useUserApi';
+import { InputBox, SignBorder, CommonStyle } from '../../components/Styles'
+import { setCharges } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
