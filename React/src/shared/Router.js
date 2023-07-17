@@ -3,7 +3,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Layout from './Layout'
 import Home from "../pages/users/Home"
 import GlobalStyle from './GlobalStyle'
-import Lotto from '../pages/lotto/Lotto'
 import Signin from '../pages/users/Signin'
 import Signup from '../pages/users/Signup'
 import MyPage from '../pages/users/MyPage'
@@ -13,6 +12,8 @@ import GetCharging from '../pages/users/GetCharging'
 import Premium from '../pages/users/Premium'
 import Statement from '../pages/users/Statement'
 import BuyNumber from '../pages/sixnum/BuyNumber'
+import StatisticalNumber from '../pages/sixnum/StatisticalNumber'
+import StatisticalMain from '../pages/lotto/StatisticalMain'
 
 
 const Router = () => {
@@ -22,7 +23,6 @@ const Router = () => {
         <Layout>
             <Routes>
                 <Route path='/' element={<Home />} />
-                <Route path='/lotto' element={<Lotto />} />
                 <Route path='/signin' element={<Signin />} />
                 <Route path='/signup' element={<Signup />} />
                 <Route path='/my-page' element={<MyPage />} />
@@ -32,6 +32,8 @@ const Router = () => {
                 <Route path='/premium' element={<Premium />} />
                 <Route path='/statement' element={<Statement />} />
                 <Route path='/buynum' element={<BuyNumber />} />
+                <Route path='/statistical/num' element={<StatisticalNumber />} />
+                <Route path='/statistical/main' element={<StatisticalMain />} />
             </Routes>
         </Layout>
     </BrowserRouter>
