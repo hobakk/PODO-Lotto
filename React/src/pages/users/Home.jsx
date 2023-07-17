@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { getWinNumber } from '../api/noneUserApi';
+import { getWinNumber } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';
-import { CommonStyle } from '../components/Styles';
-import { CommonLink } from '../components/Styles';
+import { CommonStyle } from '../../components/Styles';
+import { CommonLink } from '../../components/Styles';
 
 function Home() {
   const [value, setValue] = useState("");

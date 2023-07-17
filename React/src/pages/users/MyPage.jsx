@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { CommonStyle, CommonP, CommonLink } from '../components/Styles'
-import { withdraw } from '../api/useUserApi';
+import { CommonStyle, CommonP, CommonLink } from '../../components/Styles'
+import { withdraw } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { setStatus } from '../modules/userIfSlice';
+import { setStatus } from '../../modules/userIfSlice';
 
 function MyPage() {
     const userIf = useSelector((state)=>state.userIf);

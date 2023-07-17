@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { SignBorder, CommonStyle } from '../components/Styles'
-import { getCharges } from '../api/useUserApi'
+import { SignBorder, CommonStyle } from '../../components/Styles'
+import { getCharges } from '../../api/useUserApi'
 import { useMutation } from 'react-query'
 
 function GetCharging() {

@@ -41,7 +41,7 @@ const setPaid = async (msg) => {
 
 const getStatement = async () => {
     const { data } = await api.get("/users/statement");
-    return data;
+    return data.data;
 }
 
 // Admin

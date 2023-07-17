@@ -1,16 +1,20 @@
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Layout from './Layout'
-import Home from '../pages/Home'
+import Home from "../pages/users/Home"
 import GlobalStyle from './GlobalStyle'
-import Lotto from '../pages/Lotto'
-import Signin from '../pages/Signin'
-import Signup from '../pages/Signup'
-import MyPage from '../pages/MyPage'
-import InformationUpdate from '../pages/InformationUpdate'
-import SetCharging from '../pages/SetCharging'
-import GetCharging from '../pages/GetCharging'
-import Premium from '../pages/Premium'
+import Signin from '../pages/users/Signin'
+import Signup from '../pages/users/Signup'
+import MyPage from '../pages/users/MyPage'
+import InformationUpdate from '../pages/users/InformationUpdate'
+import SetCharging from '../pages/users/SetCharging'
+import GetCharging from '../pages/users/GetCharging'
+import Premium from '../pages/users/Premium'
+import Statement from '../pages/users/Statement'
+import BuyNumber from '../pages/sixnum/BuyNumber'
+import StatisticalNumber from '../pages/sixnum/StatisticalNumber'
+import StatisticalMain from '../pages/lotto/StatisticalMain'
+
 
 const Router = () => {
   return (
@@ -19,7 +23,6 @@ const Router = () => {
         <Layout>
             <Routes>
                 <Route path='/' element={<Home />} />
-                <Route path='/lotto' element={<Lotto />} />
                 <Route path='/signin' element={<Signin />} />
                 <Route path='/signup' element={<Signup />} />
                 <Route path='/my-page' element={<MyPage />} />
@@ -27,6 +30,10 @@ const Router = () => {
                 <Route path='/set-charging' element={<SetCharging />} />
                 <Route path='/get-charging' element={<GetCharging />} />
                 <Route path='/premium' element={<Premium />} />
+                <Route path='/statement' element={<Statement />} />
+                <Route path='/buynum' element={<BuyNumber />} />
+                <Route path='/statistical/num' element={<StatisticalNumber />} />
+                <Route path='/statistical/main' element={<StatisticalMain />} />
             </Routes>
         </Layout>
     </BrowserRouter>

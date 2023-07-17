@@ -1,9 +1,9 @@
 import React from 'react'
-import { SignBorder, CommonStyle } from '../components/Styles'
-import { setPaid } from '../api/useUserApi'
+import { SignBorder, CommonStyle } from '../../components/Styles'
+import { setPaid } from '../../api/useUserApi'
 import { useMutation } from 'react-query'
 import { useDispatch } from 'react-redux'
-import { setRole } from '../modules/userIfSlice'
+import { setRole } from '../../modules/userIfSlice'
 
 function Premium() {
     const dispatch = useDispatch();

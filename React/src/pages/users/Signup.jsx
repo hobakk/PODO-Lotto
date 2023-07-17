@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { SignBorder, CommonStyle, InputBox } from '../components/Styles'
+import { SignBorder, CommonStyle, InputBox } from '../../components/Styles'
 import { Link, useNavigate } from 'react-router-dom';
-import { signup } from '../api/noneUserApi';
+import { signup } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';
 
 function Signiup() {
