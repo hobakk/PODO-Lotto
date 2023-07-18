@@ -10,6 +10,11 @@ const logout = async () => {
     await api.post(`/users/logout`)
 }
 
+const getCashNickname = async () => {
+    const { data } = await api.get("/users/cash");
+    return data.data;
+}
+
 const withdraw = async (msg) => {
     await api.patch("/users/withdraw", msg);
 }
@@ -25,18 +30,18 @@ const update = async (inputValue) => {
 }
 
 const setCharges = async (inputValue) => {
-    const { data }= await api.post("/users/charging", inputValue);
-    return data;
+    const { data } = await api.post("/users/charging", inputValue);
+    return data.code;
 }
 
 const getCharges = async () => {
     const { data } = await api.get("/users/charging");
-    return data;
+    return data.data;
 }
 
 const setPaid = async (msg) => {
     const { data } = await api.post("/users/paid", msg);
-    return data;
+    return data.code;
 }
 
 const getStatement = async () => {
@@ -116,5 +121,5 @@ export {
     getInformation, logout, withdraw, checkPW, update, setCharges, getCharges, 
     setPaid, getStatement, getUsers, getAdminCharges, getSearch, setAdmin, upCash,
     downCash, createLotto, setStatus, setWinNumber, getMainTopNumber, 
-    getTopNumberForMonth, buyNumber, statisticalNumber
+    getTopNumberForMonth, buyNumber, statisticalNumber, getCashNickname
 };

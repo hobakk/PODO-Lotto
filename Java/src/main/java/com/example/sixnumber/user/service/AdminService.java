@@ -1,13 +1,9 @@
 package com.example.sixnumber.user.service;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -15,13 +11,11 @@ import java.util.stream.Collectors;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.InvalidInputException;
-import com.example.sixnumber.global.exception.UserNotFoundException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
@@ -31,7 +25,6 @@ import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
 import com.example.sixnumber.user.dto.WinNumberRequest;
-import com.example.sixnumber.user.dto.WinNumberResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -73,7 +66,7 @@ public class AdminService {
 	}
 
 	public ItemApiResponse<AdminGetChargingResponse> searchCharging(ChargingRequest request) {
-		String searchStr = request.getMsg() + "-" + request.getValue();
+		String searchStr = request.getMsg() + "-" + request.getCash();
 		Set<String> keys = redisTemplate.keys("*" + searchStr + "*");
 		if (keys.isEmpty()) throw new IllegalArgumentException("해당 충전 요청이 없습니다");
 
@@ -110,9 +103,7 @@ public class AdminService {
 	public ApiResponse createLotto(String email) {
 		Optional<Lotto> findMain = lottoRepository.findByMain();
 
-		if (findMain.isPresent()) {
-			throw new IllegalArgumentException("메인 로또가 이미 생성되어 있습니다");
-		}
+		if (findMain.isPresent()) throw new IllegalArgumentException("메인 로또가 이미 생성되어 있습니다");
 
 		List<Integer> countList = new ArrayList<>();
 		for (int i = 0; i < 45; i++) {
@@ -125,8 +116,7 @@ public class AdminService {
 
 	public ApiResponse setStatus(User user, Long userId, OnlyMsgRequest request) {
 		User target = confirmationProcess(user, userId);
-		String[] statusStr = {"ACTIVE", "SUSPENDED", "DORMANT"};
-		List<String> statusList = Arrays.asList(statusStr);
+		List<String> statusList = Arrays.asList("ACTIVE", "SUSPENDED", "DORMANT");
 
 		if (!statusList.contains(request.getMsg())) throw new InvalidInputException();
 

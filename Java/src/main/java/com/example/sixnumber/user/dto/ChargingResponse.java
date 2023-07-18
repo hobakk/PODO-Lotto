@@ -5,11 +5,11 @@ import lombok.Getter;
 @Getter
 public class ChargingResponse {
 	private final String msg;
-	private final int value;
+	private final int cash;
 
 
 	public ChargingResponse(String str) {
 		this.msg = str.split("-")[1];
-		this.value = Integer.parseInt(str.split("-")[2]);
+		this.cash = Integer.parseInt(str.split("-")[2]);
 	}
 }

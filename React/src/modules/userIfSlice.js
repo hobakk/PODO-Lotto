@@ -28,9 +28,18 @@ const userIfSlice = createSlice({
         setRole: (state, action) => {
             state.role = action.payload;
         },
+        setCashNickname: (state, action) => {
+            const { cash, nickname } = action.payload;
+            if  (state.cash !== cash) {
+                state.cash = cash;
+            }
+            if (state.nickname !== nickname) {
+                state.nickname = nickname;
+            }
+        },
         logoutUser: () => initialState,
     }
 })
 
-export const { setUserIf, logoutUser, setStatus, setRole } = userIfSlice.actions;
+export const { setUserIf, logoutUser, setStatus, setRole, setCashNickname } = userIfSlice.actions;
 export default userIfSlice.reducer;
