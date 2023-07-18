@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ChargingRequest {
 	private String msg;
-	private int value;
+	private int cash;
 }

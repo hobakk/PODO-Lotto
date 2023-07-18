@@ -66,7 +66,7 @@ public class AdminService {
 	}
 
 	public ItemApiResponse<AdminGetChargingResponse> searchCharging(ChargingRequest request) {
-		String searchStr = request.getMsg() + "-" + request.getValue();
+		String searchStr = request.getMsg() + "-" + request.getCash();
 		Set<String> keys = redisTemplate.keys("*" + searchStr + "*");
 		if (keys.isEmpty()) throw new IllegalArgumentException("해당 충전 요청이 없습니다");
 

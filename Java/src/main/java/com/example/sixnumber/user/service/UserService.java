@@ -155,14 +155,14 @@ public class UserService {
 
 		if (keys.size() >= 3) throw new IllegalArgumentException("처리되지 않은 요청사항이 많습니다");
 
-		String msgValue = chargingRequest.getMsg() + "-" + chargingRequest.getValue();
-		Set<String> checkIncorrect = redisTemplate.keys("*" + msgValue + "*");
+		String msgCash = chargingRequest.getMsg() + "-" + chargingRequest.getCash();
+		Set<String> checkIncorrect = redisTemplate.keys("*" + msgCash + "*");
 		if (!checkIncorrect.isEmpty())
 			throw new OverlapException("서버내에 중복된 문자가 확인되어 반려되었습니다. 다른 문자로 다시 시대해주세요");
 
 		if (user.getChargingCount() >= 4) throw new BreakTheRulesException();
 
-		String value = user.getId() + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getValue();
+		String value = user.getId() + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getCash();
 		redisTemplate.opsForValue().set(STMT + value, value, 12, TimeUnit.HOURS);
 		user.setChargingCount(1);
 		userRepository.save(user);
