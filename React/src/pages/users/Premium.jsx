@@ -33,21 +33,26 @@ function Premium() {
                 getCashNicknameMutation.mutate();
                 navigate("/");
                 alert("Premiun 적용 완료");
-            } else {
-                alert("금액이 부족하거나 프리미엄 유저입니다");
+            }
+        },
+        onError: (err)=>{
+            if (err.response) {
+                alert("금액이 부족하거나 프리미엄 등급입니다");
             }
         }
     });
     const setUserMutation = useMutation(setPaid, {
         onSuccess: (res)=>{
             if (res == 200) {
-                dispatch(setRole("ROLE_USER"));
                 navigate("/");
                 alert("Premiun 해제 완료");
-            } else {
-                alert("프리미엄 유저가 아니거나 이미 해제 신청을 하셨습니다");
             }
-        }
+        },
+        onError: (err)=>{
+            if (err.response) {
+                alert("프리미엄 등급이 아니거나 이미 해제 신청을 하셨습니다");
+            }
+        }    
     });
 
     const onClikcHandler = () => {
