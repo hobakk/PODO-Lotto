@@ -1,5 +1,7 @@
 package com.example.sixnumber.user.service;
 
+import static com.example.sixnumber.global.exception.ErrorCode.*;
+
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Arrays;
@@ -17,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
-import com.example.sixnumber.global.exception.BreakTheRulesException;
+import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
@@ -66,10 +68,10 @@ public class UserService {
 		}
 
 		if (userRepository.existsUserByEmail(request.getEmail())) {
-			throw new OverlapException("중복된 이메일입니다");
+			throw new CustomException(EMAIL_OVERLAP);
 		}
 		if (userRepository.existsUserByNickname(request.getNickname())) {
-			throw new OverlapException("중복된 닉네임입니다");
+			throw new CustomException(NICKNAME_OVERLAP);
 		}
 
 		String password = passwordEncoder.encode(request.getPassword());
@@ -160,7 +162,7 @@ public class UserService {
 		if (!checkIncorrect.isEmpty())
 			throw new OverlapException("서버내에 중복된 문자가 확인되어 반려되었습니다. 다른 문자로 다시 시대해주세요");
 
-		if (user.getChargingCount() >= 4) throw new BreakTheRulesException();
+		if (user.getChargingCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
 
 		String value = user.getId() + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getCash();
 		redisTemplate.opsForValue().set(STMT + value, value, 12, TimeUnit.HOURS);
