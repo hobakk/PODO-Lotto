@@ -195,8 +195,8 @@ public class UserService {
 
 		for (int i = 0; i < userIf.size(); i++) {
 			if (i == 1) {
-				if (passwordEncoder.matches(inputData.get(i), userIf.get(i))) continue;
-				else if (inputData.get(i).equals(userIf.get(i))) continue;
+				if (passwordEncoder.matches(inputData.get(i), userIf.get(i)) ||
+					inputData.get(i).equals(userIf.get(i))) continue;
 				else inputData.set(i, passwordEncoder.encode(inputData.get(i)));
 			}
 			if (userIf.get(i).equals(inputData.get(i))) continue;
