@@ -24,11 +24,14 @@ public class ErrorResponseEntity {
 	}
 
 	public static ResponseEntity<ErrorResponseEntity> individual(BaseException e) {
+		String[] sentence = String.valueOf(e).split("\\.");
+		String target = sentence[sentence.length -1].split(":")[0];
+
 		return ResponseEntity
 			.status(e.getStatus())
 			.body(ErrorResponseEntity.builder()
 				.status(e.getStatus().value())
-				.code(String.valueOf(e))
+				.code(target)
 				.msg(e.getMessage())
 				.build()
 			);
