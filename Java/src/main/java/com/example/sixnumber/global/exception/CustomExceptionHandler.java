@@ -7,7 +7,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class CustomExceptionHandler {
 	@ExceptionHandler(CustomException.class)
-	protected ResponseEntity<ErrorResponseEntity> handleCustomException(CustomException e) {
-		return ErrorResponseEntity.toResponseEntity(e.getErrorCode());
+	protected ResponseEntity<ErrorResponseEntity> comprehensive(CustomException e) {
+		return ErrorResponseEntity.comprehensive(e.getErrorCode());
+	}
+
+	@ExceptionHandler({StatusNotActiveException.class, OverlapException.class})
+	protected ResponseEntity<ErrorResponseEntity> individual(BaseException e) {
+		return ErrorResponseEntity.individual(e);
 	}
 }

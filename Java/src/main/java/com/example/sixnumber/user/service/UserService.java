@@ -32,8 +32,8 @@ import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.dto.WinNumberResponse;
 import com.example.sixnumber.user.entity.User;
-import com.example.sixnumber.user.exception.OverlapException;
-import com.example.sixnumber.user.exception.StatusNotActiveException;
+import com.example.sixnumber.global.exception.OverlapException;
+import com.example.sixnumber.global.exception.StatusNotActiveException;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -68,10 +68,10 @@ public class UserService {
 		}
 
 		if (userRepository.existsUserByEmail(request.getEmail())) {
-			throw new CustomException(EMAIL_OVERLAP);
+			throw new OverlapException("중복된 이메일입니다");
 		}
 		if (userRepository.existsUserByNickname(request.getNickname())) {
-			throw new CustomException(NICKNAME_OVERLAP);
+			throw new OverlapException("중복된 닉네임입니다");
 		}
 
 		String password = passwordEncoder.encode(request.getPassword());

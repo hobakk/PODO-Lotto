@@ -1,5 +1,6 @@
 package com.example.sixnumber.user.service;
 
+import static com.example.sixnumber.global.exception.ErrorCode.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -31,8 +32,7 @@ import com.example.sixnumber.fixture.TestUtil;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
-import com.example.sixnumber.global.exception.BreakTheRulesException;
-import com.example.sixnumber.global.exception.UserNotFoundException;
+import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
@@ -45,8 +45,8 @@ import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.dto.WinNumberResponse;
 import com.example.sixnumber.user.entity.User;
-import com.example.sixnumber.user.exception.OverlapException;
-import com.example.sixnumber.user.exception.StatusNotActiveException;
+import com.example.sixnumber.global.exception.OverlapException;
+import com.example.sixnumber.global.exception.StatusNotActiveException;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -173,9 +173,9 @@ public class UserServiceTest {
 	void signin_UserNotFoundException() {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 
-		when(manager.findUser(anyString())).thenThrow(new UserNotFoundException());
+		when(manager.findUser(anyString())).thenThrow(new CustomException(USER_NOT_FOUND));
 
-		Assertions.assertThrows(UserNotFoundException.class, () -> userService.signIn(signinRequest));
+		Assertions.assertThrows(CustomException.class, () -> userService.signIn(signinRequest));
 
 		verify(manager).findUser(anyString());
 	}
@@ -391,7 +391,7 @@ public class UserServiceTest {
 
 		saveUser.setChargingCount(4);
 
-		Assertions.assertThrows(BreakTheRulesException.class, () -> userService.charging(request, saveUser));
+		Assertions.assertThrows(CustomException.class, () -> userService.charging(request, saveUser));
 	}
 
 	// AdminServiceTest getCharges 와 성공 code가 동일함 삭제해도되나 ?
