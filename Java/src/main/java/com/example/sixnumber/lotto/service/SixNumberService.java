@@ -1,5 +1,7 @@
 package com.example.sixnumber.lotto.service;
 
+import static com.example.sixnumber.global.exception.ErrorCode.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.dto.ListApiResponse;
-import com.example.sixnumber.global.exception.InvalidInputException;
+import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
@@ -138,7 +140,7 @@ public class SixNumberService {
 		} else if (buyNumberRequest == null) {
 			requiredCash = statisticalNumberRequest.getValue() * (statisticalNumberRequest.getRepetition() / 2);
 			msg = statisticalNumberRequest.getRepetition() + "번 반복 TOP 6 " + statisticalNumberRequest.getValue() + "회 구매 : " + requiredCash + "원 차감";
-		} else throw new InvalidInputException();
+		} else throw new CustomException(INVALID_INPUT);
 
 		if (user.getCash() < requiredCash) throw new IllegalArgumentException("금액이 부족합니다");
 

@@ -1,12 +1,14 @@
 package com.example.sixnumber.global.util;
 
+import static com.example.sixnumber.global.exception.ErrorCode.*;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.example.sixnumber.global.exception.UserNotFoundException;
+import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 
@@ -20,9 +22,9 @@ public class Manager {
 
 	public User findUser(Object object) {
 		if (object instanceof Long userId) {
-			return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+			return userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 		} else if (object instanceof String email) {
-			return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+			return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 		} else throw new IllegalArgumentException("잘못된 접근입니다");
 	}
 

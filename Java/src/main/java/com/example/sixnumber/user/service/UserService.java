@@ -1,5 +1,7 @@
 package com.example.sixnumber.user.service;
 
+import static com.example.sixnumber.global.exception.ErrorCode.*;
+
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Arrays;
@@ -17,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
-import com.example.sixnumber.global.exception.BreakTheRulesException;
+import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
@@ -30,8 +32,8 @@ import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.dto.WinNumberResponse;
 import com.example.sixnumber.user.entity.User;
-import com.example.sixnumber.user.exception.OverlapException;
-import com.example.sixnumber.user.exception.StatusNotActiveException;
+import com.example.sixnumber.global.exception.OverlapException;
+import com.example.sixnumber.global.exception.StatusNotActiveException;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -160,7 +162,7 @@ public class UserService {
 		if (!checkIncorrect.isEmpty())
 			throw new OverlapException("서버내에 중복된 문자가 확인되어 반려되었습니다. 다른 문자로 다시 시대해주세요");
 
-		if (user.getChargingCount() >= 4) throw new BreakTheRulesException();
+		if (user.getChargingCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
 
 		String value = user.getId() + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getCash();
 		redisTemplate.opsForValue().set(STMT + value, value, 12, TimeUnit.HOURS);

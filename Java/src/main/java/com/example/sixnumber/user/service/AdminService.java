@@ -1,5 +1,7 @@
 package com.example.sixnumber.user.service;
 
+import static com.example.sixnumber.global.exception.ErrorCode.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
-import com.example.sixnumber.global.exception.InvalidInputException;
+import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
@@ -118,7 +120,7 @@ public class AdminService {
 		User target = confirmationProcess(user, userId);
 		List<String> statusList = Arrays.asList("ACTIVE", "SUSPENDED", "DORMANT");
 
-		if (!statusList.contains(request.getMsg())) throw new InvalidInputException();
+		if (!statusList.contains(request.getMsg())) throw new CustomException(INVALID_INPUT);
 
 		String targetStatusStr = target.getStatus().toString();
 

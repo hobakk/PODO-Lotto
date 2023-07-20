@@ -3,9 +3,6 @@ package com.example.sixnumber.user.service;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -30,7 +27,7 @@ import com.example.sixnumber.fixture.TestUtil;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
-import com.example.sixnumber.global.exception.InvalidInputException;
+import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
@@ -40,7 +37,6 @@ import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
 import com.example.sixnumber.user.dto.WinNumberRequest;
-import com.example.sixnumber.user.dto.WinNumberResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -263,7 +259,7 @@ public class AdminServiceTest {
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
 		Assertions.assertThrows(
-			InvalidInputException.class, () -> adminService.setStatus(admin, saveUser.getId(), request));
+			CustomException.class, () -> adminService.setStatus(admin, saveUser.getId(), request));
 
 		verify(manager).findUser(anyLong());
 	}

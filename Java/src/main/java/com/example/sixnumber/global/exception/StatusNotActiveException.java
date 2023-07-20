@@ -1,4 +1,4 @@
-package com.example.sixnumber.user.exception;
+package com.example.sixnumber.global.exception;
 
 import org.springframework.http.HttpStatus;
 
