@@ -9,7 +9,10 @@ function Home() {
   const [isEmpty, setBoolean] = useState(true);
   const getWinnumberMutation = useMutation(getWinNumber, {
     onSuccess: (res)=>{
-      setValue(res);
+      const sortedValue = res.slice().sort((a, b) => {
+        return new Date(b.date) - new Date(a.date);
+      });
+      setValue(sortedValue);
       setBoolean(false);
     },
     onError: (err)=>{
@@ -29,12 +32,6 @@ function Home() {
       getWinnumberMutation.mutate();
     }
   }, [isEmpty])
-
-  useEffect(()=>{
-    if (value !== null || value !== "") {
-      console.log(value);
-    }
-  }, [value])
 
   const changingColor = (num) => {
     let color = "";
@@ -89,12 +86,13 @@ function Home() {
                   <p style={{ marginLeft: "auto"}}><span style={SpanStyle}>{result.date}</span>추첨</p>
                 </div>
                 <div style={{ display: "flex", height: "1.2cm" }}>
-                  <p>1등 당첨금 <span style={SpanStyle}>{result.prize}</span>원</p>
+                  <p>1등 총 당첨금 <span style={SpanStyle}>{result.prize.toLocaleString()}</span>원</p>
                   <p style={{ marginLeft: "auto"}}>당첨인원 <span style={SpanStyle}>{result.winner}</span>명</p>
                 </div>
-                <div style={{ display: "flex", height: "1.5cm", marginTop: "10px" }}>
+                <div style={{ display: "flex", height: "1.5cm", marginTop: "10px", justifyContent: "center", textAlign: "center", alignItems: "center"}}>
                   <p style={{ display: "flex", marginLeft: "auto"}}>
-                    {result.numList.map((num)=>changingColor(num))} +</p>
+                    {result.numList.map((num)=>changingColor(num))}</p>
+                    <span style={{...SpanStyle, marginLeft: "5px", marginRight: "5px",}}>+</span>
                   <p style={{ display: "flex", marginLeft: "5px"}}>{changingColor(result.bonus)}</p>
                 </div>
               </div>
