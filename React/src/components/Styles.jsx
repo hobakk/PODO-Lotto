@@ -109,3 +109,16 @@ export const MenuSpan =styled.span`
   color: ${(props)=>props.color};
   font-size: 28px;
 `
+
+export const WinNumberStyle =styled.div`
+  background-color: ${(props)=>props.color};
+  width: 1.1cm;
+  height: 1.1cm;
+  border-radius: 30px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`
