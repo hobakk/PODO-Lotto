@@ -16,6 +16,9 @@ function Signiup() {
     onSuccess: ()=>{
       console.log("회원가입 완료");
       navigate("/signin");
+    }, 
+    onError: (err)=>{
+      alert(err.msg);
     }
   })
 

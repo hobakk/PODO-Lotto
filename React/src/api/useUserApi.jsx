@@ -40,9 +40,15 @@ const getCharges = async () => {
 }
 
 const setPaid = async (msg) => {
-    const { data } = await api.post("/users/paid", msg);
-    return data.code;
+    try {
+        const { data } = await api.post("/users/paid", msg);
+        return data.code;
+    } catch (error) {
+        error.status = 500;
+        throw error;
+    }
 }
+    
 
 const getStatement = async () => {
     const { data } = await api.get("/users/statement");
