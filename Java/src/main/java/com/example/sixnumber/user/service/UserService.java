@@ -201,6 +201,11 @@ public class UserService {
 				else inputData.set(i, passwordEncoder.encode(inputData.get(i)));
 			}
 			if (userIf.get(i).equals(inputData.get(i))) continue;
+			if (i == 0) {
+				if (userRepository.existsUserByEmail(inputData.get(i))) throw new OverlapException("중복된 이메일입니다");
+			} else if (i == 2) {
+				if (userRepository.existsUserByNickname(inputData.get(i))) throw new OverlapException("중복된 닉네임입니다");
+			}
 			userIf.set(i, inputData.get(i));
 		}
 
