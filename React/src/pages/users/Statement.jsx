@@ -23,7 +23,8 @@ function Statement() {
     }, [])
 
     const PStyle = {
-        border: "2px solid black", 
+        border: "2px solid black",
+        borderBottom: "0px", 
         width: "4cm", 
         height: "1cm",
         display: "flex",
@@ -38,16 +39,17 @@ function Statement() {
             <div key={value}>
                 {value.map((item, index)=>{
                     return (
-                        <div key={item.localDate + index} style={{ marginBottom: "2px", fontSize: "20px"}}>
+                        <div key={item.localDate + index} style={{ fontSize: "20px"}}>
                             <div style={{ display: "flex"}}>
-                                <p style={{...PStyle, textAlign: "center", borderRight: "0px", }}>{item.localDate}</p>
-                                <p style={{...PStyle, width: "20cm"}}>
+                                <span style={{...PStyle, textAlign: "center", borderRight: "0px", }}>{item.localDate}</span>
+                                <span style={{...PStyle, width: "20cm"}}>
                                     <p style={{ marginLeft: "15px" }}>{item.msg}</p>
-                                </p>
+                                </span>
                             </div>
                         </div>    
                     )
                 })}
+                <div style={{ borderTop: "2px solid black", width: "24cm"}} />
             </div>
         )}
     </div>
