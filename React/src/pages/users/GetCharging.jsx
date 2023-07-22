@@ -9,11 +9,13 @@ function GetCharging() {
     onSuccess: (res)=>{
       if (res !== null) {
         setChargValue(res);
-      } else {
-        alert("충전요청이 존재하지 않습니다");
       }
-    }  
-
+    },
+    onError: (err)=>{
+      if  (err.status === 500) {
+        alert(err.message);
+      }
+    }
   })
 
   useEffect(()=>{

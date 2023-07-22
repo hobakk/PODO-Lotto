@@ -145,7 +145,7 @@ public class SixNumberService {
 		if (user.getCash() < requiredCash) throw new IllegalArgumentException("금액이 부족합니다");
 
 		user.setCash("-", requiredCash);
-		user.setStatement(LocalDate.now() + ": " + msg);
+		user.setStatement(LocalDate.now() + "," + msg);
 	}
 
 	private void saveMainLottoList(List<String> list) {

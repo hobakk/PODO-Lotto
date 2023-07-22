@@ -5,7 +5,7 @@ import { CommonStyle, WinNumberStyle } from '../../components/Styles';
 import { CommonLink } from '../../components/Styles';
 
 function Home() {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState([]);
   const [isEmpty, setBoolean] = useState(true);
   const getWinnumberMutation = useMutation(getWinNumber, {
     onSuccess: (res)=>{
@@ -17,7 +17,7 @@ function Home() {
     },
     onError: (err)=>{
       if (err.status === 500) {
-        setValue("");
+        setValue([]);
       }
     }
   })
@@ -32,8 +32,8 @@ function Home() {
       getWinnumberMutation.mutate();
     }
   }, [isEmpty])
-
-  const changingColor = (num) => {
+  
+  const changingColor = (num, index) => {
     let color = "";
     if (num <= 10) {
       color = "#eab541";
@@ -46,7 +46,7 @@ function Home() {
     } else {
       color = "#17c23a";
     }
-    return <WinNumberStyle color={color} style={{ marginRight: "7px"}}>{num}</WinNumberStyle>
+    return <WinNumberStyle key={`numbers-${index}`} color={color} style={{ marginRight: "7px"}}>{num}</WinNumberStyle>
   }
 
   const Rectangle = {
@@ -73,27 +73,36 @@ function Home() {
         <button style={ButtonStyle} onClick={()=>{setBoolean(true)}}>새로고침</button>
       </div>
       <div style={{ fontSize: "20px" }}>
-        {isEmpty === true ? (
+        {isEmpty ? (
           <div>
-            <p>당첨번호 데이터가 존재하지 않습니다</p>
+            당첨번호 데이터가 존재하지 않습니다
           </div>
         ):(
-          value.map(result=>{
+          value.map((result)=>{
             return (
               <div key={result.time} style={Rectangle}>
                 <div style={{ display: "flex", height: "1.2cm" }}>
-                  <p><span style={SpanStyle}>{result.time}</span>회 당첨결과</p>
-                  <p style={{ marginLeft: "auto"}}><span style={SpanStyle}>{result.date}</span>추첨</p>
+                  <p>
+                    <span style={SpanStyle}>{result.time}</span>회 당첨결과
+                  </p>
+                  <p style={{ marginLeft: "auto"}}>
+                    <span style={SpanStyle}>{result.date}</span>추첨
+                  </p>
                 </div>
                 <div style={{ display: "flex", height: "1.2cm" }}>
-                  <p>1등 총 당첨금 <span style={SpanStyle}>{result.prize.toLocaleString()}</span>원</p>
-                  <p style={{ marginLeft: "auto"}}>당첨인원 <span style={SpanStyle}>{result.winner}</span>명</p>
+                  <p>
+                    1등 총 당첨금 <span style={SpanStyle}>{result.prize.toLocaleString()}</span>원
+                  </p>
+                  <p style={{ marginLeft: "auto"}}>
+                    당첨인원 <span style={SpanStyle}>{result.winner}</span>명
+                  </p>
                 </div>
                 <div style={{ display: "flex", height: "1.5cm", marginTop: "10px", justifyContent: "center", textAlign: "center", alignItems: "center"}}>
-                  <p style={{ display: "flex", marginLeft: "auto"}}>
-                    {result.numList.map((num)=>changingColor(num))}</p>
-                    <span style={{...SpanStyle, marginLeft: "5px", marginRight: "5px",}}>+</span>
-                  <p style={{ display: "flex", marginLeft: "5px"}}>{changingColor(result.bonus)}</p>
+                  <div style={{ display: "flex", marginLeft: "auto"}}>
+                    {result.numList.map((num, index)=>changingColor(num, index))}
+                  </div>
+                  <span style={{...SpanStyle, marginLeft: "5px", marginRight: "5px",}}>+</span>
+                  <div style={{ display: "flex", marginLeft: "5px"}}>{changingColor(result.bonus)}</div>
                 </div>
               </div>
             )})

@@ -76,7 +76,7 @@ public class UserService {
 
 		String password = passwordEncoder.encode(request.getPassword());
 		User user = new User(request, password);
-		user.setStatement(LocalDate.now() + "," + "회원가입 기념 1000원 증정");
+		user.setStatement(LocalDate.now() + ",회원가입 기념 1000원 증정");
 		userRepository.save(user);
 		return ApiResponse.create("회원가입 완료");
 	}
@@ -130,9 +130,9 @@ public class UserService {
 		User user = manager.findUser(email);
 
 		if (request.getMsg().equals("월정액 해지")) {
-			if (!user.getRole().equals(UserRole.ROLE_PAID)) {
-				throw new IllegalArgumentException("월정액 사용자가 아닙니다");
-			}
+			if (!user.getRole().equals(UserRole.ROLE_PAID)) throw new IllegalArgumentException("월정액 사용자가 아닙니다");
+			if (user.getPaymentDate().equals(request.getMsg())) throw new OverlapException("프리미엄 해제 신청을 이미 하셨습니다");
+
 			user.setPaymentDate(request.getMsg());
 			return ApiResponse.ok("해지 신청 성공");
 		}
@@ -143,7 +143,7 @@ public class UserService {
 		user.setCash("-", 5000);
 		user.setRole("PAID");
 		user.setPaymentDate(YearMonth.now().toString());
-		user.setStatement(LocalDate.now() + ": " + YearMonth.now() + "월 정액 비용 5000원 차감");
+		user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
 		return ApiResponse.ok("권한 변경 성공");
 	}
 
@@ -159,8 +159,7 @@ public class UserService {
 
 		String msgCash = chargingRequest.getMsg() + "-" + chargingRequest.getCash();
 		Set<String> checkIncorrect = redisTemplate.keys("*" + msgCash + "*");
-		if (!checkIncorrect.isEmpty())
-			throw new OverlapException("서버내에 중복된 문자가 확인되어 반려되었습니다. 다른 문자로 다시 시대해주세요");
+		if (!checkIncorrect.isEmpty()) throw new OverlapException("다른 문자로 다시 시도해주세요");
 
 		if (user.getChargingCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
 
@@ -202,6 +201,11 @@ public class UserService {
 				else inputData.set(i, passwordEncoder.encode(inputData.get(i)));
 			}
 			if (userIf.get(i).equals(inputData.get(i))) continue;
+			if (i == 0) {
+				if (userRepository.existsUserByEmail(inputData.get(i))) throw new OverlapException("중복된 이메일입니다");
+			} else if (i == 2) {
+				if (userRepository.existsUserByNickname(inputData.get(i))) throw new OverlapException("중복된 닉네임입니다");
+			}
 			userIf.set(i, inputData.get(i));
 		}
 

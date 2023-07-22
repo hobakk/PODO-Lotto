@@ -29,7 +29,7 @@ function StatisticalMain() {
     <div style={ SignBorder }>
         <div style={ CommonStyle }>
             <h1 style={{  fontSize: "80px" }}>Statistica lMain</h1>
-            {value !== "" ? (value.map()):null }
+            {value !== "" ? (value.map()) : null}
         </div>
     </div>
   )

@@ -35,10 +35,9 @@ function Premium() {
                 alert("Premiun 적용 완료");
             }
         },
-        onError: (error)=>{
-            console.log(error.status)
-            if (error.response) {
-                alert("금액이 부족하거나 프리미엄 등급입니다");
+        onError: (error)=>{    
+            if (error.status === 500) {
+                alert(error.message);
             }
         }
     });
@@ -50,8 +49,8 @@ function Premium() {
             }
         },
         onError: (error)=>{
-            if (error.response) {
-                alert("프리미엄 등급이 아니거나 이미 해제 신청을 하셨습니다");
+            if (error.status === 400) {
+                alert(error.msg);
             }
         }    
     });

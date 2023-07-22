@@ -5,11 +5,14 @@ import { useMutation } from 'react-query'
 
 function Statement() {
     const [isAssign, setAssign] = useState(false);
-    const [value, setValue] = useState("");
+    const [value, setValue] = useState([]);
     const StateMnetMutation = useMutation(getStatement, {
         onSuccess: (res)=>{
             setAssign(true);
             setValue(res);
+        },
+        onError: (err)=>{
+            alert(err.msg);
         }
     });
 
@@ -19,16 +22,36 @@ function Statement() {
         }
     }, [])
 
+    const PStyle = {
+        border: "2px solid black",
+        borderBottom: "0px", 
+        width: "4cm", 
+        height: "1cm",
+        display: "flex",
+        justifyContent: "center",
+        flexDirection: "column",
+    }
+
   return (
-    <div style={ SignBorder }>
-        <div style={ CommonStyle }>
-            <h1 style={{  fontSize: "80px" }}>Statement</h1>
-            {isAssign && (
-                <div key={value} style={{ border: "3px solid black", width: "10cm", height: "3cm", textAlign: "center" }}>
-                    {value.map()}
-                </div>
-            )}
-        </div>
+    <div style={ CommonStyle }>
+        <h1 style={{  fontSize: "80px" }}>Statement</h1>
+        {isAssign && (
+            <div key={value}>
+                {value.map((item, index)=>{
+                    return (
+                        <div key={item.localDate + index} style={{ fontSize: "20px"}}>
+                            <div style={{ display: "flex"}}>
+                                <span style={{...PStyle, textAlign: "center", borderRight: "0px", }}>{item.localDate}</span>
+                                <span style={{...PStyle, width: "20cm"}}>
+                                    <p style={{ marginLeft: "15px" }}>{item.msg}</p>
+                                </span>
+                            </div>
+                        </div>    
+                    )
+                })}
+                <div style={{ borderTop: "2px solid black", width: "24cm"}} />
+            </div>
+        )}
     </div>
   )
 }

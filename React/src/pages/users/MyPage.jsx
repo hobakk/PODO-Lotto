@@ -43,10 +43,6 @@ function MyPage() {
             alert("잘못된 문자열 입력");
         }
     }
-    
-    const onClickHandler = () => {
-        
-    }
 
   return (
     <>

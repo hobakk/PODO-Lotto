@@ -30,19 +30,19 @@ public class Application {
 			User admin = new User(signupRequest, password);
 			admin.setAdmin();
 			admin.setCash("+", 999998999);
-			admin.setStatement("테스트");
+			admin.setStatement("DATE,MSG");
 			userRepository.save(admin);
 
 			SignupRequest signupRequest1 = new SignupRequest("asdf","asdf","유저1");
 			User user1 = new User(signupRequest1, password);
 			user1.setCash("+", 20000);
-			user1.setStatement("테스트");
+			user1.setStatement("DATE,MSG");
 			userRepository.save(user1);
 
 			SignupRequest signupRequest2 = new SignupRequest("asd","asdf","유저2");
 			User user2 = new User(signupRequest2, password);
 			user2.setCash("+", 20000);
-			user2.setStatement("테스트");
+			user2.setStatement("DATE,MSG");
 			userRepository.save(user2);
 		};
 	}

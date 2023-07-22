@@ -23,6 +23,15 @@ function SetCharging() {
             if (res == 200) {
                 navigate("/get-charging");
             }
+        },
+        onError: (err)=>{
+            if  (err.status === 500) {
+                alert(err.message);
+            } else if (err.status === 400) {
+                alert(err.msg);
+            } else if (err.status === 403) {
+                alert(err.msg);
+            }
         }
     })
 
