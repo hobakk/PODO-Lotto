@@ -23,6 +23,11 @@ function InformationUpdate() {
                 formElement.style.display = "none";
                 updateElement.style.display = "block";
             } 
+        },  
+        onError: (err)=>{
+            if (err.status === 500) {
+                alert(err.message);
+            }
         }
     })
     const [inputValue, setInputValue] = useState({
@@ -59,7 +64,14 @@ function InformationUpdate() {
                 logoutMutation.mutate();
                 alert("회원정보 수정완료 재 로그인 해주세요")
             } 
-        }
+        },
+        onError: (err)=>{
+            if (err.status === 500) {
+                alert(err.message);
+            } else {
+                alert(err.msg);
+            }
+        } 
     })
 
     const onClickHandler = () => {

@@ -36,7 +36,6 @@ function Premium() {
             }
         },
         onError: (error)=>{    
-            console.log(error);
             if (error.status === 500) {
                 alert(error.message);
             }

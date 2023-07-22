@@ -34,8 +34,7 @@ const setCharges = async (inputValue) => {
         const { data } = await api.post("/users/charging", inputValue);
         return data.code;
     } catch (error) {
-        console.log(error)
-        // throw error.response;
+        throw error;
     }
 }
 
@@ -53,7 +52,6 @@ const setPaid = async (msg) => {
         const { data } = await api.post("/users/paid", msg);
         return data.code;
     } catch (error) {
-        console.log(error)
         throw error; 
     }
 }
