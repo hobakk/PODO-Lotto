@@ -30,13 +30,22 @@ const update = async (inputValue) => {
 }
 
 const setCharges = async (inputValue) => {
-    const { data } = await api.post("/users/charging", inputValue);
-    return data.code;
+    try {
+        const { data } = await api.post("/users/charging", inputValue);
+        return data.code;
+    } catch (error) {
+        console.log(error)
+        // throw error.response;
+    }
 }
 
 const getCharges = async () => {
-    const { data } = await api.get("/users/charging");
-    return data.data;
+    try {
+        const { data } = await api.get("/users/charging");
+        return data.data;    
+    } catch (error) {
+        throw error;
+    }
 }
 
 const setPaid = async (msg) => {
@@ -44,8 +53,8 @@ const setPaid = async (msg) => {
         const { data } = await api.post("/users/paid", msg);
         return data.code;
     } catch (error) {
-        error.status = 500;
-        throw error;
+        console.log(error)
+        throw error; 
     }
 }
     
@@ -54,7 +63,7 @@ const getStatement = async () => {
         const { data } = await api.get("/users/statement");
         return data.data;
     } catch (error) {
-        throw error.response.data;
+        throw error;
     }
 }
 

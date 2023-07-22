@@ -23,6 +23,9 @@ function SetCharging() {
             if (res == 200) {
                 navigate("/get-charging");
             }
+        },
+        onError: (res)=>{
+            console.log(res);
         }
     })
 

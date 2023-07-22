@@ -29,9 +29,8 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
-        if (error.response?.status === 401) {
-            return error;
-        }
+        const result = error.response.data;
+        return Promise.reject(result);
     }
 )
 
