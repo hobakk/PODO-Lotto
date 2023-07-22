@@ -76,7 +76,7 @@ public class UserService {
 
 		String password = passwordEncoder.encode(request.getPassword());
 		User user = new User(request, password);
-		user.setStatement(LocalDate.now() + "," + "회원가입 기념 1000원 증정");
+		user.setStatement(LocalDate.now() + ",회원가입 기념 1000원 증정");
 		userRepository.save(user);
 		return ApiResponse.create("회원가입 완료");
 	}
@@ -143,7 +143,7 @@ public class UserService {
 		user.setCash("-", 5000);
 		user.setRole("PAID");
 		user.setPaymentDate(YearMonth.now().toString());
-		user.setStatement(LocalDate.now() + ": " + YearMonth.now() + "월 정액 비용 5000원 차감");
+		user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
 		return ApiResponse.ok("권한 변경 성공");
 	}
 
