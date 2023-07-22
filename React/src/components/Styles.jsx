@@ -14,8 +14,6 @@ export const CommonStyle = {
 export const SignBorder = {
   width: "45%",
   height: "22cm",
-  // border: "3px solid black",
-  backgroundColor: "white",
   margin: "3px",
 }
 

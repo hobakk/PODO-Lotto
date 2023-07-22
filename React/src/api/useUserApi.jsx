@@ -49,10 +49,13 @@ const setPaid = async (msg) => {
     }
 }
     
-
 const getStatement = async () => {
-    const { data } = await api.get("/users/statement");
-    return data.data;
+    try {
+        const { data } = await api.get("/users/statement");
+        return data.data;
+    } catch (error) {
+        throw error.response.data;
+    }
 }
 
 // Admin
