@@ -130,9 +130,9 @@ public class UserService {
 		User user = manager.findUser(email);
 
 		if (request.getMsg().equals("월정액 해지")) {
-			if (!user.getRole().equals(UserRole.ROLE_PAID)) {
-				throw new IllegalArgumentException("월정액 사용자가 아닙니다");
-			}
+			if (!user.getRole().equals(UserRole.ROLE_PAID)) throw new IllegalArgumentException("월정액 사용자가 아닙니다");
+			if (user.getPaymentDate().equals(request.getMsg())) throw new OverlapException("프리미엄 해제 신청을 이미 하셨습니다");
+
 			user.setPaymentDate(request.getMsg());
 			return ApiResponse.ok("해지 신청 성공");
 		}
@@ -159,8 +159,7 @@ public class UserService {
 
 		String msgCash = chargingRequest.getMsg() + "-" + chargingRequest.getCash();
 		Set<String> checkIncorrect = redisTemplate.keys("*" + msgCash + "*");
-		if (!checkIncorrect.isEmpty())
-			throw new OverlapException("서버내에 중복된 문자가 확인되어 반려되었습니다. 다른 문자로 다시 시대해주세요");
+		if (!checkIncorrect.isEmpty()) throw new OverlapException("다른 문자로 다시 시도해주세요");
 
 		if (user.getChargingCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
 
