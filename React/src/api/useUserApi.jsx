@@ -7,7 +7,8 @@ const getInformation = async () => {
 }
 
 const logout = async () => {
-    await api.post(`/users/logout`)
+    const { data } = await api.post(`/users/logout`);
+    return data;
 }
 
 const getCashNickname = async () => {

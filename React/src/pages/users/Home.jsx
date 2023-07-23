@@ -53,7 +53,7 @@ function Home() {
   return (
     <div style={CommonStyle}>
       <div style={{ marginTop: "1.0cm", marginLeft: "auto", marginBottom: "5px"}}>
-        <CommonLink to={"/"} style={{ fontWeight: "bold", }}>추천 번호 구매하기</CommonLink>
+        <CommonLink to={"/buynum"} style={{ fontWeight: "bold", }}>추천 번호 구매하기</CommonLink>
         <button style={ButtonStyle} onClick={()=>{setBoolean(true)}}>새로고침</button>
       </div>
       <div style={{ fontSize: "20px" }}>

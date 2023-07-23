@@ -14,6 +14,7 @@ import Statement from '../pages/users/Statement'
 import BuyNumber from '../pages/sixnum/BuyNumber'
 import StatisticalNumber from '../pages/sixnum/StatisticalNumber'
 import StatisticalMain from '../pages/lotto/StatisticalMain'
+import GetUsers from '../pages/admin/GetUsers'
 
 
 const Router = () => {
@@ -34,6 +35,7 @@ const Router = () => {
                 <Route path='/buynum' element={<BuyNumber />} />
                 <Route path='/statistical/num' element={<StatisticalNumber />} />
                 <Route path='/statistical/main' element={<StatisticalMain />} />
+                <Route path='/admin/get-users' element={<GetUsers />} />
             </Routes>
         </Layout>
     </BrowserRouter>
