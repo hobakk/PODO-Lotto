@@ -124,13 +124,23 @@ const getTopNumberForMonth = async (yearMonth) => {
 
 // SixNumber ( 추천 번호 구매 )
 const buyNumber = async (inputValue) => {
-    const { data } = await api.post("/sixnum", inputValue);
-    return data.data;
+    try {
+        const { data } = await api.post("/sixnum", inputValue);
+        return data.data;
+    } catch (error) {
+        throw error;
+    }
+    
 }
 
 const statisticalNumber = async (inputValue) => {
-    const { data } = await api.post("/sixnum/repetition", inputValue);
-    return data.data;
+    try {
+        const { data } = await api.post("/sixnum/repetition", inputValue);
+        return data.data;
+    } catch (error) {
+        throw error;
+    }
+    
 }
 
 export { 

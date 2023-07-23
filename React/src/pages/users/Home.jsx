@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { getWinNumber } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';
-import { CommonStyle, WinNumberStyle } from '../../components/Styles';
-import { CommonLink } from '../../components/Styles';
+import { CommonStyle, CommonLink, } from '../../components/Styles';
+import { ChangingNumStyle } from '../../components/Manufacturing';
 
 function Home() {
   const [value, setValue] = useState([]);
@@ -32,22 +32,6 @@ function Home() {
       getWinnumberMutation.mutate();
     }
   }, [isEmpty])
-  
-  const changingColor = (num, index) => {
-    let color = "";
-    if (num <= 10) {
-      color = "#eab541";
-    } else if (num <= 20) {
-      color = "#4331b0";
-    } else if (num <= 30) {
-      color = "#e61940";
-    } else if (num <= 40) {
-      color = "#545f69";
-    } else {
-      color = "#17c23a";
-    }
-    return <WinNumberStyle key={`numbers-${index}`} color={color} style={{ marginRight: "7px"}}>{num}</WinNumberStyle>
-  }
 
   const Rectangle = {
     border: "3px solid black", 
@@ -99,10 +83,10 @@ function Home() {
                 </div>
                 <div style={{ display: "flex", height: "1.5cm", marginTop: "10px", justifyContent: "center", textAlign: "center", alignItems: "center"}}>
                   <div style={{ display: "flex", marginLeft: "auto"}}>
-                    {result.numList.map((num, index)=>changingColor(num, index))}
+                    {result.numList.map((num, index)=>ChangingNumStyle(num, index))}
                   </div>
                   <span style={{...SpanStyle, marginLeft: "5px", marginRight: "5px",}}>+</span>
-                  <div style={{ display: "flex", marginLeft: "5px"}}>{changingColor(result.bonus)}</div>
+                  <div style={{ display: "flex", marginLeft: "5px"}}>{ChangingNumStyle(result.bonus)}</div>
                 </div>
               </div>
             )})
