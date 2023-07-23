@@ -37,7 +37,11 @@ function SetCharging() {
 
     const submitHandler = (e) => {
         e.preventDefault();
-        chargingMutation.mutate(inputValue);
+        if (inputValue.cash === 0 || inputValue.msg === "") {
+            alert("값을 입력해주세요");
+        } else {
+            chargingMutation.mutate(inputValue);
+        }
     }
 
   return (
