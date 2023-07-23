@@ -8,6 +8,10 @@ export const getCookie = (name) => {
 }
 
 export const deleteToken = () => {
-    cookies.remove('accessToken');
-    cookies.remove('refreshToken');
+    try {
+        cookies.remove('accessToken');
+        cookies.remove('refreshToken');
+    } catch (error) {
+        console.error('removing cookies:', error)
+    }
 }

@@ -188,10 +188,12 @@ function Header() {
     const navigate = useNavigate();
 
     const logoutMutation = useMutation(logout, {
-      onSuccess: () => {
-        dispatch(logoutUser());
-        setTFMode(false);
-        deleteToken();
+      onSuccess: (res) => {
+        if (res.code === 200) {
+          dispatch(logoutUser());
+          setTFMode(false);
+          deleteToken();
+        }
       }
     });
 
@@ -209,6 +211,7 @@ function Header() {
     }
     
     useEffect(()=>{
+      console.log(userIf)
       if (userIf.cash !== cash) {
         setCash(userIf.cash);
       }
@@ -265,10 +268,10 @@ function Header() {
 
   return (
     <div style={{ ...HeaderStyles }}>
-        <div id='LogoTitle' onClick={()=>{navigate("/")}}>
+        <div id='LogoTitle' onClick={()=>{navigate("/")}} style={{ cursor: "pointer"}}>
           <img src={process.env.PUBLIC_URL + `/logo.png`} alt='Logo' style={{ width: "30px", height: "30px", marginRight: "5px", marginLeft: "20px" }} />
         </div>
-        <div onClick={()=>{navigate("/")}}>
+        <div onClick={()=>{navigate("/")}} style={{ cursor: "pointer"}}>
           <span style={{ fontSize: "26px" }}>PODO Lotto</span>
         </div>
           <div className='navigation-links' style={navigationLinksStyles}>
@@ -293,7 +296,7 @@ function Header() {
               <p style={{ marginRight: "30px" }}>
                 <CommonLink to={"/set-charging"} color={"#3E1F80"}>{cash}</CommonLink> 원  
                 <CommonLink to={"/my-page"} color={"#F29135"}>{nickname}</CommonLink> 님 반갑습니다
-                <CommonLink to={"/"} color={"black"} onClick={logoutHandler}>로그아웃</CommonLink>
+                <CommonLink color={"black"} onClick={logoutHandler}>로그아웃</CommonLink>
               </p>
             </div>
           </div>

@@ -55,7 +55,7 @@ public class UserController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<ApiResponse> logout(@AuthenticationPrincipal User user, HttpServletResponse response) {
+	public ResponseEntity<ApiResponse> logout(@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.logout(user));
 	}
 

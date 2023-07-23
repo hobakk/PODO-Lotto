@@ -101,7 +101,7 @@ function InformationUpdate() {
     <div style={CommonStyle}>
         <form id='form' onSubmit={submitHandler} style={{ fontSize: "30px" }}>
             <h1 style={{ fontSize: "80px"}}>Identification</h1>
-            Password: <InputBox placeHolder="********" type='passoword' value={password} onChange={(e)=>{setPassword(e.target.value)}} ref={pwRef}/>   
+            Password: <InputBox placeholder="********" type='passoword' value={password} onChange={(e)=>{setPassword(e.target.value)}} ref={pwRef}/>   
             <button style={{ marginLeft: "20px"}}>전송</button>     
         </form>
 

@@ -4,6 +4,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -41,17 +42,23 @@ public class WebSecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		// CSRF 설정
-		http.csrf().disable();
-
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-		http.authorizeRequests()
-			.antMatchers("/api/admin/**").hasRole("ADMIN")
-			.antMatchers("/api/lotto/**").hasAnyRole("ADMIN", "PAID")
-			.antMatchers("/**").permitAll()
+		http
+			.csrf().disable()
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
-			.addFilterBefore(new JwtSecurityFilter(userDetailsService, jwtProvider, redisTemplate), UsernamePasswordAuthenticationFilter.class);
+			.authorizeRequests()
+				.antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
+				.antMatchers("/api/users/signin", "/api/users/signup", "/api/users/winnumber", "/api/users/my-information").permitAll()
+				.antMatchers("/api/users/**").hasAnyRole("USER", "ADMIN", "PAID")
+				.antMatchers("/api/admin/**").hasRole("ADMIN")
+				.antMatchers("/api/lotto/**").hasAnyRole("ADMIN", "PAID")
+				.antMatchers("/**").authenticated()
+			.and()
+			.formLogin()
+				.loginPage("/signin")
+				.permitAll();
+
+		http.addFilterBefore(new JwtSecurityFilter(userDetailsService, jwtProvider, redisTemplate), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

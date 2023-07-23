@@ -2,16 +2,14 @@ import React, { useEffect, useRef, useState } from 'react'
 import { SignBorder, CommonStyle } from '../../components/Styles'
 import { buyNumber } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
+import { NumSentenceStyle } from '../../components/Manufacturing';
 
 
 function BuyNumber() {
     const [num, setNum] = useState(0);
-    const [value, setValue] = useState("");
+    const [value, setValue] = useState([]);
+    const [isEmpty, setData] = useState(true);
     const numRef = useRef();
-
-    useEffect(()=>{
-        numRef.current.focus();
-    }, [])
 
     const InputStyle = {
         width: "5cm",
@@ -24,52 +22,56 @@ function BuyNumber() {
     
     const buyNumberMutation = useMutation(buyNumber, {
         onSuccess: (res)=>{
-            setValue(res);
+            if  (res !== null) {
+                setValue(res);
+                setData(false);
+            }
+        },
+        onError: (err)=>{
+            if (err.status === 500) {
+                alert(err.message);
+            } else if (err.status === 400) {
+                alert(err.msg);
+            }
         }
     });
 
-    useEffect(()=>{
-        const buyElement = document.getElementById("buycontent");
-        const resultElement = document.getElementById("resultcontent");
-
-        // if  (value === "") {
-        //     buyElement.style.display = "block";
-        //     resultElement.style.display = "none";
-        // } else {
-        //     buyElement.style.display = "none";
-        //     resultElement.style.display = "block";
-        // }
-    }, [value])
-
-    const onClickHandler = (v) => {
+    const updownHandler = (v) => {
         v ? (setNum(num+1)):(setNum(num-1));
     }
     const buyHandler = () => {
-        if (!num <= 0) {
+        if (num > 0) {
             buyNumberMutation.mutate(num); 
         }
     }
     const onChangeHandler = (e) => {
         setNum(e.target.value);
     }
+    const onClickHandler = () => {
+        setData([]);
+        setData(true);
+    }
 
   return (
     <div style={ SignBorder }>
         <div style={ CommonStyle }>
             <h1 style={{  fontSize: "80px" }}>Buy Number</h1>
-            <div id='buycontent'>
-                <p>1회 발급당 200원이 차감됩니다</p>
-                <input value={num} ref={numRef} onChange={onChangeHandler} style={InputStyle} placeholder='0'/> 
-                <button style={buttonStyle} onClick={()=>onClickHandler(true)}>+</button>
-                <button style={buttonStyle} onClick={()=>onClickHandler(false)}>-</button>    
-                <button onClick={buyHandler} style={{ width: "50px", height: "30px", marginLeft: "20px",  }}>구매</button>
-            </div> 
-            {value !== "" ? (
-                <div id='resultcontent' key={value} style={{ display: "none"}}>
-                    {value}
+            {isEmpty ? (
+                <div id='buycontent'>
+                    <p>1회 발급당 200원이 차감됩니다</p>
+                    <input value={num} ref={numRef} onChange={onChangeHandler} style={InputStyle} placeholder='0'/> 
+                    <button style={buttonStyle} onClick={()=>updownHandler(true)}>+</button>
+                    <button style={buttonStyle} onClick={()=>updownHandler(false)}>-</button>    
+                    <button onClick={buyHandler} style={{ width: "50px", height: "30px", marginLeft: "20px",  }}>구매</button>
+                </div> 
+            ):(
+                <div id='resultcontent'>
+                    <div>
+                        {value.map(item=>NumSentenceStyle(item))}
+                    </div>
+                    <button onClick={onClickHandler} style={{ marginTop: "2cm", marginLeft: "5cm"}}>계속 구매하기</button>
                 </div>
-            ) : null}
-            
+            )}
         </div>
     </div>
   )
