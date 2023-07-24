@@ -5,6 +5,7 @@ import { withdraw } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { setStatus } from '../../modules/userIfSlice';
+import LogoutMutation from '../../components/LogoutMutation';
 
 function MyPage() {
     const userIf = useSelector((state)=>state.userIf);
@@ -28,10 +29,13 @@ function MyPage() {
         }
     }, [userIf])
 
+    const logoutMutation = LogoutMutation();
+
     const withdrawMutation = useMutation(withdraw, {
         onSuccess: ()=>{
             dispatch(setStatus("DORMANT"));
             navigate("/");
+            logoutMutation.mutate();
         }
     });
 

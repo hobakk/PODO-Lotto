@@ -3,9 +3,8 @@ import { CommonStyle, CommonP, InputBox } from '../../components/Styles'
 import { checkPW, update, logout } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { logoutUser } from '../../modules/userIfSlice';
-import { deleteToken } from '../../shared/Cookie';
 import { useDispatch, useSelector } from 'react-redux';
+import LogoutMutation from '../../components/LogoutMutation';
 
 function InformationUpdate() {
     const userIf = useSelector((state)=>state.userIf);
@@ -50,13 +49,7 @@ function InformationUpdate() {
         checkPWMutation.mutate(password);
     }
 
-    const logoutMutation = useMutation(logout, {
-        onSuccess: () => {
-          dispatch(logoutUser());
-          deleteToken();
-          navigate("/signin");
-        }
-    });
+    const logoutMutation = LogoutMutation();
 
     const updateMutation = useMutation(update, {
         onSuccess: (res)=>{

@@ -3,19 +3,17 @@ import { CommonStyle, SignBorder } from '../../components/Styles'
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { signin } from '../../api/noneUserApi';
-import { useDispatch } from 'react-redux';
-import { setUserIf } from '../../modules/userIfSlice';
-import { getInformation } from '../../api/useUserApi';
 import { InputBox } from '../../components/Styles';
+import GetUserIfMutation from '../../components/GetUserIfMutation';
 
 function Signin() {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
-
+    const getUserIfMutation = GetUserIfMutation();
     const signinMutation = useMutation(signin,{
         onSuccess: ()=>{
             console.log("로그인 완료")
             getUserIfMutation.mutate();
+            navigate("/");
         },
         onError: (err)=>{
             if  (err.status === 404) {
@@ -25,13 +23,6 @@ function Signin() {
             }
         }
     });
-
-    const getUserIfMutation = useMutation(getInformation, {
-        onSuccess: (userIf)=>{
-            dispatch(setUserIf(userIf));
-            navigate("/");
-        }
-    })
 
     const [inputValue, setInputValue] = useState({
         email: "",
