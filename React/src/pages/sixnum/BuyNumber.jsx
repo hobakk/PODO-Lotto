@@ -3,13 +3,18 @@ import { SignBorder, CommonStyle } from '../../components/Styles'
 import { buyNumber } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
 import { NumSentenceStyle } from '../../components/Manufacturing';
+import GetUserIfMutation from '../../components/GetUserIfMutation';
 
 
 function BuyNumber() {
     const [num, setNum] = useState(0);
     const [value, setValue] = useState([]);
     const [isEmpty, setData] = useState(true);
+    const [firstLine, setFirst] = useState([]);
+    const [secondLine, setSecond] = useState([]);
+    const [thirdLine, setThird] = useState([]);
     const numRef = useRef();
+    const getUserIfMutation = GetUserIfMutation();
 
     const InputStyle = {
         width: "5cm",
@@ -25,6 +30,7 @@ function BuyNumber() {
             if  (res !== null) {
                 setValue(res);
                 setData(false);
+                getUserIfMutation.mutate();
             }
         },
         onError: (err)=>{
@@ -42,6 +48,8 @@ function BuyNumber() {
     const buyHandler = () => {
         if (num > 0) {
             buyNumberMutation.mutate(num); 
+        } else {
+            alert("수량을 입력해주세요");
         }
     }
     const onChangeHandler = (e) => {
@@ -51,6 +59,12 @@ function BuyNumber() {
         setData([]);
         setData(true);
     }
+
+    useEffect(()=>{
+        setFirst(value.slice(0, 8));
+        setSecond(value.slice(8, 16));
+        setThird(value.slice(16, 24));
+    }, [value])
 
   return (
     <div style={ SignBorder }>
@@ -64,12 +78,30 @@ function BuyNumber() {
                     <button style={buttonStyle} onClick={()=>updownHandler(false)}>-</button>    
                     <button onClick={buyHandler} style={{ width: "50px", height: "30px", marginLeft: "20px",  }}>구매</button>
                 </div> 
-            ):(
-                <div id='resultcontent'>
-                    <div>
-                        {value.map(item=>NumSentenceStyle(item))}
+            ):( 
+                <div>
+                    <div id='resultcontent' style={{ display: "flex" }}>
+                        <div>
+                            {firstLine.map(numList=>{
+                                return <div style={{ display: "flex", flexWrap: "wrap",}}>{NumSentenceStyle(numList)}</div>;
+                            })}
+                        </div>
+                        {secondLine.length > 0 && (
+                            <div style={{ marginLeft: "70px" }}>
+                                {secondLine.map(numList=>{
+                                    return <div style={{ display: "flex", flexWrap: "wrap",}}>{NumSentenceStyle(numList)}</div>
+                                })}
+                            </div>
+                        )}
+                        {thirdLine.length > 0 && (
+                            <div style={{ marginLeft: "70px" }}>
+                                {secondLine.map(numList=>{
+                                    return <div style={{ display: "flex", flexWrap: "wrap",}}>{NumSentenceStyle(numList)}</div>
+                                })}
+                            </div>
+                        )}
                     </div>
-                    <button onClick={onClickHandler} style={{ marginTop: "2cm", marginLeft: "5cm"}}>계속 구매하기</button>
+                    <button onClick={onClickHandler} style={{ marginTop: "1cm", marginRight: "auto"}}>계속 구매하기</button>
                 </div>
             )}
         </div>
