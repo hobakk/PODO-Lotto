@@ -24,28 +24,8 @@ public class RedisDao {
 		return values.get(key) == null ? "" : values.get(key);
 	}
 
-	public void setValues(String key, String data) {
-		ValueOperations<String, String> values = redisTemplate.opsForValue();
-		values.set(key, data);
-	}
-	public void setValues(String key, String data, Long time, TimeUnit timeUnit) {
-		ValueOperations<String, String> values = redisTemplate.opsForValue();
-		values.set(key, data, time, timeUnit);
-	}
-
-	public void deleteValues(String key) {
-		redisTemplate.delete(key);
-	}
-
-	public void overlapLogin(String key) {
-		if (!getValue(key).equals("")) {
-			deleteValues(key);
-			throw new OverlapException("중복된 로그인입니다");
-		}
-	}
-
 	public Set<String> getKeysList(String key) {
-		 return redisTemplate.keys("*" + key + "*");
+		return redisTemplate.keys("*" + key + "*");
 	}
 
 	public List<String> multiGet(String key) {
@@ -56,11 +36,38 @@ public class RedisDao {
 		return values.multiGet(keys);
 	}
 
+	public void setValues(String key, String data) {
+		ValueOperations<String, String> values = redisTemplate.opsForValue();
+		values.set(key, data);
+	}
+
+	public void setValues(String key, String data, Long time, TimeUnit timeUnit) {
+		ValueOperations<String, String> values = redisTemplate.opsForValue();
+		values.set(key, data, time, timeUnit);
+	}
+
 	public List<String> getValuesList(String key) {
 		ListOperations<String, String> listOperations = redisTemplate.opsForList();
 		if (listOperations.range(key, 0, -1).isEmpty())
 			throw new IllegalArgumentException("당첨 번호 정보가 존재하지 않습니다");
 
 		return listOperations.range(key, 0, -1);
+	}
+
+	public void deleteValues(String key) {
+		redisTemplate.delete(key);
+	}
+
+	public boolean deleteIfNotNull(String key) {
+		if (!getValue(key).isEmpty()) {
+			deleteValues(key);
+			return true;
+		}
+		return false;
+	}
+
+	public void overlapLogin(String key) {
+		boolean isNull = deleteIfNotNull(key);
+		if (isNull) throw new OverlapException("Duplicate login");
 	}
 }
