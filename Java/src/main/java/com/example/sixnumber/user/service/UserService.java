@@ -227,8 +227,7 @@ public class UserService {
 		List<String> value = redisDao.getValuesList("WNL");
 
 		List<WinNumberResponse> responses = value.stream()
-			.map(WinNumberResponse::new)
-			.toList();
+			.map(WinNumberResponse::new).toList();
 		return ListApiResponse.ok("조회 성공", responses);
 	}
 
