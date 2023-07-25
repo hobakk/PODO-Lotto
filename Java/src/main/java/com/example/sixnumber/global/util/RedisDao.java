@@ -1,6 +1,5 @@
 package com.example.sixnumber.global.util;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -60,7 +59,7 @@ public class RedisDao {
 	}
 
 	public boolean deleteIfNotNull(String key) {
-		if (!getValue(key).isEmpty()) {
+		if (!getValue(key).equals("")) {
 			deleteValues(key);
 			return true;
 		}
@@ -69,7 +68,7 @@ public class RedisDao {
 
 	public void overlapLogin(String key) {
 		boolean isNull = deleteIfNotNull(key);
-		if (isNull) throw new OverlapException("Duplicate login");
+		if (isNull) throw new OverlapException("중복된 로그인입니다");
 	}
 
 	public void setWinNumber(String key, WinNumberRequest request) {
