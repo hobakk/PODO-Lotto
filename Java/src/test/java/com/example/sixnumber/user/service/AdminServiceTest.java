@@ -29,6 +29,7 @@ import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
+import com.example.sixnumber.global.util.RedisDao;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
@@ -53,19 +54,18 @@ public class AdminServiceTest {
 	@Mock
 	private LottoRepository lottoRepository;
 	@Mock
-	private RedisTemplate<String, String> redisTemplate;
+	private RedisDao redisDao;
 	@Mock
 	private Manager manager;
+	@Mock
+	private RedisTemplate<String, String> redisTemplate;
 
-	private ValueOperations<String, String> valueOperations;
-	private ListOperations<String, String> listOperations;
 	private User saveUser;
 	private User admin;
 
 	@BeforeEach
 	public void setup() {
 		// MockitoAnnotations.openMocks(this);
-		valueOperations = mock(ValueOperations.class);
 		saveUser = TestDataFactory.user();
 		admin = TestDataFactory.Admin();
 	}
@@ -105,17 +105,13 @@ public class AdminServiceTest {
 
 	@Test
 	void getCharges() {
-		Set<String> keys = TestDataFactory.keys();
 		List<String> values = TestDataFactory.values();
 
-		when(redisTemplate.keys(anyString())).thenReturn(keys);
-		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-		when(valueOperations.multiGet(keys)).thenReturn(values);
+		when(redisDao.multiGet(anyString())).thenReturn(values);
 
 		ListApiResponse<AdminGetChargingResponse> response = adminService.getChargs();
 
-		verify(redisTemplate).keys(anyString());
-		verify(valueOperations).multiGet(keys);
+		verify(redisDao).multiGet(anyString());
 		assertEquals(response.getData().size(), 3);
 		TestUtil.ListApiAssertEquals(response, 200, "조회 성공");
 	}
@@ -124,30 +120,14 @@ public class AdminServiceTest {
 	void searchCharging_success() {
 		ChargingRequest request = TestDataFactory.chargingRequest();
 
-		Set<String> set = new HashSet<>(List.of("7-Msg-5000"));
-
-		when(redisTemplate.keys(anyString())).thenReturn(set);
-		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-
 		List<String> values = Collections.singletonList("7-Value1-5000");
-		when(valueOperations.multiGet(set)).thenReturn(values);
+
+		when(redisDao.multiGet(anyString())).thenReturn(values);
 
 		ItemApiResponse<AdminGetChargingResponse> response = adminService.searchCharging(request);
 
-		verify(redisTemplate).keys(anyString());
-		verify(valueOperations).multiGet(set);
+		verify(redisDao).multiGet(anyString());
 		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");
-	}
-
-	@Test
-	void searchCharging_fail_notFound() {
-		ChargingRequest request = TestDataFactory.chargingRequest();
-
-		when(redisTemplate.keys(anyString())).thenReturn(Collections.emptySet());
-
-		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.searchCharging(request));
-
-		verify(redisTemplate).keys(anyString());
 	}
 
 	@Test
@@ -159,7 +139,7 @@ public class AdminServiceTest {
 		ApiResponse response = adminService.upCash(request);
 
 		verify(manager).findUser(anyLong());
-		verify(redisTemplate).delete(anyString());
+		verify(redisDao).deleteValues(anyString());
 		assertEquals(saveUser.getCash(), 11000);
 		assertNotNull(saveUser.getStatement().get(0));
 		assertEquals(saveUser.getChargingCount(), 0);
@@ -240,13 +220,12 @@ public class AdminServiceTest {
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
 		// setStatus_success_active 에서 redisTemlate 값이 없을 때 검증되서 값이 있을 경우만 검증함
-		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-		when(valueOperations.get(anyString())).thenReturn("RTV");
+		when(redisDao.deleteIfNotNull(anyString()));
 
 		ApiResponse response = adminService.setStatus(admin, saveUser.getId(), request);
 
 		verify(manager).findUser(anyLong());
-		verify(redisTemplate).delete(anyString());
+		verify(redisDao).deleteIfNotNull(anyString());
 		assertEquals(saveUser.getStatus(), Status.valueOf(statusStr));
 		TestUtil.ApiAsserEquals(response, 200, "상태 변경 완료");
 	}
@@ -277,18 +256,14 @@ public class AdminServiceTest {
 	}
 
 	@Test
-	void setWinNumber() {
+	void setWinNumber_success() {
 		WinNumberRequest winNumberRequest = TestDataFactory.winNumberRequest();
-		listOperations = mock(ListOperations.class);
 
-		when(redisTemplate.opsForList()).thenReturn(listOperations);
-		when(listOperations.size(anyString())).thenReturn(1L);
-		when(listOperations.rightPush(anyString(), anyString())).thenReturn(1L);
+		doNothing().when(redisDao).setWinNumber("WNL", winNumberRequest);
 
 		ApiResponse response = adminService.setWinNumber(winNumberRequest);
 
-		verify(listOperations).size(anyString());
-		verify(listOperations).rightPush(anyString(), anyString());
+		verify(redisDao).setWinNumber("WNL", winNumberRequest);
 		TestUtil.ApiAsserEquals(response, 200, "생성 완료");
 	}
 }

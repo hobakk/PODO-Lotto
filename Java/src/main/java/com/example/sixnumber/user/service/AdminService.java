@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -19,6 +18,7 @@ import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
+import com.example.sixnumber.global.util.RedisDao;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
@@ -43,7 +43,7 @@ public class AdminService {
 
 	private final UserRepository userRepository;
 	private final LottoRepository lottoRepository;
-	private final RedisTemplate<String, String> redisTemplate;
+	private final RedisDao redisDao;
 	private final Manager manager;
 
 	// 보안관련 더 생각해봐야함
@@ -62,17 +62,16 @@ public class AdminService {
 	}
 
 	public ListApiResponse<AdminGetChargingResponse> getChargs() {
-		Set<String> totalKeys = redisTemplate.keys("*STMT: *");
-		List<AdminGetChargingResponse> userChargesValues = redisTemplate.opsForValue().multiGet(totalKeys).stream().map(AdminGetChargingResponse::new).toList();
+		List<String> valueList = redisDao.multiGet("*STMT: *");
+
+		List<AdminGetChargingResponse> userChargesValues = valueList.stream()
+			.map(AdminGetChargingResponse::new).toList();
 		return ListApiResponse.ok("조회 성공", userChargesValues);
 	}
 
 	public ItemApiResponse<AdminGetChargingResponse> searchCharging(ChargingRequest request) {
 		String searchStr = request.getMsg() + "-" + request.getCash();
-		Set<String> keys = redisTemplate.keys("*" + searchStr + "*");
-		if (keys.isEmpty()) throw new IllegalArgumentException("해당 충전 요청이 없습니다");
-
-		List<String> value = redisTemplate.opsForValue().multiGet(keys);
+		List<String> value = redisDao.multiGet(searchStr);
 		AdminGetChargingResponse response = new AdminGetChargingResponse(value.get(0));
 		return ItemApiResponse.ok("조회 성공", response);
 	}
@@ -82,7 +81,7 @@ public class AdminService {
 		User user = manager.findUser(cashRequest.getUserId());
 		String key = "STMT: " + cashRequest.getUserId() + "-" + cashRequest.getMsg() + "-" + cashRequest.getValue();
 		// searchCharging 에서 검증되어 넘어온 Request 이기에 값이 있는지에 대한 체크는 건너뛰어도 된다 생각함
-		redisTemplate.delete(key);
+		redisDao.deleteValues(key);
 
 		user.setStatement(LocalDate.now() + "," + cashRequest.getValue() +"원 충전");
 		user.setCash("+", cashRequest.getValue());
@@ -129,21 +128,13 @@ public class AdminService {
 		target.setStatus(request.getMsg());
 
 		if (target.getStatus().equals(Status.SUSPENDED) || target.getStatus().equals(Status.DORMANT)) {
-			if (redisTemplate.opsForValue().get("RT: " + target.getId()) != null) {
-				redisTemplate.delete("RT: " + target.getId());
-			}
+			redisDao.deleteIfNotNull("RT: " + target.getId());
 		}
 		return ApiResponse.ok("상태 변경 완료");
 	}
 
 	public ApiResponse setWinNumber(WinNumberRequest request) {
-		if (redisTemplate.opsForList().size("WNL") >= 5) {
-			redisTemplate.opsForList().leftPop("WNL");
-		}
-
-		String result = request.getTime()+","+request.getDate()+","+request.getPrize()+","
-			+request.getWinner()+","+request.getNumbers();
-		redisTemplate.opsForList().rightPush("WNL", result);
+		redisDao.setWinNumber("WNL", request);
 		return ApiResponse.ok("생성 완료");
 	}
 

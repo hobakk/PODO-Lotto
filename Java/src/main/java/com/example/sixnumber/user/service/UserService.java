@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +21,7 @@ import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
+import com.example.sixnumber.global.util.RedisDao;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
@@ -50,7 +50,7 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final JwtProvider jwtProvider;
 	private final PasswordEncoder passwordEncoder;
-	private final RedisTemplate<String, String> redisTemplate;
+	private final RedisDao redisDao;
 	private final Manager manager;
 	private final String RTK = "RT: ";
 	private final String STMT = "STMT: ";
@@ -83,11 +83,7 @@ public class UserService {
 
 	public String signIn(SigninRequest request) {
 		User user = manager.findUser(request.getEmail());
-
-		if (redisTemplate.opsForValue().get(RTK + user.getId()) != null) {
-			redisTemplate.delete(RTK + user.getId());
-			throw new OverlapException("중복된 로그인입니다");
-		}
+		redisDao.overlapLogin(RTK + user.getId());
 
 		if (!user.getStatus().equals(Status.ACTIVE)) {
 			String msg = "";
@@ -104,13 +100,13 @@ public class UserService {
 
 		String accessToken = jwtProvider.accessToken(user.getEmail(), user.getId());
 		String refreshToken = jwtProvider.refreshToken(user.getEmail(), user.getId());
-		redisTemplate.opsForValue().set(RTK + user.getId(), refreshToken);
+		redisDao.setValues(RTK + user.getId(), refreshToken);
 
 		return accessToken + "," + refreshToken;
 	}
 
 	public ApiResponse logout(User user) {
-		redisTemplate.delete(RTK + user.getId());
+		redisDao.deleteValues(RTK + user.getId());
 		return ApiResponse.ok("로그아웃 성공");
 	}
 
@@ -153,32 +149,29 @@ public class UserService {
 
 	// 요청을 최대 3번까지 할 수 있고 12시간 기준으로 삭제되기에 충전 요청 취소를 만들지 않아도 된다 판단함
 	public ApiResponse charging(ChargingRequest chargingRequest, User user) {
-		Set<String> keys = redisTemplate.keys("*" + STMT + user.getId() + "-*");
+		Set<String> keys = redisDao.getKeysList(STMT + user.getId());
 
 		if (keys.size() >= 3) throw new IllegalArgumentException("처리되지 않은 요청사항이 많습니다");
 
 		String msgCash = chargingRequest.getMsg() + "-" + chargingRequest.getCash();
-		Set<String> checkIncorrect = redisTemplate.keys("*" + msgCash + "*");
+		Set<String> checkIncorrect = redisDao.getKeysList(msgCash);
 		if (!checkIncorrect.isEmpty()) throw new OverlapException("다른 문자로 다시 시도해주세요");
 
 		if (user.getChargingCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
 
 		String value = user.getId() + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getCash();
-		redisTemplate.opsForValue().set(STMT + value, value, 12, TimeUnit.HOURS);
+		redisDao.setValues(STMT + value, value, (long) 12, TimeUnit.HOURS);
 		user.setChargingCount(1);
 		userRepository.save(user);
 		return ApiResponse.ok("요청 성공");
 	}
 
 	public ListApiResponse<ChargingResponse> getCharges(Long userId) {
-		Set<String> keys = redisTemplate.keys("*" + STMT + userId + "-*");
+		List<String> values = redisDao.multiGet(STMT + userId);
 
-		if (keys.size() == 0)
-			throw new IllegalArgumentException("충전 요청이 존재하지 않습니다");
-
-		List<String> values = redisTemplate.opsForValue().multiGet(keys);
-
-		List<ChargingResponse> responses = values.stream().map(ChargingResponse::new).collect(Collectors.toList());
+		List<ChargingResponse> responses = values.stream()
+			.map(ChargingResponse::new)
+			.collect(Collectors.toList());
 		return ListApiResponse.ok("신청 리스트 조회 성공", responses);
 	}
 
@@ -231,12 +224,10 @@ public class UserService {
 	}
 
 	public ListApiResponse<WinNumberResponse> getWinNumber() {
-		List<String> value = redisTemplate.opsForList().range("WNL", 0, -1);
-		if (value.isEmpty()) {
-			throw new IllegalArgumentException("당첨 번호 정보가 존재하지 않습니다");
-		}
+		List<String> value = redisDao.getValuesList("WNL");
 
-		List<WinNumberResponse> responses = value.stream().map(WinNumberResponse::new).toList();
+		List<WinNumberResponse> responses = value.stream()
+			.map(WinNumberResponse::new).toList();
 		return ListApiResponse.ok("조회 성공", responses);
 	}
 
