@@ -1,11 +1,9 @@
 package com.example.sixnumber.global;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
@@ -73,5 +71,26 @@ public class RedisDaoTest {
 		Assertions.assertThrows(OverlapException.class, () -> redisDao.overlapLogin(key));
 
 		verify(valueOperations, times(2)).get(key);
+	}
+
+	@Test
+	void setWinNumber_success_manySize() {
+		WinNumberRequest request = TestDataFactory.winNumberRequest();
+		String result = request.getTime()+","+request.getDate()+","+request.getPrize()+","
+			+request.getWinner()+","+request.getNumbers();
+		ListOperations<String, String> listOperations = mock(ListOperations.class);
+
+		when(redisTemplate.opsForList()).thenReturn(listOperations);
+		when(listOperations.size("WNL")).thenReturn(5L);
+		when(listOperations.leftPop("WNL")).thenReturn("previousValue");
+		when(listOperations.rightPush("WNL", result)).thenReturn(1L);
+
+		Long size = redisDao.setWinNumber("WNL", request);
+
+		verify(listOperations, times(2)).size("WNL");
+		verify(listOperations).leftPop(anyString());
+		verify(listOperations).rightPush("WNL", result);
+		assertEquals(listOperations.size("WNL"), 5L);
+		assertEquals(size, 5L);
 	}
 }
