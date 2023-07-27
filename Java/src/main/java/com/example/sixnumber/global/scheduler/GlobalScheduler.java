@@ -3,10 +3,8 @@ package com.example.sixnumber.global.scheduler;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -99,7 +97,6 @@ public class GlobalScheduler {
 
 	// 너무 많은 작업을 담당하기에 분리함
 	private void generatesStatistics(int year, int lastMonth, YearMonth findYm) {
-		String statistics = "";
 		System.out.println(lastMonth+"월 통계 생성중");
 		List<Integer> countList = new ArrayList<>();
 		for (int i = 0; i < 45; i++) {
@@ -117,18 +114,9 @@ public class GlobalScheduler {
 				}
 			}
 		}
-		for (int i = 0; i < countList.size(); i++) {
-			statistics = statistics + "(" + (i+1) + " : " + countList.get(i) + "), ";
-		}
-		statistics = statistics.substring(0, statistics.length() -2);
 
-		List<Integer> sortedIndices = new ArrayList<>();
-		for (int i = 0; i < countList.size(); i++) {
-			sortedIndices.add(i);
-		}
-
-		String result = manager.reviseResult(sortedIndices, countList);
-		Lotto lotto = new Lotto(lastMonth + "월 통계", "Scheduler", findYm, countList, statistics, result);
+		String result = manager.revisedTopIndicesAsStr(countList);
+		Lotto lotto = new Lotto(lastMonth + "월 통계", "Scheduler", findYm, countList, result);
 		lottoRepository.save(lotto);
 	}
 }
