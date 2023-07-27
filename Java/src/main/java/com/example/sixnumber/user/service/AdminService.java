@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +25,6 @@ import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
-import com.example.sixnumber.user.dto.WinNumberRequest;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -131,11 +129,6 @@ public class AdminService {
 			redisDao.deleteIfNotNull("RT: " + target.getId());
 		}
 		return ApiResponse.ok("상태 변경 완료");
-	}
-
-	public ApiResponse setWinNumber(WinNumberRequest request) {
-		redisDao.setWinNumber("WNL", request);
-		return ApiResponse.ok("생성 완료");
 	}
 
 	private User confirmationProcess(User user, Long userId) {

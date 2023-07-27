@@ -223,14 +223,6 @@ public class UserService {
 		return ListApiResponse.ok("거래내역 조회 완료", response);
 	}
 
-	public ListApiResponse<WinNumberResponse> getWinNumber() {
-		List<String> value = redisDao.getValuesList("WNL");
-
-		List<WinNumberResponse> responses = value.stream()
-			.map(WinNumberResponse::new).toList();
-		return ListApiResponse.ok("조회 성공", responses);
-	}
-
 	public ItemApiResponse<MyInformationResponse> getMyInformation(Long userId) {
 		User user = manager.findUser(userId);
 		MyInformationResponse response = new MyInformationResponse(user);
