@@ -71,17 +71,4 @@ public class RedisDao {
 		boolean isNull = deleteIfNotNull(key);
 		if (isNull) throw new OverlapException("중복된 로그인입니다");
 	}
-
-	public Long setWinNumber(String key, WinNumberRequest request) {
-		ListOperations<String, String> listOperations = redisTemplate.opsForList();
-		if (listOperations.size(key) >= 5) {
-			listOperations.leftPop("WNL");
-		}
-
-		String result = request.getTime()+","+request.getDate()+","+request.getPrize()+","
-			+request.getWinner()+","+request.getNumbers();
-		listOperations.rightPush("WNL", result);
-
-		return listOperations.size(key);
-	}
 }
