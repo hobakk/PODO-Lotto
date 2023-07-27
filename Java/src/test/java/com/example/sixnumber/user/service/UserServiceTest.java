@@ -424,18 +424,6 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void getWinNumber_success() {
-		List<String> list = List.of("1075,2023-07-11,1000000,1,1 2 3 4 5 6 7");
-
-		when(redisDao.getValuesList(anyString())).thenReturn(list);
-
-		ListApiResponse<WinNumberResponse> response = userService.getWinNumber();
-
-		verify(redisDao).getValuesList(anyString());
-		TestUtil.ListApiAssertEquals(response, 200, "조회 성공");
-	}
-
-	@Test
 	void checkPW_success() {
 		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("ePassword");

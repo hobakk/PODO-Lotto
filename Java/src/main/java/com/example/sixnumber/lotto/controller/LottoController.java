@@ -1,5 +1,6 @@
 package com.example.sixnumber.lotto.controller;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,11 +23,11 @@ public class LottoController {
 
 	@GetMapping("/main")
 	public ResponseEntity<ItemApiResponse<LottoResponse>> mainTopNumbers() {
-		return ResponseEntity.ok(lottoService.mainTopNumbers());
+		return ResponseEntity.ok(ItemApiResponse.ok("조회 성공", lottoService.mainTopNumbers()));
 	}
 
 	@GetMapping("/yearMonth")
 	public ResponseEntity<ItemApiResponse<LottoResponse>> getTopNumberForMonth(@RequestBody YearMonthRequest request) {
-		return ResponseEntity.ok(lottoService.getTopNumberForMonth(request));
+		return ResponseEntity.ok(ItemApiResponse.ok("조회 성공", lottoService.getTopNumberForMonth(request)));
 	}
 }

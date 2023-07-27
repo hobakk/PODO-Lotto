@@ -7,12 +7,11 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OrderColumn;
-
-import com.example.sixnumber.global.util.TimeStamped;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Lotto extends TimeStamped {
+public class Lotto {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,17 +35,14 @@ public class Lotto extends TimeStamped {
 	private List<Integer> countList = new ArrayList<>(46);
 	@Column(name = "creationDate")
 	private YearMonth creationDate;
-	@Column(name = "statistics")
-	private String statistics;
 	@Column(name = "value")
-	private String value;
+	private String topNumber;
 
-	public Lotto(String subject, String email, YearMonth creationDate, List<Integer> countList, String statistics, String value) {
+	public Lotto(String subject, String email, YearMonth creationDate, List<Integer> countList, String topNumber) {
 		this.subject = subject;
 		this.creationDate = creationDate;
 		this.email = email;
 		this.countList = countList;
-		this.statistics = statistics;
-		this.value = value;
+		this.topNumber = topNumber;
 	}
 }

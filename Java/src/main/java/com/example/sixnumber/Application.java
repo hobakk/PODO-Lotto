@@ -1,5 +1,9 @@
 package com.example.sixnumber;
 
+import java.time.YearMonth;
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,6 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.example.sixnumber.lotto.entity.Lotto;
+import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
@@ -21,7 +27,7 @@ public class Application {
 
 	@Bean
 	public CommandLineRunner dummyData(
-		UserRepository userRepository, PasswordEncoder passwordEncoder
+		UserRepository userRepository, PasswordEncoder passwordEncoder, LottoRepository lottoRepository
 	) {
 		return args -> {
 
@@ -44,6 +50,11 @@ public class Application {
 			user2.setCash("+", 20000);
 			user2.setStatement("DATE,MSG");
 			userRepository.save(user2);
+
+			YearMonth yearMonth = YearMonth.of(2023, 5);
+			List<Integer> countList = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
+			Lotto lotto = new Lotto("test", "dummy", yearMonth, countList, "2 3 4 5 6 7");
+			lottoRepository.save(lotto);
 		};
 	}
 }

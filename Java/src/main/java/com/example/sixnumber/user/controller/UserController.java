@@ -3,6 +3,7 @@ package com.example.sixnumber.user.controller;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -101,11 +102,6 @@ public class UserController {
 	@GetMapping("/my-information")
 	public ResponseEntity<ItemApiResponse<MyInformationResponse>> getMyInformation(@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.getMyInformation(user.getId()));
-	}
-
-	@GetMapping("/winnumber")
-	public ResponseEntity<ListApiResponse<WinNumberResponse>> getWinNumber() {
-		return ResponseEntity.ok(userService.getWinNumber());
 	}
 
 	@PostMapping("/check-pw")

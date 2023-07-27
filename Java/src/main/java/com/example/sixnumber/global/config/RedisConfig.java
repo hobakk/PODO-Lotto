@@ -4,8 +4,8 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -20,6 +20,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Configuration
+@EnableCaching
 public class RedisConfig {
 
 	@Value("${spring.redis.host}")
@@ -27,12 +28,6 @@ public class RedisConfig {
 
 	@Value("${spring.redis.port}")
 	private int port;
-
-	private final ObjectMapper objectMapper;
-
-	public RedisConfig(ObjectMapper objectMapper) {
-		this.objectMapper = objectMapper;
-	}
 
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
@@ -49,21 +44,25 @@ public class RedisConfig {
 	}
 
 	@Bean
-	public RedisCacheManager redisCacheManager() {
-		RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration
-			.defaultCacheConfig()
+	public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
+		RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
+			.entryTtl(Duration.ZERO)
 			.disableCachingNullValues()
-			.serializeValuesWith(
-				RedisSerializationContext.SerializationPair
-					.fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper))
-			);
+			.serializeKeysWith(RedisSerializationContext
+				.SerializationPair
+				.fromSerializer(new StringRedisSerializer()))
+			.serializeValuesWith(RedisSerializationContext
+				.SerializationPair
+				.fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
-		Map<String, RedisCacheConfiguration> redisCacheConfigurationMap = new HashMap<>();
-		redisCacheConfigurationMap.put("MainStats", redisCacheConfiguration.entryTtl(Duration.ofMinutes(30)));
+		Map<String, RedisCacheConfiguration> cacheConfigurationMap = new HashMap<>();
+		cacheConfigurationMap.put("MainStats", redisCacheConfiguration.entryTtl(Duration.ofMinutes(30)));
 
-		return RedisCacheManager.builder(redisConnectionFactory())
+		return RedisCacheManager
+			.RedisCacheManagerBuilder
+			.fromConnectionFactory(redisConnectionFactory)
 			.cacheDefaults(redisCacheConfiguration)
-			.withInitialCacheConfigurations(redisCacheConfigurationMap)
+			.withInitialCacheConfigurations(cacheConfigurationMap)
 			.build();
 	}
 }

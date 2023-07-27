@@ -2,7 +2,9 @@ package com.example.sixnumber.global.util;
 
 import static com.example.sixnumber.global.exception.ErrorCode.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,11 +30,17 @@ public class Manager {
 		} else throw new IllegalArgumentException("잘못된 접근입니다");
 	}
 
-	public String reviseResult(List<Integer> sortedIndices, List<Integer> countList) {
-		sortedIndices.sort((index1, index2) -> countList.get(index2).compareTo(countList.get(index1)));
-		List<Integer> topIndices = sortedIndices.subList(0, Math.min(sortedIndices.size(), 6));
-		Collections.sort(topIndices);
-		topIndices.replaceAll(Integer -> Integer + 1);
-		return topIndices.stream().map(Object::toString).collect(Collectors.joining(" "));
+	public String revisedTopIndicesAsStr(List<Integer> countList) {
+		List<Integer> indices = new ArrayList<>();
+		for (int i = 0; i < countList.size(); i++) { indices.add(i); }
+
+		indices.sort((i1, i2) -> Integer.compare(countList.get(i2), countList.get(i1)));
+
+		List<Integer> integers = indices.subList(0, Math.min(6, countList.size()));
+		integers.replaceAll(Integer -> Integer + 1);
+		Collections.sort(integers);
+		return integers.stream()
+			.map(Object::toString)
+			.collect(Collectors.joining(" "));
 	}
 }
