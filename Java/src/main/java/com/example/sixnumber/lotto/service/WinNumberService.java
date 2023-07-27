@@ -35,13 +35,10 @@ public class WinNumberService {
 		winNumberRepository.save(winNumber);
 
 		List<WinNumber> winNumberList = winNumberRepository.findAll();
-		List<WinNumber> result = new ArrayList<>();
 		if (winNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
 
 		if (winNumberList.size() >= 5) {
-			for (int i = winNumberList.size()-1; i > 5; i--) {
-				result.add(winNumberList.get(i));
-			}
+			winNumberList = winNumberList.subList(winNumberList.size()-5, winNumberList.size());
 		}
 
 		return new WinNumberResponse(winNumberList);
