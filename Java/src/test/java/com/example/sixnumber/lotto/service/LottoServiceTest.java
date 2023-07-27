@@ -4,7 +4,6 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -44,21 +43,20 @@ public class LottoServiceTest {
 
 	@Test
 	void mainTopNumbers() {
-		when(lotto.getCountList()).thenReturn(Arrays.asList(4,5,6,7,8,9));
+		List<Integer> countList = Arrays.asList(4,5,6,7,8,9);
+		when(lotto.getCountList()).thenReturn(countList);
 
 		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
 
-		when(manager.reviseResult(anyList(), anyList())).thenReturn("1 2 3 4 5 6");
+		when(manager.revisedTopIndicesAsStr(anyList())).thenReturn("1 2 3 4 5 6");
 
-		ItemApiResponse<LottoResponse> response = lottoService.mainTopNumbers();
+		LottoResponse response = lottoService.mainTopNumbers();
 
 		verify(lottoRepository).findByMain();
 		verify(lotto).getCountList();
-		verify(manager).reviseResult(anyList(), anyList());
-		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");
-		LottoResponse data = response.getData();
-		assertEquals(data.getStatistics(), "(1번 : 4), (2번 : 5), (3번 : 6), (4번 : 7), (5번 : 8), (6번 : 9)");
-		assertEquals(data.getValue(), "1 2 3 4 5 6");
+		verify(manager).revisedTopIndicesAsStr(anyList());
+		assertEquals(response.getValue(), "1 2 3 4 5 6");
+		assertEquals(response.getCountList(), countList);
 	}
 
 	@Test
@@ -72,15 +70,19 @@ public class LottoServiceTest {
 
 	@Test
 	void getTopNumberForMonth() {
+		List<Integer> countList = Arrays.asList(1,2,3,4,5,6,7);
 		YearMonthRequest request = mock(YearMonthRequest.class);
 		when(request.getYearMonth()).thenReturn(YearMonth.now());
+		when(lotto.getCountList()).thenReturn(countList);
+		when(lotto.getTopNumber()).thenReturn("2 3 4 5 6 7");
 
 		when(lottoRepository.findByTopNumbersForMonth(request.getYearMonth())).thenReturn(Optional.of(lotto));
 
-		ItemApiResponse<LottoResponse> response = lottoService.getTopNumberForMonth(request);
+		LottoResponse response = lottoService.getTopNumberForMonth(request);
 
 		verify(lottoRepository).findByTopNumbersForMonth(request.getYearMonth());
-		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");
+		assertEquals(response.getValue(), "2 3 4 5 6 7");
+		assertEquals(response.getCountList(), countList);
 	}
 
 	@Test

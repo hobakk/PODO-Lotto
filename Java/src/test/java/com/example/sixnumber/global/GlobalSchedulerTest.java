@@ -64,14 +64,14 @@ public class GlobalSchedulerTest {
 		when(sixNumber.getNumberList()).thenReturn(Arrays.asList("1 2 3", "4 5 6"));
 		when(sixNumberRepository.findAllByBuyDate(anyInt(), anyInt())).thenReturn(List.of(sixNumber));
 
-		when(manager.reviseResult(anyList(), anyList())).thenReturn("1 2 3 4 5 6");
+		when(manager.revisedTopIndicesAsStr(anyList())).thenReturn("1 2 3 4 5 6");
 
 		globalScheduler.findByTopNumberListForMonth();
 
 		verify(sixNumber).getNumberList();
 		verify(sixNumberRepository).findAllByBuyDate(anyInt(), anyInt());
 		verify(lottoRepository).save(any(Lotto.class));
-		verify(manager).reviseResult(anyList(), anyList());
+		verify(manager).revisedTopIndicesAsStr(anyList());
 	}
 
 	@Test
