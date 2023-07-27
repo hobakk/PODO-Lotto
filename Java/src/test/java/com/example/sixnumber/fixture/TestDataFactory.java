@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.Arguments;
 
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
+import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -77,6 +78,10 @@ public class TestDataFactory {
 			1,
 			"1 2 3 4 5 6 7"
 		);
+	}
+
+	public static WinNumber winNumber() {
+		return  new WinNumber(winNumberRequest());
 	}
 
 	public static BuyNumberRequest buyNumberRequest() {

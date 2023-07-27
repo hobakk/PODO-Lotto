@@ -254,16 +254,4 @@ public class AdminServiceTest {
 
 		verify(manager).findUser(anyLong());
 	}
-
-	@Test
-	void setWinNumber_success() {
-		WinNumberRequest winNumberRequest = TestDataFactory.winNumberRequest();
-
-		doNothing().when(redisDao).setWinNumber("WNL", winNumberRequest);
-
-		ApiResponse response = adminService.setWinNumber(winNumberRequest);
-
-		verify(redisDao).setWinNumber("WNL", winNumberRequest);
-		TestUtil.ApiAsserEquals(response, 200, "생성 완료");
-	}
 }
