@@ -31,9 +31,8 @@ public class LottoService {
 		Lotto lotto = lottoRepository.findByMain().orElseThrow(
 			() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
 
-		List<Integer> countList = new ArrayList<>(lotto.getCountList());
-		String result = manager.revisedTopIndicesAsStr(countList);
-		return new LottoResponse(countList, result);
+		String result = manager.revisedTopIndicesAsStr(lotto.getCountList());
+		return new LottoResponse(lotto.getCountList(), result);
 	}
 
 	@Cacheable(value = "MonthStats", key = "#request.yearMonth")
@@ -41,8 +40,7 @@ public class LottoService {
 		Lotto lotto = lottoRepository.findByTopNumbersForMonth(request.getYearMonth())
 			.orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
 
-		List<Integer> countList = new ArrayList<>(lotto.getCountList());
 		String result = lotto.getTopNumber();
-		return new LottoResponse(countList, result);
+		return new LottoResponse(lotto.getCountList(), result);
 	}
 }
