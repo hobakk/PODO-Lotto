@@ -1,4 +1,4 @@
-package com.example.sixnumber.user.dto;
+package com.example.sixnumber.lotto.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
