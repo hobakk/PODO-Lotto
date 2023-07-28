@@ -36,7 +36,7 @@ public class WinNumber {
 	private int winner;
 	@ElementCollection
 	@OrderColumn(name = "topNumbers_index", nullable = false)
-	private List<Integer> topNumberList = new ArrayList<>();
+	private List<Integer> topNumberList;
 	@Column(nullable = false)
 	private int bonus;
 
