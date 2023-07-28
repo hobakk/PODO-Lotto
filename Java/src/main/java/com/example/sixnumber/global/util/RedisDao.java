@@ -9,9 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
-import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.exception.OverlapException;
-import com.example.sixnumber.user.dto.WinNumberRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -70,18 +68,5 @@ public class RedisDao {
 	public void overlapLogin(String key) {
 		boolean isNull = deleteIfNotNull(key);
 		if (isNull) throw new OverlapException("중복된 로그인입니다");
-	}
-
-	public Long setWinNumber(String key, WinNumberRequest request) {
-		ListOperations<String, String> listOperations = redisTemplate.opsForList();
-		if (listOperations.size(key) >= 5) {
-			listOperations.leftPop("WNL");
-		}
-
-		String result = request.getTime()+","+request.getDate()+","+request.getPrize()+","
-			+request.getWinner()+","+request.getNumbers();
-		listOperations.rightPush("WNL", result);
-
-		return listOperations.size(key);
 	}
 }

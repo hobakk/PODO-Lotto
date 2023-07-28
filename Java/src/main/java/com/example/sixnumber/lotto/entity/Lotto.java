@@ -32,7 +32,7 @@ public class Lotto {
 	private String subject;
 	@ElementCollection
 	@OrderColumn(name = "countList_index", nullable = false)
-	private List<Integer> countList = new ArrayList<>(46);
+	private List<Integer> countList;
 	@Column(name = "creationDate")
 	private YearMonth creationDate;
 	@Column(name = "value")

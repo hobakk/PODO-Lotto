@@ -1,8 +1,8 @@
 package com.example.sixnumber.lotto.entity;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -12,7 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OrderColumn;
 
-import com.example.sixnumber.user.dto.WinNumberRequest;
+import com.example.sixnumber.lotto.dto.WinNumberRequest;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -36,16 +36,20 @@ public class WinNumber {
 	private int winner;
 	@ElementCollection
 	@OrderColumn(name = "topNumbers_index", nullable = false)
-	private List<Integer> topNumbers;
+	private List<Integer> topNumberList;
+	@Column(nullable = false)
+	private int bonus;
 
 	public WinNumber(WinNumberRequest request) {
+		List<Integer> bonusInclude = Arrays.stream(request.getNumbers()
+				.split(" ")).map(Integer::parseInt).toList();
+		List<Integer> topNumberList = bonusInclude.subList(0, bonusInclude.size()-1);
+
 		this.data = request.getDate();
 		this.time = request.getTime();
 		this.prize = request.getPrize();
 		this.winner = request.getWinner();
-		this.topNumbers = Arrays.stream(request.getNumbers()
-							.split(" "))
-							.map(Integer::parseInt)
-							.collect(Collectors.toList());
+		this.topNumberList = topNumberList;
+		this.bonus = bonusInclude.subList(bonusInclude.size()-1, bonusInclude.size()).get(0);
 	}
 }

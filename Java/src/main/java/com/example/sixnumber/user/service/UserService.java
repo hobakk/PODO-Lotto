@@ -22,6 +22,8 @@ import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
+import com.example.sixnumber.lotto.entity.SixNumber;
+import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
@@ -30,7 +32,6 @@ import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
-import com.example.sixnumber.user.dto.WinNumberResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.exception.StatusNotActiveException;
@@ -48,6 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final SixNumberRepository sixNumberRepository;
 	private final JwtProvider jwtProvider;
 	private final PasswordEncoder passwordEncoder;
 	private final RedisDao redisDao;
@@ -235,5 +237,11 @@ public class UserService {
 		}
 
 		return ApiResponse.ok("본인확인 성공");
+	}
+
+	public ItemApiResponse<?> getRecentBuyNumbers(User user) {
+		SixNumber sixNumber = sixNumberRepository.findByRecentBuyNumbers(user.getId()).orElseThrow(
+			() -> new IllegalArgumentException("해당 정보가 존재하지 않습니다"));
+		return ItemApiResponse.ok("최근 구매 번호 조회 성공", sixNumber.getNumberList());
 	}
 }

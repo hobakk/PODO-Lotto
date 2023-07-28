@@ -3,7 +3,6 @@ package com.example.sixnumber.user.controller;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +23,6 @@ import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
-import com.example.sixnumber.user.dto.WinNumberResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
 
@@ -107,5 +105,10 @@ public class UserController {
 	@PostMapping("/check-pw")
 	public ResponseEntity<ApiResponse> checkPW(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.checkPW(request, user.getPassword()));
+	}
+
+	@GetMapping("/recent")
+	public ResponseEntity<ItemApiResponse<?>> getRecentBuyNumbers(@AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(userService.getRecentBuyNumbers(user));
 	}
 }
