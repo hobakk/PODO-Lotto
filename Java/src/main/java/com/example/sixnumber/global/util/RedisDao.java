@@ -9,9 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
-import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.exception.OverlapException;
-import com.example.sixnumber.user.dto.WinNumberRequest;
 
 import lombok.RequiredArgsConstructor;
 

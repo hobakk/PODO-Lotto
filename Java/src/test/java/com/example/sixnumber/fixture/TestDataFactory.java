@@ -17,7 +17,7 @@ import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
-import com.example.sixnumber.user.dto.WinNumberRequest;
+import com.example.sixnumber.lotto.dto.WinNumberRequest;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
