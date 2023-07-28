@@ -25,7 +25,7 @@ public class WinNumberController {
 		return ResponseEntity.ok(ItemApiResponse.ok("조회 성공", winNumberService.getWinNumbers()));
 	}
 
-	@PostMapping("/")
+	@PostMapping("/set")
 	public ResponseEntity<ApiResponse> setWinNumber(WinNumberRequest request) {
 		winNumberService.setWinNumbers(request);
 		return ResponseEntity.ok(ApiResponse.ok("등록 성공"));
