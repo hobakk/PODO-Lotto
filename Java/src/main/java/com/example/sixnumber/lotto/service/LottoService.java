@@ -1,5 +1,6 @@
 package com.example.sixnumber.lotto.service;
 
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.LottoResponse;
-import com.example.sixnumber.lotto.dto.YearMonthRequest;
 import com.example.sixnumber.lotto.dto.YearMonthResponse;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
@@ -35,13 +35,12 @@ public class LottoService {
 		return new LottoResponse(lotto.getCountList(), result);
 	}
 
-	@Cacheable(value = "MonthStats", key = "#request.yearMonth")
-	public LottoResponse getTopNumberForMonth(YearMonthRequest request) {
-		Lotto lotto = lottoRepository.findByTopNumbersForMonth(request.getYearMonth())
+	@Cacheable(value = "MonthStats", key = "#yearMonth")
+	public LottoResponse getTopNumberForMonth(YearMonth yearMonth) {
+		Lotto lotto = lottoRepository.findByTopNumbersForMonth(yearMonth)
 			.orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
 
-		String result = lotto.getTopNumber();
-		return new LottoResponse(lotto.getCountList(), result);
+		return new LottoResponse(lotto.getCountList(), lotto.getTopNumber());
 	}
 
 	@Cacheable(value = "MonthStats", key = "'all'")
