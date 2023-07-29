@@ -131,9 +131,9 @@ public class SixNumberService {
 	}
 
 	public ItemApiResponse<?> getRecentBuyNumbers(User user) {
-		SixNumber sixNumber = sixNumberRepository.findByRecentBuyNumbers(user.getId()).orElseThrow(
-			() -> new IllegalArgumentException("해당 정보가 존재하지 않습니다"));
-		return ItemApiResponse.ok("최근 구매 번호 조회 성공", sixNumber.getNumberList());
+		List<SixNumber> sixNumberList = sixNumberRepository.findByRecentBuyNumbers(user.getId());
+		if (sixNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
+		return ItemApiResponse.ok("최근 구매 번호 조회 성공", sixNumberList.get(sixNumberList.size()-1).getNumberList());
 	}
 
 	private void confirmationProcess(BuyNumberRequest buyNumberRequest, StatisticalNumberRequest statisticalNumberRequest, User userIf) {
