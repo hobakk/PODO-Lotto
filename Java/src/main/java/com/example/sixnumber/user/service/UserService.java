@@ -49,7 +49,6 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
 
 	private final UserRepository userRepository;
-	private final SixNumberRepository sixNumberRepository;
 	private final JwtProvider jwtProvider;
 	private final PasswordEncoder passwordEncoder;
 	private final RedisDao redisDao;
@@ -237,11 +236,5 @@ public class UserService {
 		}
 
 		return ApiResponse.ok("본인확인 성공");
-	}
-
-	public ItemApiResponse<?> getRecentBuyNumbers(User user) {
-		SixNumber sixNumber = sixNumberRepository.findByRecentBuyNumbers(user.getId()).orElseThrow(
-			() -> new IllegalArgumentException("해당 정보가 존재하지 않습니다"));
-		return ItemApiResponse.ok("최근 구매 번호 조회 성공", sixNumber.getNumberList());
 	}
 }

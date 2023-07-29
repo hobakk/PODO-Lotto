@@ -106,9 +106,4 @@ public class UserController {
 	public ResponseEntity<ApiResponse> checkPW(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.checkPW(request, user.getPassword()));
 	}
-
-	@GetMapping("/recent")
-	public ResponseEntity<ItemApiResponse<?>> getRecentBuyNumbers(@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.getRecentBuyNumbers(user));
-	}
 }

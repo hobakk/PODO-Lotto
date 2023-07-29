@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
@@ -127,6 +128,12 @@ public class SixNumberService {
 		sixNumberRepository.save(sixNumber);
 		saveMainLottoList(topNumbers);
 		return ListApiResponse.ok("요청 성공", topNumbers);
+	}
+
+	public ItemApiResponse<?> getRecentBuyNumbers(User user) {
+		SixNumber sixNumber = sixNumberRepository.findByRecentBuyNumbers(user.getId()).orElseThrow(
+			() -> new IllegalArgumentException("해당 정보가 존재하지 않습니다"));
+		return ItemApiResponse.ok("최근 구매 번호 조회 성공", sixNumber.getNumberList());
 	}
 
 	private void confirmationProcess(BuyNumberRequest buyNumberRequest, StatisticalNumberRequest statisticalNumberRequest, User userIf) {
