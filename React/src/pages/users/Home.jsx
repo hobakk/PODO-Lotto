@@ -11,7 +11,6 @@ function Home() {
   const getWinnumberMutation = useMutation(getWinNumber, {
     onSuccess: (res)=>{
       if (res.code === 200) {
-        console.log(res.data.winNumberList)
         const sortedValue = res.data.winNumberList.slice().sort((a, b) => {
           return new Date(b.date) - new Date(a.date);
         });
