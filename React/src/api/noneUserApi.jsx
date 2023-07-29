@@ -20,8 +20,8 @@ const signup = async (inputValue) => {
 
 const getWinNumber = async () => {
     try {
-        const { data } = await axios.get(`${process.env.REACT_APP_SPRING_URL}/users/winnumber`);
-        return data.data;  
+        const res = await axios.get(`${process.env.REACT_APP_SPRING_URL}/winnumber`);
+        return res.data;  
     } catch (error) {
         throw error.response.data;
     }

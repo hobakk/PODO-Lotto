@@ -16,8 +16,10 @@ function Signin() {
             navigate("/");
         },
         onError: (err)=>{
-            if  (err.status === 404) {
-                alert("아이디 또는 비밀번호가 일치하지 않습니다")
+            if  (err.status === 500) {
+                alert(err.message);
+            } else if (err.status !== 500) {
+                alert(err.msg);
             } else {
                 console.log(err);
             }

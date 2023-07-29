@@ -7,13 +7,17 @@ import { ChangingNumStyle } from '../../components/Manufacturing';
 function Home() {
   const [value, setValue] = useState([]);
   const [isEmpty, setBoolean] = useState(true);
+  
   const getWinnumberMutation = useMutation(getWinNumber, {
     onSuccess: (res)=>{
-      const sortedValue = res.slice().sort((a, b) => {
-        return new Date(b.date) - new Date(a.date);
-      });
-      setValue(sortedValue);
-      setBoolean(false);
+      if (res.code === 200) {
+        console.log(res.data.winNumberList)
+        const sortedValue = res.data.winNumberList.slice().sort((a, b) => {
+          return new Date(b.date) - new Date(a.date);
+        });
+        setValue(sortedValue);
+        setBoolean(false);
+      }
     },
     onError: (err)=>{
       if (err.status === 500) {
@@ -83,7 +87,7 @@ function Home() {
                 </div>
                 <div style={{ display: "flex", height: "1.5cm", marginTop: "10px", justifyContent: "center", textAlign: "center", alignItems: "center"}}>
                   <div style={{ display: "flex", marginLeft: "auto"}}>
-                    {result.numList.map((num, index)=>ChangingNumStyle(num, index))}
+                    {result.topNumberList.map((num, index)=>ChangingNumStyle(num, index))}
                   </div>
                   <span style={{...SpanStyle, marginLeft: "5px", marginRight: "5px",}}>+</span>
                   <div style={{ display: "flex", marginLeft: "5px"}}>{ChangingNumStyle(result.bonus)}</div>
