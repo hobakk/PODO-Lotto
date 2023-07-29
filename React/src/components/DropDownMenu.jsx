@@ -121,7 +121,7 @@ function DropDownMenu() {
                 <CustomLink to={"/buynum"}>랜덤 번호 구매</CustomLink>
               </LiBox>
               <LiBox>
-                <CustomLink to={"/statistical/num"}>n회 반복 처리 된 번호 구매</CustomLink>
+                <CustomLink to={"/stats/num"}>n회 반복 처리 된 번호 구매</CustomLink>
               </LiBox>
               <LiBox>
                 <CustomLink to={"/recent/num"}>이전 구매번호 조회</CustomLink>
@@ -131,7 +131,7 @@ function DropDownMenu() {
               <MenuTitle>통계</MenuTitle>
               <DividingLine />
               <LiBox>
-                <CustomLink to={"/statistical/main"}>서버 통계</CustomLink>
+                <CustomLink to={"/stats/main"}>서버 통계</CustomLink>
               </LiBox>
               <LiBox>
                 <CustomLink to={"/"}>월별 통계</CustomLink>

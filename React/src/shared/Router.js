@@ -13,7 +13,7 @@ import Premium from '../pages/users/Premium'
 import Statement from '../pages/users/Statement'
 import BuyNumber from '../pages/sixnum/BuyNumber'
 import StatisticalNumber from '../pages/sixnum/StatisticalNumber'
-import StatisticalMain from '../pages/lotto/StatisticalMain'
+import StatsMain from '../pages/lotto/StatsMain'
 import GetUsers from '../pages/admin/GetUsers'
 import RecentNumber from '../pages/sixnum/RecentNumber'
 
@@ -34,8 +34,8 @@ const Router = () => {
                 <Route path='/premium' element={<Premium />} />
                 <Route path='/statement' element={<Statement />} />
                 <Route path='/buynum' element={<BuyNumber />} />
-                <Route path='/statistical/num' element={<StatisticalNumber />} />
-                <Route path='/statistical/main' element={<StatisticalMain />} />
+                <Route path='/stats/num' element={<StatisticalNumber />} />
+                <Route path='/stats/main' element={<StatsMain />} />
                 <Route path='/admin/get-users' element={<GetUsers />} />
                 <Route path='/recent/num' element={<RecentNumber />} />
             </Routes>

@@ -7,7 +7,7 @@ import { getMainTopNumber } from '../../api/useUserApi';
 import { NumSentenceResult } from '../../components/Manufacturing';
 import StatsContainer from '../../components/StatsContainer';
 
-function StatisticalMain() {
+function StatsMain() {
     const navigate = useNavigate();
     const role = useSelector((state)=>state.userIf.role);
     const [value, setValue] = useState("");
@@ -44,4 +44,4 @@ function StatisticalMain() {
   )
 }
 
-export default StatisticalMain
+export default StatsMain
