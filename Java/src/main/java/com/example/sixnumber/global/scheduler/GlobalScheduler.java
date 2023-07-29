@@ -41,11 +41,27 @@ public class GlobalScheduler {
 		int lastMonth = Integer.parseInt(ym[1]);
 		YearMonth yLastMonth = YearMonth.of(year, lastMonth);
 
-		System.out.println(lastMonth + "월 통계 조회");
-		Optional<Lotto> lotto = lottoRepository.findByTopNumbersForMonth(yLastMonth);
+		Optional<Lotto> lastMonthLotto = lottoRepository.findByTopNumbersForMonth(yLastMonth);
 
-		if (lotto.isEmpty()) {
-			generatesStatistics(year, lastMonth, yLastMonth);
+		if (lastMonthLotto.isEmpty()) {
+			List<Integer> countList = new ArrayList<>();
+			for (int i = 0; i < 45; i++) { countList.add(1); }
+
+			List<SixNumber> lastMonthDateList = sixNumberRepository.findAllByBuyDate(year, lastMonth);
+			for (SixNumber sixNumber : lastMonthDateList) {
+				List<String> topNumberList = sixNumber.getNumberList();
+				for (String sentence : topNumberList) {
+					String[] topNumbers = sentence.split(" ");
+					for (String topNumber : topNumbers) {
+						int num = Integer.parseInt(topNumber);
+						countList.set(num, countList.get(num) + 1);
+					}
+				}
+			}
+
+			String result = manager.revisedTopIndicesAsStr(countList);
+			Lotto lotto = new Lotto(lastMonth + " Stats", "Scheduler", yLastMonth, countList, result);
+			lottoRepository.save(lotto);
 		}
 	}
 
@@ -93,30 +109,5 @@ public class GlobalScheduler {
 				if (refreshToken != null) redisTemplate.delete(refreshToken);
 			}
 		}
-	}
-
-	// 너무 많은 작업을 담당하기에 분리함
-	private void generatesStatistics(int year, int lastMonth, YearMonth findYm) {
-		System.out.println(lastMonth+"월 통계 생성중");
-		List<Integer> countList = new ArrayList<>();
-		for (int i = 0; i < 45; i++) {
-			countList.add(1);
-		}
-
-		List<SixNumber> monthDated = sixNumberRepository.findAllByBuyDate(year, lastMonth);
-		for (SixNumber sixNumber : monthDated) {
-			List<String> topNumberList = sixNumber.getNumberList();
-			for (String sentence : topNumberList) {
-				String[] topNumbers = sentence.split(" ");
-				for (String topNumber : topNumbers) {
-					int num = Integer.parseInt(topNumber);
-					countList.set(num, countList.get(num) + 1);
-				}
-			}
-		}
-
-		String result = manager.revisedTopIndicesAsStr(countList);
-		Lotto lotto = new Lotto(lastMonth + "월 통계", "Scheduler", findYm, countList, result);
-		lottoRepository.save(lotto);
 	}
 }

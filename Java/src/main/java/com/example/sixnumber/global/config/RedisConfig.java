@@ -57,6 +57,7 @@ public class RedisConfig {
 
 		Map<String, RedisCacheConfiguration> cacheConfigurationMap = new HashMap<>();
 		cacheConfigurationMap.put("MainStats", redisCacheConfiguration.entryTtl(Duration.ofMinutes(30)));
+		cacheConfigurationMap.put("MonthStats", redisCacheConfiguration.entryTtl(Duration.ofDays(7)));
 
 		return RedisCacheManager
 			.RedisCacheManagerBuilder

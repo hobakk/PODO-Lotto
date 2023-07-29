@@ -53,7 +53,7 @@ public class Application {
 
 			YearMonth yearMonth = YearMonth.of(2023, 5);
 			List<Integer> countList = Arrays.asList(1, 2, 3, 4, 5, 6, 7);
-			Lotto lotto = new Lotto("test", "dummy", yearMonth, countList, "2 3 4 5 6 7");
+			Lotto lotto = new Lotto("Stats", "dummy", yearMonth, countList, "2 3 4 5 6 7");
 			lottoRepository.save(lotto);
 		};
 	}
