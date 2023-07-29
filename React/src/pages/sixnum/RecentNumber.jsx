@@ -9,11 +9,12 @@ function RecentNumber() {
 
     const getRecentNumMutation = useMutation(getRecentNumber, {
         onSuccess: (res)=>{
-            console.log(res);
             setValue(res);
         },
         onError: (err)=>{
-            alert(err.message);
+            if (err.status === 500) {
+                alert(err.message);
+            }
         } 
     })
     
