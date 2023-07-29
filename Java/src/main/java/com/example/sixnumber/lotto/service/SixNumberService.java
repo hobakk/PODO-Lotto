@@ -145,7 +145,7 @@ public class SixNumberService {
 			requiredCash = buyNumberRequest.getValue() * 200;
 			msg = "추첨번호 " + buyNumberRequest.getValue() + "회 구매 : " + requiredCash + "원 차감";
 		} else if (buyNumberRequest == null) {
-			requiredCash = statisticalNumberRequest.getValue() * (statisticalNumberRequest.getRepetition() / 2);
+			requiredCash = statisticalNumberRequest.getValue() * 300;
 			msg = statisticalNumberRequest.getRepetition() + "번 반복 TOP 6 " + statisticalNumberRequest.getValue() + "회 구매 : " + requiredCash + "원 차감";
 		} else throw new CustomException(INVALID_INPUT);
 
