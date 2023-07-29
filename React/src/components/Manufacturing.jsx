@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { WinNumberStyle } from "./Styles";
 
 export const ChangingNumStyle = (num, index) => {
@@ -17,7 +17,7 @@ export const ChangingNumStyle = (num, index) => {
     return <WinNumberStyle key={`numbers-${index}`} color={color} style={{ marginRight: "7px"}}>{num}</WinNumberStyle>
 }
 
-export const NumSentenceStyle = (numSentence) => {
+export const NumSentenceResult = (numSentence) => {
   return (
       <div key={`sentence-${numSentence}`} style={{ marginTop: "30px" }}>
           <div style={{ display: "flex"}}>
@@ -26,3 +26,40 @@ export const NumSentenceStyle = (numSentence) => {
       </div>
   )
 }
+
+export const ResultContainer = ({ numSentenceList }) => {
+  const [firstLine, setFirst] = useState([]);
+  const [secondLine, setSecond] = useState([]);
+  const [thirdLine, setThird] = useState([]);
+  
+  useEffect(()=>{
+    if (numSentenceList.length > 0) {
+      setFirst(numSentenceList.slice(0, 8));
+      setSecond(numSentenceList.slice(8, 16));
+      setThird(numSentenceList.slice(16, 24));
+    }
+  }, [numSentenceList])
+
+  return (
+    <div id='resultcontent' style={{ display: "flex" }}>
+      <div>
+          {firstLine.map(numList=>{
+              return <div style={{ display: "flex", flexWrap: "wrap",}}>{NumSentenceResult(numList)}</div>;
+          })}
+      </div>
+      {secondLine.length > 0 && (
+          <div style={{ marginLeft: "70px" }}>
+              {secondLine.map(numList=>{
+                  return <div style={{ display: "flex", flexWrap: "wrap",}}>{NumSentenceResult(numList)}</div>
+              })}
+          </div>
+      )}
+      {thirdLine.length > 0 && (
+          <div style={{ marginLeft: "70px" }}>
+              {secondLine.map(numList=>{
+                  return <div style={{ display: "flex", flexWrap: "wrap",}}>{NumSentenceResult(numList)}</div>
+              })}
+          </div>
+      )}
+    </div>
+)}

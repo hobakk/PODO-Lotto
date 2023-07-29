@@ -1,18 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { SignBorder, CommonStyle } from '../../components/Styles'
+import { CommonStyle } from '../../components/Styles'
 import { buyNumber } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
-import { NumSentenceStyle } from '../../components/Manufacturing';
 import GetUserIfMutation from '../../components/GetUserIfMutation';
+import { ResultContainer } from '../../components/Manufacturing';
 
 
 function BuyNumber() {
     const [num, setNum] = useState(0);
     const [value, setValue] = useState([]);
     const [isEmpty, setData] = useState(true);
-    const [firstLine, setFirst] = useState([]);
-    const [secondLine, setSecond] = useState([]);
-    const [thirdLine, setThird] = useState([]);
     const numRef = useRef();
     const getUserIfMutation = GetUserIfMutation();
 
@@ -56,55 +53,26 @@ function BuyNumber() {
         setNum(e.target.value);
     }
     const onClickHandler = () => {
-        setData([]);
         setData(true);
     }
 
-    useEffect(()=>{
-        setFirst(value.slice(0, 8));
-        setSecond(value.slice(8, 16));
-        setThird(value.slice(16, 24));
-    }, [value])
-
   return (
-    <div style={ SignBorder }>
-        <div style={ CommonStyle }>
-            <h1 style={{  fontSize: "80px" }}>Buy Number</h1>
-            {isEmpty ? (
-                <div id='buycontent'>
-                    <p>1회 발급당 200원이 차감됩니다</p>
-                    <input value={num} ref={numRef} onChange={onChangeHandler} style={InputStyle} placeholder='0'/> 
-                    <button style={buttonStyle} onClick={()=>updownHandler(true)}>+</button>
-                    <button style={buttonStyle} onClick={()=>updownHandler(false)}>-</button>    
-                    <button onClick={buyHandler} style={{ width: "50px", height: "30px", marginLeft: "20px",  }}>구매</button>
-                </div> 
-            ):( 
-                <div>
-                    <div id='resultcontent' style={{ display: "flex" }}>
-                        <div>
-                            {firstLine.map(numList=>{
-                                return <div style={{ display: "flex", flexWrap: "wrap",}}>{NumSentenceStyle(numList)}</div>;
-                            })}
-                        </div>
-                        {secondLine.length > 0 && (
-                            <div style={{ marginLeft: "70px" }}>
-                                {secondLine.map(numList=>{
-                                    return <div style={{ display: "flex", flexWrap: "wrap",}}>{NumSentenceStyle(numList)}</div>
-                                })}
-                            </div>
-                        )}
-                        {thirdLine.length > 0 && (
-                            <div style={{ marginLeft: "70px" }}>
-                                {secondLine.map(numList=>{
-                                    return <div style={{ display: "flex", flexWrap: "wrap",}}>{NumSentenceStyle(numList)}</div>
-                                })}
-                            </div>
-                        )}
-                    </div>
-                    <button onClick={onClickHandler} style={{ marginTop: "1cm", marginRight: "auto"}}>계속 구매하기</button>
-                </div>
-            )}
-        </div>
+    <div style={ CommonStyle }>
+        <h1 style={{  fontSize: "80px" }}>Buy Number</h1>
+        {isEmpty ? (
+            <div id='buycontent'>
+                <p>1회 발급당 200원이 차감됩니다</p>
+                <input value={num} ref={numRef} onChange={onChangeHandler} style={InputStyle} placeholder='0'/> 
+                <button style={buttonStyle} onClick={()=>updownHandler(true)}>+</button>
+                <button style={buttonStyle} onClick={()=>updownHandler(false)}>-</button>    
+                <button onClick={buyHandler} style={{ width: "50px", height: "30px", marginLeft: "20px",  }}>구매</button>
+            </div> 
+        ):( 
+            <div>
+                <ResultContainer numSentenceList={value} />
+                <button onClick={onClickHandler} style={{ marginTop: "1cm", marginRight: "auto"}}>계속 구매하기</button>
+            </div>
+        )}
     </div>
   )
 }

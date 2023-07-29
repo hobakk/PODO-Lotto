@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { SignBorder, CommonStyle } from '../../components/Styles'
+import { CommonStyle } from '../../components/Styles'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { getMainTopNumber } from '../../api/useUserApi';
+import { NumSentenceResult } from '../../components/Manufacturing';
+import StatsContainer from '../../components/StatsContainer';
 
-function StatisticalMain() {
+function StatsMain() {
     const navigate = useNavigate();
     const role = useSelector((state)=>state.userIf.role);
     const [value, setValue] = useState("");
@@ -26,13 +28,20 @@ function StatisticalMain() {
     }, [])
 
   return (
-    <div style={ SignBorder }>
-        <div style={ CommonStyle }>
-            <h1 style={{  fontSize: "80px" }}>Statistica lMain</h1>
-            {value !== "" ? (value.map()) : null}
-        </div>
+    <div id='recent' style={ CommonStyle }>
+        <h1 style={{  fontSize: "80px", height: "1cm" }}>Statistica Main</h1>
+        {value !== "" &&(
+            <>
+                <div style={{ marginBottom: "2cm"}}>
+                        {value !== "" &&(
+                            <span style={{ textAlign: "center"}}>{NumSentenceResult(value.value)}</span>
+                        )}
+                </div>
+                <StatsContainer res={value.countList} />
+            </>
+        )}
     </div>
   )
 }
 
-export default StatisticalMain
+export default StatsMain

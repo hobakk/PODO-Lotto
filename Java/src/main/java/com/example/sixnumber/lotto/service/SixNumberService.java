@@ -131,9 +131,9 @@ public class SixNumberService {
 	}
 
 	public ItemApiResponse<?> getRecentBuyNumbers(User user) {
-		SixNumber sixNumber = sixNumberRepository.findByRecentBuyNumbers(user.getId()).orElseThrow(
-			() -> new IllegalArgumentException("해당 정보가 존재하지 않습니다"));
-		return ItemApiResponse.ok("최근 구매 번호 조회 성공", sixNumber.getNumberList());
+		List<SixNumber> sixNumberList = sixNumberRepository.findByRecentBuyNumbers(user.getId());
+		if (sixNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
+		return ItemApiResponse.ok("최근 구매 번호 조회 성공", sixNumberList.get(sixNumberList.size()-1).getNumberList());
 	}
 
 	private void confirmationProcess(BuyNumberRequest buyNumberRequest, StatisticalNumberRequest statisticalNumberRequest, User userIf) {
@@ -145,7 +145,7 @@ public class SixNumberService {
 			requiredCash = buyNumberRequest.getValue() * 200;
 			msg = "추첨번호 " + buyNumberRequest.getValue() + "회 구매 : " + requiredCash + "원 차감";
 		} else if (buyNumberRequest == null) {
-			requiredCash = statisticalNumberRequest.getValue() * (statisticalNumberRequest.getRepetition() / 2);
+			requiredCash = statisticalNumberRequest.getValue() * 300;
 			msg = statisticalNumberRequest.getRepetition() + "번 반복 TOP 6 " + statisticalNumberRequest.getValue() + "회 구매 : " + requiredCash + "원 차감";
 		} else throw new CustomException(INVALID_INPUT);
 
