@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 public class TransformResponse {
-	private final String data;
+	private final String date;
 	private final int time;
 	private final Long prize;
 	private final int winner;
@@ -19,7 +19,7 @@ public class TransformResponse {
 
 	@JsonCreator
 	public static TransformResponse create(
-		@JsonProperty("data") String data,
+		@JsonProperty("date") String data,
 		@JsonProperty("time") int time,
 		@JsonProperty("prize") Long prize,
 		@JsonProperty("winner") int winner,
@@ -29,8 +29,8 @@ public class TransformResponse {
 		return new TransformResponse(data, time, prize, winner, topNumberList, bonus);
 	}
 
-	public TransformResponse(String data, int time, Long prize, int winner, List<Integer> topNumberList, int bonus) {
-		this.data = data;
+	public TransformResponse(String date, int time, Long prize, int winner, List<Integer> topNumberList, int bonus) {
+		this.date = date;
 		this.time = time;
 		this.prize = prize;
 		this.winner = winner;
