@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.TestUtil;
+import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
@@ -40,11 +41,13 @@ public class SixNumberServiceTest {
 	private Manager manager;
 
 	private Lotto lotto;
+	private SixNumber sixNumber;
 	private User saveUser;
 
 	@BeforeEach
 	public void setup() {
 		lotto = mock(Lotto.class);
+		sixNumber = mock(SixNumber.class);
 		saveUser = TestDataFactory.user();
 	}
 
@@ -116,5 +119,24 @@ public class SixNumberServiceTest {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> sixNumberService.statisticalNumber(request, saveUser));
 
 		verify(manager).findUser(anyLong());
+	}
+
+	@Test
+	void getRecentBuyNumbers_success() {
+		when(sixNumberRepository.findByRecentBuyNumbers(anyLong())).thenReturn(Optional.of(sixNumber));
+
+		ItemApiResponse<?> response = sixNumberService.getRecentBuyNumbers(saveUser);
+
+		verify(sixNumberRepository).findByRecentBuyNumbers(anyLong());
+		TestUtil.ItemApiAssertEquals(response, 200, "최근 구매 번호 조회 성공");
+	}
+
+	@Test
+	void getRecentBuyNumbers_fail_isEmpty() {
+		when(sixNumberRepository.findByRecentBuyNumbers(anyLong())).thenReturn(Optional.empty());
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> sixNumberService.getRecentBuyNumbers(saveUser));
+
+		verify(sixNumberRepository).findByRecentBuyNumbers(anyLong());
 	}
 }
