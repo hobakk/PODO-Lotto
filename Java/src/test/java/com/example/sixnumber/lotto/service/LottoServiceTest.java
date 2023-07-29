@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -16,11 +17,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.TestUtil;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.LottoResponse;
 import com.example.sixnumber.lotto.dto.YearMonthRequest;
+import com.example.sixnumber.lotto.dto.YearMonthResponse;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 
@@ -95,5 +98,25 @@ public class LottoServiceTest {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> lottoService.getTopNumberForMonth(request));
 
 		verify(lottoRepository).findByTopNumbersForMonth(request.getYearMonth());
+	}
+
+	@Test
+	void getAllMonthStats_success() {
+		Lotto lotto = TestDataFactory.lotto();
+		when(lottoRepository.findAllByMonthStats()).thenReturn(List.of(lotto));
+
+		YearMonthResponse response = lottoService.getAllMonthStats();
+
+		verify(lottoRepository).findAllByMonthStats();
+		assertEquals(response.getYearMonthList(), List.of(lotto.getCreationDate().toString()));
+	}
+
+	@Test
+	void getAllMonthStats_fail_isEmpty() {
+		when(lottoRepository.findAllByMonthStats()).thenReturn(new ArrayList<>());
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> lottoService.getAllMonthStats());
+
+		verify(lottoRepository).findAllByMonthStats();
 	}
 }

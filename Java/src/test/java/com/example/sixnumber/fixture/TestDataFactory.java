@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.Arguments;
 
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
+import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
@@ -38,6 +39,10 @@ public class TestDataFactory {
 		user.setId(1L);
 		user.setAdmin();
 		return user;
+	}
+
+	public static Lotto lotto() {
+		return new Lotto("Stats", "lotto", YearMonth.of(2023,5), countList(), "1 2 3 4 5 6");
 	}
 
 	public static SignupRequest signupRequest() {
