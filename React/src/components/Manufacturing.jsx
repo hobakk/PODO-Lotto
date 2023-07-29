@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { WinNumberStyle } from "./Styles";
-import { useNavigate } from 'react-router-dom';
 
 export const ChangingNumStyle = (num, index) => {
     let color = "";
@@ -29,7 +28,6 @@ export const NumSentenceResult = (numSentence) => {
 }
 
 export const ResultContainer = ({ numSentenceList }) => {
-  const navigate = useNavigate();
   const [firstLine, setFirst] = useState([]);
   const [secondLine, setSecond] = useState([]);
   const [thirdLine, setThird] = useState([]);

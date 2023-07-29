@@ -123,6 +123,9 @@ function DropDownMenu() {
               <LiBox>
                 <CustomLink to={"/statistical/num"}>n회 반복 처리 된 번호 구매</CustomLink>
               </LiBox>
+              <LiBox>
+                <CustomLink to={"/recent/num"}>이전 구매번호 조회</CustomLink>
+              </LiBox>
             </UlBox>
             <UlBox width="8cm" height="9cm">
               <MenuTitle>통계</MenuTitle>

@@ -131,7 +131,6 @@ const buyNumber = async (inputValue) => {
     } catch (error) {
         throw error;
     }
-    
 }
 
 const statisticalNumber = async (inputValue) => {
@@ -141,12 +140,21 @@ const statisticalNumber = async (inputValue) => {
     } catch (error) {
         throw error;
     }
-    
+}
+
+const getRecentNumber = async () => {
+    try {
+        const res = await api.get("/sixnum/recent")
+        return res.data.data;
+    } catch (error) {
+        throw error;
+    }
 }
 
 export { 
     getInformation, logout, withdraw, checkPW, update, setCharges, getCharges, 
     setPaid, getStatement, getUsers, getAdminCharges, getSearch, setAdmin, upCash,
     downCash, createLotto, setStatus, setWinNumber, getMainTopNumber, 
-    getTopNumberForMonth, buyNumber, statisticalNumber, getCashNickname
+    getTopNumberForMonth, buyNumber, statisticalNumber, getCashNickname,
+    getRecentNumber,
 };
