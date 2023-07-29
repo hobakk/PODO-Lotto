@@ -24,7 +24,7 @@ function RecentNumber() {
   return (
     <div>
         <div style={ CommonStyle }>
-            <h3 style={{ fontSize: "80px"}}>Login</h3>
+            <h3 style={{ fontSize: "80px"}}>Recent Number</h3>
             <div>
                 {value !== "" ? (
                     <ResultContainer numSentenceList={value} />
