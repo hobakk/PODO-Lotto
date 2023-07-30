@@ -59,7 +59,7 @@ public class AdminService {
 		return ListApiResponse.ok("조회 성공", userRepository.findAll().stream().map(UsersReponse::new).collect(Collectors.toList()));
 	}
 
-	public ListApiResponse<AdminGetChargingResponse> getChargs() {
+	public ListApiResponse<AdminGetChargingResponse> getCharges() {
 		List<String> valueList = redisDao.multiGet("*STMT: *");
 
 		List<AdminGetChargingResponse> userChargesValues = valueList.stream()

@@ -58,30 +58,22 @@ function DropDownMenu() {
         <div style={navigationLinksStyles}>
           {tF ? (
           <Dropdown id='dropdown-admin' >
-            <UlBox width="12cm" height="9cm">
+            <UlBox width="7cm">
               <MenuTitle>관리자 설정</MenuTitle>
               <DividingLine />
-              <div style={{ display: "flex", margin: "25px" }}>
+              <div style={{ display: "flex", margin: "25px", justifyContent:"center" }}>
                 <div style={{marginRight: "20px"}} >
                   <LiBox>
-                    <CustomLink to={"/"}>전체 유저 조회</CustomLink>
+                    <CustomLink to={"/admin/users"}>전체 유저 조회</CustomLink>
                   </LiBox>
                   <LiBox>
-                    <CustomLink to={"/"}>충전 요청 조회</CustomLink>
+                    <CustomLink to={"/admin/charges"}>충전 요청 조회</CustomLink>
                   </LiBox>
                   <LiBox>
                     <CustomLink to={"/"}>충전 요청 검색</CustomLink>
                   </LiBox>
                   <LiBox>
                     <CustomLink to={"/"}>관리자 권한 부여</CustomLink>
-                  </LiBox>
-                  <LiBox>
-                    <CustomLink to={"/"}>포인트 지급</CustomLink>
-                  </LiBox>
-                </div>
-                <div style={{ marginLeft: "40px" }}>
-                  <LiBox>
-                    <CustomLink to={"/"}>포인트 차감</CustomLink>
                   </LiBox>
                   <LiBox>
                     <CustomLink to={"/"}>메인 로또 생성</CustomLink>
