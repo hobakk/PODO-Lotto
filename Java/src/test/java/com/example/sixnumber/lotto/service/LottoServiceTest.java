@@ -18,11 +18,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.sixnumber.fixture.TestDataFactory;
-import com.example.sixnumber.fixture.TestUtil;
-import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.LottoResponse;
-import com.example.sixnumber.lotto.dto.YearMonthRequest;
 import com.example.sixnumber.lotto.dto.YearMonthResponse;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
@@ -73,31 +70,24 @@ public class LottoServiceTest {
 
 	@Test
 	void getTopNumberForMonth() {
-		List<Integer> countList = Arrays.asList(1,2,3,4,5,6,7);
-		YearMonthRequest request = mock(YearMonthRequest.class);
-		when(request.getYearMonth()).thenReturn(YearMonth.now());
-		when(lotto.getCountList()).thenReturn(countList);
-		when(lotto.getTopNumber()).thenReturn("2 3 4 5 6 7");
+		Lotto lotto = TestDataFactory.lotto();
 
-		when(lottoRepository.findByTopNumbersForMonth(request.getYearMonth())).thenReturn(Optional.of(lotto));
+		when(lottoRepository.findByTopNumbersForMonth(lotto.getCreationDate())).thenReturn(Optional.of(lotto));
 
-		LottoResponse response = lottoService.getTopNumberForMonth(request);
+		LottoResponse response = lottoService.getTopNumberForMonth(lotto.getCreationDate());
 
-		verify(lottoRepository).findByTopNumbersForMonth(request.getYearMonth());
-		assertEquals(response.getValue(), "2 3 4 5 6 7");
-		assertEquals(response.getCountList(), countList);
+		verify(lottoRepository).findByTopNumbersForMonth(lotto.getCreationDate());
+		assertEquals(response.getValue(), "1 2 3 4 5 6");
+		assertEquals(response.getCountList(), TestDataFactory.countList());
 	}
 
 	@Test
 	void getTopNumberForMonth_fail() {
-		YearMonthRequest request = mock(YearMonthRequest.class);
-		when(request.getYearMonth()).thenReturn(YearMonth.now());
+		when(lottoRepository.findByTopNumbersForMonth(any(YearMonth.class))).thenReturn(Optional.empty());
 
-		when(lottoRepository.findByTopNumbersForMonth(request.getYearMonth())).thenReturn(Optional.empty());
+		Assertions.assertThrows(IllegalArgumentException.class, () -> lottoService.getTopNumberForMonth(YearMonth.now()));
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> lottoService.getTopNumberForMonth(request));
-
-		verify(lottoRepository).findByTopNumbersForMonth(request.getYearMonth());
+		verify(lottoRepository).findByTopNumbersForMonth(any(YearMonth.class));
 	}
 
 	@Test

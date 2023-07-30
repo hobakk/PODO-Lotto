@@ -29,7 +29,7 @@ function StatsMain() {
 
   return (
     <div id='recent' style={ CommonStyle }>
-        <h1 style={{  fontSize: "80px", height: "1cm" }}>Statistica Main</h1>
+        <h1 style={{  fontSize: "80px", height: "1cm" }}>Stats Main</h1>
         {value !== "" &&(
             <>
                 <div style={{ marginBottom: "2cm"}}>

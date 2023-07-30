@@ -134,7 +134,7 @@ function DropDownMenu() {
                 <CustomLink to={"/stats/main"}>서버 통계</CustomLink>
               </LiBox>
               <LiBox>
-                <CustomLink to={"/"}>월별 통계</CustomLink>
+                <CustomLink to={"/stats/month"}>월별 통계</CustomLink>
               </LiBox>
             </UlBox>
           </Dropdown>

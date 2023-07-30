@@ -16,6 +16,7 @@ import StatisticalNumber from '../pages/sixnum/StatisticalNumber'
 import StatsMain from '../pages/lotto/StatsMain'
 import GetUsers from '../pages/admin/GetUsers'
 import RecentNumber from '../pages/sixnum/RecentNumber'
+import StatsMonth from '../pages/lotto/StatsMonth'
 
 
 const Router = () => {
@@ -36,6 +37,7 @@ const Router = () => {
                 <Route path='/buynum' element={<BuyNumber />} />
                 <Route path='/stats/num' element={<StatisticalNumber />} />
                 <Route path='/stats/main' element={<StatsMain />} />
+                <Route path='/stats/month' element={<StatsMonth />} />
                 <Route path='/admin/get-users' element={<GetUsers />} />
                 <Route path='/recent/num' element={<RecentNumber />} />
             </Routes>
