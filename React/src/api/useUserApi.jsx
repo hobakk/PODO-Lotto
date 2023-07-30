@@ -114,13 +114,34 @@ const setWinNumber = async (inputValue) => {
 
 // Lotto ( 통계 )
 const getMainTopNumber = async () => {
-    const { data } = await api.get("/lotto/main");
-    return data.data;
+    try {
+        const { data } = await api.get("/lotto/main");
+        return data.data;
+    } catch (error) {
+        throw error;
+    }
 }
 
 const getTopNumberForMonth = async (yearMonth) => {
-    const { data } = await api.get("/lotto/yearMonth", yearMonth);
-    return data.data;
+    try {
+        const { data } = await api.get("/lotto/yearMonth", {
+            params: {
+                yearMonth,
+            }
+        });
+        return data.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+const getAllMonthStats = async () => {
+    try {
+        const { data } = await api.get("/lotto/yearMonth/all");
+        return data.data;   
+    } catch (error) {
+        throw error;
+    }
 }
 
 // SixNumber ( 추천 번호 구매 )
@@ -156,5 +177,5 @@ export {
     setPaid, getStatement, getUsers, getAdminCharges, getSearch, setAdmin, upCash,
     downCash, createLotto, setStatus, setWinNumber, getMainTopNumber, 
     getTopNumberForMonth, buyNumber, statisticalNumber, getCashNickname,
-    getRecentNumber,
+    getRecentNumber, getAllMonthStats,
 };
