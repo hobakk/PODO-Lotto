@@ -27,7 +27,7 @@ function GetUsers() {
         {value !== "" &&(
             value.filter(user=>user.role !== "ROLE_ADMIN").map(user=>{
               return (
-                <div style={{ display: 'flex', width: "42cm", alignContent: "center", justifyContent: "center"}}>
+                <div key={user.id} style={{ display: 'flex', width: "42cm", alignContent: "center", justifyContent: "center"}}>
                   <div style={{ display: "flex", flexDirection: "column", border: "3px solid black", width: "12cm", marginBottom: "5px"}}>
                     <div style={{ display:"flex", padding: "10px" }}>
                       <span>id: {user.id}</span>
@@ -43,7 +43,6 @@ function GetUsers() {
                     </div>
                   </div>  
                 </div>
-                
               )
             })
         )}
