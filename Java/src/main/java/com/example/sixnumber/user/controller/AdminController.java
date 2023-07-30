@@ -35,9 +35,9 @@ public class AdminController {
 		return ResponseEntity.ok(adminService.getUsers());
 	}
 
-	@GetMapping("/chargs")
-	public ResponseEntity<ListApiResponse<AdminGetChargingResponse>> getChargs() {
-		return ResponseEntity.ok(adminService.getChargs());
+	@GetMapping("/charges")
+	public ResponseEntity<ListApiResponse<AdminGetChargingResponse>> getCharges() {
+		return ResponseEntity.ok(adminService.getCharges());
 	}
 
 	@GetMapping("/search")

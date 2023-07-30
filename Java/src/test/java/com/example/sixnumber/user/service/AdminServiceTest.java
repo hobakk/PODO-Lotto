@@ -104,7 +104,7 @@ public class AdminServiceTest {
 
 		when(redisDao.multiGet(anyString())).thenReturn(values);
 
-		ListApiResponse<AdminGetChargingResponse> response = adminService.getChargs();
+		ListApiResponse<AdminGetChargingResponse> response = adminService.getCharges();
 
 		verify(redisDao).multiGet(anyString());
 		assertEquals(response.getData().size(), 3);
