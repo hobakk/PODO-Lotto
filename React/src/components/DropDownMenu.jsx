@@ -64,7 +64,7 @@ function DropDownMenu() {
               <div style={{ display: "flex", margin: "25px" }}>
                 <div style={{marginRight: "20px"}} >
                   <LiBox>
-                    <CustomLink to={"/"}>전체 유저 조회</CustomLink>
+                    <CustomLink to={"/admin/users"}>전체 유저 조회</CustomLink>
                   </LiBox>
                   <LiBox>
                     <CustomLink to={"/"}>충전 요청 조회</CustomLink>

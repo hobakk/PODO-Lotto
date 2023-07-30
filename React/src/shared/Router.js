@@ -38,7 +38,7 @@ const Router = () => {
                 <Route path='/stats/num' element={<StatisticalNumber />} />
                 <Route path='/stats/main' element={<StatsMain />} />
                 <Route path='/stats/month' element={<StatsMonth />} />
-                <Route path='/admin/get-users' element={<GetUsers />} />
+                <Route path='/admin/users' element={<GetUsers />} />
                 <Route path='/recent/num' element={<RecentNumber />} />
             </Routes>
         </Layout>
