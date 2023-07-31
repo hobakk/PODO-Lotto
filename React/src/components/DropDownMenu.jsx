@@ -70,7 +70,7 @@ function DropDownMenu() {
                     <CustomLink to={"/admin/charges"}>충전 요청 조회</CustomLink>
                   </LiBox>
                   <LiBox>
-                    <CustomLink to={"/"}>충전 요청 검색</CustomLink>
+                    <CustomLink to={"/admin/search"}>충전 요청 검색</CustomLink>
                   </LiBox>
                   <LiBox>
                     <CustomLink to={"/"}>메인 로또 생성</CustomLink>

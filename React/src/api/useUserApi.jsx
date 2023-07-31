@@ -77,9 +77,13 @@ const getAdminCharges = async () => {
     return data.data;
 }
 
-const getSearch = async (inputValue) => {
-    const { data } = await api.get("/admin/search", inputValue);
-    return data.data;
+const getSearch = async ({ msg, cash }) => {
+    const { data } = await api.get("/admin/search", { params: {
+        msg,
+        cash,
+    }});
+    console.log(data)
+    return data;
 }
 
 const setAdmin = async ({ userId, msg }) => {
