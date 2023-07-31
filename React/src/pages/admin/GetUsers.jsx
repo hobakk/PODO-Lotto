@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
-import { downCash, getUsers, setRoleFromAdmin } from '../../api/useUserApi'
+import { downCash, getUsers, setRoleFromAdmin, setStatusFromAdmin } from '../../api/useUserApi'
 import { CommonStyle } from '../../components/Styles';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,6 +12,7 @@ function GetUsers() {
   const [searchInputValue, setSearchInputValue] = useState("");
   const [role, setRole] = useState({});
   const [result, setResult] = useState([]);
+  const [status, setStatus] = useState({});
 
   const getUsersMutation = useMutation(getUsers, {
     onSuccess: (res) =>{
@@ -42,6 +43,21 @@ function GetUsers() {
     onError: (err)=>{
       if (err.status === 500) {
         alert(err.message);
+      }
+    }
+  })
+
+  const setStatusMutation = useMutation(setStatusFromAdmin, {
+    onSuccess: (res)=>{
+      if (res === 200) {
+        setRender(!render);
+      }
+    },
+    onError: (err)=>{
+      if (err.status === 500) {
+        alert(err.message);
+      } else if (err.status === 400) {
+        alert(err.msg);
       }
     }
   })
@@ -86,6 +102,12 @@ function GetUsers() {
       [userId]: e.target.value,
     })
   }
+  const statusOnChangeHandler = (e, userId) => {
+    setStatus({
+      ...status,
+      [userId]: e.target.value,
+    })
+  }
 
   const roleOnClickHandler = (userId) => {
     if (role[userId] === "ADMIN") {
@@ -95,6 +117,12 @@ function GetUsers() {
       setRoleMutation.mutate({ userId, msg });
     }
   }
+  const statusOnClickHandler = (userId) => {
+    const msg = status[userId];
+    setStatusMutation.mutate({ userId, msg });
+  }
+
+  useEffect(()=>{console.log(status)},[status])
 
   const MapFirstStyle = {
     display: 'flex',
@@ -134,10 +162,12 @@ function GetUsers() {
         </div>
         <div style={{ display:"flex", padding: "10px" }}>
           <span>Status: {entityType.status}</span>
-          <select style={{ marginLeft: "auto" }}>
-
+          <select value={status[entityType.id]} onChange={(e)=>statusOnChangeHandler(e, entityType.id)} style={{ marginLeft: "auto" }}>
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="SUSPENDED">SUSPENDED</option>
+            <option value="DORMANT">DORMANT</option>
           </select>
-          <button>수정하기</button>
+          <button onClick={()=>statusOnClickHandler(entityType.id)}>수정하기</button>
         </div>
       </div>  
     )

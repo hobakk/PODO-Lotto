@@ -102,7 +102,7 @@ const createLotto = async () => {
     return data.code;
 }
 
-const setStatus = async ({ userId, msg }) => {
+const setStatusFromAdmin = async ({ userId, msg }) => {
     const { data } = await api.patch(`/admin/status/${userId}`, msg);
     return data.code;
 }
@@ -113,7 +113,6 @@ const setWinNumber = async (inputValue) => {
 }
 
 const setRoleFromAdmin = async ({ userId, msg }) => {
-    console.log(msg)
     try {
         const { data } = await api.patch(`/admin/role/${userId}`, msg);
         return data.code;
@@ -185,7 +184,7 @@ const getRecentNumber = async () => {
 export { 
     getInformation, logout, withdraw, checkPW, update, setCharges, getCharges, 
     setPaid, getStatement, getUsers, getAdminCharges, getSearch, setAdmin, upCash,
-    downCash, createLotto, setStatus, setWinNumber, getMainTopNumber, 
+    downCash, createLotto, setStatusFromAdmin, setWinNumber, getMainTopNumber, 
     getTopNumberForMonth, buyNumber, statisticalNumber, getCashNickname,
     getRecentNumber, getAllMonthStats, setRoleFromAdmin
 };
