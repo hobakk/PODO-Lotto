@@ -73,13 +73,7 @@ function DropDownMenu() {
                     <CustomLink to={"/"}>충전 요청 검색</CustomLink>
                   </LiBox>
                   <LiBox>
-                    <CustomLink to={"/"}>관리자 권한 부여</CustomLink>
-                  </LiBox>
-                  <LiBox>
                     <CustomLink to={"/"}>메인 로또 생성</CustomLink>
-                  </LiBox>
-                  <LiBox>
-                    <CustomLink to={"/"}>유저 상태 변경</CustomLink>
                   </LiBox>
                 </div>
               </div>

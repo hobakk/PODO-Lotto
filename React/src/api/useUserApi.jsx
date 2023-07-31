@@ -82,7 +82,7 @@ const getSearch = async (inputValue) => {
     return data.data;
 }
 
-const setAdmin = async (userId, msg) => {
+const setAdmin = async ({ userId, msg }) => {
     const { data } = await api.patch(`/admin/users/${userId}`, msg);
     return data.code;
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
-import { downCash, getUsers, setRoleFromAdmin, setStatusFromAdmin } from '../../api/useUserApi'
+import { downCash, getUsers, setRoleFromAdmin, setStatusFromAdmin, setAdmin } from '../../api/useUserApi'
 import { CommonStyle } from '../../components/Styles';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,6 +13,7 @@ function GetUsers() {
   const [role, setRole] = useState({});
   const [result, setResult] = useState([]);
   const [status, setStatus] = useState({});
+  const [key, setkey] = useState({});
 
   const getUsersMutation = useMutation(getUsers, {
     onSuccess: (res) =>{
@@ -62,6 +63,19 @@ function GetUsers() {
     }
   })
 
+  const setAdminMutation = useMutation(setAdmin, {
+    onSuccess: (res)=>{
+      if (res === 200) {
+        setRender(!render);
+      }
+    },
+    onError: (err)=>{
+      if (err.status === 500) {
+        alert(err.message);
+      }
+    }
+  })
+
   useEffect(()=>{
     getUsersMutation.mutate();
   },[render])
@@ -86,7 +100,7 @@ function GetUsers() {
       value: cash[userId],
       msg: "문의하세요"
     }
-
+    console.log(CashRequest)
     downCashMutation.mutate(CashRequest);
   }
 
@@ -108,6 +122,12 @@ function GetUsers() {
       [userId]: e.target.value,
     })
   }
+  const keyOnChangeHandler = (e, userId) => {
+    setkey({
+      ...key,
+      [userId]: e.target.value,
+    })
+  }
 
   const roleOnClickHandler = (userId) => {
     if (role[userId] === "ADMIN") {
@@ -121,8 +141,10 @@ function GetUsers() {
     const msg = status[userId];
     setStatusMutation.mutate({ userId, msg });
   }
-
-  useEffect(()=>{console.log(status)},[status])
+  const securityKeyOnClickHandler = (userId) => {
+    const msg = key[userId];
+    setAdminMutation.mutate({ userId, msg });
+  }
 
   const MapFirstStyle = {
     display: 'flex',
@@ -138,13 +160,15 @@ function GetUsers() {
     marginBottom: "5px"
   }
 
+  useEffect(()=>{console.log(key)}, [key])
+
   const ResultContainer = ({ entityType }) => {
     return (
       <div style={MapSecondStyle}>
         <div style={{ display:"flex", padding: "10px" }}>
           <span>id: {entityType.id}</span>
           <span style={{ margin: "auto" }}>Cash: {entityType.cash}</span>
-          <input name={`${entityType.id}`} onChange={(e)=>onChangeHandler(e, entityType.id)} />
+          <input value={cash[entityType.id]} onChange={(e)=>onChangeHandler(e, entityType.id)}/>
           <button onClick={()=>onClickHandler(entityType.id)}>포인트 차감</button>
         </div>
         <div style={{ display:"flex", padding: "10px" }}>
@@ -152,13 +176,20 @@ function GetUsers() {
           <span style={{ marginLeft: "auto" }}>Nickname: {entityType.nickname}</span>
         </div>
         <div style={{ display:"flex", padding: "10px" }}>
-          <span>Role: {entityType.role}</span>
+          <span>Role: {entityType.role.split("_")[1]}</span>
           <select value={role[entityType.id]} onChange={(e)=>selectOnChangeHandler(e, entityType.id)} style={{ marginLeft: "auto" }}>
             <option value="USER">USER</option>
             <option value="PAID">PAID</option>
             <option value="ADMIN">ADMIN</option>
           </select>
-          <button onClick={()=>roleOnClickHandler(entityType.id)}>수정하기</button>
+          {role[entityType.id] !== "ADMIN" ? (
+            <button onClick={()=>roleOnClickHandler(entityType.id)}>수정하기</button>
+          ):(
+            <> 
+              <input value={key[entityType.id]} onChange={(e)=>keyOnChangeHandler(e, entityType.id)} placeholder='Key 입력'/>
+              <button onClick={()=>securityKeyOnClickHandler(entityType.id)}>관리자 지정</button>
+            </>
+          )}
         </div>
         <div style={{ display:"flex", padding: "10px" }}>
           <span>Status: {entityType.status}</span>
