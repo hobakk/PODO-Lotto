@@ -131,6 +131,21 @@ public class AdminService {
 		return ApiResponse.ok("상태 변경 완료");
 	}
 
+	public ApiResponse setRole(User user, Long userId, OnlyMsgRequest request) {
+		User target = confirmationProcess(user, userId);
+
+		UserRole changeRole = null;
+		switch (request.getMsg()) {
+			case "USER" -> changeRole = UserRole.ROLE_USER;
+			case "PAID" -> changeRole = UserRole.ROLE_PAID;
+		}
+
+		if (target.getRole().equals(changeRole)) throw new IllegalArgumentException("동일한 권한입니다");
+
+		target.setRole(changeRole);
+		return ApiResponse.ok("권한 변경 완료");
+	}
+
 	private User confirmationProcess(User user, Long userId) {
 		if (user.getId().equals(userId)) {
 			throw new IllegalArgumentException("본인 입니다");

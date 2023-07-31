@@ -239,7 +239,7 @@ public class UserServiceTest {
 		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("월정액 해지");
 
-		saveUser.setRole("PAID");
+		saveUser.setRole(UserRole.ROLE_PAID);
 		saveUser.setPaymentDate(" ");
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);

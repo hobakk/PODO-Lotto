@@ -91,11 +91,8 @@ public class User implements UserDetails {
 			case "-" -> this.cash -= cash;
 		}
 	}
-	public void setRole(String role) {
-		switch (role) {
-			case "USER" -> this.role = UserRole.ROLE_USER;
-			case "PAID" -> this.role = UserRole.ROLE_PAID;
-		}
+	public void setRole(UserRole role) {
+		this.role = role;
 	}
 
 	public void setAdmin() {

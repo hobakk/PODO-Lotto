@@ -138,7 +138,7 @@ public class UserService {
 			throw new IllegalArgumentException("금액이 부족하거나 이미 월정액 이용자입니다");
 		}
 		user.setCash("-", 5000);
-		user.setRole("PAID");
+		user.setRole(UserRole.ROLE_PAID);
 		user.setPaymentDate(YearMonth.now().toString());
 		user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
 		return ApiResponse.ok("권한 변경 성공");

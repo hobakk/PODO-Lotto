@@ -66,7 +66,12 @@ public class AdminController {
 	}
 
 	@PatchMapping("/status/{userId}")
-	public ResponseEntity<?> setStatus(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<ApiResponse> setStatus(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(adminService.setStatus(user, userId, request));
+	}
+
+	@PatchMapping("/role/{userId}")
+	public ResponseEntity<ApiResponse> setRole(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(adminService.setRole(user, userId, request));
 	}
 }

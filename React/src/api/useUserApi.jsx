@@ -82,7 +82,7 @@ const getSearch = async (inputValue) => {
     return data.data;
 }
 
-const setAdmin = async (userId, msg) => {
+const setAdmin = async ({ userId, msg }) => {
     const { data } = await api.patch(`/admin/users/${userId}`, msg);
     return data.code;
 }
@@ -102,7 +102,7 @@ const createLotto = async () => {
     return data.code;
 }
 
-const setStatus = async (userId, msg) => {
+const setStatusFromAdmin = async ({ userId, msg }) => {
     const { data } = await api.patch(`/admin/status/${userId}`, msg);
     return data.code;
 }
@@ -110,6 +110,15 @@ const setStatus = async (userId, msg) => {
 const setWinNumber = async (inputValue) => {
     const { data } = await api.post("/admin/winnumber", inputValue);
     return data.code;
+}
+
+const setRoleFromAdmin = async ({ userId, msg }) => {
+    try {
+        const { data } = await api.patch(`/admin/role/${userId}`, msg);
+        return data.code;
+    } catch (error) {
+        throw error;
+    }
 }
 
 // Lotto ( 통계 )
@@ -175,7 +184,7 @@ const getRecentNumber = async () => {
 export { 
     getInformation, logout, withdraw, checkPW, update, setCharges, getCharges, 
     setPaid, getStatement, getUsers, getAdminCharges, getSearch, setAdmin, upCash,
-    downCash, createLotto, setStatus, setWinNumber, getMainTopNumber, 
+    downCash, createLotto, setStatusFromAdmin, setWinNumber, getMainTopNumber, 
     getTopNumberForMonth, buyNumber, statisticalNumber, getCashNickname,
-    getRecentNumber, getAllMonthStats,
+    getRecentNumber, getAllMonthStats, setRoleFromAdmin
 };

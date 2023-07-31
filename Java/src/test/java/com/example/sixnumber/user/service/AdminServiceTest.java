@@ -249,4 +249,27 @@ public class AdminServiceTest {
 
 		verify(manager).findUser(anyLong());
 	}
+
+	@Test
+	void setRole_success() {
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
+		when(request.getMsg()).thenReturn("PAID");
+
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
+
+		ApiResponse response = adminService.setRole(admin, saveUser.getId(), request);
+
+		verify(manager).findUser(anyLong());
+		TestUtil.ApiAsserEquals(response, 200, "권한 변경 완료");
+	}
+
+	@Test
+	void setRole_fail_incorrect() {
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
+		when(request.getMsg()).thenReturn("USER");
+
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.setRole(admin, saveUser.getId(), request));
+	}
 }
