@@ -113,13 +113,14 @@ public class AdminServiceTest {
 
 	@Test
 	void searchCharging_success() {
-		ChargingRequest request = TestDataFactory.chargingRequest();
+		String msg = "Value1";
+		int cash = 5000;
 
 		List<String> values = Collections.singletonList("7-Value1-5000");
 
 		when(redisDao.multiGet(anyString())).thenReturn(values);
 
-		ItemApiResponse<AdminGetChargingResponse> response = adminService.searchCharging(request);
+		ItemApiResponse<AdminGetChargingResponse> response = adminService.searchCharging(msg, cash);
 
 		verify(redisDao).multiGet(anyString());
 		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");
