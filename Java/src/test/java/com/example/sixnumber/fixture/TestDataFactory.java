@@ -29,7 +29,7 @@ public class TestDataFactory {
 		User user = new User(signupRequest(), "ePassword");
 		user.setId(7L);
 		user.setCash("+", 5000);
-		user.setRole("USER");
+		user.setRole(UserRole.ROLE_USER);
 		user.setStatus("ACTIVE");
 		return user;
 	}

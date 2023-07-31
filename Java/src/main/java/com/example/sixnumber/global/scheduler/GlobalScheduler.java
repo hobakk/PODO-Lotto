@@ -80,7 +80,7 @@ public class GlobalScheduler {
 				user.setPaymentDate(YearMonth.now().toString());
 				user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
 			} else if (paymentDate.equals("월정액 해지") || user.getCash() < 5000) {
-				user.setRole("USER");
+				user.setRole(UserRole.ROLE_USER);
 				user.setPaymentDate("");
 			} else {
 				throw new IllegalArgumentException("얘기치 않은 동작 및 오류");
