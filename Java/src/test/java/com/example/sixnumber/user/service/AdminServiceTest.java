@@ -32,6 +32,7 @@ import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
+import com.example.sixnumber.user.dto.RoleRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
@@ -248,5 +249,28 @@ public class AdminServiceTest {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.setStatus(admin, saveUser.getId(), request));
 
 		verify(manager).findUser(anyLong());
+	}
+
+	@Test
+	void setRole_success() {
+		RoleRequest request = mock(RoleRequest.class);
+		when(request.getRole()).thenReturn(UserRole.ROLE_PAID);
+
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
+
+		ApiResponse response = adminService.setRole(admin, saveUser.getId(), request);
+
+		verify(manager).findUser(anyLong());
+		TestUtil.ApiAsserEquals(response, 200, "권한 변경 완료");
+	}
+
+	@Test
+	void setRole_fail_incorrect() {
+		RoleRequest request = mock(RoleRequest.class);
+		when(request.getRole()).thenReturn(UserRole.ROLE_USER);
+
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.setRole(admin, saveUser.getId(), request));
 	}
 }
