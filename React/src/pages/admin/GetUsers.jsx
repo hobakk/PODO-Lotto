@@ -104,10 +104,12 @@ function GetUsers() {
     downCashMutation.mutate(CashRequest);
   }
 
-  const onChangeHandler = (e, userId) => {
+  const onChangeHandler = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value)
     setCash({
       ...cash,
-      [userId]: e.target.value,
+      [name]: value,
     })
   }
   const selectOnChangeHandler = (e, userId) => {
@@ -122,10 +124,11 @@ function GetUsers() {
       [userId]: e.target.value,
     })
   }
-  const keyOnChangeHandler = (e, userId) => {
+  const keyOnChangeHandler = (e) => {
+    const { name, value } = e.target;
     setkey({
       ...key,
-      [userId]: e.target.value,
+      [name]: value,
     })
   }
 
@@ -160,7 +163,7 @@ function GetUsers() {
     marginBottom: "5px"
   }
 
-  useEffect(()=>{console.log(key)}, [key])
+  useEffect(()=>{console.log(key[`Key3`])}, [key])
 
   const ResultContainer = ({ entityType }) => {
     return (
@@ -168,7 +171,11 @@ function GetUsers() {
         <div style={{ display:"flex", padding: "10px" }}>
           <span>id: {entityType.id}</span>
           <span style={{ margin: "auto" }}>Cash: {entityType.cash}</span>
-          <input value={cash[entityType.id]} onChange={(e)=>onChangeHandler(e, entityType.id)}/>
+          <input 
+            name={`Cash${entityType.id}`}
+            value={cash[`Cash${entityType.id}`]}
+            onChange={onChangeHandler}
+          />
           <button onClick={()=>onClickHandler(entityType.id)}>포인트 차감</button>
         </div>
         <div style={{ display:"flex", padding: "10px" }}>
@@ -185,8 +192,14 @@ function GetUsers() {
           {role[entityType.id] !== "ADMIN" ? (
             <button onClick={()=>roleOnClickHandler(entityType.id)}>수정하기</button>
           ):(
+            // input box 에 문자, 숫자등 1개씩만 값이 타이핑됨
             <> 
-              <input value={key[entityType.id]} onChange={(e)=>keyOnChangeHandler(e, entityType.id)} placeholder='Key 입력'/>
+              <input 
+                value={key[`Key${entityType.id}`]} 
+                name={`Key${entityType.id}`}
+                onChange={keyOnChangeHandler} 
+                placeholder='Key 입력'
+              />
               <button onClick={()=>securityKeyOnClickHandler(entityType.id)}>관리자 지정</button>
             </>
           )}
