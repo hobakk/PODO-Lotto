@@ -102,7 +102,7 @@ const createLotto = async () => {
     return data.code;
 }
 
-const setStatus = async (userId, msg) => {
+const setStatus = async ({ userId, msg }) => {
     const { data } = await api.patch(`/admin/status/${userId}`, msg);
     return data.code;
 }
@@ -110,6 +110,16 @@ const setStatus = async (userId, msg) => {
 const setWinNumber = async (inputValue) => {
     const { data } = await api.post("/admin/winnumber", inputValue);
     return data.code;
+}
+
+const setRoleFromAdmin = async ({ userId, msg }) => {
+    console.log(msg)
+    try {
+        const { data } = await api.patch(`/admin/role/${userId}`, msg);
+        return data.code;
+    } catch (error) {
+        throw error;
+    }
 }
 
 // Lotto ( 통계 )
@@ -177,5 +187,5 @@ export {
     setPaid, getStatement, getUsers, getAdminCharges, getSearch, setAdmin, upCash,
     downCash, createLotto, setStatus, setWinNumber, getMainTopNumber, 
     getTopNumberForMonth, buyNumber, statisticalNumber, getCashNickname,
-    getRecentNumber, getAllMonthStats,
+    getRecentNumber, getAllMonthStats, setRoleFromAdmin
 };

@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
-import { downCash, getUsers } from '../../api/useUserApi'
+import { downCash, getUsers, setRoleFromAdmin } from '../../api/useUserApi'
 import { CommonStyle } from '../../components/Styles';
-import { Contains } from '../../components/Manufacturing';
+import { useNavigate } from 'react-router-dom';
 
 function GetUsers() {
+  const navigate = useNavigate();
   const [cash, setCash] = useState({});
   const [value, setValue] = useState([]);
   const [render, setRender] = useState(true);
   const [searchInputValue, setSearchInputValue] = useState("");
+  const [role, setRole] = useState({});
   const [result, setResult] = useState([]);
 
   const getUsersMutation = useMutation(getUsers, {
@@ -26,6 +28,19 @@ function GetUsers() {
     },
     onError: (err)=>{
       if  (err.status === 500) {
+        alert(err.message);
+      }
+    }
+  })
+
+  const setRoleMutation = useMutation(setRoleFromAdmin, {
+    onSuccess: (res)=>{
+      if (res === 200) {
+        setRender(!render);
+      }
+    },
+    onError: (err)=>{
+      if (err.status === 500) {
         alert(err.message);
       }
     }
@@ -65,6 +80,21 @@ function GetUsers() {
       [userId]: e.target.value,
     })
   }
+  const selectOnChangeHandler = (e, userId) => {
+    setRole({
+      ...role,
+      [userId]: e.target.value,
+    })
+  }
+
+  const roleOnClickHandler = (userId) => {
+    if (role[userId] === "ADMIN") {
+      navigate("/");
+    } else {
+      const msg = role[userId];
+      setRoleMutation.mutate({ userId, msg });
+    }
+  }
 
   const MapFirstStyle = {
     display: 'flex',
@@ -82,24 +112,34 @@ function GetUsers() {
 
   const ResultContainer = ({ entityType }) => {
     return (
-      <div key={entityType.id} style={MapFirstStyle}>
-        <div style={MapSecondStyle}>
-          <div style={{ display:"flex", padding: "10px" }}>
-            <span>id: {entityType.id}</span>
-            <span style={{ margin: "auto" }}>Cash: {entityType.cash}</span>
-            <input name={`${entityType.id}`} onChange={(e)=>onChangeHandler(e, entityType.id)} />
-            <button onClick={()=>onClickHandler(entityType.id)}>포인트 차감</button>
-          </div>
-          <div style={{ display:"flex", padding: "10px" }}>
-            <span>Email: {entityType.email}</span>
-            <span style={{ marginLeft: "auto" }}>Nickname: {entityType.nickname}</span>
-          </div>
-          <div style={{ display:"flex", padding: "10px" }}>
-            <span>Role: {entityType.role}</span>
-            <span style={{ marginLeft: "auto" }}>Status: {entityType.status}</span>
-          </div>
-        </div>  
-      </div>
+      <div style={MapSecondStyle}>
+        <div style={{ display:"flex", padding: "10px" }}>
+          <span>id: {entityType.id}</span>
+          <span style={{ margin: "auto" }}>Cash: {entityType.cash}</span>
+          <input name={`${entityType.id}`} onChange={(e)=>onChangeHandler(e, entityType.id)} />
+          <button onClick={()=>onClickHandler(entityType.id)}>포인트 차감</button>
+        </div>
+        <div style={{ display:"flex", padding: "10px" }}>
+          <span>Email: {entityType.email}</span>
+          <span style={{ marginLeft: "auto" }}>Nickname: {entityType.nickname}</span>
+        </div>
+        <div style={{ display:"flex", padding: "10px" }}>
+          <span>Role: {entityType.role}</span>
+          <select value={role[entityType.id]} onChange={(e)=>selectOnChangeHandler(e, entityType.id)} style={{ marginLeft: "auto" }}>
+            <option value="USER">USER</option>
+            <option value="PAID">PAID</option>
+            <option value="ADMIN">ADMIN</option>
+          </select>
+          <button onClick={()=>roleOnClickHandler(entityType.id)}>수정하기</button>
+        </div>
+        <div style={{ display:"flex", padding: "10px" }}>
+          <span>Status: {entityType.status}</span>
+          <select style={{ marginLeft: "auto" }}>
+
+          </select>
+          <button>수정하기</button>
+        </div>
+      </div>  
     )
   }
 
@@ -109,7 +149,11 @@ function GetUsers() {
         <input onChange={(e)=>setSearchInputValue(e.target.value)} placeholder='검색할 값을 입력해주세요' style={{ marginBottom:"1cm", width:"7cm", height:"0.5cm" }}/>
         {searchInputValue === "" ? (
             value.filter(user=>user.role !== "ROLE_ADMIN").map(user=>{
-              return <ResultContainer entityType={user} />
+              return (
+                <div key={user.id} style={MapFirstStyle}>
+                  <ResultContainer entityType={user} />
+                </div>
+              )
             })
         ):(
           <>
@@ -117,7 +161,11 @@ function GetUsers() {
               <div>검색 결과 없음</div>
             ):(
               result.map(item=>{
-                return <ResultContainer entityType={item} />
+                return (
+                  <div key={item.id} style={MapFirstStyle}>
+                    <ResultContainer entityType={item} />
+                  </div>
+                )
               })
             )}
           </>
