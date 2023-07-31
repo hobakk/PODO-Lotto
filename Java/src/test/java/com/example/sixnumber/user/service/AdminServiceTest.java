@@ -32,7 +32,6 @@ import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
-import com.example.sixnumber.user.dto.RoleRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
@@ -253,8 +252,8 @@ public class AdminServiceTest {
 
 	@Test
 	void setRole_success() {
-		RoleRequest request = mock(RoleRequest.class);
-		when(request.getRole()).thenReturn(UserRole.ROLE_PAID);
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
+		when(request.getMsg()).thenReturn("PAID");
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
@@ -266,8 +265,8 @@ public class AdminServiceTest {
 
 	@Test
 	void setRole_fail_incorrect() {
-		RoleRequest request = mock(RoleRequest.class);
-		when(request.getRole()).thenReturn(UserRole.ROLE_USER);
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
+		when(request.getMsg()).thenReturn("USER");
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 

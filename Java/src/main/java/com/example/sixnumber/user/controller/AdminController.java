@@ -17,7 +17,6 @@ import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
-import com.example.sixnumber.user.dto.RoleRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.AdminService;
@@ -67,12 +66,12 @@ public class AdminController {
 	}
 
 	@PatchMapping("/status/{userId}")
-	public ResponseEntity<?> setStatus(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<ApiResponse> setStatus(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(adminService.setStatus(user, userId, request));
 	}
 
 	@PatchMapping("/role/{userId}")
-	public ResponseEntity<?> setRole(@PathVariable Long userId, @RequestBody RoleRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<ApiResponse> setRole(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(adminService.setRole(user, userId, request));
 	}
 }
