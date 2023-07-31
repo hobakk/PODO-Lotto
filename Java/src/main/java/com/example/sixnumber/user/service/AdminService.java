@@ -24,6 +24,7 @@ import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
+import com.example.sixnumber.user.dto.RoleRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
@@ -129,6 +130,14 @@ public class AdminService {
 			redisDao.deleteIfNotNull("RT: " + target.getId());
 		}
 		return ApiResponse.ok("상태 변경 완료");
+	}
+
+	public ApiResponse setRole(User user, Long userId, RoleRequest request) {
+		User target = confirmationProcess(user, userId);
+		if (target.getRole().equals(request.getRole())) throw new IllegalArgumentException("동일한 권한입니다");
+
+		target.setRole(request.getRole());
+		return ApiResponse.ok("권한 변경 완료");
 	}
 
 	private User confirmationProcess(User user, Long userId) {
