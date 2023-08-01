@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
@@ -72,5 +73,17 @@ public class WinNumberServiceTest {
 		verify(winNumberRepository).save(any(WinNumber.class));
 		verify(winNumberRepository).findAll();
 		assertEquals(response.getWinNumberList().size(), 1);
+	}
+
+	@Test
+	void setWinNumber_fail_overLap() {
+		WinNumberRequest request = TestDataFactory.winNumberRequest();
+
+		when(winNumberRepository.findByTimeAndTopNumberList(
+			anyInt(), anyList())).thenReturn(true);
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> winNumberService.setWinNumbers(request));
+
+		verify(winNumberRepository).findByTimeAndTopNumberList(anyInt(), anyList());
 	}
 }
