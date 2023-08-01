@@ -91,7 +91,7 @@ export const MenuDiv =styled.div`
   cursor: pointer;
   width: 3cm;
   height: 115%;
-  margin-left: 100px;
+  margin-left: 80px;
   background-color: ${(props)=>props.color};
 `
 
