@@ -25,7 +25,7 @@ function GetUsers() {
     onSuccess: (res)=>{
       if  (res === 200) {
         alert("차감완료");
-        // setRender(!render);
+        setRender(!render);
       }
     },
     onError: (err)=>{
@@ -38,7 +38,7 @@ function GetUsers() {
   const setRoleMutation = useMutation(setRoleFromAdmin, {
     onSuccess: (res)=>{
       if (res === 200) {
-        // setRender(!render);
+        setRender(!render);
       }
     },
     onError: (err)=>{
@@ -51,7 +51,7 @@ function GetUsers() {
   const setStatusMutation = useMutation(setStatusFromAdmin, {
     onSuccess: (res)=>{
       if (res === 200) {
-        // setRender(!render);
+        setRender(!render);
       }
     },
     onError: (err)=>{
@@ -66,7 +66,7 @@ function GetUsers() {
   const setAdminMutation = useMutation(setAdmin, {
     onSuccess: (res)=>{
       if (res === 200) {
-        // setRender(!render);
+        setRender(!render);
       }
     },
     onError: (err)=>{
@@ -78,7 +78,7 @@ function GetUsers() {
 
   useEffect(()=>{
     getUsersMutation.mutate();
-  },[])
+  },[render])
 
   useEffect(()=>{
     if (searchInputValue === "") {
@@ -145,7 +145,7 @@ function GetUsers() {
     setStatusMutation.mutate({ userId, msg });
   }
   const securityKeyOnClickHandler = (userId) => {
-    const msg = key[`Key${userId}`];
+    const msg = key[`Key${entityType.id}`];
     setAdminMutation.mutate({ userId, msg });
   }
 
