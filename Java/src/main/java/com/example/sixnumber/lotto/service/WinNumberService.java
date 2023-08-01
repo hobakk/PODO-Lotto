@@ -1,6 +1,7 @@
 package com.example.sixnumber.lotto.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.cache.annotation.CachePut;
@@ -31,6 +32,9 @@ public class WinNumberService {
 	@CachePut(value = "WinNumbers", key = "'all'")
 	public WinNumberResponse setWinNumbers(WinNumberRequest request) {
 		WinNumber winNumber = new WinNumber(request);
+		if (winNumberRepository.findByTimeAndTopNumberList(winNumber.getTime(), winNumber.getTopNumberList())) {
+			throw new IllegalArgumentException("이미 등록된 정보입니다");
+		}
 		winNumberRepository.save(winNumber);
 
 		List<WinNumber> winNumberList = findAllAfterCheckIsEmpty();
