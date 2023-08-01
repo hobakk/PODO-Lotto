@@ -9,16 +9,13 @@ import { AdminMenuValue, LottoMenuValue, UserMenuValue } from './MenuValue';
 const mainColor = `#9957F0`;
 
 const HeaderStyles = {
-  margin: `0`,
   width: '100%',
-  background: `linear-gradient(to bottom, white 90%, ${mainColor} 90%)`,
+  background: `linear-gradient(to bottom, white 90%, ${mainColor} 10%)`,
   height: '60px',
   display: 'flex',
+  flexDirection: "row",
   alignItems: 'center',
-  justifyContent: 'center', // 중앙 배치
-  color: 'black',
-  fontWeight: '600',
-  fontSize: `22px`
+  fontWeight: '550',
 };
 
 const FooterStyles = {
@@ -39,7 +36,7 @@ const layoutStyles = {
   alignItems: 'center',
   minHeight: '90.1vh',
   backgroundColor: "white",
-  overflow: "hidden", // 스크롤 기능x
+  overflow: "hidden", // 스크롤 기능
 }
 
 function Header() {
@@ -62,47 +59,42 @@ function Header() {
     if (userIf.role !== userRole) {
       setUserRole(userIf.role);
     }
-    setIsLogin(!isLogin);
+    if (userIf.nickname === "") {
+      setIsLogin(false);
+    } else {
+      setIsLogin(true);
+    }
   }, [userIf])
 
-  const navigationLinksStyles  = {
-    margin: 'auto',
-    display: 'flex',
-  }
-
   return (
-    <div style={{ ...HeaderStyles }}>
-        <div id='LogoTitle' onClick={()=>{navigate("/")}} style={{ cursor: "pointer"}}>
-          <img src={process.env.PUBLIC_URL + `/logo.png`} alt='Logo' style={{ width: "30px", height: "30px", marginRight: "5px", marginLeft: "20px" }} />
-        </div>
-        <div onClick={()=>{navigate("/")}} style={{ cursor: "pointer"}}>
-          <span style={{ fontSize: "26px" }}>PODO Lotto</span>
-        </div>
-          <div className='navigation-links' style={navigationLinksStyles}>
-            <MenuContainer MenuValue={LottoMenuValue}/>
-            <MenuContainer MenuValue={UserMenuValue}/>
-            {userIf.role === "ROLE_ADMIN" &&(
-              <MenuContainer MenuValue={AdminMenuValue}/>
-            )}
+    <div style={ HeaderStyles }>
+      <div id='LogoTitle' onClick={()=>{navigate("/")}} style={{ cursor: "pointer", marginLeft:"15px"}}>
+        <img src={process.env.PUBLIC_URL + `/logo.png`} alt='Logo' style={{ width: "30px", height: "30px"}} />
+      </div>
+      <div onClick={()=>{navigate("/")}} style={{ cursor: "pointer"}}>
+        <span style={{ fontSize: "26px" }}>PODO Lotto</span>
+      </div>
+      <div style={{ display:"flex", margin:"auto" }}>
+        <MenuContainer MenuValue={LottoMenuValue}/>
+        <MenuContainer MenuValue={UserMenuValue}/>
+        {userIf.role === "ROLE_ADMIN" &&(
+          <MenuContainer MenuValue={AdminMenuValue}/>
+        )}
+      </div>
+      <div style={{ marginRight:"15px" }}>
+        {!isLogin ? (
+          <div>
+            <Link to={"/signin"}> 로그인 </Link> /
+            <Link to={"/signup"}> 회원가입</Link>
           </div>
-          <div style={{ marginLeft: "auto", marginRight: "10px", fontSize: "20px" }}>
-            <div>
-              {!isLogin ? (
-                <div>
-                  <Link to={"/signin"}> 로그인 </Link> /
-                  <Link to={"/signup"}> 회원가입</Link>
-                </div>
-              ):(
-                <div style={{ display: "flex", color: "black", fontSize: "16px"}}>
-                  <p>
-                    <CommonLink to={"/set-charging"} color={"#3E1F80"}>{cash}</CommonLink> 원  
-                    <CommonLink to={"/my-page"} color={"#F29135"}>{nickname}</CommonLink> 님 반갑습니다
-                    <CommonLink color={"black"} onClick={()=>logoutMutation.mutate()}>로그아웃</CommonLink>
-                  </p>
-                </div>
-              )}
-            </div>
+        ):(
+          <div style={{ display:"flex", alignItems:'center', justifyContent: 'center', }}>
+            <CommonLink to={"/set-charging"} color={"#3E1F80"}>{cash}</CommonLink> 원  
+            <CommonLink to={"/my-page"} color={"#F29135"}>{nickname}</CommonLink> 님 반갑습니다
+            <CommonLink color={"black"} onClick={()=>logoutMutation.mutate()}>로그아웃</CommonLink>
           </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -120,10 +112,10 @@ function Layout({ children }) {
   return (
     <div>
       <Header/>
-        <div style={{...layoutStyles, backdropFilter: "blur(20000px)"}}>
+        <div style={ layoutStyles }>
             {children}
         </div>
-      <Footer />
+      <Footer/>
     </div>
   );
 }

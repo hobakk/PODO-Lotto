@@ -44,8 +44,8 @@ function MenuContainer({ MenuValue }) {
                 </MenuDiv>
                 {isDropdown && (
                     <div style={navigationLinksStyles}>
-                    <Dropdown id='dropdown-admin' >
-                        <UlBox width="8cm">
+                    <Dropdown>
+                        <UlBox width="6cm">
                         <div style={{ margin: "20px", justifyContent:"center" }}>
                             {MenuValue.content.map((item)=>{
                                 return (
@@ -61,7 +61,6 @@ function MenuContainer({ MenuValue }) {
                 )}
             </>
         )}
-        
         </div>
     )
 }
