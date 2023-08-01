@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { useMutation } from 'react-query';
-import { OnOff, CommonLink} from '../components/Styles';
-import { setAdminMode } from '../modules/adminMode';
+import { useSelector } from 'react-redux';
+import { CommonLink} from '../components/Styles';
 import LogoutMutation from '../components/LogoutMutation';
-import DropdownMenu from "../components/DropDownMenu";
 import MenuContainer from '../components/MenuContainer';
 import { AdminMenuValue, LottoMenuValue, UserMenuValue } from './MenuValue';
 
