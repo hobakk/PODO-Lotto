@@ -145,7 +145,7 @@ function GetUsers() {
     setStatusMutation.mutate({ userId, msg });
   }
   const securityKeyOnClickHandler = (userId) => {
-    const msg = key[`Key${entityType.id}`];
+    const msg = key[`Key${userId}`];
     setAdminMutation.mutate({ userId, msg });
   }
 
