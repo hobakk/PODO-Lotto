@@ -36,7 +36,7 @@ public class WinNumberService {
 		WinNumber winNumber = new WinNumber(request);
 		Optional<WinNumber> target = winNumberRepository.findByTimeAndTopNumberListIn(
 			winNumber.getTime(), winNumber.getTopNumberList());
-		if (target.isEmpty()) throw new OverlapException("이미 등록된 정보입니다");
+		if (target.isPresent()) throw new OverlapException("이미 등록된 정보입니다");
 
 		winNumberRepository.save(winNumber);
 
