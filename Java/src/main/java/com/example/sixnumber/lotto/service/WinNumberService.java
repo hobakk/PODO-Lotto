@@ -1,13 +1,16 @@
 package com.example.sixnumber.lotto.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.lotto.dto.TransformResponse;
 import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.lotto.repository.WinNumberRepository;
@@ -31,6 +34,10 @@ public class WinNumberService {
 	@CachePut(value = "WinNumbers", key = "'all'")
 	public WinNumberResponse setWinNumbers(WinNumberRequest request) {
 		WinNumber winNumber = new WinNumber(request);
+		Optional<WinNumber> target = winNumberRepository.findByTimeAndTopNumberListIn(
+			winNumber.getTime(), winNumber.getTopNumberList());
+		if (target.isPresent()) throw new OverlapException("이미 등록된 정보입니다");
+
 		winNumberRepository.save(winNumber);
 
 		List<WinNumber> winNumberList = findAllAfterCheckIsEmpty();

@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.sixnumber.fixture.TestDataFactory;
+import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.lotto.repository.WinNumberRepository;
 import com.example.sixnumber.lotto.dto.WinNumberRequest;
@@ -72,5 +75,17 @@ public class WinNumberServiceTest {
 		verify(winNumberRepository).save(any(WinNumber.class));
 		verify(winNumberRepository).findAll();
 		assertEquals(response.getWinNumberList().size(), 1);
+	}
+
+	@Test
+	void setWinNumber_fail_overLap() {
+		WinNumberRequest request = TestDataFactory.winNumberRequest();
+
+		when(winNumberRepository.findByTimeAndTopNumberListIn(
+			anyInt(), anyList())).thenReturn(Optional.of(winNumber));
+
+		Assertions.assertThrows(OverlapException.class, () -> winNumberService.setWinNumbers(request));
+
+		verify(winNumberRepository).findByTimeAndTopNumberListIn(anyInt(), anyList());
 	}
 }
