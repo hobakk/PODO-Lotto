@@ -103,7 +103,7 @@ const downCash = async (inputValue) => {
 
 const createLotto = async () => {
     const { data } = await api.post("/admin/lotto");
-    return data.code;
+    return data;
 }
 
 const setStatusFromAdmin = async ({ userId, msg }) => {
