@@ -97,7 +97,7 @@ function GetUsers() {
   const onClickHandler = (userId) => {
     const CashRequest = {
       userId,
-      value: cash[userId],
+      value: cash[`Cash${userId}`],
       msg: "문의하세요"
     }
     console.log(CashRequest)
@@ -145,7 +145,7 @@ function GetUsers() {
     setStatusMutation.mutate({ userId, msg });
   }
   const securityKeyOnClickHandler = (userId) => {
-    const msg = key[userId];
+    const msg = key[`Key${userId}`];
     setAdminMutation.mutate({ userId, msg });
   }
 

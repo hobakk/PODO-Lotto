@@ -21,20 +21,16 @@ export const InputBox =styled.input`
   width: 5cm;
   height: 25px;
 `
-export const OnOff =styled.span`
-  color: ${(props) => props.color};
-  font-size: 16px;
-`
+
 export const UlBox =styled.ul`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
-  /* border: 2px solid ${mainColor} ; */
   list-style: none;
   padding: 0;
   margin: 0;
   text-align: center;
   background-color: white;
-  font-size: 22px;
+  font-size: 20px;
 `
 
 export const DividingLine =styled.div`
@@ -58,11 +54,10 @@ export const MenuTitle =styled.p`
 
 export const Dropdown =styled.div`
   position: absolute;
-  top: 100%;
-  left: 0;
-  display: flex;
-  background-color: #9957F0;
-  padding: 5px;
+  top: 115%;
+  background-color: white;
+  border: 6px solid #9957F0;
+  padding: 10px 5px 10px 5px;
   z-index: 1;
 `
 
@@ -94,13 +89,10 @@ export const CommonLink = styled(Link)`
 
 export const MenuDiv =styled.div`
   cursor: pointer;
-  margin: auto;
-  margin-left: 80px;
-  margin-top: 8px;
   width: 3cm;
-  height: 39px;
+  height: 115%;
+  margin-left: 80px;
   background-color: ${(props)=>props.color};
-  text-align: center;
 `
 
 export const MenuSpan =styled.span`

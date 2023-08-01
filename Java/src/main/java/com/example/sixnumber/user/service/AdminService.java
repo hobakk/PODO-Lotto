@@ -67,8 +67,8 @@ public class AdminService {
 		return ListApiResponse.ok("조회 성공", userChargesValues);
 	}
 
-	public ItemApiResponse<AdminGetChargingResponse> searchCharging(ChargingRequest request) {
-		String searchStr = request.getMsg() + "-" + request.getCash();
+	public ItemApiResponse<AdminGetChargingResponse> searchCharging(String msg, int cash) {
+		String searchStr = msg + "-" + cash;
 		List<String> value = redisDao.multiGet(searchStr);
 		AdminGetChargingResponse response = new AdminGetChargingResponse(value.get(0));
 		return ItemApiResponse.ok("조회 성공", response);

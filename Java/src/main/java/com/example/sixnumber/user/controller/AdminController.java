@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sixnumber.global.dto.ApiResponse;
@@ -41,8 +42,8 @@ public class AdminController {
 	}
 
 	@GetMapping("/search")
-	public ResponseEntity<ItemApiResponse<AdminGetChargingResponse>> searchCharging(@RequestBody ChargingRequest request) {
-		return ResponseEntity.ok(adminService.searchCharging(request));
+	public ResponseEntity<ItemApiResponse<AdminGetChargingResponse>> searchCharging(@RequestParam("msg") String msg, @RequestParam("cash") int cash) {
+		return ResponseEntity.ok(adminService.searchCharging(msg, cash));
 	}
 
 	@PatchMapping("/users/{userId}")
