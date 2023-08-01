@@ -111,9 +111,13 @@ const setStatusFromAdmin = async ({ userId, msg }) => {
     return data.code;
 }
 
-const setWinNumber = async (inputValue) => {
-    const { data } = await api.post("/admin/winnumber", inputValue);
-    return data.code;
+const setWinNumber = async ( inputValue ) => {
+    try {
+        const { data } = await api.post("/winnumber/set", inputValue);
+        return data;
+    } catch (error) {
+        throw error;
+    }
 }
 
 const setRoleFromAdmin = async ({ userId, msg }) => {
