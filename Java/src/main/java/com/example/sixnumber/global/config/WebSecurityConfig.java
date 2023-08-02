@@ -52,15 +52,10 @@ public class WebSecurityConfig {
 				.antMatchers("/api/users/**").hasAnyRole("USER", "ADMIN", "PAID")
 				.antMatchers("/api/admin/**", "/api/winnumber/set").hasRole("ADMIN")
 				.antMatchers("/api/lotto/**", "/api/lotto/yearMonth/all").hasAnyRole("ADMIN", "PAID")
-				.antMatchers("/**").authenticated()
-			.and()
-			.formLogin()
-				.loginPage("/signin")
-				.permitAll();
+				.antMatchers("/**").authenticated();
 
 		http.addFilterBefore(new JwtSecurityFilter(userDetailsService, jwtProvider, redisTemplate), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
-
 }
