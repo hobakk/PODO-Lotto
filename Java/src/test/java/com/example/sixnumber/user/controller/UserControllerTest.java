@@ -1,9 +1,7 @@
 package com.example.sixnumber.user.controller;
 
-import static com.example.sixnumber.global.util.JwtProvider.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(UserController.class)
+@WithMockUser(username = "test")
 class UserControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
@@ -37,7 +36,6 @@ class UserControllerTest {
 	private UserService userService;
 
 	@Test
-	@WithMockUser(username = "test")
 	public void Signup() throws Exception {
 		when(userService.signUp(any(SignupRequest.class))).thenReturn(ApiResponse.ok("회원가입 완료"));
 
@@ -56,13 +54,13 @@ class UserControllerTest {
 		when(userService.signIn(any(SigninRequest.class))).thenReturn("AccessT,RefreshT");
 
 		mockMvc.perform(MockMvcRequestBuilders
-			.post("/api/users/signin")
+			.post("/api/users/signin").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(TestDataFactory.signinRequest())))
 			.andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.jsonPath("$.msg").value("로그인 성공"))
-			.andExpect(header().string(AUTHORIZATION_HEADER, "Bearer AccessT"))
-			.andExpect(header().exists("Set-Cookie"));
+			.andExpect(MockMvcResultMatchers.cookie().value("accessToken", "AccessT"))
+			.andExpect(MockMvcResultMatchers.cookie().value("refreshToken", "RefreshT"));
 
 		verify(userService).signIn(any(SigninRequest.class));
 	}
