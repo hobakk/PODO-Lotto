@@ -21,6 +21,7 @@ import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
+import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -134,5 +135,21 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.data").isNotEmpty());;
 
 		verify(userService).getCharges(anyLong());
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void Charging() throws Exception {
+		when(userService.charging(any(ChargingRequest.class), any(User.class)))
+			.thenReturn(ApiResponse.ok("요청 성공"));
+
+		mockMvc.perform(post("/api/users/charging").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.chargingRequest()))
+			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("요청 성공"));
+
+		verify(userService).charging(any(ChargingRequest.class), any(User.class));
 	}
 }
