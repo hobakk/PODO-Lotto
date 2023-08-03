@@ -16,6 +16,7 @@ import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
+import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.lotto.dto.WinNumberRequest;
@@ -83,6 +84,10 @@ public class TestDataFactory {
 			1,
 			"1 2 3 4 5 6 7"
 		);
+	}
+
+	public static OnlyMsgRequest onlyMsgRequest() {
+		return new OnlyMsgRequest("회원탈퇴");
 	}
 
 	public static WinNumber winNumber() {

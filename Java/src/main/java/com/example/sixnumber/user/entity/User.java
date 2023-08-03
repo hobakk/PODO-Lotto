@@ -1,13 +1,11 @@
 package com.example.sixnumber.user.entity;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -69,6 +67,18 @@ public class User implements UserDetails {
 		this.email = request.getEmail();
 		this.password = password;
 		this.nickname = request.getNickname();
+		this.role = UserRole.ROLE_USER;
+		this.status = Status.ACTIVE;
+		this.cash = 1000;
+		this.statement = new ArrayList<>();
+		this.chargingCount = 0;
+	}
+
+	// Controller Test
+	public User(String email, String password) {
+		this.email = email;
+		this.password = password;
+		this.nickname = "testUSer";
 		this.role = UserRole.ROLE_USER;
 		this.status = Status.ACTIVE;
 		this.cash = 1000;
