@@ -5,6 +5,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,7 +19,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
+import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
+import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -107,10 +111,28 @@ class UserControllerTest {
 		mockMvc.perform(get("/api/users/cash").with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(user)))
-			.andExpect(jsonPath("$.code").value(200))
-			.andExpect(jsonPath("$.msg").value("조회 성공"))
-			.andExpect(jsonPath("$.data").isNotEmpty());
+				.andExpect(jsonPath("$.code").value(200))
+				.andExpect(jsonPath("$.msg").value("조회 성공"))
+				.andExpect(jsonPath("$.data").isNotEmpty());
 
 		verify(userService).getCashNickname(any(User.class));
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void GetCharges() throws Exception {
+		ChargingResponse response = new ChargingResponse("7-홍길동전-2000");
+		List<ChargingResponse> responses = List.of(response);
+
+		when(userService.getCharges(anyLong())).thenReturn(ListApiResponse.ok("신청 리스트 조회 성공", responses));
+
+		mockMvc.perform(get("/api/users/charging").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.user().getId())))
+			.andExpect(jsonPath("$.code").value(200))
+			.andExpect(jsonPath("$.msg").value("신청 리스트 조회 성공"))
+			.andExpect(jsonPath("$.data").isNotEmpty());;
+
+		verify(userService).getCharges(anyLong());
 	}
 }
