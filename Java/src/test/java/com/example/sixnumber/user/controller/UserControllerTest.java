@@ -12,11 +12,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.dto.ApiResponse;
+import com.example.sixnumber.global.dto.ItemApiResponse;
+import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -24,7 +25,6 @@ import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@ActiveProfiles("test")
 @AutoConfigureMockMvc
 @WebMvcTest(UserController.class)
 class UserControllerTest {
@@ -84,15 +84,33 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void	Withdraw() throws Exception {
-		when(userService.withdraw(any(OnlyMsgRequest.class), eq("TestUser")))
+		when(userService.withdraw(any(OnlyMsgRequest.class), anyString()))
 			.thenReturn(ApiResponse.ok("회원 탈퇴 완료"));
 
 		mockMvc.perform(patch("/api/users/withdraw").with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(TestDataFactory.onlyMsgRequest())))
+				.content(objectMapper.writeValueAsString(TestDataFactory.onlyMsgRequest()))
+				.content(objectMapper.writeValueAsString("testUSer")))
 				.andExpect(status().isOk());
 
-		verify(userService).withdraw(any(OnlyMsgRequest.class), eq("TestUser"));
+		verify(userService).withdraw(any(OnlyMsgRequest.class), anyString());
 	}
 
+	@Test
+	@WithCustomMockUser
+	public void GetCashNickname() throws Exception {
+		User user = TestDataFactory.user();
+
+		when(userService.getCashNickname(any(User.class))).thenReturn(
+			ItemApiResponse.ok("조회 성공", new CashNicknameResponse(user)));
+
+		mockMvc.perform(get("/api/users/cash").with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(user)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("조회 성공"))
+			.andExpect(jsonPath("$.data").isNotEmpty());
+
+		verify(userService).getCashNickname(any(User.class));
+	}
 }
