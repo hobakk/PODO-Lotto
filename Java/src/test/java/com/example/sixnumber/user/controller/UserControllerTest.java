@@ -107,7 +107,7 @@ class UserControllerTest {
 		mockMvc.perform(get("/api/users/cash").with(csrf())
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(user)))
-			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.code").value(200))
 			.andExpect(jsonPath("$.msg").value("조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
