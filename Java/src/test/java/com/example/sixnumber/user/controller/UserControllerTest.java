@@ -10,14 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.example.sixnumber.TestConfig;
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.dto.ApiResponse;
+import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.entity.User;
@@ -27,6 +30,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @WebMvcTest(UserController.class)
+@Import(TestConfig.class)
 class UserControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
@@ -38,7 +42,7 @@ class UserControllerTest {
 	private UserService userService;
 
 	@Test
-	@WithMockUser(username = "test")
+	@WithMockUser
 	public void Signup() throws Exception {
 		when(userService.signUp(any(SignupRequest.class))).thenReturn(ApiResponse.create("회원가입 완료"));
 
@@ -52,7 +56,7 @@ class UserControllerTest {
 	}
 
 	@Test
-	@WithUserDetails("asd")
+	@WithMockUser
 	public void Signin() throws Exception {
 		when(userService.signIn(any(SigninRequest.class))).thenReturn("AccessT,RefreshT");
 
@@ -68,7 +72,7 @@ class UserControllerTest {
 	}
 
 	@Test
-	@WithUserDetails("asd")
+	@WithMockUser
 	public void Logout() throws Exception {
 		when(userService.logout(any(User.class))).thenReturn(ApiResponse.ok("로그아웃 성공"));
 
@@ -81,5 +85,20 @@ class UserControllerTest {
 		verify(userService).logout(any(User.class));
 	}
 
+	@Test
+	@WithUserDetails(value = "username", userDetailsServiceBeanName = "myUserDetailsService")
+	public void	Withdraw() throws Exception {
+		User user = TestDataFactory.user();
+
+		when(userService.withdraw(any(OnlyMsgRequest.class), anyString()))
+			.thenReturn(ApiResponse.ok("회원 탈퇴 완료"));
+
+		mockMvc.perform(patch("/api/users/withdraw").with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(TestDataFactory.onlyMsgRequest())))
+				.andExpect(status().isOk());
+
+		verify(userService).withdraw(any(OnlyMsgRequest.class), "asd");
+	}
 
 }
