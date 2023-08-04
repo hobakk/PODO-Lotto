@@ -152,4 +152,19 @@ class UserControllerTest {
 
 		verify(userService).charging(any(ChargingRequest.class), any(User.class));
 	}
+
+	@Test
+	@WithCustomMockUser
+	public void setPaid() throws Exception {
+		when(userService.setPaid(any(OnlyMsgRequest.class), anyString())).thenReturn(ApiResponse.ok("권한 변경 성공"));
+
+		mockMvc.perform(patch("/api/users/paid").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.onlyMsgRequest()))
+			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("권한 변경 성공"));
+
+		verify(userService).setPaid(any(OnlyMsgRequest.class), anyString());
+	}
 }
