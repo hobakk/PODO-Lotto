@@ -72,7 +72,7 @@ public class UserController {
 
 	@GetMapping("/charging")
 	public ResponseEntity<ListApiResponse<ChargingResponse>> getCharges(@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.getCharges(user.getId()));
+		return ResponseEntity.ok(userService.getCharges(user));
 	}
 
 	@PostMapping("/charging")
@@ -81,7 +81,7 @@ public class UserController {
 		return ResponseEntity.ok(userService.charging(chargingRequest, user));
 	}
 
-	@PostMapping("/paid")
+	@PatchMapping("/paid")
 	public ResponseEntity<ApiResponse> setPaid(@RequestBody OnlyMsgRequest request,
 		@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.setPaid(request, user.getEmail()));
@@ -99,7 +99,7 @@ public class UserController {
 
 	@GetMapping("/my-information")
 	public ResponseEntity<ItemApiResponse<MyInformationResponse>> getMyInformation(@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.getMyInformation(user.getId()));
+		return ResponseEntity.ok(userService.getMyInformation(user));
 	}
 
 	@PostMapping("/check-pw")

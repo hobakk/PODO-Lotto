@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,11 +24,15 @@ import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
+import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
+import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
+import com.example.sixnumber.user.type.Status;
+import com.example.sixnumber.user.type.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @AutoConfigureMockMvc
@@ -41,6 +46,8 @@ class UserControllerTest {
 
 	@MockBean
 	private UserService userService;
+	@MockBean
+	private PasswordEncoder passwordEncoder;
 
 	@Test
 	@WithMockUser
@@ -52,6 +59,20 @@ class UserControllerTest {
 			.content(objectMapper.writeValueAsString(TestDataFactory.signupRequest())))
 			.andExpect(jsonPath("$.code").value(201))
 			.andExpect(jsonPath("$.msg").value("회원가입 완료"));
+
+		verify(userService).signUp(any(SignupRequest.class));
+	}
+
+	@Test
+	@WithCustomMockUser(status = Status.DORMANT)
+	public void Signup_ReJoin() throws Exception {
+		when(userService.signUp(any(SignupRequest.class))).thenReturn(ApiResponse.ok("재가입 완료"));
+
+		mockMvc.perform(post("/api/users/signup").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.signupRequest())))
+			.andExpect(jsonPath("$.code").value(200))
+			.andExpect(jsonPath("$.msg").value("재가입 완료"));
 
 		verify(userService).signUp(any(SignupRequest.class));
 	}
@@ -93,10 +114,10 @@ class UserControllerTest {
 			.thenReturn(ApiResponse.ok("회원 탈퇴 완료"));
 
 		mockMvc.perform(patch("/api/users/withdraw").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(TestDataFactory.onlyMsgRequest()))
-				.content(objectMapper.writeValueAsString("testUSer")))
-				.andExpect(status().isOk());
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.onlyMsgRequest()))
+			.content(objectMapper.writeValueAsString("testUSer")))
+			.andExpect(status().isOk());
 
 		verify(userService).withdraw(any(OnlyMsgRequest.class), anyString());
 	}
@@ -110,11 +131,11 @@ class UserControllerTest {
 			ItemApiResponse.ok("조회 성공", new CashNicknameResponse(user)));
 
 		mockMvc.perform(get("/api/users/cash").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(user)))
-				.andExpect(jsonPath("$.code").value(200))
-				.andExpect(jsonPath("$.msg").value("조회 성공"))
-				.andExpect(jsonPath("$.data").isNotEmpty());
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(user)))
+			.andExpect(jsonPath("$.code").value(200))
+			.andExpect(jsonPath("$.msg").value("조회 성공"))
+			.andExpect(jsonPath("$.data").isNotEmpty());
 
 		verify(userService).getCashNickname(any(User.class));
 	}
@@ -125,16 +146,16 @@ class UserControllerTest {
 		ChargingResponse response = new ChargingResponse("7-홍길동전-2000");
 		List<ChargingResponse> responses = List.of(response);
 
-		when(userService.getCharges(anyLong())).thenReturn(ListApiResponse.ok("신청 리스트 조회 성공", responses));
+		when(userService.getCharges(any(User.class))).thenReturn(ListApiResponse.ok("신청 리스트 조회 성공", responses));
 
 		mockMvc.perform(get("/api/users/charging").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.user().getId())))
+			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
 			.andExpect(jsonPath("$.code").value(200))
 			.andExpect(jsonPath("$.msg").value("신청 리스트 조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());;
 
-		verify(userService).getCharges(anyLong());
+		verify(userService).getCharges(any(User.class));
 	}
 
 	@Test
@@ -151,5 +172,84 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.msg").value("요청 성공"));
 
 		verify(userService).charging(any(ChargingRequest.class), any(User.class));
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void SetPaid() throws Exception {
+		when(userService.setPaid(any(OnlyMsgRequest.class), anyString())).thenReturn(ApiResponse.ok("권한 변경 성공"));
+
+		mockMvc.perform(patch("/api/users/paid").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.onlyMsgRequest()))
+			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("권한 변경 성공"));
+
+		verify(userService).setPaid(any(OnlyMsgRequest.class), anyString());
+	}
+
+	@Test
+	@WithCustomMockUser(role = UserRole.ROLE_PAID)
+	public void SetPaid_Release() throws Exception {
+		when(userService.setPaid(any(OnlyMsgRequest.class), anyString())).thenReturn(ApiResponse.ok("해지 신청 성공"));
+
+		mockMvc.perform(patch("/api/users/paid").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(new OnlyMsgRequest("월정액 해지")))
+			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("해지 신청 성공"));
+
+		verify(userService).setPaid(any(OnlyMsgRequest.class), anyString());
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void Update() throws Exception {
+		when(userService.update(any(SignupRequest.class), any(User.class))).thenReturn(ApiResponse.ok("수정 완료"));
+
+		mockMvc.perform(patch("/api/users/update").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.signupRequest()))
+			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("수정 완료"));
+
+		verify(userService).update(any(SignupRequest.class), any(User.class));
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void GetStatement() throws Exception {
+		StatementResponse response = new StatementResponse(("2023-07-14,테스트").split(","));
+
+		when(userService.getStatement(anyString())).thenReturn(ListApiResponse.ok("거래내역 조회 완료", List.of(response)));
+
+		mockMvc.perform(get("/api/users/statement").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("거래내역 조회 완료"))
+			.andExpect(jsonPath("$.data").isNotEmpty());
+
+		verify(userService).getStatement(anyString());
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void GetMyInformation() throws Exception {
+		User user = TestDataFactory.user();
+		MyInformationResponse response = new MyInformationResponse(user);
+
+		when(userService.getMyInformation(any(User.class))).thenReturn(ItemApiResponse.ok("조회 성공", response));
+
+		mockMvc.perform(get("/api/users/my-information").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(user)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("조회 성공"));
+
+		verify(userService).getMyInformation(any(User.class));
 	}
 }

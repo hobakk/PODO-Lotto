@@ -19,22 +19,20 @@ import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.global.exception.OverlapException;
+import com.example.sixnumber.global.exception.StatusNotActiveException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
-import com.example.sixnumber.lotto.entity.SixNumber;
-import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.MyInformationResponse;
+import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
-import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.entity.User;
-import com.example.sixnumber.global.exception.OverlapException;
-import com.example.sixnumber.global.exception.StatusNotActiveException;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -167,8 +165,8 @@ public class UserService {
 		return ApiResponse.ok("요청 성공");
 	}
 
-	public ListApiResponse<ChargingResponse> getCharges(Long userId) {
-		List<String> values = redisDao.multiGet(STMT + userId);
+	public ListApiResponse<ChargingResponse> getCharges(User user) {
+		List<String> values = redisDao.multiGet(STMT + user.getId());
 
 		List<ChargingResponse> responses = values.stream()
 			.map(ChargingResponse::new)
@@ -224,9 +222,9 @@ public class UserService {
 		return ListApiResponse.ok("거래내역 조회 완료", response);
 	}
 
-	public ItemApiResponse<MyInformationResponse> getMyInformation(Long userId) {
-		User user = manager.findUser(userId);
-		MyInformationResponse response = new MyInformationResponse(user);
+	public ItemApiResponse<MyInformationResponse> getMyInformation(User user) {
+		User userIf = manager.findUser(user.getId());
+		MyInformationResponse response = new MyInformationResponse(userIf);
 		return ItemApiResponse.ok("조회 성공", response);
 	}
 

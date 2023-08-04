@@ -7,19 +7,30 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
 import com.example.sixnumber.user.entity.User;
+import com.example.sixnumber.user.type.Status;
+import com.example.sixnumber.user.type.UserRole;
 
 public class WithCustomMockUserSecurityContextFactory implements WithSecurityContextFactory<WithCustomMockUser> {
 
+	private final PasswordEncoder passwordEncoder;
+
+	public WithCustomMockUserSecurityContextFactory(PasswordEncoder passwordEncoder) {
+		this.passwordEncoder = passwordEncoder;
+	}
+
 	@Override
 	public SecurityContext createSecurityContext(WithCustomMockUser annotation) {
-		String role = annotation.role();
+		UserRole role = annotation.role();
 		String username = annotation.username();
-		GrantedAuthority authority = new SimpleGrantedAuthority(role);
+		Status status = annotation.status();
+		String encodedPassword = passwordEncoder.encode("password");
+		GrantedAuthority authority = new SimpleGrantedAuthority(role.toString());
 
-		User user = new User(username, "password");
+		User user = new User(username, encodedPassword, role, status);
 
 		UsernamePasswordAuthenticationToken token =
 			new UsernamePasswordAuthenticationToken(user, "password", List.of(authority));

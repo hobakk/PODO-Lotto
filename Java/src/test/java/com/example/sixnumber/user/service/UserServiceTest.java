@@ -360,7 +360,7 @@ public class UserServiceTest {
 
 	@Test
 	void getCharges_success() {
-		ListApiResponse<ChargingResponse> response = userService.getCharges(saveUser.getId());
+		ListApiResponse<ChargingResponse> response = userService.getCharges(saveUser);
 
 		verify(redisDao).multiGet(anyString());
 		TestUtil.ListApiAssertEquals(response, 200, "신청 리스트 조회 성공");
@@ -416,7 +416,7 @@ public class UserServiceTest {
 	void getMyInformation() {
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		ItemApiResponse<MyInformationResponse> response = userService.getMyInformation(saveUser.getId());
+		ItemApiResponse<MyInformationResponse> response = userService.getMyInformation(saveUser);
 
 		verify(manager).findUser(anyLong());
 		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");
