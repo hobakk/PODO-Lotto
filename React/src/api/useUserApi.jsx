@@ -50,7 +50,7 @@ const getCharges = async () => {
 
 const setPaid = async (msg) => {
     try {
-        const { data } = await api.post("/users/paid", msg);
+        const { data } = await api.patch("/users/paid", msg);
         return data.code;
     } catch (error) {
         throw error; 
