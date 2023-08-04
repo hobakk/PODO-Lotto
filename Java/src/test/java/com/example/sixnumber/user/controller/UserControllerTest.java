@@ -24,6 +24,7 @@ import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
+import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -233,5 +234,22 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
 		verify(userService).getStatement(anyString());
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void GetMyInformation() throws Exception {
+		User user = TestDataFactory.user();
+		MyInformationResponse response = new MyInformationResponse(user);
+
+		when(userService.getMyInformation(anyLong())).thenReturn(ItemApiResponse.ok("조회 성공", response));
+
+		mockMvc.perform(get("/api/users/my-information").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content("{\"userId\":\"7\"}"))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("조회 성공"));
+
+		verify(userService).getMyInformation(anyLong());
 	}
 }
