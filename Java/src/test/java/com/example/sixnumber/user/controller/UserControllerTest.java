@@ -30,6 +30,7 @@ import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
 import com.example.sixnumber.user.type.Status;
+import com.example.sixnumber.user.type.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @AutoConfigureMockMvc
@@ -66,8 +67,8 @@ class UserControllerTest {
 		when(userService.signUp(any(SignupRequest.class))).thenReturn(ApiResponse.ok("재가입 완료"));
 
 		mockMvc.perform(post("/api/users/signup").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(TestDataFactory.signupRequest())))
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.signupRequest())))
 			.andExpect(jsonPath("$.code").value(200))
 			.andExpect(jsonPath("$.msg").value("재가입 완료"));
 
@@ -111,10 +112,10 @@ class UserControllerTest {
 			.thenReturn(ApiResponse.ok("회원 탈퇴 완료"));
 
 		mockMvc.perform(patch("/api/users/withdraw").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(TestDataFactory.onlyMsgRequest()))
-				.content(objectMapper.writeValueAsString("testUSer")))
-				.andExpect(status().isOk());
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.onlyMsgRequest()))
+			.content(objectMapper.writeValueAsString("testUSer")))
+			.andExpect(status().isOk());
 
 		verify(userService).withdraw(any(OnlyMsgRequest.class), anyString());
 	}
@@ -128,11 +129,11 @@ class UserControllerTest {
 			ItemApiResponse.ok("조회 성공", new CashNicknameResponse(user)));
 
 		mockMvc.perform(get("/api/users/cash").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(user)))
-				.andExpect(jsonPath("$.code").value(200))
-				.andExpect(jsonPath("$.msg").value("조회 성공"))
-				.andExpect(jsonPath("$.data").isNotEmpty());
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(user)))
+			.andExpect(jsonPath("$.code").value(200))
+			.andExpect(jsonPath("$.msg").value("조회 성공"))
+			.andExpect(jsonPath("$.data").isNotEmpty());
 
 		verify(userService).getCashNickname(any(User.class));
 	}
@@ -173,7 +174,7 @@ class UserControllerTest {
 
 	@Test
 	@WithCustomMockUser
-	public void setPaid() throws Exception {
+	public void SetPaid() throws Exception {
 		when(userService.setPaid(any(OnlyMsgRequest.class), anyString())).thenReturn(ApiResponse.ok("권한 변경 성공"));
 
 		mockMvc.perform(patch("/api/users/paid").with(csrf())
@@ -182,6 +183,21 @@ class UserControllerTest {
 			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("권한 변경 성공"));
+
+		verify(userService).setPaid(any(OnlyMsgRequest.class), anyString());
+	}
+
+	@Test
+	@WithCustomMockUser(role = UserRole.ROLE_PAID)
+	public void SetPaid_Release() throws Exception {
+		when(userService.setPaid(any(OnlyMsgRequest.class), anyString())).thenReturn(ApiResponse.ok("해지 신청 성공"));
+
+		mockMvc.perform(patch("/api/users/paid").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(new OnlyMsgRequest("월정액 해지")))
+			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("해지 신청 성공"));
 
 		verify(userService).setPaid(any(OnlyMsgRequest.class), anyString());
 	}
