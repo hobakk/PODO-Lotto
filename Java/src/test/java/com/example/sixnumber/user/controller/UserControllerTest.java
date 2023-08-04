@@ -201,4 +201,19 @@ class UserControllerTest {
 
 		verify(userService).setPaid(any(OnlyMsgRequest.class), anyString());
 	}
+
+	@Test
+	@WithCustomMockUser
+	public void Update() throws Exception {
+		when(userService.update(any(SignupRequest.class), any(User.class))).thenReturn(ApiResponse.ok("수정 완료"));
+
+		mockMvc.perform(patch("/api/users/update").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.signupRequest()))
+			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("수정 완료"));
+
+		verify(userService).update(any(SignupRequest.class), any(User.class));
+	}
 }
