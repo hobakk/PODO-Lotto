@@ -222,9 +222,9 @@ public class UserService {
 		return ListApiResponse.ok("거래내역 조회 완료", response);
 	}
 
-	public ItemApiResponse<MyInformationResponse> getMyInformation(Long userId) {
-		User user = manager.findUser(userId);
-		MyInformationResponse response = new MyInformationResponse(user);
+	public ItemApiResponse<MyInformationResponse> getMyInformation(User user) {
+		User userIf = manager.findUser(user.getId());
+		MyInformationResponse response = new MyInformationResponse(userIf);
 		return ItemApiResponse.ok("조회 성공", response);
 	}
 
