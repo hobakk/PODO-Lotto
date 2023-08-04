@@ -75,12 +75,12 @@ public class User implements UserDetails {
 	}
 
 	// Controller Test
-	public User(String email, String password) {
+	public User(String email, String password, UserRole role, Status status) {
 		this.email = email;
 		this.password = password;
 		this.nickname = "testUSer";
-		this.role = UserRole.ROLE_USER;
-		this.status = Status.ACTIVE;
+		this.role = role;
+		this.status = status;
 		this.cash = 1000;
 		this.statement = new ArrayList<>();
 		this.chargingCount = 0;
