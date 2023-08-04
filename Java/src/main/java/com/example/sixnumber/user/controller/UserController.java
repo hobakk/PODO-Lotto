@@ -81,7 +81,7 @@ public class UserController {
 		return ResponseEntity.ok(userService.charging(chargingRequest, user));
 	}
 
-	@PostMapping("/paid")
+	@PatchMapping("/paid")
 	public ResponseEntity<ApiResponse> setPaid(@RequestBody OnlyMsgRequest request,
 		@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.setPaid(request, user.getEmail()));
