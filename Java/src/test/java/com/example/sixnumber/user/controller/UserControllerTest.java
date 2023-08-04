@@ -27,6 +27,7 @@ import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
+import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
 import com.example.sixnumber.user.type.Status;
@@ -215,5 +216,22 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.msg").value("수정 완료"));
 
 		verify(userService).update(any(SignupRequest.class), any(User.class));
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void GetStatement() throws Exception {
+		StatementResponse response = new StatementResponse(("2023-07-14,테스트").split(","));
+
+		when(userService.getStatement(anyString())).thenReturn(ListApiResponse.ok("거래내역 조회 완료", List.of(response)));
+
+		mockMvc.perform(get("/api/users/statement").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("거래내역 조회 완료"))
+			.andExpect(jsonPath("$.data").isNotEmpty());
+
+		verify(userService).getStatement(anyString());
 	}
 }
