@@ -125,16 +125,16 @@ class UserControllerTest {
 		ChargingResponse response = new ChargingResponse("7-홍길동전-2000");
 		List<ChargingResponse> responses = List.of(response);
 
-		when(userService.getCharges(anyLong())).thenReturn(ListApiResponse.ok("신청 리스트 조회 성공", responses));
+		when(userService.getCharges(any(User.class))).thenReturn(ListApiResponse.ok("신청 리스트 조회 성공", responses));
 
 		mockMvc.perform(get("/api/users/charging").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.user().getId())))
+			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
 			.andExpect(jsonPath("$.code").value(200))
 			.andExpect(jsonPath("$.msg").value("신청 리스트 조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());;
 
-		verify(userService).getCharges(anyLong());
+		verify(userService).getCharges(any(User.class));
 	}
 
 	@Test
