@@ -242,14 +242,14 @@ class UserControllerTest {
 		User user = TestDataFactory.user();
 		MyInformationResponse response = new MyInformationResponse(user);
 
-		when(userService.getMyInformation(anyLong())).thenReturn(ItemApiResponse.ok("조회 성공", response));
+		when(userService.getMyInformation(any(User.class))).thenReturn(ItemApiResponse.ok("조회 성공", response));
 
 		mockMvc.perform(get("/api/users/my-information").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content("{\"userId\":\"7\"}"))
+			.content(objectMapper.writeValueAsString(user)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("조회 성공"));
 
-		verify(userService).getMyInformation(anyLong());
+		verify(userService).getMyInformation(any(User.class));
 	}
 }
