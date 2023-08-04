@@ -72,7 +72,7 @@ public class UserController {
 
 	@GetMapping("/charging")
 	public ResponseEntity<ListApiResponse<ChargingResponse>> getCharges(@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.getCharges(user.getId()));
+		return ResponseEntity.ok(userService.getCharges(user));
 	}
 
 	@PostMapping("/charging")
