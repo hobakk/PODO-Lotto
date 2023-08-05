@@ -55,7 +55,7 @@ public class UserController {
 
 	@PostMapping("/logout")
 	public ResponseEntity<ApiResponse> logout(@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.logout(user));
+		return ResponseEntity.ok(userService.logout(user.getId()));
 	}
 
 	@PatchMapping("/withdraw")
@@ -72,7 +72,7 @@ public class UserController {
 
 	@GetMapping("/charging")
 	public ResponseEntity<ListApiResponse<ChargingResponse>> getCharges(@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.getCharges(user));
+		return ResponseEntity.ok(userService.getCharges(user.getId()));
 	}
 
 	@PostMapping("/charging")
@@ -99,7 +99,7 @@ public class UserController {
 
 	@GetMapping("/my-information")
 	public ResponseEntity<ItemApiResponse<MyInformationResponse>> getMyInformation(@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.getMyInformation(user));
+		return ResponseEntity.ok(userService.getMyInformation(user.getId()));
 	}
 
 	@PostMapping("/check-pw")

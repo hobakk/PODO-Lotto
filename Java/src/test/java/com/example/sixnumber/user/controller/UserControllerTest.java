@@ -1,5 +1,6 @@
 package com.example.sixnumber.user.controller;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -13,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -46,8 +46,6 @@ class UserControllerTest {
 
 	@MockBean
 	private UserService userService;
-	@MockBean
-	private PasswordEncoder passwordEncoder;
 
 	@Test
 	@WithMockUser
@@ -96,15 +94,15 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void Logout() throws Exception {
-		when(userService.logout(any(User.class))).thenReturn(ApiResponse.ok("로그아웃 성공"));
+		when(userService.logout(anyLong())).thenReturn(ApiResponse.ok("로그아웃 성공"));
 
 		mockMvc.perform(post("/api/users/logout").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
+			.content(objectMapper.writeValueAsString(99L)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("로그아웃 성공"));
 
-		verify(userService).logout(any(User.class));
+		verify(userService).logout(anyLong());
 	}
 
 	@Test
@@ -115,7 +113,6 @@ class UserControllerTest {
 
 		mockMvc.perform(patch("/api/users/withdraw").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.onlyMsgRequest()))
 			.content(objectMapper.writeValueAsString("testUSer")))
 			.andExpect(status().isOk());
 
@@ -131,8 +128,7 @@ class UserControllerTest {
 			ItemApiResponse.ok("조회 성공", new CashNicknameResponse(user)));
 
 		mockMvc.perform(get("/api/users/cash").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(user)))
+			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.code").value(200))
 			.andExpect(jsonPath("$.msg").value("조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
@@ -146,16 +142,15 @@ class UserControllerTest {
 		ChargingResponse response = new ChargingResponse("7-홍길동전-2000");
 		List<ChargingResponse> responses = List.of(response);
 
-		when(userService.getCharges(any(User.class))).thenReturn(ListApiResponse.ok("신청 리스트 조회 성공", responses));
+		when(userService.getCharges(anyLong())).thenReturn(ListApiResponse.ok("신청 리스트 조회 성공", responses));
 
 		mockMvc.perform(get("/api/users/charging").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
+			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.code").value(200))
 			.andExpect(jsonPath("$.msg").value("신청 리스트 조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());;
 
-		verify(userService).getCharges(any(User.class));
+		verify(userService).getCharges(anyLong());
 	}
 
 	@Test
@@ -166,7 +161,6 @@ class UserControllerTest {
 
 		mockMvc.perform(post("/api/users/charging").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.chargingRequest()))
 			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("요청 성공"));
@@ -181,7 +175,6 @@ class UserControllerTest {
 
 		mockMvc.perform(patch("/api/users/paid").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.onlyMsgRequest()))
 			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("권한 변경 성공"));
@@ -196,7 +189,6 @@ class UserControllerTest {
 
 		mockMvc.perform(patch("/api/users/paid").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(new OnlyMsgRequest("월정액 해지")))
 			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("해지 신청 성공"));
@@ -211,7 +203,6 @@ class UserControllerTest {
 
 		mockMvc.perform(patch("/api/users/update").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.signupRequest()))
 			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("수정 완료"));
@@ -227,8 +218,7 @@ class UserControllerTest {
 		when(userService.getStatement(anyString())).thenReturn(ListApiResponse.ok("거래내역 조회 완료", List.of(response)));
 
 		mockMvc.perform(get("/api/users/statement").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
+			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("거래내역 조회 완료"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
@@ -242,14 +232,27 @@ class UserControllerTest {
 		User user = TestDataFactory.user();
 		MyInformationResponse response = new MyInformationResponse(user);
 
-		when(userService.getMyInformation(any(User.class))).thenReturn(ItemApiResponse.ok("조회 성공", response));
+		when(userService.getMyInformation(anyLong())).thenReturn(ItemApiResponse.ok("조회 성공", response));
 
 		mockMvc.perform(get("/api/users/my-information").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(user)))
+			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("조회 성공"));
 
-		verify(userService).getMyInformation(any(User.class));
+		verify(userService).getMyInformation(anyLong());
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void CheckPW() throws Exception {
+		when(userService.checkPW(any(OnlyMsgRequest.class), anyString())).thenReturn(ApiResponse.ok("본인확인 성공"));
+
+		mockMvc.perform(post("/api/users/check-pw").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString("password")))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("본인확인 성공"));
+
+		verify(userService).checkPW(any(OnlyMsgRequest.class), anyString());
 	}
 }

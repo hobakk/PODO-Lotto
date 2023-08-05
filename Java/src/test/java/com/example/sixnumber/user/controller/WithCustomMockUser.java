@@ -13,5 +13,6 @@ import com.example.sixnumber.user.type.UserRole;
 public @interface WithCustomMockUser {
 	UserRole role() default UserRole.ROLE_USER;
 	String username() default "testUser";
+	String password() default "password";
 	Status status() default Status.ACTIVE;
 }

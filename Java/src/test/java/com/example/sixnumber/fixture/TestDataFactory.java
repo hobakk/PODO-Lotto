@@ -86,8 +86,8 @@ public class TestDataFactory {
 		);
 	}
 
-	public static OnlyMsgRequest onlyMsgRequest() {
-		return new OnlyMsgRequest("회원탈퇴");
+	public static OnlyMsgRequest onlyMsgRequest(String msg) {
+		return new OnlyMsgRequest(msg);
 	}
 
 	public static WinNumber winNumber() {

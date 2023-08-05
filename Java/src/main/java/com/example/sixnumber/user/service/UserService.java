@@ -104,8 +104,8 @@ public class UserService {
 		return accessToken + "," + refreshToken;
 	}
 
-	public ApiResponse logout(User user) {
-		redisDao.deleteValues(RTK + user.getId());
+	public ApiResponse logout(Long userId) {
+		redisDao.deleteValues(RTK + userId);
 		return ApiResponse.ok("로그아웃 성공");
 	}
 
@@ -165,8 +165,8 @@ public class UserService {
 		return ApiResponse.ok("요청 성공");
 	}
 
-	public ListApiResponse<ChargingResponse> getCharges(User user) {
-		List<String> values = redisDao.multiGet(STMT + user.getId());
+	public ListApiResponse<ChargingResponse> getCharges(Long userId) {
+		List<String> values = redisDao.multiGet(STMT + userId);
 
 		List<ChargingResponse> responses = values.stream()
 			.map(ChargingResponse::new)
@@ -222,14 +222,14 @@ public class UserService {
 		return ListApiResponse.ok("거래내역 조회 완료", response);
 	}
 
-	public ItemApiResponse<MyInformationResponse> getMyInformation(User user) {
-		User userIf = manager.findUser(user.getId());
+	public ItemApiResponse<MyInformationResponse> getMyInformation(Long userId) {
+		User userIf = manager.findUser(userId);
 		MyInformationResponse response = new MyInformationResponse(userIf);
 		return ItemApiResponse.ok("조회 성공", response);
 	}
 
-	public ApiResponse checkPW(OnlyMsgRequest request, String password) {
-		if (!passwordEncoder.matches(request.getMsg(), password)) {
+	public ApiResponse checkPW(OnlyMsgRequest request, String encodedPassword) {
+		if (!passwordEncoder.matches(request.getMsg(), encodedPassword)) {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
 		}
 
