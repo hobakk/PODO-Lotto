@@ -115,7 +115,6 @@ class UserControllerTest {
 
 		mockMvc.perform(patch("/api/users/withdraw").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.onlyMsgRequest()))
 			.content(objectMapper.writeValueAsString("testUSer")))
 			.andExpect(status().isOk());
 
@@ -166,7 +165,6 @@ class UserControllerTest {
 
 		mockMvc.perform(post("/api/users/charging").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.chargingRequest()))
 			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("요청 성공"));
@@ -181,7 +179,6 @@ class UserControllerTest {
 
 		mockMvc.perform(patch("/api/users/paid").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.onlyMsgRequest()))
 			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("권한 변경 성공"));
@@ -196,7 +193,6 @@ class UserControllerTest {
 
 		mockMvc.perform(patch("/api/users/paid").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(new OnlyMsgRequest("월정액 해지")))
 			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("해지 신청 성공"));
@@ -211,7 +207,6 @@ class UserControllerTest {
 
 		mockMvc.perform(patch("/api/users/update").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.signupRequest()))
 			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("수정 완료"));
