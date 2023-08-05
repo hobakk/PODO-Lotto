@@ -128,8 +128,7 @@ class UserControllerTest {
 			ItemApiResponse.ok("조회 성공", new CashNicknameResponse(user)));
 
 		mockMvc.perform(get("/api/users/cash").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(user)))
+			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.code").value(200))
 			.andExpect(jsonPath("$.msg").value("조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
@@ -146,8 +145,7 @@ class UserControllerTest {
 		when(userService.getCharges(anyLong())).thenReturn(ListApiResponse.ok("신청 리스트 조회 성공", responses));
 
 		mockMvc.perform(get("/api/users/charging").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(99L)))
+			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("$.code").value(200))
 			.andExpect(jsonPath("$.msg").value("신청 리스트 조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());;
@@ -220,8 +218,7 @@ class UserControllerTest {
 		when(userService.getStatement(anyString())).thenReturn(ListApiResponse.ok("거래내역 조회 완료", List.of(response)));
 
 		mockMvc.perform(get("/api/users/statement").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
+			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("거래내역 조회 완료"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
@@ -238,8 +235,7 @@ class UserControllerTest {
 		when(userService.getMyInformation(anyLong())).thenReturn(ItemApiResponse.ok("조회 성공", response));
 
 		mockMvc.perform(get("/api/users/my-information").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(99L)))
+			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("조회 성공"));
 
