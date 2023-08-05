@@ -429,7 +429,7 @@ public class UserServiceTest {
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
-		ApiResponse response = userService.checkPW(request, saveUser);
+		ApiResponse response = userService.checkPW(request, saveUser.getPassword());
 
 		verify(passwordEncoder).matches(anyString(), anyString());
 		TestUtil.ApiAsserEquals(response, 200, "본인확인 성공");
@@ -442,7 +442,7 @@ public class UserServiceTest {
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
-		Assertions.assertThrows(IllegalArgumentException.class, ()->userService.checkPW(request, saveUser));
+		Assertions.assertThrows(IllegalArgumentException.class, ()->userService.checkPW(request, saveUser.getPassword()));
 
 		verify(passwordEncoder).matches(anyString(), anyString());
 	}

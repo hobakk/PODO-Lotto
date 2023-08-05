@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -46,8 +45,6 @@ class UserControllerTest {
 
 	@MockBean
 	private UserService userService;
-	@MockBean
-	private PasswordEncoder passwordEncoder;
 
 	@Test
 	@WithMockUser
@@ -251,14 +248,14 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void CheckPW() throws Exception {
-		when(userService.checkPW(any(OnlyMsgRequest.class), any(User.class))).thenReturn(ApiResponse.ok("본인확인 성공"));
+		when(userService.checkPW(any(OnlyMsgRequest.class), anyString())).thenReturn(ApiResponse.ok("본인확인 성공"));
 
 		mockMvc.perform(post("/api/users/check-pw").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString("testUser")))
+			.content(objectMapper.writeValueAsString("password")))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("본인확인 성공"));
 
-		verify(userService).checkPW(any(OnlyMsgRequest.class), any(User.class));
+		verify(userService).checkPW(any(OnlyMsgRequest.class), anyString());
 	}
 }
