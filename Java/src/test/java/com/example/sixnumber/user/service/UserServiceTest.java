@@ -202,7 +202,7 @@ public class UserServiceTest {
 
 	@Test
 	void logout() {
-		ApiResponse response = userService.logout(saveUser);
+		ApiResponse response = userService.logout(saveUser.getId());
 
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "로그아웃 성공");

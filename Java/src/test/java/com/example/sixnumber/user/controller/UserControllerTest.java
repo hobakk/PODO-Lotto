@@ -94,15 +94,15 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void Logout() throws Exception {
-		when(userService.logout(any(User.class))).thenReturn(ApiResponse.ok("로그아웃 성공"));
+		when(userService.logout(anyLong())).thenReturn(ApiResponse.ok("로그아웃 성공"));
 
 		mockMvc.perform(post("/api/users/logout").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
+			.content(objectMapper.writeValueAsString(99L)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("로그아웃 성공"));
 
-		verify(userService).logout(any(User.class));
+		verify(userService).logout(anyLong());
 	}
 
 	@Test

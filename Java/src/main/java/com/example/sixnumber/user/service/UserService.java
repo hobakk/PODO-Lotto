@@ -104,8 +104,8 @@ public class UserService {
 		return accessToken + "," + refreshToken;
 	}
 
-	public ApiResponse logout(User user) {
-		redisDao.deleteValues(RTK + user.getId());
+	public ApiResponse logout(Long userId) {
+		redisDao.deleteValues(RTK + userId);
 		return ApiResponse.ok("로그아웃 성공");
 	}
 
