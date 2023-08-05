@@ -104,6 +104,6 @@ public class UserController {
 
 	@PostMapping("/check-pw")
 	public ResponseEntity<ApiResponse> checkPW(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.checkPW(request, user.getPassword()));
+		return ResponseEntity.ok(userService.checkPW(request, user));
 	}
 }

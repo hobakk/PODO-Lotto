@@ -228,8 +228,8 @@ public class UserService {
 		return ItemApiResponse.ok("조회 성공", response);
 	}
 
-	public ApiResponse checkPW(OnlyMsgRequest request, String password) {
-		if (!passwordEncoder.matches(request.getMsg(), password)) {
+	public ApiResponse checkPW(OnlyMsgRequest request, User user) {
+		if (!passwordEncoder.matches(request.getMsg(), user.getPassword())) {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
 		}
 
