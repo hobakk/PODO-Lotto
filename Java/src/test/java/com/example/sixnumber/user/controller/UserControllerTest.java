@@ -247,4 +247,18 @@ class UserControllerTest {
 
 		verify(userService).getMyInformation(any(User.class));
 	}
+
+	@Test
+	@WithCustomMockUser
+	public void CheckPW() throws Exception {
+		when(userService.checkPW(any(OnlyMsgRequest.class), any(User.class))).thenReturn(ApiResponse.ok("본인확인 성공"));
+
+		mockMvc.perform(post("/api/users/check-pw").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString("testUser")))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("본인확인 성공"));
+
+		verify(userService).checkPW(any(OnlyMsgRequest.class), any(User.class));
+	}
 }
