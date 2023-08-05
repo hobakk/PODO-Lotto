@@ -165,8 +165,8 @@ public class UserService {
 		return ApiResponse.ok("요청 성공");
 	}
 
-	public ListApiResponse<ChargingResponse> getCharges(User user) {
-		List<String> values = redisDao.multiGet(STMT + user.getId());
+	public ListApiResponse<ChargingResponse> getCharges(Long userId) {
+		List<String> values = redisDao.multiGet(STMT + userId);
 
 		List<ChargingResponse> responses = values.stream()
 			.map(ChargingResponse::new)
