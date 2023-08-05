@@ -24,6 +24,7 @@ public class WithCustomMockUserSecurityContextFactory implements WithSecurityCon
 		GrantedAuthority authority = new SimpleGrantedAuthority(role.toString());
 
 		User user = new User(username, password, role, status);
+		user.setId(99L);
 
 		UsernamePasswordAuthenticationToken token =
 			new UsernamePasswordAuthenticationToken(user, password, List.of(authority));
