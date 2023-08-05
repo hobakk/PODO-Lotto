@@ -27,7 +27,7 @@ public class WithCustomMockUserSecurityContextFactory implements WithSecurityCon
 		UserRole role = annotation.role();
 		String username = annotation.username();
 		Status status = annotation.status();
-		String encodedPassword = passwordEncoder.encode("password");
+		String encodedPassword = passwordEncoder.encode(annotation.password());
 		GrantedAuthority authority = new SimpleGrantedAuthority(role.toString());
 
 		User user = new User(username, encodedPassword, role, status);
