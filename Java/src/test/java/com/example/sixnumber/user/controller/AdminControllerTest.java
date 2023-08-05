@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.UsersReponse;
 import com.example.sixnumber.user.service.AdminService;
 import com.example.sixnumber.user.type.UserRole;
@@ -38,9 +39,8 @@ public class AdminControllerTest {
 	@Test
 	public void GetUsers() throws Exception {
 		UsersReponse usersReponse = new UsersReponse(TestDataFactory.user());
-		List<UsersReponse> userList = List.of(usersReponse);
 
-		when(adminService.getUsers()).thenReturn(ListApiResponse.ok("조회 성공", userList));
+		when(adminService.getUsers()).thenReturn(ListApiResponse.ok("조회 성공", List.of(usersReponse)));
 
 		mockMvc.perform(get("/api/admin/users").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
@@ -49,5 +49,20 @@ public class AdminControllerTest {
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
 		verify(adminService).getUsers();
+	}
+
+	@Test
+	public void GetCharges() throws Exception {
+		AdminGetChargingResponse chargeList = new AdminGetChargingResponse("1-콩쥐팥쥐-2000");
+
+		when(adminService.getCharges()).thenReturn(ListApiResponse.ok("조회 성공", List.of(chargeList)));
+
+		mockMvc.perform(get("/api/admin/charges").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("조회 성공"))
+			.andExpect(jsonPath("$.data").isNotEmpty());
+
+		verify(adminService).getCharges();
 	}
 }
