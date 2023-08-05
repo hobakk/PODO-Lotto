@@ -416,7 +416,7 @@ public class UserServiceTest {
 	void getMyInformation() {
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		ItemApiResponse<MyInformationResponse> response = userService.getMyInformation(saveUser);
+		ItemApiResponse<MyInformationResponse> response = userService.getMyInformation(saveUser.getId());
 
 		verify(manager).findUser(anyLong());
 		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");

@@ -99,7 +99,7 @@ public class UserController {
 
 	@GetMapping("/my-information")
 	public ResponseEntity<ItemApiResponse<MyInformationResponse>> getMyInformation(@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.getMyInformation(user));
+		return ResponseEntity.ok(userService.getMyInformation(user.getId()));
 	}
 
 	@PostMapping("/check-pw")

@@ -1,5 +1,6 @@
 package com.example.sixnumber.user.controller;
 
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -234,15 +235,15 @@ class UserControllerTest {
 		User user = TestDataFactory.user();
 		MyInformationResponse response = new MyInformationResponse(user);
 
-		when(userService.getMyInformation(any(User.class))).thenReturn(ItemApiResponse.ok("조회 성공", response));
+		when(userService.getMyInformation(anyLong())).thenReturn(ItemApiResponse.ok("조회 성공", response));
 
 		mockMvc.perform(get("/api/users/my-information").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(user)))
+			.content(objectMapper.writeValueAsString(99L)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("조회 성공"));
 
-		verify(userService).getMyInformation(any(User.class));
+		verify(userService).getMyInformation(anyLong());
 	}
 
 	@Test
