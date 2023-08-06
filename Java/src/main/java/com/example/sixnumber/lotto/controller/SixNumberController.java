@@ -28,7 +28,7 @@ public class SixNumberController {
 		return ResponseEntity.ok(sixNumberService.buyNumber(buyNumberRequest, user));
 	}
 
-	@PostMapping("/Repetition")
+	@PostMapping("/repetition")
 	public ResponseEntity<?> statisticalNumber(@RequestBody StatisticalNumberRequest BuyRepetitionNumberRequest, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(sixNumberService.statisticalNumber(BuyRepetitionNumberRequest, user));
 	}

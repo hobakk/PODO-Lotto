@@ -20,6 +20,7 @@ import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.WithCustomMockUser;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
+import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.lotto.service.SixNumberService;
 import com.example.sixnumber.user.entity.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -56,5 +57,20 @@ public class SixNumberControllerTest {
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
 		verify(sixNumberService).buyNumber(any(BuyNumberRequest.class), any(User.class));
+	}
+
+	@Test
+	public void StatisticalNumber() throws Exception {
+		when(sixNumberService.statisticalNumber(any(StatisticalNumberRequest.class), any(User.class))).thenReturn(
+			ListApiResponse.ok("요청 성공", topNumbers));
+
+		mockMvc.perform(post("/api/sixnum/repetition").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.statisticalNumberRequest())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("요청 성공"))
+			.andExpect(jsonPath("$.data").isNotEmpty());
+
+		verify(sixNumberService).statisticalNumber(any(StatisticalNumberRequest.class), any(User.class));
 	}
 }
