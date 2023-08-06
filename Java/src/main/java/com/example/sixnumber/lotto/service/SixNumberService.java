@@ -130,7 +130,7 @@ public class SixNumberService {
 		return ListApiResponse.ok("요청 성공", topNumbers);
 	}
 
-	public ItemApiResponse<?> getRecentBuyNumbers(User user) {
+	public ItemApiResponse<List<String>> getRecentBuyNumbers(User user) {
 		List<SixNumber> sixNumberList = sixNumberRepository.findByRecentBuyNumbers(user.getId());
 		if (sixNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
 		return ItemApiResponse.ok("최근 구매 번호 조회 성공", sixNumberList.get(sixNumberList.size()-1).getNumberList());
