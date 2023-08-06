@@ -154,4 +154,18 @@ public class AdminControllerTest {
 
 		verify(adminService).setStatus(any(User.class), anyLong(), any(OnlyMsgRequest.class));
 	}
+
+	@Test
+	public void SetRole() throws Exception {
+		when(adminService.setRole(any(User.class), anyLong(), any(OnlyMsgRequest.class)))
+			.thenReturn(ApiResponse.ok("권한 변경 완료"));
+
+		mockMvc.perform(patch("/api/admin/role/99").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString("PAID")))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("권한 변경 완료"));
+
+		verify(adminService).setRole(any(User.class), anyLong(), any(OnlyMsgRequest.class));
+	}
 }
