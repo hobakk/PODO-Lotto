@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.sixnumber.fixture.TestDataFactory;
+import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.UsersReponse;
@@ -64,5 +65,22 @@ public class AdminControllerTest {
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
 		verify(adminService).getCharges();
+	}
+
+	@Test
+	public void SearchCharging() throws Exception {
+		AdminGetChargingResponse response = new AdminGetChargingResponse("1-콩쥐팥쥐-2000");
+
+		when(adminService.searchCharging(anyString(), anyInt())).thenReturn(ItemApiResponse.ok("조회 성공", response));
+
+		mockMvc.perform(get("/api/admin/search").with(csrf())
+			.param("msg", "콩쥐팥쥐")
+			.param("cash", "2000")
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("조회 성공"))
+			.andExpect(jsonPath("$.data").isNotEmpty());
+
+		verify(adminService).searchCharging(anyString(), anyInt());
 	}
 }
