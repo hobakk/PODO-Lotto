@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.WithCustomMockUser;
+import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
@@ -72,5 +73,19 @@ public class SixNumberControllerTest {
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
 		verify(sixNumberService).statisticalNumber(any(StatisticalNumberRequest.class), any(User.class));
+	}
+
+	@Test
+	public void GetRecentBuyNumber() throws Exception {
+		when(sixNumberService.getRecentBuyNumbers(any(User.class))).thenReturn(
+			ItemApiResponse.ok("최근 구매 번호 조회 성공", topNumbers));
+
+		mockMvc.perform(get("/api/sixnum/recent").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("최근 구매 번호 조회 성공"))
+			.andExpect(jsonPath("$.data").isNotEmpty());
+
+		verify(sixNumberService).getRecentBuyNumbers(any(User.class));
 	}
 }
