@@ -16,10 +16,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.sixnumber.fixture.TestDataFactory;
+import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
+import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
+import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.AdminService;
 import com.example.sixnumber.user.type.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -82,5 +85,19 @@ public class AdminControllerTest {
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
 		verify(adminService).searchCharging(anyString(), anyInt());
+	}
+
+	@Test
+	public void SetAdmin() throws Exception {
+		when(adminService.setAdmin(any(OnlyMsgRequest.class), any(User.class), anyLong()))
+			.thenReturn(ApiResponse.ok("변경 완료"));
+
+		mockMvc.perform(patch("/api/admin/users/99").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString("AdminSecurityKey")))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("변경 완료"));
+
+		verify(adminService).setAdmin(any(OnlyMsgRequest.class), any(User.class), anyLong());
 	}
 }
