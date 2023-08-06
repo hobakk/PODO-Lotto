@@ -127,4 +127,17 @@ public class AdminControllerTest {
 
 		verify(adminService).downCash(any(CashRequest.class));
 	}
+
+	@Test
+	public void CreateLotto() throws Exception {
+		when(adminService.createLotto(anyString())).thenReturn(ApiResponse.ok("생성 완료"));
+
+		mockMvc.perform(post("/api/admin/lotto").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString("testAdmin")))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("생성 완료"));
+
+		verify(adminService).createLotto(anyString());
+	}
 }
