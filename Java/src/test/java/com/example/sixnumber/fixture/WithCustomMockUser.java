@@ -1,4 +1,4 @@
-package com.example.sixnumber.user.controller;
+package com.example.sixnumber.fixture;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
