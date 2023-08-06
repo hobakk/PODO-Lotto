@@ -114,4 +114,17 @@ public class AdminControllerTest {
 
 		verify(adminService).upCash(any(CashRequest.class));
 	}
+
+	@Test
+	public void DownCash() throws Exception {
+		when(adminService.downCash(any(CashRequest.class))).thenReturn(ApiResponse.ok("차감 완료"));
+
+		mockMvc.perform(patch("/api/admin/users/down-cash").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.cashRequest())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("차감 완료"));
+
+		verify(adminService).downCash(any(CashRequest.class));
+	}
 }
