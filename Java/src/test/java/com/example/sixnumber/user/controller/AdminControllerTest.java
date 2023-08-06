@@ -20,6 +20,7 @@ import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
+import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
 import com.example.sixnumber.user.entity.User;
@@ -99,5 +100,18 @@ public class AdminControllerTest {
 			.andExpect(jsonPath("$.msg").value("변경 완료"));
 
 		verify(adminService).setAdmin(any(OnlyMsgRequest.class), any(User.class), anyLong());
+	}
+
+	@Test
+	public void UpCash() throws Exception {
+		when(adminService.upCash(any(CashRequest.class))).thenReturn(ApiResponse.ok("충전 완료"));
+
+		mockMvc.perform(patch("/api/admin/users/up-cash").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.cashRequest())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("충전 완료"));
+
+		verify(adminService).upCash(any(CashRequest.class));
 	}
 }
