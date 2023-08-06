@@ -140,4 +140,18 @@ public class AdminControllerTest {
 
 		verify(adminService).createLotto(anyString());
 	}
+
+	@Test
+	public void SetStatus() throws Exception {
+		when(adminService.setStatus(any(User.class), anyLong(), any(OnlyMsgRequest.class)))
+			.thenReturn(ApiResponse.ok("상태 변경 완료"));
+
+		mockMvc.perform(patch("/api/admin/status/99").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString("SUSPENDED")))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("상태 변경 완료"));
+
+		verify(adminService).setStatus(any(User.class), anyLong(), any(OnlyMsgRequest.class));
+	}
 }
