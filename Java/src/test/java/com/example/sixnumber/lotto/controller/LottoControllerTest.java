@@ -47,7 +47,7 @@ public class LottoControllerTest {
 
 		mockMvc.perform(get("/api/lotto/main").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.code").value(200))
 			.andExpect(jsonPath("$.msg").value("조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
