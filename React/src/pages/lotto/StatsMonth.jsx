@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
-import { useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { getAllMonthStats, getTopNumberForMonth } from '../../api/useUserApi';
 import { NumSentenceResult } from '../../components/Manufacturing';
 import StatsContainer from '../../components/StatsContainer';
+import { AllowNotRoleUser } from '../../components/CheckRole';
 
 function StatsMonth() {
-    const navigate = useNavigate();
-    const role = useSelector((state)=>state.userIf.role);
     const [yMList, setYMList] = useState("");
     const [yearMonth, setYearMonth] = useState("");
     const [value, setValue] = useState("");
@@ -38,17 +35,10 @@ function StatsMonth() {
     })
 
     useEffect(()=>{
-        console.log("랜더링")
-        if  (role === null || role == "ROLE_USER") {
-            alert("접근 권한이 없습니다. 프리미엄 페이지로 이동합니다.");
-            navigate("/premium");
-        } else {
-            allMonthStatsMutation.mutate();
-        }
+        allMonthStatsMutation.mutate();
     }, [render])
 
     useEffect(()=>{
-        console.log(yearMonth)
         if (yearMonth !== "") {
             getMonthStatsMutation.mutate(yearMonth);
         }
@@ -64,6 +54,7 @@ function StatsMonth() {
 
   return (
     <div id='recent' style={ CommonStyle }>
+        <AllowNotRoleUser />
         <h1 style={{  fontSize: "80px", height: "1cm"}}>Stats Month</h1>
         {value !== "" &&(
             <button onClick={()=>{

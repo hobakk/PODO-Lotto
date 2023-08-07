@@ -15,3 +15,20 @@ export function AllowAll() {
 
     return null;
 }
+
+export function AllowNotRoleUser() {
+    const navigate = useNavigate();
+    const role = useSelector(state=>state.userIf.role);
+
+    useEffect(()=>{
+        if  (role === "ROLE_USER") {
+            alert("프리미엄 등록 이후 이용해주시기 바랍니다")
+            navigate("/premium")
+        } else if (role ==="") {
+            alert("로그인 이후 이용해주세요")
+            navigate("/signin")
+        } 
+    }, [role])
+
+    return null;
+}
