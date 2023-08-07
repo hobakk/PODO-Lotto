@@ -32,3 +32,17 @@ export function AllowNotRoleUser() {
 
     return null;
 }
+
+export function AllowOnlyAdmin() {
+    const navigate = useNavigate();
+    const role = useSelector(state=>state.userIf.role);
+
+    useEffect(()=>{
+        if  (role !== "ROLE_ADMIN") {
+            alert("접근 권한이 없습니다")
+            navigate("/")
+        }
+    }, [role])
+
+    return null;
+}

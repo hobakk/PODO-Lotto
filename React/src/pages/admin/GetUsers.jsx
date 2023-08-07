@@ -3,6 +3,7 @@ import { useMutation } from 'react-query'
 import { downCash, getUsers, setRoleFromAdmin, setStatusFromAdmin, setAdmin } from '../../api/useUserApi'
 import { CommonStyle } from '../../components/Styles';
 import { useNavigate } from 'react-router-dom';
+import { AllowOnlyAdmin } from '../../components/CheckRole';
 
 function GetUsers() {
   const navigate = useNavigate();
@@ -219,6 +220,7 @@ function GetUsers() {
 
   return (
     <div id='recent' style={ CommonStyle }>
+      <AllowOnlyAdmin />
         <h1 style={{  fontSize: "80px", height:"1.5cm"}}>Get Users</h1>
         <input onChange={(e)=>setSearchInputValue(e.target.value)} placeholder='검색할 값을 입력해주세요' style={{ marginBottom:"1cm", width:"7cm", height:"0.5cm" }}/>
         {searchInputValue === "" ? (

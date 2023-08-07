@@ -3,6 +3,7 @@ import { useMutation } from 'react-query'
 import { getAdminCharges, upCash } from '../../api/useUserApi'
 import { CommonStyle } from '../../components/Styles';
 import { useNavigate } from 'react-router-dom';
+import { AllowOnlyAdmin } from '../../components/CheckRole';
 
 function GetAllCharges() {
     const navigate = useNavigate();
@@ -81,6 +82,7 @@ function GetAllCharges() {
 
   return (
     <div id='recent' style={ CommonStyle }>
+        <AllowOnlyAdmin />
         <h1 style={{  fontSize: "80px", height:"1.5cm" }}>Get AllCharges</h1>
         <div style={{ display:"flex", flexDirection:"row", textAlign:"center"}}>
             <select id="selectOption" value={selectValue} onChange={(e)=>setSelectValue(e.target.value)} style={{ height:"0.65cm" }}>

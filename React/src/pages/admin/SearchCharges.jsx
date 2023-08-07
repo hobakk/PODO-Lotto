@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
 import { useMutation } from 'react-query';
 import { getSearch } from '../../api/useUserApi';
+import { AllowOnlyAdmin } from '../../components/CheckRole';
 
 function SearchCharges() {
     const [inputValue, setInputValue] = useState([]);
@@ -58,6 +59,7 @@ function SearchCharges() {
 
   return (
     <div id='recent' style={{ ...CommonStyle, fontSize:"20px"}}>
+        <AllowOnlyAdmin />
         <h1 style={{  fontSize: "80px" }}>Search Charges</h1>
         {value === "" ? (
             <form onSubmit={onSubmitHandler}>

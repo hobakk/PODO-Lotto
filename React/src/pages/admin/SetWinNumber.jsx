@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
 import { useMutation } from 'react-query';
 import { setWinNumber } from '../../api/useUserApi';
+import { AllowOnlyAdmin } from '../../components/CheckRole';
 
 function SetWinNumber() {
     const [inputValue, setInputValue] = useState([]);
@@ -48,6 +49,7 @@ function SetWinNumber() {
 
   return (
     <form style={ CommonStyle } onSubmit={onSubmitHandler}>
+        <AllowOnlyAdmin />
         <h1 style={{  fontSize: "80px" }}>Set WinNumber</h1>
         <input style={InputStyle} name='date' onChange={onChangeHandler} ref={dateRef} placeholder='date : 0000-00-00' />
         <input style={InputStyle} name='time' onChange={onChangeHandler} placeholder='time : 0000' />
