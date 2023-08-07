@@ -40,25 +40,39 @@ export const ResultContainer = ({ numSentenceList }) => {
     }
   }, [numSentenceList])
 
+  const LineStyle = ({line}) => {
+    const Style = {
+      display: "flex",
+      flexWrap: "wrap"
+    }
+
+    return (
+      <div>
+        {line.map((numList, index)=>{
+            return (
+              <div key={`${line}${index}`} style={Style}>
+                {NumSentenceResult(numList)}
+              </div>
+            )
+          })
+        }
+      </div>  
+    )
+  }
+
   return (
     <div id='resultcontent' style={{ display: "flex" }}>
       <div>
-          {firstLine.map(numList=>{
-              return <div style={{ display: "flex", flexWrap: "wrap",}}>{NumSentenceResult(numList)}</div>;
-          })}
+          <LineStyle line={firstLine}/>
       </div>
       {secondLine.length > 0 && (
           <div style={{ marginLeft: "70px" }}>
-              {secondLine.map(numList=>{
-                  return <div style={{ display: "flex", flexWrap: "wrap",}}>{NumSentenceResult(numList)}</div>
-              })}
+              <LineStyle line={secondLine}/>
           </div>
       )}
       {thirdLine.length > 0 && (
           <div style={{ marginLeft: "70px" }}>
-              {secondLine.map(numList=>{
-                  return <div style={{ display: "flex", flexWrap: "wrap",}}>{NumSentenceResult(numList)}</div>
-              })}
+              <LineStyle line={thirdLine}/>
           </div>
       )}
     </div>

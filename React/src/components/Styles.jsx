@@ -97,6 +97,8 @@ export const MenuDiv =styled.div`
 
 export const MenuSpan =styled.span`
   color: ${(props)=>props.color};
+  display: flex;
+  justify-content: center;
   font-size: 28px;
 `
 

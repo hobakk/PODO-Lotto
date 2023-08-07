@@ -86,7 +86,9 @@ function Home() {
                 </div>
                 <div style={{ display: "flex", height: "1.5cm", marginTop: "10px", justifyContent: "center", textAlign: "center", alignItems: "center"}}>
                   <div style={{ display: "flex", marginLeft: "auto"}}>
-                    {result.topNumberList.map((num, index)=>ChangingNumStyle(num, index))}
+                    {result.topNumberList.map((num, index)=>{
+                      return <div key={index}>{ChangingNumStyle(num, index)}</div>
+                    })}
                   </div>
                   <span style={{...SpanStyle, marginLeft: "5px", marginRight: "5px",}}>+</span>
                   <div style={{ display: "flex", marginLeft: "5px"}}>{ChangingNumStyle(result.bonus)}</div>
