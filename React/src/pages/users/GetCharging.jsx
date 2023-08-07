@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { SignBorder, CommonStyle } from '../../components/Styles'
 import { getCharges } from '../../api/useUserApi'
 import { useMutation } from 'react-query'
+import CheckRole from '../../components/CheckRole';
 
 function GetCharging() {
   const [chargValue, setChargValue] = useState([]);
@@ -19,7 +20,6 @@ function GetCharging() {
   })
 
   useEffect(()=>{
-    console.log("랜더링")
     getChargesMutation.mutate();
   }, [])
 
@@ -33,6 +33,7 @@ function GetCharging() {
 
   return (
     <div style={ SignBorder }>
+      <CheckRole />
         <div style={ CommonStyle }>
             <h1 style={{  fontSize: "80px" }}>getCharging</h1>
             {chargValue !== "" || chargValue !== null ? (

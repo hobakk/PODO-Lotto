@@ -25,7 +25,8 @@ function MyPage() {
             formElement.style.display = "none";
             setRole("관리자");
         } else {
-            alert("비정상 접근")
+            alert("로그인 이후 이용해주세요")
+            navigate("/signin")
         }
     }, [userIf])
 
