@@ -4,7 +4,8 @@ import { useSelector } from 'react-redux';
 import { CommonLink} from '../components/Styles';
 import LogoutMutation from '../components/LogoutMutation';
 import MenuContainer from '../components/MenuContainer';
-import { AdminMenuValue, LottoMenuValue, UserMenuValue } from './MenuValue';
+import { AdminMenuValue, LottoMenuValue, StatsMenuValue, UserMenuValue } from './MenuValue';
+import StatsContainer from '../components/StatsContainer';
 
 const mainColor = `#9957F0`;
 
@@ -76,6 +77,7 @@ function Header() {
       </div>
       <div style={{ display:"flex", margin:"auto" }}>
         <MenuContainer MenuValue={LottoMenuValue}/>
+        <MenuContainer MenuValue={StatsMenuValue}/>
         <MenuContainer MenuValue={UserMenuValue}/>
         {userIf.role === "ROLE_ADMIN" &&(
           <MenuContainer MenuValue={AdminMenuValue}/>

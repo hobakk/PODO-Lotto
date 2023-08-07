@@ -20,6 +20,14 @@ export const UserMenuValue = {
     ]
 }
 
+export const StatsMenuValue = {
+    title: "통계",
+    content: [
+        ["통합", "/stats/main"], 
+        ["월별", "/stats/month"],
+    ]
+}
+
 export const LottoMenuValue = {
     title: "추천번호",
     content: [
