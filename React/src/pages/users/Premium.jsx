@@ -5,7 +5,6 @@ import { useMutation } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCashNickname, setRole } from '../../modules/userIfSlice'
 import { useNavigate } from 'react-router-dom'
-import { AllowAll } from '../../components/CheckRole'
 
 function Premium() {
     const dispatch = useDispatch();

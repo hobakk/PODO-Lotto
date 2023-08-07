@@ -3,6 +3,7 @@ import { ResultContainer } from '../../components/Manufacturing'
 import { useMutation } from 'react-query'
 import { CommonStyle } from '../../components/Styles';
 import { getRecentNumber } from '../../api/useUserApi';
+import { AllowAll } from '../../components/CheckRole';
 
 function RecentNumber() {
     const [value, setValue] = useState("");
@@ -24,6 +25,7 @@ function RecentNumber() {
 
   return (
     <div>
+        <AllowAll />
         <div style={ CommonStyle }>
             <h3 style={{ fontSize: "80px"}}>Recent Number</h3>
             <div>
