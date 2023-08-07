@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { SignBorder, CommonStyle } from '../../components/Styles'
 import { getStatement } from '../../api/useUserApi'
 import { useMutation } from 'react-query'
+import { AllowAll } from '../../components/CheckRole';
 
 function Statement() {
     const [isAssign, setAssign] = useState(false);
@@ -34,6 +35,7 @@ function Statement() {
 
   return (
     <div style={ CommonStyle }>
+        <AllowAll />
         <h1 style={{  fontSize: "80px" }}>Statement</h1>
         {isAssign && (
             <div key={value}>

@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom';
 
-function CheckRole() {
+export function AllowAll() {
     const navigate = useNavigate();
     const role = useSelector(state=>state.userIf.role);
 
@@ -15,5 +15,3 @@ function CheckRole() {
 
     return null;
 }
-
-export default CheckRole

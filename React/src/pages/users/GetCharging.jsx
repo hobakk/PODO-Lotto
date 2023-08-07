@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { SignBorder, CommonStyle } from '../../components/Styles'
 import { getCharges } from '../../api/useUserApi'
 import { useMutation } from 'react-query'
-import CheckRole from '../../components/CheckRole';
+import { AllowAll } from '../../components/CheckRole'
 
 function GetCharging() {
   const [chargValue, setChargValue] = useState([]);
@@ -33,7 +33,7 @@ function GetCharging() {
 
   return (
     <div style={ SignBorder }>
-      <CheckRole />
+      <AllowAll />
         <div style={ CommonStyle }>
             <h1 style={{  fontSize: "80px" }}>getCharging</h1>
             {chargValue !== "" || chargValue !== null ? (

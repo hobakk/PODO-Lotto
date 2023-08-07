@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { CommonStyle, CommonP, InputBox } from '../../components/Styles'
-import { checkPW, update, logout } from '../../api/useUserApi';
+import { checkPW, update } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import LogoutMutation from '../../components/LogoutMutation';
+import { AllowAll } from '../../components/CheckRole';
 
 function InformationUpdate() {
     const userIf = useSelector((state)=>state.userIf);
@@ -92,6 +93,7 @@ function InformationUpdate() {
     
   return (
     <div style={CommonStyle}>
+        <AllowAll/>
         <form id='form' onSubmit={submitHandler} style={{ fontSize: "30px" }}>
             <h1 style={{ fontSize: "80px"}}>Identification</h1>
             Password: <InputBox placeholder="********" type='passoword' value={password} onChange={(e)=>{setPassword(e.target.value)}} ref={pwRef}/>   
