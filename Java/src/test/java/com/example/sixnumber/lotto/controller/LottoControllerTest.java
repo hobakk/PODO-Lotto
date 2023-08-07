@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.YearMonth;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.WithCustomMockUser;
 import com.example.sixnumber.lotto.dto.LottoResponse;
+import com.example.sixnumber.lotto.dto.YearMonthResponse;
 import com.example.sixnumber.lotto.service.LottoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -66,5 +68,18 @@ public class LottoControllerTest {
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
 		verify(lottoService).getTopNumberForMonth(any(YearMonth.class));
+	}
+
+	@Test
+	public void GetAllMonthStats() throws Exception {
+		when(lottoService.getAllMonthStats()).thenReturn(new YearMonthResponse(List.of("2023-07")));
+
+		mockMvc.perform(get("/api/lotto/yearMonth/all").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("조회 성공"))
+			.andExpect(jsonPath("$.data").isNotEmpty());
+
+		verify(lottoService).getAllMonthStats();
 	}
 }
