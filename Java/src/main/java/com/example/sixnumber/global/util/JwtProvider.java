@@ -28,7 +28,7 @@ public class JwtProvider {
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	public static final String BEARER_PREFIX = "Bearer";
 	private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-	private static final int expire = 1000 * 60 * 30;
+	private static final Long expire = 30 * 60 * 1000L;
 	private static final Long refreshExpire = 7 * 24 * 60 * 1000L;
 	private static final Date curDate = new Date();
 	private final RedisTemplate<String, String> redisTemplate;
@@ -42,7 +42,7 @@ public class JwtProvider {
 			.setSubject(email)
 			.claim("id", userId)
 			.setIssuedAt(curDate)
-			.setExpiration(setExpireDate((long) expire))
+			.setExpiration(setExpireDate(expire))
 			.signWith(KEY)
 			.compact();
 	}
@@ -131,7 +131,7 @@ public class JwtProvider {
 
 	public boolean isTokenExpired(String token) {
 		Date expirationDate = getClaims(token).getExpiration();
-		return expirationDate.after(new Date());
+		return expirationDate != null && expirationDate.before(new Date());
 	}
 
 	public Date setExpireDate(Long data) {
