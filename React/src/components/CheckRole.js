@@ -15,7 +15,6 @@ const withCheckLogin = (AllowType) => () => {
     const checkLoginMutation = useMutation(checkLoginAndgetUserIf, {
         onSuccess: (res)=>{
             if  (res.code === 200) {
-                console.log(res.data);
                 dispatch(setUserIf(res.data));
             }
         },
@@ -25,12 +24,16 @@ const withCheckLogin = (AllowType) => () => {
     })
 
     useEffect(() => {
-        const tokens = getAllCookie().split(",");
+        let tokens = "";
+
+        if  (getAllCookie() !== null) {
+            tokens = getAllCookie().split(",");
+        }
 
         if ( !email && !nickname && !role && tokens.length === 2) {
             checkLoginMutation.mutate(tokens);
         } else {
-            if (AllowType === "AllowAll") {
+            if (AllowType === "AllowLogin") {
                 if (userIf.role === "") {
                     alert("로그인 이후 이용해주세요");
                     navigate("/signin");
@@ -55,6 +58,7 @@ const withCheckLogin = (AllowType) => () => {
     return null;
 }
 
-export const AllowAll = withCheckLogin("AllowAll");
+export const AllowAll = withCheckLogin("All");
+export const AllowLogin = withCheckLogin("AllowLogin");
 export const AllowNotRoleUser = withCheckLogin("AllowNotRoleUser");
 export const AllowOnlyAdmin = withCheckLogin("AllowOnlyAdmin");

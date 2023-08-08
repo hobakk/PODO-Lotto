@@ -17,5 +17,8 @@ export const deleteToken = () => {
 }
 
 export const getAllCookie = () => {
+    if  (!cookies.get("accessToken") || !cookies.get("refreshToken")) {
+        return null;
+    }
     return cookies.get("accessToken") + "," + cookies.get("refreshToken");
 }
