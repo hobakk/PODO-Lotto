@@ -23,7 +23,7 @@ public class JwtController {
 	private final JwtProvider jwtProvider;
 	private final Manager manager;
 
-	@PostMapping("/jwt/refresh/check")
+	@PostMapping("/api/jwt/refresh/check")
 	public ResponseEntity<ItemApiResponse<MyInformationResponse>> getInformation(
 		@RequestBody TokenRequest request,
 		HttpServletResponse response

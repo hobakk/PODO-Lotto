@@ -48,7 +48,8 @@ public class WebSecurityConfig {
 			.and()
 			.authorizeRequests()
 				.antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
-				.antMatchers("/api/users/signin", "/api/users/signup", "/api/winnumber", "/api/users/my-information").permitAll()
+				.antMatchers("/api/users/signin", "/api/users/signup",
+					"/api/winnumber", "/api/users/my-information", "/api/jwt/refresh/check").permitAll()
 				.antMatchers("/api/admin/**", "/api/winnumber/set").hasRole("ADMIN")
 				.antMatchers("/api/lotto/**", "/api/lotto/yearMonth/all").hasAnyRole("ADMIN", "PAID")
 				.antMatchers("/**").authenticated();
