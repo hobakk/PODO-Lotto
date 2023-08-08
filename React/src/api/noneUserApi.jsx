@@ -27,4 +27,13 @@ const getWinNumber = async () => {
     }
 }
 
-export { signin, signup, getWinNumber}
+const checkLoginAndgetUserIf = async (tokens) => {
+    try {
+        const res = await signApi.post("/jwt/refresh/check", tokens);
+        return res.data;
+    } catch (error) {
+        throw error.response.data;
+    }
+}
+
+export { signin, signup, getWinNumber, checkLoginAndgetUserIf}

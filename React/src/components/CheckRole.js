@@ -1,6 +1,34 @@
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom';
+import { getAllCookie } from '../shared/Cookie';
+import { checkLoginAndgetUserIf } from '../api/noneUserApi';
+import { useMutation } from 'react-query';
+import { setUserIf } from '../modules/userIfSlice';
+
+export function checkLogin() {
+    const dispatch = useDispatch();
+    const userIf = useSelector(state=>state.userIf);
+
+    const checkLoginMutation = useMutation(checkLoginAndgetUserIf, {
+        onSuccess: (res)=>{
+            console.log(res);
+            dispatch(setUserIf(res))
+        },
+        onError: (err)=>{
+            alert(err.message);
+        }
+    })
+
+    useEffect(()=>{
+        const tokens = getAllCookie().split(",");
+        if (userIf === null && tokens.length === 2) {
+            checkLoginMutation.mutate(tokens);
+        }
+    }, [userIf])
+
+    return null;
+}
 
 export function AllowAll() {
     const navigate = useNavigate();
