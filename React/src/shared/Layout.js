@@ -5,7 +5,6 @@ import { CommonLink} from '../components/Styles';
 import LogoutMutation from '../components/LogoutMutation';
 import MenuContainer from '../components/MenuContainer';
 import { AdminMenuValue, LottoMenuValue, StatsMenuValue, UserMenuValue } from './MenuValue';
-import StatsContainer from '../components/StatsContainer';
 
 const mainColor = `#9957F0`;
 
@@ -35,7 +34,7 @@ const layoutStyles = {
   flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  minHeight: '90.1vh',
+  minHeight: '100vh',
   backgroundColor: "white",
   overflow: "hidden", // 스크롤 기능
 }
@@ -112,7 +111,7 @@ function Footer() {
 
 function Layout({ children }) {
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header/>
         <div style={ layoutStyles }>
             {children}
