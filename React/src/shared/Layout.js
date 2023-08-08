@@ -45,18 +45,18 @@ function Header() {
   const userIf = useSelector((state) => state.userIf);
   const [isLogin, setIsLogin] = useState(false);
 
-  const [cash, setCash] = useState(0);
+  const [cash, setCash] = useState();
   const [nickname, setNickname] = useState("");
   const [userRole, setUserRole] = useState("");
   
   useEffect(()=>{
-    if (userIf.cash !== cash) {
+    if  (userIf.cash !== "") {
       setCash(userIf.cash);
     }
-    if (userIf.nickname !== nickname) {
+    if (userIf.nickname !== "") {
       setNickname(userIf.nickname);
     }
-    if (userIf.role !== userRole) {
+    if (userIf.role !== "") {
       setUserRole(userIf.role);
     }
     if (userIf.nickname === "") {

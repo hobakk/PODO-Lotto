@@ -29,7 +29,12 @@ const getWinNumber = async () => {
 
 const checkLoginAndgetUserIf = async (tokens) => {
     try {
-        const res = await signApi.post("/jwt/refresh/check", tokens);
+        const res = await axios.post(`${process.env.REACT_APP_SPRING_URL}/jwt/refresh/check`, {
+            accessToken: tokens[0],
+            refreshToken: tokens[1],
+        }, {
+            withCredentials: true,
+        });
         return res.data;
     } catch (error) {
         throw error.response.data;
