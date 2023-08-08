@@ -15,3 +15,7 @@ export const deleteToken = () => {
         console.error('removing cookies:', error)
     }
 }
+
+export const getAllCookie = () => {
+    return cookies.get("accessToken") + "," + cookies.get("refreshToken");
+}

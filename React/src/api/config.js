@@ -16,6 +16,7 @@ api.interceptors.request.use(
     (config) => {
         config.headers['Content-Type'] = 'application/json';
         config.headers['Authorization'] = `Bearer ${getCookie("accessToken")}`;
+        config.headers['Refresh-Token'] = `Bearer ${getCookie("refreshToken")}`;
         return config;
     },
     (error) => {
