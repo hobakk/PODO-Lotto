@@ -7,9 +7,8 @@ import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-
-import com.example.sixnumber.user.entity.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -32,6 +31,7 @@ public class JwtProvider {
 	private static final int expire = 1000 * 60 * 30;
 	private static final Long refreshExpire = 7 * 24 * 60 * 60 * 1000L;
 	private static final Date curDate = new Date();
+	private final RedisTemplate<String, String> redisTemplate;
 
 	public String accessToken(String email, Long userId) {
 		HashMap<String, Object> headers = new HashMap<>();
@@ -70,6 +70,27 @@ public class JwtProvider {
 		return null;
 	}
 
+	public String resolveRefreshToken(HttpServletRequest request) {
+		String bearerToken = request.getHeader("Refresh-Token");
+
+		if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
+			return bearerToken.substring(7);
+		}
+		return null;
+	}
+
+	public String getIdEmail(String token) {
+		Long userId = getClaims(token).get("id", Long.class);
+		String email = Jwts.parserBuilder()
+			.setSigningKey(KEY)
+			.build()
+			.parseClaimsJws(token)
+			.getBody()
+			.getSubject();
+
+		return userId + "," + email;
+	}
+
 	public Boolean validateToken(String token) throws ExpiredJwtException {
 		try {
 			Jwts.parserBuilder().setSigningKey(KEY).build().parseClaimsJws(token);
@@ -82,6 +103,22 @@ public class JwtProvider {
 			log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
 		}
 		return false;
+	}
+
+	public Boolean validateRefreshToken(String accessToken, String refreshToken) {
+		Long id = getClaims(accessToken).get("id", Long.class);
+		String refreshTokenInRedis = redisTemplate.opsForValue().get("RT: " + id);
+
+		if (
+			Objects.isNull(refreshTokenInRedis)
+			|| isTokenExpired(refreshTokenInRedis)
+			|| !refreshToken.equals(refreshTokenInRedis)
+		) {
+			redisTemplate.delete("RT: " + id);
+			return false;
+		}
+
+		return true;
 	}
 
 	public Claims getClaims(String token) {

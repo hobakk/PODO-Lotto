@@ -1,8 +1,6 @@
 package com.example.sixnumber.global.scurity;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.Objects;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -21,7 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.sixnumber.global.util.JwtProvider;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 
@@ -52,14 +49,11 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 				createAuthentication(id);
 			}
 		} catch (ExpiredJwtException e) {
-			Long id = e.getClaims().get("id", Long.class);
-			String refreshTokenInRedis = redisTemplate.opsForValue().get("RT: " + id);
-
-			if (Objects.isNull(refreshTokenInRedis) || jwtProvider.isTokenExpired(refreshTokenInRedis)) {
-				redisTemplate.delete("RT: " + id);
+			String refreshToken = jwtProvider.resolveRefreshToken(request);
+			if (jwtProvider.validateRefreshToken(token, refreshToken))
 				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
-			}
 
+			Long id = e.getClaims().get("id", Long.class);
 			String email = e.getClaims().getSubject();
 			String newAccessToken = jwtProvider.accessToken(email, id);
 
