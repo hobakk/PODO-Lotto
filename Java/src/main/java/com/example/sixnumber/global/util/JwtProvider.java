@@ -29,7 +29,7 @@ public class JwtProvider {
 	public static final String BEARER_PREFIX = "Bearer";
 	private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	private static final int expire = 1000 * 60 * 30;
-	private static final Long refreshExpire = 7 * 24 * 60 * 60 * 1000L;
+	private static final Long refreshExpire = 7 * 24 * 60 * 1000L;
 	private static final Date curDate = new Date();
 	private final RedisTemplate<String, String> redisTemplate;
 
@@ -65,9 +65,10 @@ public class JwtProvider {
 		String token = switch (tokenType) {
 			case "access" -> AUTHORIZATION_HEADER;
 			case "refresh" -> "Refresh-Token";
+			default -> throw new IllegalArgumentException("잘못된 TokenType 입니다");
 		};
-		String bearerToken = request.getHeader(token);
 
+		String bearerToken = request.getHeader(token);
 		if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
 			return bearerToken.substring(7);
 		}
@@ -128,9 +129,9 @@ public class JwtProvider {
 		getClaims(token).setExpiration(new Date());
 	}
 
-	public Boolean isTokenExpired(String token) {
+	public boolean isTokenExpired(String token) {
 		Date expirationDate = getClaims(token).getExpiration();
-		return expirationDate.before(new Date());
+		return expirationDate.after(new Date());
 	}
 
 	public Date setExpireDate(Long data) {
