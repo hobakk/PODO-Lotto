@@ -4,8 +4,7 @@ import { buyNumber } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
 import GetUserIfMutation from '../../components/GetUserIfMutation';
 import { ResultContainer } from '../../components/Manufacturing';
-import { AllowAll } from '../../components/CheckRole';
-
+import { AllowLogin } from '../../components/CheckRole';
 
 function BuyNumber() {
     const [num, setNum] = useState(0);
@@ -59,7 +58,7 @@ function BuyNumber() {
 
   return (
     <div style={ CommonStyle }>
-        <AllowAll />
+        <AllowLogin />
         <h1 style={{  fontSize: "80px" }}>Buy Number</h1>
         {isEmpty ? (
             <div id='buycontent'>

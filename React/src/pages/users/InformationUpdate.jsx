@@ -5,7 +5,7 @@ import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import LogoutMutation from '../../components/LogoutMutation';
-import { AllowAll } from '../../components/CheckRole';
+import { AllowLogin } from '../../components/CheckRole';
 
 function InformationUpdate() {
     const userIf = useSelector((state)=>state.userIf);
@@ -93,7 +93,7 @@ function InformationUpdate() {
     
   return (
     <div style={CommonStyle}>
-        <AllowAll/>
+        <AllowLogin/>
         <form id='form' onSubmit={submitHandler} style={{ fontSize: "30px" }}>
             <h1 style={{ fontSize: "80px"}}>Identification</h1>
             Password: <InputBox placeholder="********" type='passoword' value={password} onChange={(e)=>{setPassword(e.target.value)}} ref={pwRef}/>   

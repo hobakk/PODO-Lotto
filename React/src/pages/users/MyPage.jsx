@@ -6,6 +6,7 @@ import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { setStatus } from '../../modules/userIfSlice';
 import LogoutMutation from '../../components/LogoutMutation';
+import { AllowLogin } from '../../components/CheckRole';
 
 function MyPage() {
     const userIf = useSelector((state)=>state.userIf);
@@ -24,9 +25,6 @@ function MyPage() {
         } else if (userIf.role == "ROLE_ADMIN") {
             formElement.style.display = "none";
             setRole("관리자");
-        } else {
-            alert("로그인 이후 이용해주세요")
-            navigate("/signin")
         }
     }, [userIf])
 
@@ -51,6 +49,7 @@ function MyPage() {
 
   return (
     <>
+        <AllowLogin />
         <div style={CommonStyle}>
             <div id="common" style={{ marginTop: "20px" }}>
                 <h1 style={{ fontSize: "80px"}}>My Page</h1>

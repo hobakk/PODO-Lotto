@@ -5,6 +5,7 @@ import { useMutation } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCashNickname, setRole } from '../../modules/userIfSlice'
 import { useNavigate } from 'react-router-dom'
+import { AllowLogin } from '../../components/CheckRole'
 
 function Premium() {
     const dispatch = useDispatch();
@@ -66,14 +67,12 @@ function Premium() {
         if  (userIf.role == "ROLE_PAID") {
             setPaidElement.style.display = "none";
             setUserElement.style.display = "block";
-        } else if (userIf.role === "") {
-            alert("로그인 이후 이용해주세요")
-            navigate("/signin")
         }
     }, []);
 
   return (
     <div style={ SignBorder }>
+        <AllowLogin />
         <div style={ CommonStyle }>
             <div id='set-paid'>
                 <h1 style={{  fontSize: "80px" }}>Premium</h1>

@@ -3,7 +3,7 @@ import { CommonStyle } from '../../components/Styles'
 import { buyNumber } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
 import { ResultContainer } from '../../components/Manufacturing';
-import { AllowAll } from '../../components/CheckRole';
+import { AllowLogin } from '../../components/CheckRole';
 
 function StatisticalNumber() {
     const [num, setNum] = useState(0);
@@ -56,7 +56,7 @@ function StatisticalNumber() {
 
   return (
     <div style={ CommonStyle }>
-        <AllowAll />
+        <AllowLogin />
         <h1 style={{  fontSize: "80px" }}>Statistical Number</h1>
         <div id='buycontent'>
             <p>반복횟수 입력란 </p>

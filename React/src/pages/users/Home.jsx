@@ -3,6 +3,7 @@ import { getWinNumber } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';
 import { CommonStyle, CommonLink, } from '../../components/Styles';
 import { ChangingNumStyle } from '../../components/Manufacturing';
+import { AllowAll } from '../../components/CheckRole';
 
 function Home() {
   const [value, setValue] = useState([]);
@@ -55,6 +56,7 @@ function Home() {
 
   return (
     <div style={CommonStyle}>
+      <AllowAll />
       <div style={{ marginTop: "1.0cm", marginLeft: "auto", marginBottom: "5px"}}>
         <CommonLink to={"/buynum"} style={{ fontWeight: "bold", }}>추천 번호 구매하기</CommonLink>
         <button style={ButtonStyle} onClick={()=>{setBoolean(true)}}>새로고침</button>
