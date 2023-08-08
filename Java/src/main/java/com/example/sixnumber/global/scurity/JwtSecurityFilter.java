@@ -32,7 +32,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		String token = jwtProvider.resolveToken(request);
+		String token = jwtProvider.resolveToken(request, "access");
 
 		try {
 			if (token != null) {
@@ -49,7 +49,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 				createAuthentication(id);
 			}
 		} catch (ExpiredJwtException e) {
-			String refreshToken = jwtProvider.resolveRefreshToken(request);
+			String refreshToken = jwtProvider.resolveToken(request, "refresh");
 			if (jwtProvider.validateRefreshToken(token, refreshToken))
 				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
 

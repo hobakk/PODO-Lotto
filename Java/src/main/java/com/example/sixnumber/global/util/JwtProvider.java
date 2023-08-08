@@ -61,17 +61,12 @@ public class JwtProvider {
 			.compact();
 	}
 
-	public String resolveToken(HttpServletRequest request) {
-		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-
-		if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
-			return bearerToken.substring(7);
-		}
-		return null;
-	}
-
-	public String resolveRefreshToken(HttpServletRequest request) {
-		String bearerToken = request.getHeader("Refresh-Token");
+	public String resolveToken(HttpServletRequest request, String tokenType) {
+		String token = switch (tokenType) {
+			case "access" -> AUTHORIZATION_HEADER;
+			case "refresh" -> "Refresh-Token";
+		};
+		String bearerToken = request.getHeader(token);
 
 		if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
 			return bearerToken.substring(7);
