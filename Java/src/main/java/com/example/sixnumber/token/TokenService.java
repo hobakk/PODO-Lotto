@@ -27,12 +27,12 @@ public class TokenService {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
 
 		String[] idEmail = jwtProvider.getIdEmail(request.getRefreshToken()).split(",");
-		Cookie accessToken = new Cookie("accessToken", jwtProvider
-			.accessToken(idEmail[1], Long.parseLong(idEmail[0])));
-		accessToken.setPath("/");
+		String accessToken = jwtProvider.accessToken(idEmail[1], Long.parseLong(idEmail[0]));
+		Cookie cookie = new Cookie("accessToken", accessToken);
+		cookie.setPath("/");
 
 		User user = manager.findUser(idEmail[1]);
 		MyInformationResponse myInformationResponse = new MyInformationResponse(user);
-		return new UserIfAndCookieResponse(myInformationResponse, accessToken);
+		return new UserIfAndCookieResponse(myInformationResponse, cookie);
 	}
 }
