@@ -4,11 +4,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.util.JwtProvider;
@@ -39,5 +41,15 @@ public class TokenServiceTest {
 		verify(jwtProvider).accessToken(anyString(), anyLong());
 		verify(manager).findUser(anyString());
 		assertNotNull(response);
+	}
+
+	@Test
+	void getInformationAfterCheckLogin_fail_Invalid() {
+		when(jwtProvider.validateRefreshToken(anyString(), anyString())).thenReturn(false);
+
+		Assertions.assertThrows(ResponseStatusException.class,
+			() -> tokenService.getInformationAfterCheckLogin(TestDataFactory.tokenRequest()));
+
+		verify(jwtProvider).validateRefreshToken(anyString(), anyString());
 	}
 }
