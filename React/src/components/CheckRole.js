@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom';
-import { getAllCookie } from '../shared/Cookie';
+import { deleteToken, getAllCookie } from '../shared/Cookie';
 import { checkLoginAndgetUserIf } from '../api/noneUserApi';
 import { useMutation } from 'react-query';
 import { setUserIf } from '../modules/userIfSlice';
@@ -19,7 +19,10 @@ const withCheckLogin = (AllowType) => () => {
             }
         },
         onError: (err)=>{
-            alert(err.message);
+            if  (err.message === "SignatureException") {
+                console.log("sd")
+                deleteToken();
+            }
         }
     })
 
