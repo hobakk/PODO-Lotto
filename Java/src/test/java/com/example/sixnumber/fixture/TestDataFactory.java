@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.params.provider.Arguments;
 
+import com.example.sixnumber.global.dto.TokenRequest;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
@@ -119,6 +120,10 @@ public class TestDataFactory {
 			list.add(1);
 		}
 		return list;
+	}
+
+	public static TokenRequest tokenRequest() {
+		return new TokenRequest("accessT", "refreshT");
 	}
 
 	public static Stream<Arguments> statusTestData() {
