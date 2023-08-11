@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { checkLoginAndgetUserIf } from '../api/noneUserApi';
 import { setUserIf } from '../modules/userIfSlice';
 import { deleteToken, getAccessTAndRefreshT } from '../shared/Cookie';
-import { userIfType } from '../config/configStore';
+import { RootState } from '../config/configStore';
 
 function useCheckLogin() {
     type errorType = {
@@ -13,9 +13,8 @@ function useCheckLogin() {
     }
 
     const dispatch = useDispatch();
+    const userIf = useSelector((state: RootState)=>state.userIf);
     const [isLogin, setData] = useState<boolean>();
-    const userIf = useSelector((state: userIfType)=>state);
-    const { email, nickname, role } = userIf;
     const [accessToken, refreshToken] = getAccessTAndRefreshT();
 
     const checkLoginMutation = useMutation(checkLoginAndgetUserIf, {
@@ -33,9 +32,11 @@ function useCheckLogin() {
     })
 
     useEffect(()=>{
-        if (!email && !nickname && !role && accessToken && refreshToken) {
+        console.log(userIf)
+        const { email, nickname, role } = userIf;
+        if (!email && !nickname && !role && accessToken !== null && refreshToken !== null) {
             checkLoginMutation.mutate([ accessToken, refreshToken ]);
-        } else if (email && nickname && role && accessToken && refreshToken) {
+        } else if (email && nickname && role && accessToken !== null && refreshToken !== null) {
             setData(true);
         } else {
             setData(false);
