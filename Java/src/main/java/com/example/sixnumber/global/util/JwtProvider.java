@@ -131,7 +131,8 @@ public class JwtProvider {
 
 	public boolean isTokenExpired(String token) {
 		Date expirationDate = getClaims(token).getExpiration();
-		return expirationDate != null && expirationDate.before(new Date());
+		if	(expirationDate == null || expirationDate.before(new Date())) return true;
+		return false;
 	}
 
 	public Date setExpireDate(Long data) {
