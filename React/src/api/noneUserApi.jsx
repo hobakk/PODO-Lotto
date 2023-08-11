@@ -39,7 +39,8 @@ const checkLoginAndgetUserIf = async (tokens) => {
     } catch (error) {
         if (error.response.data.message ===
             "JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.") {
-            throw new Error("SignatureException")
+            const error = new Error("SignatureException");
+            throw error.status(403);
         } else {
             throw error.response.data;
         }

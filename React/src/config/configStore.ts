@@ -7,4 +7,5 @@ const store = configureStore({
     },
 });
 
+export type userIfType = ReturnType<typeof userIfReducer>;
 export default store;
