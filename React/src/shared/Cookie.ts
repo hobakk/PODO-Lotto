@@ -2,7 +2,6 @@ import { Cookies } from "react-cookie";
 
 const cookies = new Cookies();
 
-
 export const getCookie = (name: string) => {
     return cookies.get(name);
 }
@@ -17,8 +16,18 @@ export const deleteToken = () => {
 }
 
 export const getAllCookie = () => {
-    if  (!cookies.get("accessToken") || !cookies.get("refreshToken")) {
+    if  (!getCookie("accessToken") || !getCookie("refreshToken")) {
         return null;
     }
-    return cookies.get("accessToken") + "," + cookies.get("refreshToken");
+    
+    return getCookie("accessToken") + "," + getCookie("refreshToken");
+}
+
+export const getAccessTAndRefreshT = (): [string | undefined, string | undefined] => {
+    const tokens = getAllCookie()?.split(",");
+    if (tokens?.length === 2) {
+        return [tokens[0], tokens[1]];
+    }
+    
+    return [undefined, undefined];
 }
