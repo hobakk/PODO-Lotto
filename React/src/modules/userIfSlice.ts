@@ -39,12 +39,8 @@ const userIfSlice = createSlice({
         },
         setCashNickname: (state, action: PayloadAction<{ cash: string; nickname: string }>) => {
             const { cash, nickname } = action.payload;
-            if  (state.cash !== cash) {
-                state.cash = cash;
-            }
-            if (state.nickname !== nickname) {
-                state.nickname = nickname;
-            }
+            state.cash = cash;
+            state.nickname = nickname;
         },
         logoutUser: () => initialState,
     }
