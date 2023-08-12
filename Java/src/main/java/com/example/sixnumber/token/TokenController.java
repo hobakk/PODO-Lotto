@@ -24,7 +24,8 @@ public class TokenController {
 		HttpServletResponse response
 	) {
 		UserIfAndCookieResponse userIfAndCookieResponse = tokenService.getInformationAfterCheckLogin(request);
-		response.addCookie(userIfAndCookieResponse.getCookie());
+		if (userIfAndCookieResponse.getCookie() != null) response.addCookie(userIfAndCookieResponse.getCookie());
+
 		return ResponseEntity.ok(ItemApiResponse.ok("조회 및 재발급 성공", userIfAndCookieResponse.getResponse()));
 	}
 }

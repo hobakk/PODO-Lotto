@@ -3,7 +3,6 @@ package com.example.sixnumber.global.config;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.example.sixnumber.global.scurity.JwtSecurityFilter;
 import com.example.sixnumber.global.scurity.UserDetailsServiceImpl;
 import com.example.sixnumber.global.util.JwtProvider;
+import com.example.sixnumber.global.util.RedisDao;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +27,7 @@ public class WebSecurityConfig {
 
 	private final UserDetailsServiceImpl userDetailsService;
 	private final JwtProvider jwtProvider;
-	private final RedisTemplate<String, String> redisTemplate;
+	private final RedisDao redisDao;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -54,7 +54,7 @@ public class WebSecurityConfig {
 				.antMatchers("/api/lotto/**", "/api/lotto/yearMonth/all").hasAnyRole("ADMIN", "PAID")
 				.antMatchers("/**").authenticated();
 
-		http.addFilterBefore(new JwtSecurityFilter(userDetailsService, jwtProvider, redisTemplate), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(new JwtSecurityFilter(userDetailsService, jwtProvider, redisDao), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

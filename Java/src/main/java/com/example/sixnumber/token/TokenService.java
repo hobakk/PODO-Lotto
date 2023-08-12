@@ -13,6 +13,7 @@ import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.entity.User;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -23,16 +24,24 @@ public class TokenService {
 	private final Manager manager;
 
 	public UserIfAndCookieResponse getInformationAfterCheckLogin(TokenRequest request) {
-		if (!jwtProvider.validateRefreshToken(request.getAccessToken(), request.getRefreshToken()))
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
+		try {
+			if (!jwtProvider.validateToken(request.getAccessToken()))
+				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
+		} catch (ExpiredJwtException e) {
+			String[] idEmail = jwtProvider.validateRefreshToken(request.getRefreshToken());
+			if (idEmail.length != 2) throw new IllegalArgumentException("RefreshToken exception");
 
-		String[] idEmail = jwtProvider.getIdEmail(request.getRefreshToken()).split(",");
-		String accessToken = jwtProvider.accessToken(idEmail[1], Long.parseLong(idEmail[0]));
-		Cookie cookie = new Cookie("accessToken", accessToken);
-		cookie.setPath("/");
+			String accessToken = jwtProvider.accessToken(idEmail[1], Long.parseLong(idEmail[0]));
+			Cookie cookie = new Cookie("accessToken", accessToken);
+			cookie.setPath("/");
 
-		User user = manager.findUser(idEmail[1]);
+			User user = manager.findUser(idEmail[1]);
+			MyInformationResponse myInformationResponse = new MyInformationResponse(user);
+			return new UserIfAndCookieResponse(myInformationResponse, cookie);
+		}
+
+		User user = manager.findUser(jwtProvider.getTokenInUserId(request.getAccessToken()));
 		MyInformationResponse myInformationResponse = new MyInformationResponse(user);
-		return new UserIfAndCookieResponse(myInformationResponse, cookie);
+		return new UserIfAndCookieResponse(myInformationResponse, null);
 	}
 }
