@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const mainColor = `#9957F0`;
 
-export const CommonStyle = {
+export const CommonStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   // justifyContent: 'center',
@@ -11,10 +11,15 @@ export const CommonStyle = {
   minHeight: '90vh',
 }
 
-export const SignBorder = {
+export const SignBorder: React.CSSProperties = {
   width: "45%",
   height: "22cm",
   margin: "3px",
+}
+
+type UlBoxProps = { 
+  width?: string;
+  height?: string;
 }
 
 export const InputBox =styled.input`
@@ -22,7 +27,7 @@ export const InputBox =styled.input`
   height: 25px;
 `
 
-export const UlBox =styled.ul`
+export const UlBox =styled.ul<UlBoxProps>`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
   list-style: none;
@@ -71,7 +76,11 @@ export const CustomLink =styled(Link)`
   font-size: 21px;
 `
 
-export const CommonLink = styled(Link)`
+type ColorProps = { 
+  color: string;
+}
+
+export const CommonLink = styled(Link)<ColorProps>`
   color: ${(props)=>props.color};
   text-decoration: none;
   margin-left: 20px;
@@ -87,7 +96,7 @@ export const CommonLink = styled(Link)`
   }
 `
 
-export const MenuDiv =styled.div`
+export const MenuDiv =styled.div<ColorProps>`
   cursor: pointer;
   width: 3cm;
   height: 115%;
@@ -95,14 +104,14 @@ export const MenuDiv =styled.div`
   background-color: ${(props)=>props.color};
 `
 
-export const MenuSpan =styled.span`
+export const MenuSpan =styled.span<ColorProps>`
   color: ${(props)=>props.color};
   display: flex;
   justify-content: center;
   font-size: 28px;
 `
 
-export const WinNumberStyle =styled.div`
+export const WinNumberStyle =styled.div<ColorProps>`
   background-color: ${(props)=>props.color};
   width: 1.1cm;
   height: 1.1cm;
@@ -114,19 +123,3 @@ export const WinNumberStyle =styled.div`
   flex-direction: column;
   justify-content: center;
 `
-
-export const ChangingColor = (num, index) => {
-  let color = "";
-  if (num <= 10) {
-    color = "#eab541";
-  } else if (num <= 20) {
-    color = "#4331b0";
-  } else if (num <= 30) {
-    color = "#e61940";
-  } else if (num <= 40) {
-    color = "#545f69";
-  } else {
-    color = "#17c23a";
-  }
-  return <WinNumberStyle key={`numbers-${index}`} color={color} style={{ marginRight: "7px"}}>{num}</WinNumberStyle>
-}
