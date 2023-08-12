@@ -25,7 +25,8 @@ public class RedisDao {
 
 	public String getValue(Long userId) {
 		ValueOperations<String, String> values = redisTemplate.opsForValue();
-		return values.get(RTK + userId) == null ? "" : values.get(RTK + userId);
+		String inRedisValue = values.get(RTK + userId);
+		return inRedisValue == null ? "" : inRedisValue;
 	}
 
 	public boolean checkKey(Long userId) {
