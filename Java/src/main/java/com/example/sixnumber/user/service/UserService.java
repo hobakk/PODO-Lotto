@@ -51,8 +51,6 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final RedisDao redisDao;
 	private final Manager manager;
-	private final String RTK = "RT: ";
-	private final String STMT = "STMT: ";
 
 	public ApiResponse signUp(SignupRequest request) {
 		Optional<User> dormantUser = userRepository.findByStatusAndEmail(Status.DORMANT, request.getEmail());
@@ -82,7 +80,7 @@ public class UserService {
 
 	public String signIn(SigninRequest request) {
 		User user = manager.findUser(request.getEmail());
-		redisDao.overlapLogin(RTK + user.getId());
+		redisDao.overlapLogin(user.getId());
 
 		if (!user.getStatus().equals(Status.ACTIVE)) {
 			String msg = "";
@@ -99,13 +97,13 @@ public class UserService {
 
 		String accessToken = jwtProvider.accessToken(user.getEmail(), user.getId());
 		String refreshToken = jwtProvider.refreshToken(user.getEmail(), user.getId());
-		redisDao.setValues(RTK + user.getId(), refreshToken);
+		redisDao.setValues(user.getId(), refreshToken);
 
 		return accessToken + "," + refreshToken;
 	}
 
 	public ApiResponse logout(Long userId) {
-		redisDao.deleteValues(RTK + userId);
+		redisDao.deleteValues(userId);
 		return ApiResponse.ok("로그아웃 성공");
 	}
 
@@ -148,7 +146,7 @@ public class UserService {
 
 	// 요청을 최대 3번까지 할 수 있고 12시간 기준으로 삭제되기에 충전 요청 취소를 만들지 않아도 된다 판단함
 	public ApiResponse charging(ChargingRequest chargingRequest, User user) {
-		Set<String> keys = redisDao.getKeysList(STMT + user.getId());
+		Set<String> keys = redisDao.getKeysList(user.getId());
 
 		if (keys.size() >= 3) throw new IllegalArgumentException("처리되지 않은 요청사항이 많습니다");
 
@@ -159,14 +157,14 @@ public class UserService {
 		if (user.getChargingCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
 
 		String value = user.getId() + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getCash();
-		redisDao.setValues(STMT + value, value, (long) 12, TimeUnit.HOURS);
+		redisDao.setValues(value, value, (long) 12, TimeUnit.HOURS);
 		user.setChargingCount(1);
 		userRepository.save(user);
 		return ApiResponse.ok("요청 성공");
 	}
 
 	public ListApiResponse<ChargingResponse> getCharges(Long userId) {
-		List<String> values = redisDao.multiGet(STMT + userId);
+		List<String> values = redisDao.multiGet(userId);
 
 		List<ChargingResponse> responses = values.stream()
 			.map(ChargingResponse::new)

@@ -22,7 +22,6 @@ import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
-import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
 import com.example.sixnumber.user.entity.User;
@@ -60,7 +59,7 @@ public class AdminService {
 	}
 
 	public ListApiResponse<AdminGetChargingResponse> getCharges() {
-		List<String> valueList = redisDao.multiGet("*STMT: *");
+		List<String> valueList = redisDao.multiGet("All");
 
 		List<AdminGetChargingResponse> userChargesValues = valueList.stream()
 			.map(AdminGetChargingResponse::new).toList();
@@ -77,7 +76,7 @@ public class AdminService {
 	// 결제에 대해서 고민해봐야함 현재 로직은 특정 계좌에 msg 와 value 가 확인되면 수동으로 넣어주는 방식
 	public ApiResponse upCash(CashRequest cashRequest) {
 		User user = manager.findUser(cashRequest.getUserId());
-		String key = "STMT: " + cashRequest.getUserId() + "-" + cashRequest.getMsg() + "-" + cashRequest.getValue();
+		String key = cashRequest.getUserId() + "-" + cashRequest.getMsg() + "-" + cashRequest.getValue();
 		// searchCharging 에서 검증되어 넘어온 Request 이기에 값이 있는지에 대한 체크는 건너뛰어도 된다 생각함
 		redisDao.deleteValues(key);
 
@@ -126,7 +125,7 @@ public class AdminService {
 		target.setStatus(request.getMsg());
 
 		if (target.getStatus().equals(Status.SUSPENDED) || target.getStatus().equals(Status.DORMANT)) {
-			redisDao.deleteIfNotNull("RT: " + target.getId());
+			redisDao.deleteIfNotNull(target.getId());
 		}
 		return ApiResponse.ok("상태 변경 완료");
 	}
