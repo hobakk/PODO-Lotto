@@ -69,11 +69,11 @@ function Header() {
         <span style={{ fontSize: "26px" }}>PODO Lotto</span>
       </div>
       <div style={{ display:"flex", margin:"auto" }}>
-        <MenuContainer MenuValue={LottoMenuValue}/>
-        <MenuContainer MenuValue={StatsMenuValue}/>
-        <MenuContainer MenuValue={UserMenuValue}/>
+        <MenuContainer MenuValue={LottoMenuValue} AllowType='AllowLogin'/>
+        <MenuContainer MenuValue={StatsMenuValue} AllowType='AllowNotRoleUser'/>
+        <MenuContainer MenuValue={UserMenuValue} AllowType='AllowLogin'/>
         {userIf.role === "ROLE_ADMIN" &&(
-          <MenuContainer MenuValue={AdminMenuValue}/>
+          <MenuContainer MenuValue={AdminMenuValue} AllowType='AllowOnlyAdmin'/>
         )}
       </div>
       <div style={{ marginRight:"15px" }}>
