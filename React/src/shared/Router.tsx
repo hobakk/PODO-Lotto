@@ -22,7 +22,6 @@ import SearchCharges from '../pages/admin/SearchCharges'
 import CreateMainLotto from '../pages/admin/CreateMainLotto'
 import SetWinNumber from '../pages/admin/SetWinNumber'
 
-
 const Router = () => {
   return (
     <BrowserRouter>
