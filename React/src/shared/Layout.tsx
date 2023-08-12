@@ -5,10 +5,12 @@ import { CommonLink} from '../components/Styles';
 import LogoutMutation from '../components/LogoutMutation';
 import MenuContainer from '../components/MenuContainer';
 import { AdminMenuValue, LottoMenuValue, StatsMenuValue, UserMenuValue } from './MenuValue';
+import useCheckLogin from '../hooks/useCheckLogin';
+import { RootState } from '../config/configStore';
 
 const mainColor = `#9957F0`;
 
-const HeaderStyles = {
+const HeaderStyles: React.CSSProperties = {
   width: '100%',
   background: `linear-gradient(to bottom, white 90%, ${mainColor} 10%)`,
   height: '60px',
@@ -18,7 +20,7 @@ const HeaderStyles = {
   fontWeight: '550',
 };
 
-const FooterStyles = {
+const FooterStyles: React.CSSProperties = {
   width: '100%',
   height: '40px',
   display: 'flex',
@@ -29,7 +31,7 @@ const FooterStyles = {
   fontSize: '12px',
 };
 
-const layoutStyles = {
+const layoutStyles: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -39,32 +41,24 @@ const layoutStyles = {
   overflow: "hidden", // 스크롤 기능
 }
 
+type UserIf = {
+  cash: string;
+  nickname: string;
+  role: string;
+}
+
 function Header() {
   const navigate = useNavigate();
   const logoutMutation = LogoutMutation();
-  const userIf = useSelector((state) => state.userIf);
-  const [isLogin, setIsLogin] = useState(false);
-
-  const [cash, setCash] = useState();
-  const [nickname, setNickname] = useState("");
-  const [userRole, setUserRole] = useState("");
+  const userIf = useSelector((state: RootState)=>state.userIf) as UserIf;
+  const isLogin = useCheckLogin();
+  const [cash, setCash] = useState<string | undefined>();
+  const [nickname, setNickname] = useState<string | undefined>("");
   
   useEffect(()=>{
-    if  (userIf.cash !== "") {
-      setCash(userIf.cash);
-    }
-    if (userIf.nickname !== "") {
-      setNickname(userIf.nickname);
-    }
-    if (userIf.role !== "") {
-      setUserRole(userIf.role);
-    }
-    if (userIf.nickname === "") {
-      setIsLogin(false);
-    } else {
-      setIsLogin(true);
-    }
-  }, [userIf])
+    setCash(userIf.cash);
+    setNickname(userIf.nickname);
+  }, [userIf]);
 
   return (
     <div style={ HeaderStyles }>
@@ -92,7 +86,7 @@ function Header() {
           <div style={{ display:"flex", alignItems:'center', justifyContent: 'center', }}>
             <CommonLink to={"/set-charging"} color={"#3E1F80"}>{cash}</CommonLink> 원  
             <CommonLink to={"/my-page"} color={"#F29135"}>{nickname}</CommonLink> 님 반갑습니다
-            <CommonLink color={"black"} onClick={()=>logoutMutation.mutate()}>로그아웃</CommonLink>
+            <div color={"black"} onClick={()=>logoutMutation.mutate()}>로그아웃</div>
           </div>
         )}
       </div>
@@ -109,7 +103,11 @@ function Footer() {
   );
 }
 
-function Layout({ children }) {
+type LayoutProps = {
+  children: React.ReactNode;
+}
+
+function Layout({ children }: LayoutProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header/>
