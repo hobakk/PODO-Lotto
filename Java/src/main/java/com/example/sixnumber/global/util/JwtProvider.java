@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.global.exception.ErrorCode;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -87,10 +90,16 @@ public class JwtProvider {
 		return userId + "," + email;
 	}
 
-	public Boolean validateToken(String token) throws ExpiredJwtException {
+	public Long getTokenInUserId(String token) {
+		return getClaims(token).get("id", Long.class);
+	}
+
+	public Boolean validateToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(KEY).build().parseClaimsJws(token);
 		return true;
+		} catch (ExpiredJwtException e) {
+			throw new CustomException(ErrorCode.EXPIRED_TOKEN);
 		} catch (SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
 		} catch (UnsupportedJwtException e) {
@@ -101,20 +110,17 @@ public class JwtProvider {
 		return false;
 	}
 
-	public Boolean validateRefreshToken(String accessToken, String refreshToken) {
-		Long id = getClaims(accessToken).get("id", Long.class);
-		String refreshTokenInRedis = redisTemplate.opsForValue().get("RT: " + id);
+	public String[] validateRefreshToken(String refreshToken) {
+		String[] idEmail = getIdEmail(refreshToken).split(",");
+		String refreshTokenInRedis = redisTemplate.opsForValue().get("RT: " + idEmail[0]);
 
-		if (
-			Objects.isNull(refreshTokenInRedis)
-			|| isTokenExpired(refreshTokenInRedis)
-			|| !refreshToken.equals(refreshTokenInRedis)
-		) {
-			redisTemplate.delete("RT: " + id);
-			return false;
+		if (Objects.isNull(refreshTokenInRedis)
+			|| !refreshToken.equals(refreshTokenInRedis) || isTokenExpired(refreshTokenInRedis)) {
+			redisTemplate.delete("RT: " + idEmail[0]);
+			return null;
 		}
 
-		return true;
+		return idEmail;
 	}
 
 	public Claims getClaims(String token) {

@@ -16,13 +16,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.sixnumber.global.exception.CustomException;
-import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.RedisDao;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -38,16 +35,12 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 		String token = jwtProvider.resolveToken(request, "access");
 
 		if (token != null) {
-			try {
-				if (!jwtProvider.validateToken(token)) {
-					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
-				}
-			} catch (ExpiredJwtException e) {
-				throw new CustomException(ErrorCode.EXPIRED_TOKEN);
+			if (!jwtProvider.validateToken(token)) {
+				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
 			}
 
 			Long id = jwtProvider.getClaims(token).get("id", Long.class);
-			if (redisDao.checkKey(id)) {
+			if (!redisDao.checkKey(id)) {
 				redisDao.deleteValues(id);
 				throw new OverlapException("중복 로그인 입니다");
 			}
