@@ -1,32 +1,27 @@
-{
-    "compileOnSave": true,
-    "compilerOptions": {
-      "target": "es2016",
-      "jsx": "react-jsx",
-      "module": "esnext",
-      "sourceMap": true,
-      "removeComments": true,
-      "esModuleInterop": true,
-      "forceConsistentCasingInFileNames": true,
-      "strict": true,
-      "skipLibCheck": true,
-      "lib": [
-        "dom",
-        "dom.iterable",
-        "esnext"
-      ],
-      "allowJs": true,
-      "allowSyntheticDefaultImports": true,
-      "noFallthroughCasesInSwitch": true,
-      "moduleResolution": "node",
-      "resolveJsonModule": true,
-      "isolatedModules": true,
-      "noEmit": true
-    },
-    "include": [
-      "./src/"
-    ],
-    "exclude": [
-      "node_modules/*"
-    ]
-  }
+{   //compilerOptions 속성은 생략될 수 있으며 생략하면 컴파일러의 기본 값이 사용됨.
+  "compilerOptions": {
+    "target": "es5", //타입스크립트 파일을 어떤 버전의 자바스크립트로 바꿔줄지 정하는 부분(기본값)
+    // 커스텀하게 라이브러리를 쓰려고 할 때 lib 정의. 여기에 항목을 정하지 않았다면 target에서 지정한 기본값 버전에 따라 정의됨.
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ], 
+    "allowJs": true, //true 라면 파일의 확장자가 .js, .jsx 사용 가능. 기본은 .ts, .tsx 및 .d.ts
+    "skipLibCheck": true, // 선언 파일의 유형 검사를 건너뛰어 컴파일하는 동안 시간을 절약할 수 있음.
+    "esModuleInterop": true, // ES6 모듈 사양을 준수하여 CommonJS 모듈을 가져올 수 있게 됨. (import 를 require로 사용할 수 있음. 아니면 import * as 로도 사용 가능.)
+    "allowSyntheticDefaultImports": true, // default export 가 아닌 모듈에서도 default import 가 가능하게 할 지에 대한 여부. 타입 확인에 영향.
+    "strict": true, //strict 모드 활성화 여부
+    "forceConsistentCasingInFileNames": true, // 같은 파일에 대한 일관되지 않은 참조를 허용하지 않을 지에 대한 여부
+    "noFallthroughCasesInSwitch": true, //switch 문에서 fallthrough 케이스에 대한 에러보고 여부
+    "module": "esnext", //모듈을 위한 코드 생성 설정 (none, commonjs, amd, system, umd, es2015, es2020 or esnext)
+    "moduleResolution": "node", // 모듈 해석 방법 설정: 'node' (Node.js) 혹은 'classic' (TypeScript pre-1.6).
+    "resolveJsonModule": true, //ts 는 기본적으로 json 파일 확인을 지원하지 않음. json 파일을 가져오기 위한 설정
+    "isolatedModules": true, // 각 파일을 분리된 모듈로 트랜스파일
+    "noEmit": true, //결과 파일을 내보낼지에 대한 여부
+    "jsx": "react-jsx" // JSX 코드 생성 설정 (preserve, react-native, 혹은 react-jsx)
+  },
+  "include": [
+    "src"  // 프로그램에 포함할 파일 이름 또는 패턴의 배열을 지정. (src/**/*, tests/**/*) 예시처럼 해당 파일이 가진 디렉토리를 기준으로 확인됨.
+  ]
+}
