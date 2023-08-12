@@ -28,14 +28,8 @@ public class TokenService {
 			if (!jwtProvider.validateToken(request.getAccessToken()))
 				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
 		} catch (ExpiredJwtException e) {
-			String[] idEmail = jwtProvider.validateRefreshToken(request.getRefreshToken());
-			if (idEmail.length != 2) throw new IllegalArgumentException("RefreshToken exception");
-
-			String accessToken = jwtProvider.accessToken(idEmail[1], Long.parseLong(idEmail[0]));
-			Cookie cookie = new Cookie("accessToken", accessToken);
-			cookie.setPath("/");
-
-			User user = manager.findUser(idEmail[1]);
+			Cookie cookie = createCookie(request.getRefreshToken());
+			User user = manager.findUser(jwtProvider.getTokenInUserId(request.getRefreshToken()));
 			MyInformationResponse myInformationResponse = new MyInformationResponse(user);
 			return new UserIfAndCookieResponse(myInformationResponse, cookie);
 		}
@@ -43,5 +37,19 @@ public class TokenService {
 		User user = manager.findUser(jwtProvider.getTokenInUserId(request.getAccessToken()));
 		MyInformationResponse myInformationResponse = new MyInformationResponse(user);
 		return new UserIfAndCookieResponse(myInformationResponse, null);
+	}
+
+	public Cookie renewAccessToken(String refreshToken) {
+		return createCookie(refreshToken);
+	}
+
+	private Cookie createCookie(String refreshToken) {
+		String[] idEmail = jwtProvider.validateRefreshToken(refreshToken);
+		if (idEmail != null && idEmail.length == 2) throw new IllegalArgumentException("RefreshToken exception");
+
+		String accessToken = jwtProvider.accessToken(idEmail[1], Long.parseLong(idEmail[0]));
+		Cookie cookie = new Cookie("accessToken", accessToken);
+		cookie.setPath("/");
+		return cookie;
 	}
 }
