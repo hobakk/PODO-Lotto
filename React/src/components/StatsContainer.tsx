@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { ChangingNumStyle } from './Manufacturing';
 
-export const StatsContainer = ({ res }) => {
-    const [countList, setCountList] = useState("");
+type StatsContainerProps = { res: string[] }
+
+export const StatsContainer = ({ res }: StatsContainerProps) => {
+    const [countList, setCountList] = useState<string[]>([]);
 
     useEffect(()=>{
         if (res !== null) {
@@ -10,7 +12,7 @@ export const StatsContainer = ({ res }) => {
         }
     }, [res])
 
-    const Style = {
+    const Style: React.CSSProperties = {
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
@@ -20,7 +22,7 @@ export const StatsContainer = ({ res }) => {
     }
   return (
     <div style={{ fontSize: "20px", width: "42cm" }}>
-        {countList !== "" ? (
+        {countList.length !== 0 && (
             <div style={{ display: "flex", flexWrap: "wrap"}}>
                 {countList.map((num, index)=>{
                     return (
@@ -32,7 +34,7 @@ export const StatsContainer = ({ res }) => {
                     )
                 })}
             </div>
-        ):null}
+        )}
     </div>
   )
 }
