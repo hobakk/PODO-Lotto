@@ -1,4 +1,11 @@
-export const AdminMenuValue = {
+type SubMenuItem = [string, string];
+
+export type MenuType = {
+    title: string,
+    content: SubMenuItem[],
+}
+
+export const AdminMenuValue: MenuType = {
     title: "관리자",
     content: [
         ["전체 유저 조회", "/admin/users"], 
@@ -9,7 +16,7 @@ export const AdminMenuValue = {
     ]
 }
 
-export const UserMenuValue = {
+export const UserMenuValue: MenuType = {
     title: "내정보",
     content: [
         ["마이페이지", "/my-page"], 
@@ -20,7 +27,7 @@ export const UserMenuValue = {
     ]
 }
 
-export const StatsMenuValue = {
+export const StatsMenuValue: MenuType = {
     title: "통계",
     content: [
         ["통합", "/stats/main"], 
@@ -28,7 +35,7 @@ export const StatsMenuValue = {
     ]
 }
 
-export const LottoMenuValue = {
+export const LottoMenuValue: MenuType = {
     title: "추천번호",
     content: [
         ["랜덤 번호 구매", "/buynum"], 
