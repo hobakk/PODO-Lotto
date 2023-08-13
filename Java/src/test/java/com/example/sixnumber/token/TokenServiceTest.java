@@ -10,11 +10,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
+import com.example.sixnumber.user.entity.User;
 
 @ExtendWith(MockitoExtension.class)
 public class TokenServiceTest {
@@ -27,29 +27,36 @@ public class TokenServiceTest {
 	private Manager manager;
 
 	@Test
-	void getInformationAfterCheckLogin_success() {
-		when(jwtProvider.validateRefreshToken(anyString(), anyString())).thenReturn(true);
-		when(jwtProvider.getIdEmail(anyString())).thenReturn("7,testEmail");
-		when(jwtProvider.accessToken(anyString(), anyLong())).thenReturn("tokenValue");
+	void getInformationAfterCheckLogin_InvalidAccessToken() {
+		User user = TestDataFactory.user();
+		String[] idEmail = {"7", "anyString"};
 
-		when(manager.findUser(anyString())).thenReturn(TestDataFactory.user());
+		when(jwtProvider.validateToken(anyString())).thenReturn(false);
+		when(jwtProvider.validateRefreshToken(anyString())).thenReturn(idEmail);
+		when(jwtProvider.accessToken(anyString(), anyLong())).thenReturn("tokenValue");
+		when(jwtProvider.getTokenInUserId(anyString())).thenReturn(user.getId());
+
+		when(manager.findUser(anyLong())).thenReturn(user);
 
 		UserIfAndCookieResponse response = tokenService.getInformationAfterCheckLogin(TestDataFactory.tokenRequest());
 
-		verify(jwtProvider).validateRefreshToken(anyString(), anyString());
-		verify(jwtProvider).getIdEmail(anyString());
+		verify(jwtProvider).validateToken(anyString());
+		verify(jwtProvider).validateRefreshToken(anyString());
 		verify(jwtProvider).accessToken(anyString(), anyLong());
-		verify(manager).findUser(anyString());
+		verify(jwtProvider).getTokenInUserId(anyString());
+		verify(manager).findUser(anyLong());
 		assertNotNull(response);
 	}
 
 	@Test
-	void getInformationAfterCheckLogin_fail_Invalid() {
-		when(jwtProvider.validateRefreshToken(anyString(), anyString())).thenReturn(false);
+	void getInformationAfterCheckLogin_fail_isNull() {
+		String[] idEmail = {"anyLong"};
 
-		Assertions.assertThrows(ResponseStatusException.class,
+		when(jwtProvider.validateRefreshToken(anyString())).thenReturn(idEmail);
+
+		Assertions.assertThrows(IllegalArgumentException.class,
 			() -> tokenService.getInformationAfterCheckLogin(TestDataFactory.tokenRequest()));
 
-		verify(jwtProvider).validateRefreshToken(anyString(), anyString());
+		verify(jwtProvider).validateRefreshToken(anyString());
 	}
 }

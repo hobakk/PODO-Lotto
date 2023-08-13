@@ -46,7 +46,7 @@ public class TokenService {
 
 	private Cookie createCookie(String refreshToken) {
 		String[] idEmail = jwtProvider.validateRefreshToken(refreshToken);
-		if (idEmail != null && idEmail.length == 2) throw new IllegalArgumentException("RefreshToken exception");
+		if (idEmail != null && idEmail.length != 2) throw new IllegalArgumentException("RefreshToken exception");
 
 		String accessToken = jwtProvider.accessToken(idEmail[1], Long.parseLong(idEmail[0]));
 		Cookie cookie = new Cookie("accessToken", accessToken);
