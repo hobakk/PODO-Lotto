@@ -78,7 +78,7 @@ public class RedisDao {
 		else throw new CustomException(ErrorCode.INVALID_INPUT);
 	}
 
-	public boolean deleteIfNotNull(Long userId) {
+	public boolean deleteInRedisValueIsNotNull(Long userId) {
 		if (!getValue(userId).equals("")) {
 			deleteValues(userId);
 			return true;
@@ -87,7 +87,7 @@ public class RedisDao {
 	}
 
 	public void overlapLogin(Long userId) {
-		boolean isNull = deleteIfNotNull(userId);
+		boolean isNull = deleteInRedisValueIsNotNull(userId);
 		if (isNull) throw new OverlapException("중복된 로그인입니다");
 	}
 }

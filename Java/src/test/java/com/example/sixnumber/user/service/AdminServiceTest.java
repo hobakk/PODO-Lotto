@@ -1,7 +1,7 @@
 package com.example.sixnumber.user.service;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +30,6 @@ import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
-import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UsersReponse;
 import com.example.sixnumber.user.entity.User;
@@ -210,19 +209,18 @@ public class AdminServiceTest {
 	@ParameterizedTest
 	@ValueSource(strings = {"SUSPENDED", "DORMANT"})
 	void setStatus_success_suspended_or_dormant(String statusStr) {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn(statusStr);
+		OnlyMsgRequest request = new OnlyMsgRequest(statusStr);
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
 		// setStatus_success_active 에서 redisTemlate 값이 없을 때 검증되서 값이 있을 경우만 검증함
-		when(redisDao.deleteIfNotNull(anyString()));
+		when(redisDao.deleteInRedisValueIsNotNull(anyLong())).thenReturn(true);
 
 		ApiResponse response = adminService.setStatus(admin, saveUser.getId(), request);
 
 		verify(manager).findUser(anyLong());
-		verify(redisDao).deleteIfNotNull(anyString());
-		assertEquals(saveUser.getStatus(), Status.valueOf(statusStr));
+		verify(redisDao).deleteInRedisValueIsNotNull(anyLong());
+		assertEquals(saveUser.getStatus(), Status.valueOf(request.getMsg()));
 		TestUtil.ApiAsserEquals(response, 200, "상태 변경 완료");
 	}
 

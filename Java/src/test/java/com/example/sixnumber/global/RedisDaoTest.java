@@ -16,8 +16,10 @@ import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
+import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.util.RedisDao;
+import com.example.sixnumber.user.entity.User;
 
 @ExtendWith(MockitoExtension.class)
 public class RedisDaoTest {
@@ -62,10 +64,12 @@ public class RedisDaoTest {
 
 	@Test
 	void overlapLogin() {
+		User user = TestDataFactory.user();
+
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 		when(valueOperations.get(key)).thenReturn("value");
 
-		Assertions.assertThrows(OverlapException.class, () -> redisDao.overlapLogin(key));
+		Assertions.assertThrows(OverlapException.class, () -> redisDao.overlapLogin(user.getId()));
 
 		verify(valueOperations, times(2)).get(key);
 	}

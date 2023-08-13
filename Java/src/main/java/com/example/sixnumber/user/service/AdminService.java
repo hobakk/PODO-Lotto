@@ -125,7 +125,7 @@ public class AdminService {
 		target.setStatus(request.getMsg());
 
 		if (target.getStatus().equals(Status.SUSPENDED) || target.getStatus().equals(Status.DORMANT)) {
-			redisDao.deleteIfNotNull(target.getId());
+			redisDao.deleteInRedisValueIsNotNull(target.getId());
 		}
 		return ApiResponse.ok("상태 변경 완료");
 	}
