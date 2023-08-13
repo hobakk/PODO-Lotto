@@ -1,6 +1,8 @@
 package com.example.sixnumber.global.util;
 
 import java.security.Key;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
@@ -31,26 +33,23 @@ public class JwtProvider {
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	public static final String BEARER_PREFIX = "Bearer";
 	private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-	private static final Long expire = 30 * 60 * 1000L;
-	private static final Long refreshExpire = 7 * 24 * 60 * 1000L;
-	private static final Date curDate = new Date();
+	private static final Duration expire = Duration.ofMinutes(30);
+	private static final Duration refreshExpire = Duration.ofDays(7);
 	private final RedisTemplate<String, String> redisTemplate;
 
 	public String accessToken(String email, Long userId) {
-		HashMap<String, Object> headers = new HashMap<>();
-		headers.put("typ", "JWT");
-		headers.put("alg", "HS256");
-		return Jwts.builder()
-			.setHeader(headers)
-			.setSubject(email)
-			.claim("id", userId)
-			.setIssuedAt(curDate)
-			.setExpiration(setExpireDate(expire))
-			.signWith(KEY)
-			.compact();
+		Instant now = Instant.now();
+		Instant expiration = now.plus(expire);
+		return setToken(email, userId, now, expiration);
 	}
 
 	public String refreshToken(String email, Long userId) {
+		Instant now = Instant.now();
+		Instant expiration = now.plus(refreshExpire);
+		return setToken(email, userId, now, expiration);
+	}
+
+	public String setToken(String email, Long userId, Instant now, Instant expiration) {
 		HashMap<String, Object> headers = new HashMap<>();
 		headers.put("typ", "JWT");
 		headers.put("alg", "HS256");
@@ -58,8 +57,8 @@ public class JwtProvider {
 			.setHeader(headers)
 			.setSubject(email)
 			.claim("id", userId)
-			.setIssuedAt(curDate)
-			.setExpiration(setExpireDate(refreshExpire))
+			.setIssuedAt(Date.from(now))
+			.setExpiration(Date.from(expiration))
 			.signWith(KEY)
 			.compact();
 	}
@@ -139,9 +138,5 @@ public class JwtProvider {
 		Date expirationDate = getClaims(token).getExpiration();
 		if	(expirationDate == null || expirationDate.before(new Date())) return true;
 		return false;
-	}
-
-	public Date setExpireDate(Long data) {
-		return new Date(curDate.getTime() + data);
 	}
 }
