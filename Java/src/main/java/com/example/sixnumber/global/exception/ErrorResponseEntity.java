@@ -8,16 +8,16 @@ import lombok.Data;
 @Data
 @Builder
 public class ErrorResponseEntity {
-	private int status;
-	private String code;
+	private int code;
+	private String exceptionType;
 	private String message;
 
 	public static ResponseEntity<ErrorResponseEntity> comprehensive(ErrorCode e) {
 		return ResponseEntity
 			.status(e.getHttpStatus())
 			.body(ErrorResponseEntity.builder()
-				.status(e.getHttpStatus().value())
-				.code(e.name())
+				.code(e.getHttpStatus().value())
+				.exceptionType(e.name())
 				.message(e.getMessage())
 				.build()
 			);
@@ -30,8 +30,8 @@ public class ErrorResponseEntity {
 		return ResponseEntity
 			.status(e.getStatus())
 			.body(ErrorResponseEntity.builder()
-				.status(e.getStatus().value())
-				.code(target)
+				.code(e.getStatus().value())
+				.exceptionType(target)
 				.message(e.getMessage())
 				.build()
 			);
