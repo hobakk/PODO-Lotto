@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,8 @@ import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.global.exception.OverlapException;
+import com.example.sixnumber.global.exception.StatusNotActiveException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
@@ -35,13 +38,11 @@ import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.MyInformationResponse;
+import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
-import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.entity.User;
-import com.example.sixnumber.global.exception.OverlapException;
-import com.example.sixnumber.global.exception.StatusNotActiveException;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -150,7 +151,7 @@ public class UserServiceTest {
 		String Token = userService.signIn(signinRequest);
 
 		verify(manager).findUser(anyString());
-		verify(redisDao).overlapLogin(anyString());
+		verify(redisDao).overlapLogin(anyLong());
 		verify(passwordEncoder).matches(anyString(), anyString());
 		verify(jwtProvider).refreshToken(saveUser.getEmail(), saveUser.getId());
 		verify(jwtProvider).accessToken(saveUser.getEmail(), saveUser.getId());
@@ -206,7 +207,7 @@ public class UserServiceTest {
 
 		assertEquals(response.getCode(), 200);
 		assertEquals(response.getMsg(), "로그아웃 성공");
-		verify(redisDao).deleteValues(anyString());
+		verify(redisDao).deleteValues(anyLong());
 	}
 
 	@Test
@@ -313,11 +314,10 @@ public class UserServiceTest {
 	void charging_success() {
 		ChargingRequest request = TestDataFactory.chargingRequest();
 
-		Set<String> set = new HashSet<>(List.of("STMT: 7-1"));
-
 		ApiResponse response = userService.charging(request, saveUser);
 
-		verify(redisDao, times(2)).getKeysList(anyString());
+		verify(redisDao, times(1)).getKeysList(anyLong());
+		verify(redisDao, times(1)).getKeysList(anyString());
 		verify(redisDao).setValues(anyString(), anyString(), anyLong(), any());
 		verify(userRepository).save(saveUser);
 		assertEquals(saveUser.getChargingCount(), 1);
@@ -329,23 +329,24 @@ public class UserServiceTest {
 		ChargingRequest request = TestDataFactory.chargingRequest();
 
 		Set<String> keys = TestDataFactory.keys();
-		when(redisDao.getKeysList(anyString())).thenReturn(keys);
+		when(redisDao.getKeysList(anyLong())).thenReturn(keys);
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.charging(request, saveUser));
 
-		verify(redisDao).getKeysList(anyString());
+		verify(redisDao).getKeysList(anyLong());
 	}
 
 	@Test
 	void charging_fail_KeyOverlapException() {
 		ChargingRequest request = TestDataFactory.chargingRequest();
-
 		Set<String> set = new HashSet<>(List.of("Msg-5000"));
+
+		when(redisDao.getKeysList(anyLong())).thenReturn(Collections.emptySet());
 		when(redisDao.getKeysList(anyString())).thenReturn(set);
 
 		Assertions.assertThrows(OverlapException.class, () -> userService.charging(request, saveUser));
 
-		verify(redisDao, times(2)).getKeysList(anyString());
+		verify(redisDao, times(1)).getKeysList(anyString());
 	}
 
 	@Test
@@ -362,7 +363,7 @@ public class UserServiceTest {
 	void getCharges_success() {
 		ListApiResponse<ChargingResponse> response = userService.getCharges(saveUser.getId());
 
-		verify(redisDao).multiGet(anyString());
+		verify(redisDao).multiGet(anyLong());
 		TestUtil.ListApiAssertEquals(response, 200, "신청 리스트 조회 성공");
 	}
 
