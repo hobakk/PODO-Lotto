@@ -14,9 +14,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.dto.TokenRequest;
+import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.user.entity.User;
+
+import io.jsonwebtoken.ExpiredJwtException;
 
 @ExtendWith(MockitoExtension.class)
 public class TokenServiceTest {
@@ -80,6 +83,16 @@ public class TokenServiceTest {
 		when(jwtProvider.validateRefreshToken(anyString())).thenReturn(idEmail);
 
 		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> tokenService.getInformationAfterCheckLogin(tokenRequest));
+
+		verify(jwtProvider).validateRefreshToken(anyString());
+	}
+
+	@Test
+	void getInformationAfterCheckLogin_fail_ExpiredJwtException() {
+		when(jwtProvider.validateRefreshToken(anyString())).thenThrow(ExpiredJwtException.class);
+
+		Assertions.assertThrows(CustomException.class,
 			() -> tokenService.getInformationAfterCheckLogin(tokenRequest));
 
 		verify(jwtProvider).validateRefreshToken(anyString());
