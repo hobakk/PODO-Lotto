@@ -15,5 +15,5 @@ public enum ErrorCode {
 	INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 RefreshToken 입니다");
 
 	private final HttpStatus httpStatus;
-	private final String msg;
+	private final String message;
 }
