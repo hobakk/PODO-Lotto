@@ -2,12 +2,12 @@ package com.example.sixnumber.token;
 
 import javax.servlet.http.Cookie;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.example.sixnumber.global.dto.TokenRequest;
+import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.user.dto.MyInformationResponse;
@@ -24,19 +24,20 @@ public class TokenService {
 	private final Manager manager;
 
 	public UserIfAndCookieResponse getInformationAfterCheckLogin(TokenRequest request) {
-		try {
-			if (!jwtProvider.validateToken(request.getAccessToken()))
-				throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
-		} catch (ExpiredJwtException e) {
-			Cookie cookie = createCookie(request.getRefreshToken());
-			User user = manager.findUser(jwtProvider.getTokenInUserId(request.getRefreshToken()));
+		if (jwtProvider.validateToken(request.getAccessToken())) {
+			User user = manager.findUser(jwtProvider.getTokenInUserId(request.getAccessToken()));
 			MyInformationResponse myInformationResponse = new MyInformationResponse(user);
-			return new UserIfAndCookieResponse(myInformationResponse, cookie);
+			return new UserIfAndCookieResponse(myInformationResponse, null);
+		} else {
+			try {
+				Cookie cookie = createCookie(request.getRefreshToken());
+				User user = manager.findUser(jwtProvider.getTokenInUserId(request.getRefreshToken()));
+				MyInformationResponse myInformationResponse = new MyInformationResponse(user);
+				return new UserIfAndCookieResponse(myInformationResponse, cookie);
+			} catch (ExpiredJwtException e) {
+				throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+			}
 		}
-
-		User user = manager.findUser(jwtProvider.getTokenInUserId(request.getAccessToken()));
-		MyInformationResponse myInformationResponse = new MyInformationResponse(user);
-		return new UserIfAndCookieResponse(myInformationResponse, null);
 	}
 
 	public Cookie renewAccessToken(String refreshToken) {
