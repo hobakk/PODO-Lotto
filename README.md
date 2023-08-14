@@ -46,5 +46,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 ### 1. 조회
 - 메인 로또 통계 조회, 월 통계 조회, 저장된 월 통계 index 조회
 ## SixNumber
+### 1. 랜덤 번호 추천
+### 2. 반복 연산된 번호 추천
 ## WinNumber
 
