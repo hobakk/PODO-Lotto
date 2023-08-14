@@ -49,4 +49,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 ### 1. 랜덤 번호 추천
 ### 2. 반복 연산된 번호 추천
 ## WinNumber
+Redis Cache 사용해서 속도 개선
+### 1. 당첨번호 조회
+### 2. 당첨번호 등록
 
