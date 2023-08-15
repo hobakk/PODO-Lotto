@@ -3,11 +3,18 @@ import { SignBorder, CommonStyle, InputBox } from '../../components/Styles'
 import { Link, useNavigate } from 'react-router-dom';
 import { signup } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';
+import { errorType } from '../../shared/TypeMenu';
 
 function Signiup() {
-  const emailRef = useRef();
+  type InputValue = {
+    email: string,
+    password: string,
+    nickname: string, 
+  }
+
+  const emailRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const [inputValue, setInputValue] = useState({
+  const [inputValue, setInputValue] = useState<InputValue>({
     email: "",
     password: "",
     nickname: "",
@@ -17,19 +24,20 @@ function Signiup() {
       console.log("회원가입 완료");
       navigate("/signin");
     }, 
-    onError: (err)=>{
-      alert(err.msg);
+    onError: (err: errorType)=>{
+      alert(err.message);
     }
   })
 
-  const onChangeHandler = (e) => {
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setInputValue({
       ...inputValue,
-      [e.target.name]: e.target.value,
+      [name]: value,
     })
   }
 
-  const sunmitHandler = (e) => {
+  const sunmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     signupMutation.mutate(inputValue);
   }
@@ -40,13 +48,16 @@ function Signiup() {
         <h3 style={{ fontSize: "80px"}}>Signup</h3>
         <form onSubmit={sunmitHandler} style={{ fontSize: "30px", display: "flex", flexDirection: "column", }}>
           <div>
-            Email : <InputBox onChange={onChangeHandler} placeholder='test@email.com' style={{ marginLeft: "55px" }} value={inputValue.email} ref={emailRef} name='email'></InputBox>
+            <span>Email : </span>
+            <InputBox onChange={onChangeHandler} placeholder='test@email.com' style={{ marginLeft: "55px" }} value={inputValue.email} ref={emailRef} name='email' />
           </div>
           <div style={{ marginTop: "20px", marginBottom: "20px" }}>
-            Password : <InputBox onChange={onChangeHandler} type="password" placeholder='******' value={inputValue.password} name="password"></InputBox>
+            <span>Password : </span>
+            <InputBox onChange={onChangeHandler} type="password" placeholder='******' value={inputValue.password} name="password" />
           </div>
           <div>
-            Nickname : <InputBox onChange={onChangeHandler} type="text" placeholder='홍길동' value={inputValue.nickname} name="nickname"></InputBox>
+            <span>Nickname : </span>
+            <InputBox onChange={onChangeHandler} type="text" placeholder='홍길동' value={inputValue.nickname} name="nickname" />
           </div>
           <div style={{ fontSize: "18px", margin: "auto", marginBottom: "1cm", marginTop: "1cm"}}>
           <div>
