@@ -5,16 +5,12 @@ import { checkLoginAndgetUserIf } from '../api/noneUserApi';
 import { setUserIf } from '../modules/userIfSlice';
 import { deleteToken, getAccessTAndRefreshT } from '../shared/Cookie';
 import { RootState } from '../config/configStore';
+import { errorType } from '../shared/TypeMenu';
 
 function useCheckLogin() {
-    type errorType = {
-        status: number;
-        message: string;
-    }
-
     const dispatch = useDispatch();
     const userIf = useSelector((state: RootState)=>state.userIf);
-    const [isLogin, setData] = useState<boolean>();
+    const [isLogin, setData] = useState<boolean>(false);
     const [accessToken, refreshToken] = getAccessTAndRefreshT();
 
     const checkLoginMutation = useMutation(checkLoginAndgetUserIf, {
@@ -32,11 +28,10 @@ function useCheckLogin() {
     })
 
     useEffect(()=>{
-        console.log(userIf)
         const { email, nickname, role } = userIf;
-        if (!email && !nickname && !role && accessToken !== null && refreshToken !== null) {
+        if (!email && !nickname && !role && accessToken !== undefined && refreshToken !== undefined) {
             checkLoginMutation.mutate([ accessToken, refreshToken ]);
-        } else if (email && nickname && role && accessToken !== null && refreshToken !== null) {
+        } else if (email && nickname && role && accessToken !== undefined && refreshToken !== undefined) {
             setData(true);
         } else {
             setData(false);
