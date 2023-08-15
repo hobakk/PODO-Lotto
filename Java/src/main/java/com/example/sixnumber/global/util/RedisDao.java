@@ -1,6 +1,5 @@
 package com.example.sixnumber.global.util;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -41,11 +40,12 @@ public class RedisDao {
 	}
 
 	public List<String> multiGet(Object object) {
-		Set<String> keys = new HashSet<>();
+		Set<String> keys;
 		if (object instanceof Long userId) {
 			keys = getKeysList(STMT + userId);
 		} else if (object instanceof String key) {
 			if (key.equals("All")) keys = getKeysList(STMT);
+			else keys = getKeysList(key);
 		} else throw new CustomException(ErrorCode.INVALID_INPUT);
 
 		if (keys.size() == 0) throw new IllegalArgumentException("충전 요청이 존재하지 않습니다");
