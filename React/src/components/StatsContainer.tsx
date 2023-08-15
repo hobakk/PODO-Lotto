@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ChangingNumStyle } from './Manufacturing';
 
-type StatsContainerProps = { res: string[] }
-
-export const StatsContainer = ({ res }: StatsContainerProps) => {
+export const StatsContainer = ({ res }: {res: string[]}) => {
     const [countList, setCountList] = useState<string[]>([]);
 
     useEffect(()=>{
@@ -27,7 +25,7 @@ export const StatsContainer = ({ res }: StatsContainerProps) => {
                 {countList.map((num, index)=>{
                     return (
                         <div style={Style}>
-                            {ChangingNumStyle(index + 1)}
+                            {ChangingNumStyle({num: index + 1, index: 0})}
                             <p style={{ margin: "5px" }}>:</p>
                             <p>{num}</p>             
                         </div>
