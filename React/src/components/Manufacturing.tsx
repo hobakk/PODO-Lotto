@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { WinNumberStyle } from "./Styles";
 
-export const ChangingNumStyle = (num, index) => {
+export const ChangingNumStyle = ({ num, index }: {num: number, index: number}) => {
     let color = "";
     if (num <= 10) {
       color = "#eab541";
@@ -17,20 +17,20 @@ export const ChangingNumStyle = (num, index) => {
     return <WinNumberStyle key={`numbers-${index}`} color={color} style={{ marginRight: "7px"}}>{num}</WinNumberStyle>
 }
 
-export const NumSentenceResult = (numSentence) => {
+export const NumSentenceResult = (numSentence: string) => {
   return (
       <div key={`sentence-${numSentence}`} style={{ marginTop: "30px" }}>
           <div style={{ display: "flex"}}>
-            {numSentence.split(" ").map((num, input)=>ChangingNumStyle(num, input))}
+            {numSentence.split(" ").map((num, index)=>ChangingNumStyle({ num: parseInt(num), index: index }))}
           </div>
       </div>
   )
 }
 
-export const ResultContainer = ({ numSentenceList }) => {
-  const [firstLine, setFirst] = useState([]);
-  const [secondLine, setSecond] = useState([]);
-  const [thirdLine, setThird] = useState([]);
+export const ResultContainer = ({numSentenceList}: {numSentenceList: string[]}) => {
+  const [firstLine, setFirst] = useState<string[]>([]);
+  const [secondLine, setSecond] = useState<string[]>([]);
+  const [thirdLine, setThird] = useState<string[]>([]);
   
   useEffect(()=>{
     if (numSentenceList.length > 0) {
@@ -40,8 +40,8 @@ export const ResultContainer = ({ numSentenceList }) => {
     }
   }, [numSentenceList])
 
-  const LineStyle = ({line}) => {
-    const Style = {
+  const LineStyle = ({line}: {line: string[]}) => {
+    const Style: React.CSSProperties = {
       display: "flex",
       flexWrap: "wrap"
     }
@@ -62,18 +62,12 @@ export const ResultContainer = ({ numSentenceList }) => {
 
   return (
     <div id='resultcontent' style={{ display: "flex" }}>
-      <div>
-          <LineStyle line={firstLine}/>
-      </div>
+      <div><LineStyle line={firstLine}/></div>
       {secondLine.length > 0 && (
-          <div style={{ marginLeft: "70px" }}>
-              <LineStyle line={secondLine}/>
-          </div>
+          <div style={{ marginLeft: "70px" }}><LineStyle line={secondLine}/></div>
       )}
       {thirdLine.length > 0 && (
-          <div style={{ marginLeft: "70px" }}>
-              <LineStyle line={thirdLine}/>
-          </div>
+          <div style={{ marginLeft: "70px" }}><LineStyle line={thirdLine}/></div>
       )}
     </div>
 )}
