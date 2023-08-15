@@ -19,6 +19,9 @@ spring:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
 
+  jwt:
+    secret-key: ${SECRET_KEY}
+
 #  security:
 #    oauth2:
 #      client:

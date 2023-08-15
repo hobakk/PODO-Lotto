@@ -1,14 +1,17 @@
 package com.example.sixnumber.global.util;
 
-import java.security.Key;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -19,23 +22,30 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class JwtProvider {
+	@Value("${spring.jwt.secret-key}")
+	private String keyValue;
+
+	private final SecretKey secretKey;
+	private final RedisTemplate<String, String> redisTemplate;
+
+	public JwtProvider(RedisTemplate<String, String> redisTemplate) {
+		String keyBase64Encoded = Base64.getEncoder().encodeToString(keyValue.getBytes());
+		byte[] decodedKey = Base64.getDecoder().decode(keyBase64Encoded);
+		this.secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
+		this.redisTemplate = redisTemplate;
+	}
 
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	public static final String BEARER_PREFIX = "Bearer";
-	private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	private static final Duration expire = Duration.ofMinutes(30);
 	private static final Duration refreshExpire = Duration.ofDays(7);
-	private final RedisTemplate<String, String> redisTemplate;
+
 
 	public String accessToken(String email, Long userId) {
 		Instant now = Instant.now();
@@ -53,13 +63,14 @@ public class JwtProvider {
 		HashMap<String, Object> headers = new HashMap<>();
 		headers.put("typ", "JWT");
 		headers.put("alg", "HS256");
+		System.out.println(secretKey);
 		return Jwts.builder()
 			.setHeader(headers)
 			.setSubject(email)
 			.claim("id", userId)
 			.setIssuedAt(Date.from(now))
 			.setExpiration(Date.from(expiration))
-			.signWith(KEY)
+			.signWith(secretKey)
 			.compact();
 	}
 
@@ -80,7 +91,7 @@ public class JwtProvider {
 	public String getIdEmail(String token) {
 		Long userId = getClaims(token).get("id", Long.class);
 		String email = Jwts.parserBuilder()
-			.setSigningKey(KEY)
+			.setSigningKey(secretKey)
 			.build()
 			.parseClaimsJws(token)
 			.getBody()
@@ -95,7 +106,7 @@ public class JwtProvider {
 
 	public Boolean validateToken(String token) {
 		try {
-			Jwts.parserBuilder().setSigningKey(KEY).build().parseClaimsJws(token);
+			Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
 		return true;
 		} catch (ExpiredJwtException e) {
 			throw new CustomException(ErrorCode.EXPIRED_TOKEN);
@@ -124,7 +135,7 @@ public class JwtProvider {
 
 	public Claims getClaims(String token) {
 		return Jwts.parserBuilder()
-			.setSigningKey(KEY)
+			.setSigningKey(secretKey)
 			.build()
 			.parseClaimsJws(token)
 			.getBody();
