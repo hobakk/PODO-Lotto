@@ -17,6 +17,11 @@ export const SignBorder: React.CSSProperties = {
   margin: "3px",
 }
 
+export const LogoutStyle: React.CSSProperties = {
+  cursor: "pointer",
+  marginLeft: "10px",
+}
+
 type UlBoxProps = { 
   width?: string;
   height?: string;

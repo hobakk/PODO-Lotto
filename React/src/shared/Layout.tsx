@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { CommonLink} from '../components/Styles';
+import { CommonLink, LogoutStyle} from '../components/Styles';
 import LogoutMutation from '../components/LogoutMutation';
 import MenuContainer from '../components/MenuContainer';
 import { AdminMenuValue, LottoMenuValue, StatsMenuValue, UserMenuValue } from './MenuValue';
@@ -54,7 +54,7 @@ function Header() {
   const isLogin = useCheckLogin();
   const [cash, setCash] = useState<string | undefined>();
   const [nickname, setNickname] = useState<string | undefined>("");
-  
+
   useEffect(()=>{
     setCash(userIf.cash);
     setNickname(userIf.nickname);
@@ -86,7 +86,7 @@ function Header() {
           <div style={{ display:"flex", alignItems:'center', justifyContent: 'center', }}>
             <CommonLink to={"/set-charging"} color={"#3E1F80"}>{cash}</CommonLink> 원  
             <CommonLink to={"/my-page"} color={"#F29135"}>{nickname}</CommonLink> 님 반갑습니다
-            <div color={"black"} onClick={()=>logoutMutation.mutate()}>로그아웃</div>
+            <div style={LogoutStyle} onClick={()=>logoutMutation.mutate()}>로그아웃</div>
           </div>
         )}
       </div>
