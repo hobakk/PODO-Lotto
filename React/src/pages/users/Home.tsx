@@ -3,24 +3,24 @@ import { getWinNumber } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';
 import { CommonStyle, CommonLink, } from '../../components/Styles';
 import { ChangingNumStyle } from '../../components/Manufacturing';
-import { AllowAll } from '../../components/CheckRole';
+import { Res, WinNumber, errorType } from '../../shared/TypeMenu';
 
 function Home() {
-  const [value, setValue] = useState([]);
-  const [isEmpty, setBoolean] = useState(true);
+  const [value, setValue] = useState<WinNumber[]>([]);
+  const [isEmpty, setBoolean] = useState<boolean>(true);
   
   const getWinnumberMutation = useMutation(getWinNumber, {
-    onSuccess: (res)=>{
+    onSuccess: (res: Res)=>{
       if (res.code === 200) {
-        const sortedValue = res.data.winNumberList.slice().sort((a, b) => {
-          return new Date(b.date) - new Date(a.date);
+        const sortedValue = res.data.winNumberList.slice().sort((a: WinNumber, b: WinNumber) => {
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
         });
         setValue(sortedValue);
         setBoolean(false);
       }
     },
-    onError: (err)=>{
-      if (err.status === 500) {
+    onError: (err: errorType)=>{
+      if (err.code === 500) {
         setValue([]);
       }
     }
@@ -37,28 +37,27 @@ function Home() {
     }
   }, [isEmpty])
 
-  const Rectangle = {
+  const Rectangle: React.CSSProperties = {
     border: "3px solid black", 
     backgroundColor: "#D4F0F0",
     padding: "15px",
     marginBottom: "5px",
     width: "20cm"
   }
-  const ButtonStyle = {
+  const ButtonStyle: React.CSSProperties = {
     width: "3cm",
     height: "30px",
     marginLeft: "10px"
   }
-  const SpanStyle = {
+  const SpanStyle: React.CSSProperties = {
     fontWeight: "bold",
     color: "#011815",
   }
 
   return (
     <div style={CommonStyle}>
-      <AllowAll />
       <div style={{ marginTop: "1.0cm", marginLeft: "auto", marginBottom: "5px"}}>
-        <CommonLink to={"/buynum"} style={{ fontWeight: "bold", }}>추천 번호 구매하기</CommonLink>
+        <CommonLink to={"/buynum"} color='blue' style={{ fontWeight: "bold", }}>추천 번호 구매하기</CommonLink>
         <button style={ButtonStyle} onClick={()=>{setBoolean(true)}}>새로고침</button>
       </div>
       <div style={{ fontSize: "20px" }}>
@@ -89,11 +88,11 @@ function Home() {
                 <div style={{ display: "flex", height: "1.5cm", marginTop: "10px", justifyContent: "center", textAlign: "center", alignItems: "center"}}>
                   <div style={{ display: "flex", marginLeft: "auto"}}>
                     {result.topNumberList.map((num, index)=>{
-                      return <div key={index}>{ChangingNumStyle(num, index)}</div>
+                      return <div key={index}>{ChangingNumStyle({num, index})}</div>
                     })}
                   </div>
                   <span style={{...SpanStyle, marginLeft: "5px", marginRight: "5px",}}>+</span>
-                  <div style={{ display: "flex", marginLeft: "5px"}}>{ChangingNumStyle(result.bonus)}</div>
+                  <div style={{ display: "flex", marginLeft: "5px"}}>{ChangingNumStyle({num: result.bonus, index: 0})}</div>
                 </div>
               </div>
             )})
