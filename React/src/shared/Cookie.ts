@@ -16,11 +16,13 @@ export const deleteToken = () => {
 }
 
 export const getAllCookie = () => {
-    if  (!getCookie("accessToken") || !getCookie("refreshToken")) {
-        return null;
+    const access = getCookie("accessToken");
+    const refresh = getCookie("refreshToken");
+    if  (!access || !refresh) {
+        return undefined;
     }
     
-    return getCookie("accessToken") + "," + getCookie("refreshToken");
+    return access + "," + refresh;
 }
 
 export const getAccessTAndRefreshT = (): [string | undefined, string | undefined] => {
