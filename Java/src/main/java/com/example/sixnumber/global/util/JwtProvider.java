@@ -28,13 +28,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class JwtProvider {
-	@Value("${spring.jwt.secret-key}")
-	private String keyValue;
-
 	private final SecretKey secretKey;
 	private final RedisTemplate<String, String> redisTemplate;
 
-	public JwtProvider(RedisTemplate<String, String> redisTemplate) {
+	public JwtProvider(RedisTemplate<String, String> redisTemplate, @Value("${spring.jwt.secret-key}") String keyValue) {
 		String keyBase64Encoded = Base64.getEncoder().encodeToString(keyValue.getBytes());
 		byte[] decodedKey = Base64.getDecoder().decode(keyBase64Encoded);
 		this.secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
@@ -63,7 +60,6 @@ public class JwtProvider {
 		HashMap<String, Object> headers = new HashMap<>();
 		headers.put("typ", "JWT");
 		headers.put("alg", "HS256");
-		System.out.println(secretKey);
 		return Jwts.builder()
 			.setHeader(headers)
 			.setSubject(email)
