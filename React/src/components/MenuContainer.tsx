@@ -1,22 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { MenuDiv, MenuSpan, Dropdown, UlBox, LiBox, CustomLink } from './Styles';
 import { MenuType } from '../shared/MenuValue';
-import { useSelector } from 'react-redux';
-import { RootState } from '../config/configStore';
-import { useNavigate } from 'react-router-dom';
 
-type MenuContainerProps = {
-    MenuValue: MenuType; 
-    AllowType: string;
-}
-
-function MenuContainer({ MenuValue, AllowType }: MenuContainerProps) {
-
+function MenuContainer({ MenuValue }: {MenuValue: MenuType}) {
     const [backColor, setBackColor] = useState<string>("white");
     const [isDropdown, setDropdown] = useState<boolean>(false);
     const [spanColor, setSpanColor] = useState<string>("black");
-    const userRole = useSelector((state: RootState)=>state.userIf.role) as string;
-    const navigate = useNavigate();
 
     const handleMouseEnter = () => {
         setDropdown(true);
@@ -35,28 +24,6 @@ function MenuContainer({ MenuValue, AllowType }: MenuContainerProps) {
         setSpanColor("black");
         }
     }, [isDropdown])
-
-    useEffect(()=>{
-        if (AllowType === "AllowLogin") {
-            if (userRole === "") {
-                alert("로그인 이후 이용해주세요");
-                navigate("/signin");
-            }
-        } else if (AllowType === "AllowNotRoleUser") {
-            if (userRole === "ROLE_USER") {
-                alert("프리미엄 등록 이후 이용해주시기 바랍니다");
-                navigate("/premium");
-            } else if (userRole === "") {
-                alert("로그인 이후 이용해주세요");
-                navigate("/signin");
-            }
-        } else if (AllowType === "AllowOnlyAdmin") {
-            if (userRole !== "ROLE_ADMIN") {
-                alert("접근 권한이 없습니다");
-                navigate("/");
-            }
-        }
-    }, [userRole])
     
     const navigationLinksStyles  = {
         marginLeft: '30px',
