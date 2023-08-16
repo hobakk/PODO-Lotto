@@ -4,15 +4,16 @@ import { setCharges } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { AllowLogin } from '../../components/CheckRole'
+import { Res, errorType } from '../../shared/TypeMenu';
 
 function SetCharging() {
     const navigate = useNavigate();
-    const [inputValue, setInputValue] = useState({
+    const [inputValue, setInputValue] = useState<{cash: number, msg: string}>({
         cash: 0,
         msg: "",
     });
     
-    const onChangeHandler = (e) => {
+    const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue({
             ...inputValue,
             [e.target.name]: e.target.value,
@@ -20,23 +21,23 @@ function SetCharging() {
     }
 
     const chargingMutation = useMutation(setCharges, {
-        onSuccess: (res)=>{
-            if (res == 200) {
+        onSuccess: (res: Res)=>{
+            if (res.code == 200) {
                 navigate("/get-charging");
             }
         },
-        onError: (err)=>{
-            if  (err.status === 500) {
+        onError: (err: errorType)=>{
+            if  (err.code === 500) {
                 alert(err.message);
-            } else if (err.status === 400) {
-                alert(err.msg);
-            } else if (err.status === 403) {
-                alert(err.msg);
+            } else if (err.code === 400) {
+                alert(err.message);
+            } else if (err.code === 403) {
+                alert(err.message);
             }
         }
     })
 
-    const submitHandler = (e) => {
+    const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (inputValue.cash === 0 || inputValue.msg === "") {
             alert("값을 입력해주세요");
