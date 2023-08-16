@@ -133,7 +133,7 @@ const setRoleFromAdmin = async ({ userId, msg }) => {
 const getMainTopNumber = async () => {
     try {
         const { data } = await api.get("/lotto/main");
-        return data.data;
+        return data;
     } catch (error) {
         throw error;
     }
