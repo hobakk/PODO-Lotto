@@ -1,12 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { ReactElement, useEffect, useRef, useState } from 'react'
 import { CommonStyle, SignBorder } from '../../components/Styles'
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { signin } from '../../api/noneUserApi';
 import { InputBox } from '../../components/Styles';
 import GetUserIfMutation from '../../components/GetUserIfMutation';
+import { errorType } from '../../shared/TypeMenu';
 
 function Signin() {
+    const emailRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
     const getUserIfMutation = GetUserIfMutation();
     const signinMutation = useMutation(signin,{
@@ -15,11 +17,11 @@ function Signin() {
             getUserIfMutation.mutate();
             navigate("/");
         },
-        onError: (err)=>{
-            if  (err.status === 500) {
+        onError: (err: errorType)=>{
+            if  (err.code === 500) {
                 alert(err.message);
-            } else if (err.status !== 500) {
-                alert(err.msg);
+            } else if (err.code !== 500) {
+                alert(err.message);
             } else {
                 console.log(err);
             }
@@ -30,20 +32,21 @@ function Signin() {
         email: "",
         password: "",
     });
-    const onChangeHandler = (e) => {
+    const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue({
             ...inputValue,
             [e.target.name]: e.target.value,
         })
     }
-    const submitHandler =  (e) => {
+    const submitHandler =  (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         signinMutation.mutate(inputValue);
     }
 
-    const emailRef = useRef();
     useEffect(()=>{
-        emailRef.current.focus();
+        if (emailRef.current) {
+            emailRef.current.focus();
+        }
     }, [])
 
   return (
