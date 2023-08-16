@@ -13,7 +13,7 @@ const logout = async () => {
 
 const getCashNickname = async () => {
     const { data } = await api.get("/users/cash");
-    return data.data;
+    return data;
 }
 
 const withdraw = async (msg) => {
@@ -51,7 +51,7 @@ const getCharges = async () => {
 const setPaid = async (msg) => {
     try {
         const { data } = await api.patch("/users/paid", msg);
-        return data.code;
+        return data;
     } catch (error) {
         throw error; 
     }
