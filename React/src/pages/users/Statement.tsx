@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { SignBorder, CommonStyle } from '../../components/Styles'
+import { CommonStyle } from '../../components/Styles'
 import { getStatement } from '../../api/useUserApi'
 import { useMutation } from 'react-query'
-import { AllowLogin } from '../../components/CheckRole'
+import { Res, errorType } from '../../shared/TypeMenu';
 
 function Statement() {
-    const [isAssign, setAssign] = useState(false);
-    const [value, setValue] = useState([]);
+    const [isAssign, setAssign] = useState<boolean>(false);
+    const [value, setValue] = useState<{localDate: string, msg: string}[]>([]);
     const StateMnetMutation = useMutation(getStatement, {
-        onSuccess: (res)=>{
+        onSuccess: (res: Res)=>{
             setAssign(true);
-            setValue(res);
+            setValue(res.data);
         },
-        onError: (err)=>{
-            alert(err.msg);
+        onError: (err: errorType)=>{
+            alert(err.message);
         }
     });
 
@@ -23,7 +23,7 @@ function Statement() {
         }
     }, [])
 
-    const PStyle = {
+    const PStyle: React.CSSProperties = {
         border: "2px solid black",
         borderBottom: "0px", 
         width: "4cm", 
@@ -35,10 +35,9 @@ function Statement() {
 
   return (
     <div style={ CommonStyle }>
-        <AllowLogin />
         <h1 style={{  fontSize: "80px" }}>Statement</h1>
         {isAssign && (
-            <div key={value}>
+            <div>
                 {value.map((item, index)=>{
                     return (
                         <div key={item.localDate + index} style={{ fontSize: "20px"}}>

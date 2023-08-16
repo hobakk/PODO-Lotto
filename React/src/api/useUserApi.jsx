@@ -60,7 +60,7 @@ const setPaid = async (msg) => {
 const getStatement = async () => {
     try {
         const { data } = await api.get("/users/statement");
-        return data.data;
+        return data;
     } catch (error) {
         throw error;
     }
