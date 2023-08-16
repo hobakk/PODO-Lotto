@@ -49,7 +49,7 @@
 
 Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.tistory.com/131)
 ### 1. 메인 로또 통계
-- Cache 의 entryTtl 을 30분으로 제한하여 30분 단위로 통계를 갱신
+- Cache 의 entryTtl 을 30분으로 제한하여 30분 단위로 갱신 (조회를 한다는 가정하에)
 ### 2. 월 통계, 저장된 월 통계 YearMonth(index)
 - entryTtl 제한을 두지 않음
 
@@ -67,7 +67,7 @@ Redis Cache 사용해서 속도 개선
 ### 1. 당첨번호 조회
 - @Cacheable 을 적용하고 entryTtl 제한을 두지않음
 ### 2. 당첨번호 등록
-- @CachePut RedisCache 에 저장되어 있는 value="WinNumbers" 를 갱신
+- @CachePut 을 적용하여 저장되어 있는 RedisCache 를 갱신
 
 <br/><br/><h2>Token</h2>
 
@@ -78,6 +78,7 @@ Redis Cache 사용해서 속도 개선
 - FE 에서 Res.code 401 을 받았을 때 FE 에서 보낸 RefreshToken 을 valid 하고 유효하면 AccessToken 을 갱신
 
 <br/><br/><h2>Scheduler</h2>
+
 ### 1. 월 통계 생성
 - 현재 기준 저번달 통계가 존재하지 않을 때 통계를 생성 및 저장
 ### 2. 프리미엄 등록 또는 해제
