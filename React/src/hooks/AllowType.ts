@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux/es/hooks/useSelector';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../config/configStore';
 
-function AllowType(type: string) {
+export function useAllowType(type: string): boolean {
+    const [isAllow, setIsAllow] = useState<boolean>(false);
     const role = useSelector((state: RootState)=>state.userIf.role) as string;
     const navigate = useNavigate();
 
@@ -27,11 +28,9 @@ function AllowType(type: string) {
                 navigate("/");
             }
         }
+
+        setIsAllow(true);
     }, [role])
 
-    return null;
+    return isAllow;
 }
-
-export const AllowLogin = AllowType("AllowLogin");
-export const AllowNotRoleUser = AllowType("AllowNotRoleUser");
-export const AllowOnlyAdmin = AllowType("AllowOnlyAdmin");
