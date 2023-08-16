@@ -1,8 +1,6 @@
 package com.example.sixnumber.user.repository;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,7 +14,7 @@ import com.example.sixnumber.user.type.UserRole;
 public interface UserRepository extends JpaRepository<User, Long> {
 	Boolean existsUserByEmail(String email);
 	Boolean existsUserByNickname(String nickname);
-	List<User> findByRole(UserRole role);
+	List<User> findAllByRoleAndPaymentDate(UserRole role, String localDateStr);
 	Optional<User> findByEmail(String email);
 	Optional<User> findByStatusAndEmail(Status status, String email);
 

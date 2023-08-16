@@ -135,7 +135,7 @@ public class UserService {
 		}
 		user.setCash("-", 5000);
 		user.setRole(UserRole.ROLE_PAID);
-		user.setPaymentDate(YearMonth.now().toString());
+		user.setPaymentDate(LocalDate.now().plusDays(31).toString());
 		user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
 		return ApiResponse.ok("권한 변경 성공");
 	}

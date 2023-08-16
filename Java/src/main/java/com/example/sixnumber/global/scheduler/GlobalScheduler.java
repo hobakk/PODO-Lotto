@@ -65,25 +65,21 @@ public class GlobalScheduler {
 		}
 	}
 
-	// 월 말에 월정액 가입한 유저의 경우 몇일 지나고 다시 결제가 되는데 어떻게 처리할지 고민해야함 예: YearMonth -> LocalDate
 	@Scheduled(cron = "0 0 9 ? * MON-FRI")
 	public void paymentAndCancellation() {
-		System.out.println("자동 결제 및 해지");
-		String lastMonth = YearMonth.now().minusMonths(1).toString();
+		LocalDate now = LocalDate.now();
+		List<User> userList = userRepository.findAllByRoleAndPaymentDate(UserRole.ROLE_PAID, now.toString());
 
-		List<User> userList = userRepository.findByRole(UserRole.ROLE_PAID);
 		for (User user : userList) {
 			String paymentDate = user.getPaymentDate();
-
-			if (paymentDate.equals(lastMonth) && user.getCash() >= 5000 && !user.getPaymentDate().equals("월정액 해지")) {
+			int cash = user.getCash();
+			if (cash >= 5000 && !paymentDate.equals("월정액 해지")) {
 				user.setCash("-", 5000);
-				user.setPaymentDate(YearMonth.now().toString());
+				user.setPaymentDate(now.plusDays(31).toString());
 				user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
-			} else if (paymentDate.equals("월정액 해지") || user.getCash() < 5000) {
+			} else {
 				user.setRole(UserRole.ROLE_USER);
 				user.setPaymentDate("");
-			} else {
-				throw new IllegalArgumentException("얘기치 않은 동작 및 오류");
 			}
 		}
 	}
