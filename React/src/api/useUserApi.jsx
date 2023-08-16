@@ -42,7 +42,7 @@ const setCharges = async (inputValue) => {
 const getCharges = async () => {
     try {
         const { data } = await api.get("/users/charging");
-        return data.data;    
+        return data;    
     } catch (error) {
         throw error;
     }
