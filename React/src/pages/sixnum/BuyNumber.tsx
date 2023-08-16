@@ -5,41 +5,48 @@ import { useMutation } from 'react-query';
 import GetUserIfMutation from '../../components/GetUserIfMutation';
 import { ResultContainer } from '../../components/Manufacturing';
 import { AllowLogin } from '../../components/CheckRole';
+import { Res, errorType } from '../../shared/TypeMenu';
 
 function BuyNumber() {
-    const [num, setNum] = useState(0);
-    const [value, setValue] = useState([]);
-    const [isEmpty, setData] = useState(true);
-    const numRef = useRef();
+    const [num, setNum] = useState<number>(0);
+    const [value, setValue] = useState<string[]>([]);
+    const [isEmpty, setData] = useState<boolean>(true);
+    const numRef = useRef<HTMLInputElement>(null);
     const getUserIfMutation = GetUserIfMutation();
 
-    const InputStyle = {
+    const InputStyle: React.CSSProperties = {
         width: "5cm",
         height: "25px",
     }
-    const buttonStyle = {
+    const buttonStyle: React.CSSProperties = {
         width: "30px",
         height: "30px",
     }
     
+    useEffect(()=>{ 
+        if (numRef.current) {
+            numRef.current.focus();
+        }
+    }, [])
+
     const buyNumberMutation = useMutation(buyNumber, {
-        onSuccess: (res)=>{
-            if  (res !== null) {
-                setValue(res);
+        onSuccess: (res: Res)=>{
+            if  (res.data !== null) {
+                setValue(res.data);
                 setData(false);
                 getUserIfMutation.mutate();
             }
         },
-        onError: (err)=>{
-            if (err.status === 500) {
+        onError: (err: errorType)=>{
+            if (err.code === 500) {
                 alert(err.message);
-            } else if (err.status === 400) {
-                alert(err.msg);
+            } else if (err.code === 400) {
+                alert(err.message);
             }
         }
     });
 
-    const updownHandler = (v) => {
+    const updownHandler = (v: boolean) => {
         v ? (setNum(num+1)):(setNum(num-1));
     }
     const buyHandler = () => {
@@ -49,8 +56,8 @@ function BuyNumber() {
             alert("수량을 입력해주세요");
         }
     }
-    const onChangeHandler = (e) => {
-        setNum(e.target.value);
+    const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setNum(parseInt(e.target.value));
     }
     const onClickHandler = () => {
         setData(true);
@@ -58,7 +65,6 @@ function BuyNumber() {
 
   return (
     <div style={ CommonStyle }>
-        <AllowLogin />
         <h1 style={{  fontSize: "80px" }}>Buy Number</h1>
         {isEmpty ? (
             <div id='buycontent'>
