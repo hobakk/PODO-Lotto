@@ -165,7 +165,7 @@ const getAllMonthStats = async () => {
 const buyNumber = async (inputValue) => {
     try {
         const { data } = await api.post("/sixnum", inputValue);
-        return data.data;
+        return data;
     } catch (error) {
         throw error;
     }
