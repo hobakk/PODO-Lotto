@@ -65,7 +65,7 @@ public class GlobalScheduler {
 		}
 	}
 
-	@Scheduled(cron = "0 0 9 ? * MON-FRI")
+	@Scheduled(cron = "0 0 9 * * *")
 	public void paymentAndCancellation() {
 		LocalDate now = LocalDate.now();
 		List<User> userList = userRepository.findAllByRoleAndPaymentDate(UserRole.ROLE_PAID, now.toString());
