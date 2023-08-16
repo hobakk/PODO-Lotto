@@ -99,10 +99,12 @@ public class GlobalScheduler {
 		List<User> untreatedUsers = userRepository.findUserByUntreated(4);
 		if (!untreatedUsers.isEmpty()) {
 			for (User user : untreatedUsers) {
-				user.setStatus("SUSPENDED");
-				String Key = "RT: " + user.getId();
-				String refreshToken = redisTemplate.opsForValue().get(Key);
-				if (refreshToken != null) redisTemplate.delete(refreshToken);
+				if (!user.getRole().equals(UserRole.ROLE_ADMIN)) {
+					user.setStatus("SUSPENDED");
+					String Key = "RT: " + user.getId();
+					String refreshToken = redisTemplate.opsForValue().get(Key);
+					if (refreshToken != null) redisTemplate.delete(refreshToken);
+				}
 			}
 		}
 	}
