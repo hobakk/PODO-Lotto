@@ -41,26 +41,33 @@
 ### 1. 모든 유저 조회, 모든 충전요청 조회
 - FE: 조회된 정보들을 Nickname, cash 값으로 필터링
 ### 2. 나머지
-- 생성: 관리자 등록, 메인 로또 객체
+- 생성: 메인 통계 (Lotto 객체)
 - 조회: 충전요청 검색
-- 수정: 충전, 차감, 상태 수정, 권한 수정
+- 수정: 관리자 등록, 충전, 차감, 상태 수정, 권한 수정
 
 <br/><br/><h2>Lotto</h2>
 
 Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.tistory.com/131)
-### 1. 조회
-- 메인 로또 통계, 월 통계, 저장된 월 통계 YearMonth
+### 1. 메인 로또 통계
+- Cache 의 entryTtl 을 30분으로 제한하여 30분 단위로 통계를 갱신
+### 2. 월 통계, 저장된 월 통계 YearMonth(index)
+- entryTtl 제한을 두지 않음
 
 <br/><br/><h2>SixNumber</h2>
 
 ### 1. 랜덤 번호 추천
-### 2. 반복 연산된 번호 추천
+### 2. 반복 연산된 번호 추천 [code](https://github.com/hobakk/Lotto/blob/main/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L75-L131)
+- Thead 최종 출력 TopNumber 개수 만큼 생성하여 연산 
+- MultiThread 를 사용하여 23.5% 속도 개선 -> [Blog](https://holloweyed-snail.tistory.com/127)
+- 주어진 조건에 따라 무작위로 숫자를 생성하고, 그 중에서 가장 자주 등장하는 숫자를 찾아 리스트로 반환
 
 <br/><br/><h2>WinNumber</h2>
 
 Redis Cache 사용해서 속도 개선
 ### 1. 당첨번호 조회
+- @Cacheable 을 적용하고 entryTtl 제한을 두지않음
 ### 2. 당첨번호 등록
+- @CachePut RedisCache 에 저장되어 있는 value="WinNumbers" 를 갱신
 
 <br/><br/><h2>Token</h2>
 
