@@ -18,3 +18,12 @@ export type Res = {
     message: string;
     data: any;
 };
+
+export type UserIfState = {
+    email: string;
+    nickname: string;
+    cash: string;
+    role: string;
+    status: string;
+    statement: Record<string, any>;
+};

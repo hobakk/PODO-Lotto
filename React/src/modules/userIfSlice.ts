@@ -1,13 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-interface UserIfState {
-    email: string;
-    nickname: string;
-    cash: string;
-    role: string;
-    status: string;
-    statement: Record<string, any>;
-}
+import { UserIfState } from "../shared/TypeMenu";
 
 const initialState: UserIfState = {
     email: "",
