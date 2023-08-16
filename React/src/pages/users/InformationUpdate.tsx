@@ -6,18 +6,22 @@ import LogoutMutation from '../../components/LogoutMutation';
 import { RootState } from '../../config/configStore';
 import { useSelector } from 'react-redux';
 import { Res, errorType } from '../../shared/TypeMenu';
+import { useAllowType } from '../../hooks/AllowType';
 
 function InformationUpdate() {
+    type InputProps = { email: string, password: string, nickname: string }
+
     const userIf = useSelector((state: RootState)=>state.userIf);
     const [password, setPassword] = useState<string>("");
     const pwRef = useRef<HTMLInputElement>(null);
     const [isPassword, setIsPassword] = useState<boolean>(false);
-    const [inputValue, setInputValue] = useState({
+    useAllowType("AllowLogin");
+    const [inputValue, setInputValue] = useState<InputProps>({
         email: "",
         password: "",
         nickname: "",
     }); 
-    const [result, setResult] = useState({
+    const [result, setResult] = useState<InputProps>({
         email: "",
         password: "",
         nickname: "",
@@ -25,7 +29,9 @@ function InformationUpdate() {
 
     const checkPWMutation = useMutation(checkPW, {
         onSuccess: (res: Res)=>{
-            setIsPassword(true);
+            if (res.code === 200) {
+                setIsPassword(true);
+            }
         },  
         onError: (err: errorType)=>{
             if (err.code === 500) {
@@ -73,7 +79,6 @@ function InformationUpdate() {
     }
 
     useEffect(()=>{
-        console.log(result)
         if  (result.email !== "" && result.nickname !== "") {
             updateMutation.mutate(result);  
         }
