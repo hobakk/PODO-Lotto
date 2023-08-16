@@ -71,4 +71,21 @@ Redis Cache 사용해서 속도 개선
 
 <br/><br/><h2>Token</h2>
 
+### 1. 로그인체크 이후 UserInfo 반환
+- React 새로고침 시 Redux가 초기화되어 AccessTokne 이 만료되지 않았다면 UserInfo 를 Redux state 에 업데이트
+- AccessTokne 이 만료되었다면 RefreshToken 의 만료를 체크하고 상황에 맞는 동작 진행
+### 2. RefreshToken 갱신
+- FE 에서 Res.code 401 을 받았을 때 FE 에서 보낸 RefreshToken 을 valid 하고 유효하면 AccessToken 을 갱신
+
 <br/><br/><h2>Scheduler</h2>
+### 1. 월 통계 생성
+- 현재 기준 저번달 통계가 존재하지 않을 때 통계를 생성 및 저장
+### 2. 프리미엄 등록 또는 해제
+- 프리미엄 등록 이후 31일 경과시 5000원 차감
+- 조건에 부합하지 않다면 프리미엄 해제
+### 3. 탈퇴한 유저 정보 일괄 삭제
+- 탈퇴 이후 1달이 경과된 유저 전부를 삭제
+### 4. 이용정지
+- 충전 요청 미처리 횟수 초과시 상태 변경
+
+<br/><br/>
