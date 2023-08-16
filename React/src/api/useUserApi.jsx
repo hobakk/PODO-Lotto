@@ -183,7 +183,7 @@ const statisticalNumber = async (inputValue) => {
 const getRecentNumber = async () => {
     try {
         const res = await api.get("/sixnum/recent")
-        return res.data.data;
+        return res.data;
     } catch (error) {
         throw error;
     }
