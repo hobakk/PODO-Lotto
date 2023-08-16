@@ -22,12 +22,12 @@ const withdraw = async (msg) => {
 
 const checkPW = async (msg) => {
     const { data } = await api.post("/users/check-pw", msg);
-    return data.code;
+    return data;
 }
 
 const update = async (inputValue) => {
     const { data } = await api.patch("/users/update", inputValue);
-    return data.code;
+    return data;
 }
 
 const setCharges = async (inputValue) => {
