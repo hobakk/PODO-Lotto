@@ -146,7 +146,7 @@ const getTopNumberForMonth = async (yearMonth) => {
                 yearMonth,
             }
         });
-        return data.data;
+        return data;
     } catch (error) {
         throw error;
     }
@@ -155,7 +155,7 @@ const getTopNumberForMonth = async (yearMonth) => {
 const getAllMonthStats = async () => {
     try {
         const { data } = await api.get("/lotto/yearMonth/all");
-        return data.data;   
+        return data;   
     } catch (error) {
         throw error;
     }
