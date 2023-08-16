@@ -3,11 +3,12 @@ import { InputBox, SignBorder, CommonStyle } from '../../components/Styles'
 import { setCharges } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { AllowLogin } from '../../components/CheckRole'
 import { Res, errorType } from '../../shared/TypeMenu';
+import { useAllowType } from '../../hooks/AllowType';
 
 function SetCharging() {
     const navigate = useNavigate();
+    useAllowType("AllowLogin");
     const [inputValue, setInputValue] = useState<{cash: number, msg: string}>({
         cash: 0,
         msg: "",
@@ -48,7 +49,6 @@ function SetCharging() {
 
   return (
     <div style={ SignBorder }>
-        <AllowLogin />
         <form onSubmit={submitHandler} style={ CommonStyle }>
             <h1 style={{  fontSize: "80px" }}>Charging</h1>
             <p>금액과 입금 메세지를 적어주세요</p>
