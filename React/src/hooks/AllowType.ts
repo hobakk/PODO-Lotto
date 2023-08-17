@@ -34,3 +34,7 @@ export function useAllowType(type: string): boolean {
 
     return isAllow;
 }
+
+export const AllowOnlyAdmin: string = "AllowOnlyAdmin";
+export const AllowLogin: string = "AllowLogin";
+export const AllowNotRoleUser: string = "AllowNotRoleUser";
