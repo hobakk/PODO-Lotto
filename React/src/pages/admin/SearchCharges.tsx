@@ -2,28 +2,36 @@ import React, { useEffect, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
 import { useMutation } from 'react-query';
 import { getSearch } from '../../api/useUserApi';
-import { AllowOnlyAdmin } from '../../components/CheckRole';
+import { Res, errorType } from '../../shared/TypeMenu';
+import { AllowOnlyAdmin, useAllowType } from '../../hooks/AllowType';
 
 function SearchCharges() {
-    const [inputValue, setInputValue] = useState([]);
-    const [value, setValue] = useState("");
+    useAllowType(AllowOnlyAdmin);
+    const [inputValue, setInputValue] = useState<{msg: string, cash: number}>({
+        msg: "",
+        cash: 0,
+    });
+    const [value, setValue] = useState<{userId: Number, msg: string, value: number}>({
+        userId: 0,
+        msg: "",
+        value: 0,
+    });
 
     const getSearchMutation = useMutation(getSearch, {
-        onSuccess: (res)=>{
+        onSuccess: (res: Res)=>{
             if (res.code === 200) {
-                console.log("들어옴")
                 setValue(res.data);
             }
         },
-        onError: (err) => {
-            if (err.status === 500) {
+        onError: (err: errorType) => {
+            if (err.code === 500) {
                 alert(err.message);
             }
-            setValue([]);
+            setValue({userId: 0, msg: "", value: 0});
         }
     })
 
-    const onChangeHandler = (e) => {
+    const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setInputValue({
             ...inputValue,
@@ -31,7 +39,7 @@ function SearchCharges() {
         })
     }
 
-    const onSubmitHandler = (e) => {
+    const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (inputValue.msg === "") {
             alert("msg 를 입력하세요");
@@ -42,9 +50,7 @@ function SearchCharges() {
         }
     }
 
-    useEffect(()=>{console.log(value)}, [value])
-
-    const MapBorderStyle = {
+    const MapBorderStyle: React.CSSProperties = {
         display: "flex",
         flexDirection: "column",
         border: "3px solid black",
@@ -52,7 +58,7 @@ function SearchCharges() {
         marginBottom: "5px"
       }
 
-    const InputStyle = {
+    const InputStyle: React.CSSProperties = {
         width: "7cm",
         height: "0.8cm",
     }
@@ -61,7 +67,7 @@ function SearchCharges() {
     <div id='recent' style={{ ...CommonStyle, fontSize:"20px"}}>
         <AllowOnlyAdmin />
         <h1 style={{  fontSize: "80px" }}>Search Charges</h1>
-        {value === "" ? (
+        {value.userId === 0 ? (
             <form onSubmit={onSubmitHandler}>
                 <div>
                     <input 
