@@ -3,31 +3,42 @@ import { CommonStyle } from '../../components/Styles'
 import { useMutation } from 'react-query';
 import { setWinNumber } from '../../api/useUserApi';
 import { AllowOnlyAdmin } from '../../components/CheckRole';
+import { Res, errorType } from '../../shared/TypeMenu';
 
 function SetWinNumber() {
-    const [inputValue, setInputValue] = useState([]);
-    const dateRef = useRef();
+    type WinNumberRequest = {
+        date: string,
+        time: number,
+        prize: number,
+        winner: number,
+        numbers: string,
+    }
+
+    const [inputValue, setInputValue] = useState<WinNumberRequest>({
+        date: "",
+        time: 0,
+        prize: 0,
+        winner: 0,
+        numbers: "",
+    });
+    const dateRef = useRef<HTMLInputElement>(null);
 
     const setWinNumberMutation = useMutation(setWinNumber, {
-        onSuccess: (res)=>{
-            alert(res.msg);
+        onSuccess: (res: Res)=>{
+            alert(res.message);
         },
-        onError: (err)=>{
-            if (err.status === 500) {
-                alert(err.message);
-            } else {
-                alert(err.msg);
-            }
+        onError: (err: errorType)=>{
+            alert(err.message);
         }
     })
 
-    const InputStyle = {
+    const InputStyle: React.CSSProperties = {
         width: "7cm",
         height: "0.8cm",
         marginBottom: "15px",
     }
 
-    const onSubmitHandler = (e) => {
+    const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const { date, time, prize, winner, numbers } = inputValue;
         if  (!date || !time || !prize || !winner || !numbers ) {
@@ -37,7 +48,7 @@ function SetWinNumber() {
         }
     }
 
-    const onChangeHandler = (e) => {
+    const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setInputValue({
             ...inputValue,
@@ -45,7 +56,11 @@ function SetWinNumber() {
         })
     }
 
-    useEffect(()=>{dateRef.current.focus()}, [])
+    useEffect(()=>{
+        if (dateRef.current) {
+            dateRef.current.focus()
+        }
+    }, [])
 
   return (
     <form style={ CommonStyle } onSubmit={onSubmitHandler}>
