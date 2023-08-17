@@ -7,13 +7,13 @@ import { setCashNickname, setRole } from '../../modules/userIfSlice'
 import { useNavigate } from 'react-router-dom'
 import { RootState } from '../../config/configStore'
 import { Res, errorType } from '../../shared/TypeMenu'
-import { useAllowType } from '../../hooks/AllowType'
+import { AllowLogin, useAllowType } from '../../hooks/AllowType'
 
 function Premium() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const userIf = useSelector((state: RootState)=>state.userIf);
-    useAllowType("AllowLogin");
+    useAllowType(AllowLogin);
 
     const borderDiv: React.CSSProperties = {
         border: "3px solid black",

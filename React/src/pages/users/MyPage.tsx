@@ -7,11 +7,11 @@ import { useNavigate } from 'react-router-dom';
 import { setStatus } from '../../modules/userIfSlice';
 import LogoutMutation from '../../components/LogoutMutation';
 import { RootState } from '../../config/configStore';
-import { useAllowType } from '../../hooks/AllowType';
+import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function MyPage() {
     const userIf = useSelector((state: RootState)=>state.userIf);
-    const isAllow = useAllowType("AllowLogin");
+    const isAllow = useAllowType(AllowLogin);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [role, setRole] = useState<string>("일반");

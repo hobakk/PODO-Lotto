@@ -3,13 +3,12 @@ import { ResultContainer } from '../../components/Manufacturing'
 import { useMutation } from 'react-query'
 import { CommonStyle } from '../../components/Styles';
 import { getRecentNumber } from '../../api/useUserApi';
-import { AllowLogin } from '../../components/CheckRole';
 import { Res, errorType } from '../../shared/TypeMenu';
-import { useAllowType } from '../../hooks/AllowType';
+import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function RecentNumber() {
     const [value, setValue] = useState<string[]>([]);
-    const isAllow = useAllowType("AllowLogin");
+    const isAllow = useAllowType(AllowLogin);
 
     const getRecentNumMutation = useMutation(getRecentNumber, {
         onSuccess: (res: Res)=>{
@@ -30,7 +29,6 @@ function RecentNumber() {
 
   return (
     <div>
-        <AllowLogin />
         <div style={ CommonStyle }>
             <h3 style={{ fontSize: "80px"}}>Recent Number</h3>
             <div>

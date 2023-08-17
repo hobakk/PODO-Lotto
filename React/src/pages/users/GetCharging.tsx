@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { SignBorder, CommonStyle } from '../../components/Styles'
+import { CommonStyle } from '../../components/Styles'
 import { getCharges } from '../../api/useUserApi'
 import { useMutation } from 'react-query'
 import { Res, errorType } from '../../shared/TypeMenu';
-import { useAllowType } from '../../hooks/AllowType';
+import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function GetCharging() {
   const [chargValue, setChargValue] = useState<{cash: number, msg: string}[]>([]);
-  const isAllow = useAllowType("AllowLogin");
+  const isAllow = useAllowType(AllowLogin);
   const getChargesMutation = useMutation(getCharges, {
     onSuccess: (res: Res)=>{
       if (res.data !== null) {

@@ -3,12 +3,12 @@ import { CommonStyle } from '../../components/Styles'
 import { getStatement } from '../../api/useUserApi'
 import { useMutation } from 'react-query'
 import { Res, errorType } from '../../shared/TypeMenu';
-import { useAllowType } from '../../hooks/AllowType';
+import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function Statement() {
     const [isAssign, setAssign] = useState<boolean>(false);
     const [value, setValue] = useState<{localDate: string, msg: string}[]>([]);
-    const isAllow: boolean = useAllowType("AllowLogin");
+    const isAllow: boolean = useAllowType(AllowLogin);
 
     const StateMnetMutation = useMutation(getStatement, {
         onSuccess: (res: Res)=>{

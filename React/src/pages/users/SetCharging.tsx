@@ -4,11 +4,11 @@ import { setCharges } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { Res, errorType } from '../../shared/TypeMenu';
-import { useAllowType } from '../../hooks/AllowType';
+import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function SetCharging() {
     const navigate = useNavigate();
-    useAllowType("AllowLogin");
+    useAllowType(AllowLogin);
     const [inputValue, setInputValue] = useState<{cash: number, msg: string}>({
         cash: 0,
         msg: "",

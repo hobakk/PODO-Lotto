@@ -6,7 +6,7 @@ import LogoutMutation from '../../components/LogoutMutation';
 import { RootState } from '../../config/configStore';
 import { useSelector } from 'react-redux';
 import { Res, errorType } from '../../shared/TypeMenu';
-import { useAllowType } from '../../hooks/AllowType';
+import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function InformationUpdate() {
     type InputProps = { email: string, password: string, nickname: string }
@@ -15,7 +15,7 @@ function InformationUpdate() {
     const [password, setPassword] = useState<string>("");
     const pwRef = useRef<HTMLInputElement>(null);
     const [isPassword, setIsPassword] = useState<boolean>(false);
-    useAllowType("AllowLogin");
+    useAllowType(AllowLogin);
     const [inputValue, setInputValue] = useState<InputProps>({
         email: "",
         password: "",

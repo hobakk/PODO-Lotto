@@ -3,11 +3,11 @@ import { CommonStyle } from '../../components/Styles'
 import { buyNumber } from '../../api/useUserApi';
 import { useMutation } from 'react-query';
 import { ResultContainer } from '../../components/Manufacturing';
-import { useAllowType } from '../../hooks/AllowType';
+import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 import { Res } from '../../shared/TypeMenu';
 
 function StatisticalNumber() {
-    useAllowType("AllowLogin");
+    useAllowType(AllowLogin);
     const [num, setNum] = useState<number>(0);
     const [repetition, setRepetition] = useState<number>(0);
     const [value, setValue] = useState<string[]>([]);

@@ -5,10 +5,10 @@ import { getAllMonthStats, getTopNumberForMonth } from '../../api/useUserApi';
 import { NumSentenceResult } from '../../components/Manufacturing';
 import StatsContainer from '../../components/StatsContainer';
 import { Res, errorType } from '../../shared/TypeMenu';
-import { useAllowType } from '../../hooks/AllowType';
+import { AllowNotRoleUser, useAllowType } from '../../hooks/AllowType';
 
 function StatsMonth() {
-    useAllowType("AllowNotRoleUser");
+    useAllowType(AllowNotRoleUser);
     const [yMList, setYMList] = useState<string[]>([]);
     const [yearMonth, setYearMonth] = useState<string>("");
     const [value, setValue] = useState<{countList: string[], value: string}>({countList: [], value: ""});
@@ -74,7 +74,12 @@ function StatsMonth() {
                     yMList.map((str, index)=>{
                         return (
                             <div key={`buttons${index}`}>
-                                <button onClick={()=>setYearMonth(str)} style={{ width: "3cm", height: "1cm", fontSize: "20px" }} >{str}</button>
+                                <button 
+                                    onClick={()=>setYearMonth(str)} 
+                                    style={{ width: "3cm", height: "1cm", fontSize: "20px" }} 
+                                >
+                                    {str}
+                                </button>
                             </div>
                         )
                     })

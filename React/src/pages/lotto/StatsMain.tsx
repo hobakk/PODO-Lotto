@@ -5,11 +5,11 @@ import { getMainTopNumber } from '../../api/useUserApi';
 import { NumSentenceResult } from '../../components/Manufacturing';
 import StatsContainer from '../../components/StatsContainer';
 import { Res } from '../../shared/TypeMenu';
-import { useAllowType } from '../../hooks/AllowType';
+import { AllowNotRoleUser, useAllowType } from '../../hooks/AllowType';
 
 function StatsMain() {
     const [value, setValue] = useState<{countList: string[], value: string}>({countList: [], value: ""});
-    const isAllow = useAllowType("AllowNotRoleUser")
+    const isAllow = useAllowType(AllowNotRoleUser);
 
     const MainMutation = useMutation(getMainTopNumber, {
         onSuccess: (res: Res)=>{
