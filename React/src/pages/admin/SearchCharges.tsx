@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
 import { useMutation } from 'react-query';
 import { getSearch } from '../../api/useUserApi';
-import { Res, errorType } from '../../shared/TypeMenu';
+import { AdminGetCharges, Res, errorType } from '../../shared/TypeMenu';
 import { AllowOnlyAdmin, useAllowType } from '../../hooks/AllowType';
 
 function SearchCharges() {
@@ -11,7 +11,7 @@ function SearchCharges() {
         msg: "",
         cash: 0,
     });
-    const [value, setValue] = useState<{userId: Number, msg: string, value: number}>({
+    const [value, setValue] = useState<AdminGetCharges>({
         userId: 0,
         msg: "",
         value: 0,

@@ -27,3 +27,9 @@ export type UserIfState = {
     status: string;
     statement: Record<string, any>;
 };
+
+export type AdminGetCharges = {
+    userId: Number,
+    msg: string,
+    value: number,
+};
