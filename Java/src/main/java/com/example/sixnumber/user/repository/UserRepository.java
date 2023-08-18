@@ -1,5 +1,6 @@
 package com.example.sixnumber.user.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,7 @@ import com.example.sixnumber.user.type.UserRole;
 public interface UserRepository extends JpaRepository<User, Long> {
 	Boolean existsUserByEmail(String email);
 	Boolean existsUserByNickname(String nickname);
-	List<User> findAllByRoleAndPaymentDate(UserRole role, String localDateStr);
+	List<User> findAllByRoleAndPaymentDate(UserRole role, LocalDate localDateStr);
 	Optional<User> findByEmail(String email);
 	Optional<User> findByStatusAndEmail(Status status, String email);
 

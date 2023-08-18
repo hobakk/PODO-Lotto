@@ -237,18 +237,17 @@ public class UserServiceTest {
 
 	@Test
 	void setUser_success() {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn("월정액 해지");
+		OnlyMsgRequest request = new OnlyMsgRequest("월정액 해지");
 
 		saveUser.setRole(UserRole.ROLE_PAID);
-		saveUser.setPaymentDate(" ");
+		saveUser.setCancelPaid(false);
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		ApiResponse response = userService.setPaid(request, saveUser.getEmail());
 
 		verify(manager).findUser(anyString());
-		assertEquals(saveUser.getPaymentDate(), "월정액 해지");
+		assertEquals(saveUser.getCancelPaid(), true);
 		TestUtil.ApiAsserEquals(response, 200, "해지 신청 성공");
 	}
 
