@@ -124,9 +124,9 @@ public class UserService {
 
 		if (request.getMsg().equals("월정액 해지")) {
 			if (!user.getRole().equals(UserRole.ROLE_PAID)) throw new IllegalArgumentException("월정액 사용자가 아닙니다");
-			if (user.getPaymentDate().equals(request.getMsg())) throw new OverlapException("프리미엄 해제 신청을 이미 하셨습니다");
+			if (Boolean.TRUE.equals(user.getCancelPaid())) throw new OverlapException("프리미엄 해제 신청을 이미 하셨습니다");
 
-			user.setPaymentDate(request.getMsg());
+			user.setCancelPaid(true);
 			return ApiResponse.ok("해지 신청 성공");
 		}
 
@@ -135,7 +135,7 @@ public class UserService {
 		}
 		user.setCash("-", 5000);
 		user.setRole(UserRole.ROLE_PAID);
-		user.setPaymentDate(LocalDate.now().plusDays(31).toString());
+		user.setPaymentDate(LocalDate.now().plusDays(31));
 		user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
 		return ApiResponse.ok("권한 변경 성공");
 	}

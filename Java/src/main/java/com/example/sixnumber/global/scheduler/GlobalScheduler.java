@@ -71,15 +71,16 @@ public class GlobalScheduler {
 		List<User> userList = userRepository.findAllByRoleAndPaymentDate(UserRole.ROLE_PAID, now.toString());
 
 		for (User user : userList) {
-			String paymentDate = user.getPaymentDate();
+			boolean cancelPaid = user.getCancelPaid();
 			int cash = user.getCash();
-			if (cash >= 5000 && !paymentDate.equals("월정액 해지")) {
+			if (cash >= 5000 && !cancelPaid) {
 				user.setCash("-", 5000);
-				user.setPaymentDate(now.plusDays(31).toString());
+				user.setPaymentDate(now.plusDays(31));
 				user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
 			} else {
 				user.setRole(UserRole.ROLE_USER);
-				user.setPaymentDate("");
+				user.setPaymentDate(null);
+				user.setCancelPaid(null);
 			}
 		}
 	}

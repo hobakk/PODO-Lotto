@@ -55,13 +55,15 @@ public class User implements UserDetails {
 	@Column(name = "status", nullable = false)
 	private Status status;
 	@Column(name = "paymentDate")
-	private String paymentDate;
+	private LocalDate paymentDate;
+	@Column(name = "cancelPaid")
+	private Boolean cancelPaid;
 	@Column(name = "withdrawExpiration")
 	private LocalDate withdrawExpiration;
 	@ElementCollection
 	@OrderColumn(name = "statement_index", nullable = false)
 	private List<String> statement;
-	@Column(name = "chargingCount")
+	@Column(name = "timeOutCount")
 	private int timeOutCount;
 
 	public User(SignupRequest request, String password) {
@@ -93,9 +95,10 @@ public class User implements UserDetails {
 		this.nickname = list.get(2);
 	}
 
-	public void setPaymentDate(String yearMonth) {
-		this.paymentDate = yearMonth;
+	public void setPaymentDate(LocalDate localDate) {
+		this.paymentDate = localDate;
 	}
+	public void setCancelPaid(Boolean type) { this.cancelPaid = type; }
 	public void setCash(String sign, int cash) {
 		switch (sign) {
 			case "+" -> this.cash += cash;
@@ -126,10 +129,6 @@ public class User implements UserDetails {
 	public void setTimeOutCount(int num) {
 		if (num == 0) this.timeOutCount = 0;
 		else this.timeOutCount += num;
-	}
-
-	public void setNickname(String str) {
-		this.nickname = str;
 	}
 
 	// test code
