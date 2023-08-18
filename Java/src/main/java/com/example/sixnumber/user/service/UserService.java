@@ -57,7 +57,7 @@ public class UserService {
 		if (dormantUser.isPresent()) {
 			User user = dormantUser.get();
 			if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-				user.setStatus("ACTIVE");
+				user.setStatus(Status.ACTIVE);
 				user.setWithdrawExpiration(null);
 				userRepository.save(user);
 				return ApiResponse.ok("재가입 완료");
@@ -114,7 +114,7 @@ public class UserService {
 			throw new IllegalArgumentException("잘못된 문자열 입력");
 		}
 		User user = manager.findUser(email);
-		user.setStatus("DORMANT");
+		user.setStatus(Status.DORMANT);
 		user.setWithdrawExpiration(LocalDate.now().plusMonths(1));
 		return ApiResponse.ok("회원 탈퇴 완료");
 	}

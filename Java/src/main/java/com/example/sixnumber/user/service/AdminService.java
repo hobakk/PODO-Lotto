@@ -122,7 +122,14 @@ public class AdminService {
 
 		if (targetStatusStr.equals(request.getMsg())) throw new IllegalArgumentException("이미 적용되어 있는 상태코드 입니다");
 
-		target.setStatus(request.getMsg());
+		Status status = null;
+		switch (request.getMsg()) {
+			case "ACTIVE" -> status = Status.ACTIVE;
+			case "SUSPENDED" -> status = Status.SUSPENDED;
+			case "DORMANT" -> status = Status.DORMANT;
+		}
+
+		target.setStatus(status);
 
 		if (target.getStatus().equals(Status.SUSPENDED) || target.getStatus().equals(Status.DORMANT)) {
 			redisDao.deleteInRedisValueIsNotNull(target.getId());

@@ -2,6 +2,7 @@ package com.example.sixnumber.user.entity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -109,12 +110,9 @@ public class User implements UserDetails {
 		this.role = UserRole.ROLE_ADMIN;
 	}
 
-	public void setStatus(String status) {
-		switch (status) {
-			case "ACTIVE" -> this.status = Status.ACTIVE;
-			case "SUSPENDED" -> this.status = Status.SUSPENDED;
-			case "DORMANT" -> this.status = Status.DORMANT;
-		}
+	public void setStatus(Status status) {
+		List<Status> statusList = Arrays.asList(Status.ACTIVE, Status.DORMANT, Status.SUSPENDED);
+		if (statusList.contains(status)) this.status = status;
 	}
 
 	public void setWithdrawExpiration(LocalDate localDate) {

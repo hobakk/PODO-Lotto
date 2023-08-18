@@ -94,7 +94,7 @@ public class UserServiceTest {
 	void signup_success_setActive() {
 		SignupRequest request = TestDataFactory.signupRequest();
 
-		saveUser.setStatus("DORMANT");
+		saveUser.setStatus(Status.DORMANT);
 
 		when(userRepository.findByStatusAndEmail(eq(Status.DORMANT), anyString())).thenReturn(Optional.of(saveUser));
 

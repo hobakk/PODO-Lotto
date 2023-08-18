@@ -100,7 +100,7 @@ public class GlobalScheduler {
 		if (!untreatedUsers.isEmpty()) {
 			for (User user : untreatedUsers) {
 				if (!user.getRole().equals(UserRole.ROLE_ADMIN)) {
-					user.setStatus("SUSPENDED");
+					user.setStatus(Status.SUSPENDED);
 					String Key = "RT: " + user.getId();
 					String refreshToken = redisTemplate.opsForValue().get(Key);
 					if (refreshToken != null) redisTemplate.delete(refreshToken);

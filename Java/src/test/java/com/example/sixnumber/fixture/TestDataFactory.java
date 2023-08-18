@@ -32,7 +32,7 @@ public class TestDataFactory {
 		user.setId(7L);
 		user.setCash("+", 5000);
 		user.setRole(UserRole.ROLE_USER);
-		user.setStatus("ACTIVE");
+		user.setStatus(Status.ACTIVE);
 		return user;
 	}
 

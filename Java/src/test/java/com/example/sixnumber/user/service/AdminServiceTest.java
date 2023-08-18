@@ -195,7 +195,7 @@ public class AdminServiceTest {
 		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("ACTIVE");
 
-		saveUser.setStatus("SUSPENDED");
+		saveUser.setStatus(Status.SUSPENDED);
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
