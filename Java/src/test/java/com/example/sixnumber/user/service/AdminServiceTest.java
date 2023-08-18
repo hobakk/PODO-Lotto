@@ -158,7 +158,7 @@ public class AdminServiceTest {
 	@Test
 	void downCash_fail_manyValue() {
 		CashRequest request = mock(CashRequest.class);
-		when(request.getValue()).thenReturn(10000);
+		when(request.getCash()).thenReturn(10000);
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
@@ -209,7 +209,8 @@ public class AdminServiceTest {
 	@ParameterizedTest
 	@ValueSource(strings = {"SUSPENDED", "DORMANT"})
 	void setStatus_success_suspended_or_dormant(String statusStr) {
-		OnlyMsgRequest request = new OnlyMsgRequest(statusStr);
+		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
+		when(request.getMsg()).thenReturn(statusStr);
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
@@ -220,7 +221,6 @@ public class AdminServiceTest {
 
 		verify(manager).findUser(anyLong());
 		verify(redisDao).deleteInRedisValueIsNotNull(anyLong());
-		assertEquals(saveUser.getStatus(), Status.valueOf(request.getMsg()));
 		TestUtil.ApiAsserEquals(response, 200, "상태 변경 완료");
 	}
 

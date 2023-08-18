@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class CashRequest {
 	private Long userId;
 	private String msg;
-	private int value;
+	private int cash;
 
 }

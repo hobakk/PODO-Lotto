@@ -76,24 +76,24 @@ public class AdminService {
 	// 결제에 대해서 고민해봐야함 현재 로직은 특정 계좌에 msg 와 value 가 확인되면 수동으로 넣어주는 방식
 	public ApiResponse upCash(CashRequest cashRequest) {
 		User user = manager.findUser(cashRequest.getUserId());
-		String key = cashRequest.getUserId() + "-" + cashRequest.getMsg() + "-" + cashRequest.getValue();
+		String key = cashRequest.getUserId() + "-" + cashRequest.getMsg() + "-" + cashRequest.getCash();
 		// searchCharging 에서 검증되어 넘어온 Request 이기에 값이 있는지에 대한 체크는 건너뛰어도 된다 생각함
 		redisDao.deleteValues(key);
 
-		user.setStatement(LocalDate.now() + "," + cashRequest.getValue() +"원 충전");
-		user.setCash("+", cashRequest.getValue());
+		user.setStatement(LocalDate.now() + "," + cashRequest.getCash() +"원 충전");
+		user.setCash("+", cashRequest.getCash());
 		user.setTimeOutCount(0);
 		return ApiResponse.ok("충전 완료");
 	}
 
 	public ApiResponse downCash(CashRequest cashRequest) {
 		User user = manager.findUser(cashRequest.getUserId());
-		if (user.getCash() < cashRequest.getValue()) {
+		if (user.getCash() < cashRequest.getCash()) {
 			throw new IllegalArgumentException("해당 유저가 보유한 금액보다 많습니다");
 		}
 
-		user.setCash("-", cashRequest.getValue());
-		user.setStatement(LocalDate.now() + "," + cashRequest.getMsg() + ": " + cashRequest.getValue() + "원 차감");
+		user.setCash("-", cashRequest.getCash());
+		user.setStatement(LocalDate.now() + "," + cashRequest.getMsg() + ": " + cashRequest.getCash() + "원 차감");
 		return ApiResponse.ok("차감 완료");
 	}
 
