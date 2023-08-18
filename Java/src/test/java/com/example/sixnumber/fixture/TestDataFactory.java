@@ -1,5 +1,6 @@
 package com.example.sixnumber.fixture;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import com.example.sixnumber.global.dto.TokenRequest;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
+import com.example.sixnumber.lotto.dto.WinNumberRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.user.dto.CashRequest;
@@ -20,7 +22,6 @@ import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
-import com.example.sixnumber.lotto.dto.WinNumberRequest;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -149,9 +150,17 @@ public class TestDataFactory {
 	}
 
 	public static Stream<Arguments> cancellation() {
+		User paid = user();
+		paid.setRole(UserRole.ROLE_PAID);
+		paid.setCancelPaid(false);
+
+		User cancelPaidUser = user();
+		cancelPaidUser.setRole(UserRole.ROLE_PAID);
+		cancelPaidUser.setCancelPaid(true);
+
 		return Stream.of(
-			Arguments.of(String.valueOf(YearMonth.of(2023, 4)), "-", 5000, 1000),
-			Arguments.of("월정액 해지", "+", 0, 6000)
+			Arguments.of(paid, 1000, UserRole.ROLE_PAID, LocalDate.now().plusDays(31), false),
+			Arguments.of(cancelPaidUser, 6000, UserRole.ROLE_USER, null, null)
 		);
 	}
 

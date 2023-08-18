@@ -1,14 +1,12 @@
 package com.example.sixnumber.global;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,51 +72,23 @@ public class GlobalSchedulerTest {
 		verify(manager).revisedTopIndicesAsStr(anyList());
 	}
 
-	@Test
-	void payment() {
-		saveUser.setStatus("PAID");
-		saveUser.setPaymentDate(String.valueOf(YearMonth.now().minusMonths(1)));
-
-		when(userRepository.findByRole(UserRole.ROLE_PAID)).thenReturn(List.of(saveUser));
-
-		globalScheduler.paymentAndCancellation();
-
-		verify(userRepository).findByRole(UserRole.ROLE_PAID);
-		assertEquals(saveUser.getCash(), 1000);
-		assertEquals(saveUser.getPaymentDate(), YearMonth.now().toString());
-		assertEquals(saveUser.getStatement().get(0), LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
-	}
-
 	@ParameterizedTest
 	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#cancellation")
-	void Cancellation(String yearMonth, String sign, int cash, int resultCash) {
-		saveUser.setStatus("PAID");
-		saveUser.setPaymentDate(yearMonth);
-		saveUser.setCash(sign, cash);
-
-		when(userRepository.findByRole(UserRole.ROLE_PAID)).thenReturn(List.of(saveUser));
+	void paymentAndCancellation(User user, int resultCash, UserRole resultRole, LocalDate resultLocalDate, Boolean result) {
+		when(userRepository.findAllByRoleAndPaymentDate(any(UserRole.class), any(LocalDate.class))).thenReturn(List.of(user));
 
 		globalScheduler.paymentAndCancellation();
 
-		verify(userRepository).findByRole(UserRole.ROLE_PAID);
-		assertEquals(saveUser.getCash(), resultCash);
-	}
-
-	@Test
-	void paymentAndCancellation_fail() {
-		saveUser.setStatus("PAID");
-		saveUser.setPaymentDate("false");
-
-		when(userRepository.findByRole(UserRole.ROLE_PAID)).thenReturn(List.of(saveUser));
-
-		Assertions.assertThrows(IllegalArgumentException.class, () -> globalScheduler.paymentAndCancellation());
-
-		verify(userRepository).findByRole(UserRole.ROLE_PAID);
+		verify(userRepository).findAllByRoleAndPaymentDate(any(UserRole.class), any(LocalDate.class));
+		assertEquals(user.getCash(), resultCash);
+		assertEquals(user.getRole(), resultRole);
+		assertEquals(user.getPaymentDate(), resultLocalDate);
+		assertEquals(user.getCancelPaid(), result);
 	}
 
 	@Test
 	void withdrawExpiartion() {
-		saveUser.setStatus("DORMANT");
+		saveUser.setStatus(Status.DORMANT);
 		saveUser.setWithdrawExpiration(LocalDate.now().minusMonths(2));
 
 		when(userRepository.findByStatusAndWithdrawExpiration(eq(Status.DORMANT))).thenReturn(List.of(saveUser));
@@ -131,7 +101,7 @@ public class GlobalSchedulerTest {
 
 	@Test
 	void autoSetSuspended() {
-		saveUser.setChargingCount(4);
+		saveUser.setTimeOutCount(4);
 		when(userRepository.findUserByUntreated(4)).thenReturn(List.of(saveUser));
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 
