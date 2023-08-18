@@ -71,9 +71,9 @@ public class GlobalScheduler {
 		List<User> userList = userRepository.findAllByRoleAndPaymentDate(UserRole.ROLE_PAID, now);
 
 		for (User user : userList) {
-			boolean cancelPaid = user.getCancelPaid();
+			Boolean cancelPaid = user.getCancelPaid();
 			int cash = user.getCash();
-			if (cash >= 5000 && !cancelPaid) {
+			if (cash >= 5000 && !cancelPaid || cancelPaid == null) {
 				user.setCash("-", 5000);
 				user.setPaymentDate(now.plusDays(31));
 				user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
