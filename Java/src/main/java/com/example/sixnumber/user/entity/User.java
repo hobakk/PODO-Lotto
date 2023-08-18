@@ -62,7 +62,7 @@ public class User implements UserDetails {
 	@OrderColumn(name = "statement_index", nullable = false)
 	private List<String> statement;
 	@Column(name = "chargingCount")
-	private int chargingCount;
+	private int timeOutCount;
 
 	public User(SignupRequest request, String password) {
 		this.email = request.getEmail();
@@ -72,7 +72,7 @@ public class User implements UserDetails {
 		this.status = Status.ACTIVE;
 		this.cash = 1000;
 		this.statement = new ArrayList<>();
-		this.chargingCount = 0;
+		this.timeOutCount = 0;
 	}
 
 	// Controller Test
@@ -84,7 +84,7 @@ public class User implements UserDetails {
 		this.status = status;
 		this.cash = 1000;
 		this.statement = new ArrayList<>();
-		this.chargingCount = 0;
+		this.timeOutCount = 0;
 	}
 
 	public void update(List<String> list) {
@@ -123,9 +123,9 @@ public class User implements UserDetails {
 		this.statement.add(str);
 	}
 
-	public void setChargingCount(int num) {
-		if (num == 0) this.chargingCount = 0;
-		else this.chargingCount += num;
+	public void setTimeOutCount(int num) {
+		if (num == 0) this.timeOutCount = 0;
+		else this.timeOutCount += num;
 	}
 
 	public void setNickname(String str) {

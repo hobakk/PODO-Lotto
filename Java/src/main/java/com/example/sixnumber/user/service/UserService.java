@@ -154,11 +154,11 @@ public class UserService {
 		Set<String> checkIncorrect = redisDao.getKeysList(msgCash);
 		if (!checkIncorrect.isEmpty()) throw new OverlapException("다른 문자로 다시 시도해주세요");
 
-		if (user.getChargingCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
+		if (user.getTimeOutCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
 
 		String value = user.getId() + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getCash();
 		redisDao.setValues(value, value, (long) 12, TimeUnit.HOURS);
-		user.setChargingCount(1);
+		user.setTimeOutCount(1);
 		userRepository.save(user);
 		return ApiResponse.ok("요청 성공");
 	}

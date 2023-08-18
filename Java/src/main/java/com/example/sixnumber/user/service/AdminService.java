@@ -82,7 +82,7 @@ public class AdminService {
 
 		user.setStatement(LocalDate.now() + "," + cashRequest.getValue() +"원 충전");
 		user.setCash("+", cashRequest.getValue());
-		user.setChargingCount(0);
+		user.setTimeOutCount(0);
 		return ApiResponse.ok("충전 완료");
 	}
 

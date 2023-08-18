@@ -137,7 +137,7 @@ public class AdminServiceTest {
 		verify(redisDao).deleteValues(anyString());
 		assertEquals(saveUser.getCash(), 11000);
 		assertNotNull(saveUser.getStatement().get(0));
-		assertEquals(saveUser.getChargingCount(), 0);
+		assertEquals(saveUser.getTimeOutCount(), 0);
 		TestUtil.ApiAsserEquals(response, 200, "충전 완료");
 	}
 

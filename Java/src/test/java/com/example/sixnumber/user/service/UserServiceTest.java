@@ -320,7 +320,7 @@ public class UserServiceTest {
 		verify(redisDao, times(1)).getKeysList(anyString());
 		verify(redisDao).setValues(anyString(), anyString(), anyLong(), any());
 		verify(userRepository).save(saveUser);
-		assertEquals(saveUser.getChargingCount(), 1);
+		assertEquals(saveUser.getTimeOutCount(), 1);
 		TestUtil.ApiAsserEquals(response, 200, "요청 성공");
 	}
 
@@ -353,7 +353,7 @@ public class UserServiceTest {
 	void charging_BreakTheRulesException() {
 		ChargingRequest request = TestDataFactory.chargingRequest();
 
-		saveUser.setChargingCount(4);
+		saveUser.setTimeOutCount(4);
 
 		Assertions.assertThrows(CustomException.class, () -> userService.charging(request, saveUser));
 	}
