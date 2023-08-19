@@ -7,7 +7,7 @@ import com.example.sixnumber.user.type.UserRole;
 import lombok.Getter;
 
 @Getter
-public class UsersReponse {
+public class UsersResponse {
 	private final Long id;
 	private final String email;
 	private final String password;
@@ -16,7 +16,7 @@ public class UsersReponse {
 	private final UserRole role;
 	private final Status status;
 
-	public UsersReponse(User user) {
+	public UsersResponse(User user) {
 		this.id = user.getId();
 		this.email = user.getEmail();
 		this.password = user.getPassword();

@@ -23,7 +23,7 @@ import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
-import com.example.sixnumber.user.dto.UsersReponse;
+import com.example.sixnumber.user.dto.UsersResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -54,8 +54,8 @@ public class AdminService {
 	}
 
 	// page 처리 필요함
-	public ListApiResponse<UsersReponse> getUsers() {
-		return ListApiResponse.ok("조회 성공", userRepository.findAll().stream().map(UsersReponse::new).collect(Collectors.toList()));
+	public ListApiResponse<UsersResponse> getUsers() {
+		return ListApiResponse.ok("조회 성공", userRepository.findAll().stream().map(UsersResponse::new).collect(Collectors.toList()));
 	}
 
 	public ListApiResponse<AdminGetChargingResponse> getCharges() {

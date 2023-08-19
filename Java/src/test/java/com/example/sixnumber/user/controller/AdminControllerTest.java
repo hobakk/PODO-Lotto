@@ -23,7 +23,7 @@ import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
-import com.example.sixnumber.user.dto.UsersReponse;
+import com.example.sixnumber.user.dto.UsersResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.AdminService;
 import com.example.sixnumber.user.type.UserRole;
@@ -44,9 +44,9 @@ public class AdminControllerTest {
 
 	@Test
 	public void GetUsers() throws Exception {
-		UsersReponse usersReponse = new UsersReponse(TestDataFactory.user());
+		UsersResponse usersResponse = new UsersResponse(TestDataFactory.user());
 
-		when(adminService.getUsers()).thenReturn(ListApiResponse.ok("조회 성공", List.of(usersReponse)));
+		when(adminService.getUsers()).thenReturn(ListApiResponse.ok("조회 성공", List.of(usersResponse)));
 
 		mockMvc.perform(get("/api/admin/users").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))

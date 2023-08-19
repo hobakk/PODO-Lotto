@@ -17,7 +17,7 @@ import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
-import com.example.sixnumber.user.dto.UsersReponse;
+import com.example.sixnumber.user.dto.UsersResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.AdminService;
 
@@ -31,7 +31,7 @@ public class AdminController {
 	private final AdminService adminService;
 
 	@GetMapping("/users")
-	public ResponseEntity<ListApiResponse<UsersReponse>> getUsers() {
+	public ResponseEntity<ListApiResponse<UsersResponse>> getUsers() {
 		return ResponseEntity.ok(adminService.getUsers());
 	}
 
