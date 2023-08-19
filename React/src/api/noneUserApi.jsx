@@ -12,6 +12,7 @@ const signin = async (emailPassword) => {
 const signup = async (inputValue) => {
     try {
         const response = await axios.post(`${process.env.REACT_APP_SPRING_URL}/users/signup`, inputValue);
+        console.log(response)
         return response.data;
     } catch (error) {
         throw error.response.data;
@@ -29,7 +30,7 @@ const getWinNumber = async () => {
 
 const checkLoginAndgetUserIf = async (tokens) => {
     try {
-        const res = await axios.post(`${process.env.REACT_APP_SPRING_URL}/jwt/refresh/check`, {
+        const res = await axios.post(`${process.env.REACT_APP_SPRING_URL}/jwt/check/login`, {
             accessToken: tokens[0],
             refreshToken: tokens[1],
         }, {

@@ -3,22 +3,24 @@ import { useMutation } from 'react-query'
 import { getAdminCharges, upCash } from '../../api/useUserApi'
 import { CommonStyle } from '../../components/Styles';
 import { useNavigate } from 'react-router-dom';
-import { AllowOnlyAdmin } from '../../components/CheckRole';
+import { AdminGetCharges, Res, errorType } from '../../shared/TypeMenu';
+import { AllowOnlyAdmin, useAllowType } from '../../hooks/AllowType';
 
 function GetAllCharges() {
+    useAllowType(AllowOnlyAdmin);
     const navigate = useNavigate();
-    const [value, setValue] = useState([]);
-    const [render, setRender] = useState(true);
-    const [selectValue, setSelectValue] = useState("selectCash");
-    const [searchInputValue, setSearchInputValue] = useState("");
-    const [result, setResult] = useState([]);
+    const [value, setValue] = useState<AdminGetCharges[]>([]);
+    const [render, setRender] = useState<boolean>(true);
+    const [selectValue, setSelectValue] = useState<string>("selectCash");
+    const [searchInputValue, setSearchInputValue] = useState<string>("");
+    const [result, setResult] = useState<AdminGetCharges[]>([]);
 
     const getAllChargingMutation = useMutation(getAdminCharges, {
-        onSuccess: (res)=>{
-            setValue(res);
+        onSuccess: (res: Res)=>{
+            setValue(res.data);
         },
-        onError: (err)=>{
-            if (err.status === 500) {
+        onError: (err: errorType)=>{
+            if (err.code === 500) {
                 alert(err.message);
                 navigate("/");
             }
@@ -26,8 +28,8 @@ function GetAllCharges() {
     })
 
     const upCashMutation = useMutation(upCash, {
-        onSuccess: (res)=>{
-            if (res === 200) {
+        onSuccess: (res: Res)=>{
+            if (res.code === 200) {
                 setRender(!render);
             }
         }
@@ -41,7 +43,7 @@ function GetAllCharges() {
         console.log(selectValue)
     }, [selectValue])
 
-    const onClickHandler = (charg) => {
+    const onClickHandler = (charg: AdminGetCharges) => {
         console.log(charg);
         upCashMutation.mutate(charg);
     }
@@ -51,7 +53,7 @@ function GetAllCharges() {
             setResult([]);
         }
         if (value.length !== 0) {
-            let filteredCharges = "";
+            let filteredCharges: AdminGetCharges[] = [];
             if (selectValue === "selectCash") {
                 filteredCharges = value.filter(charg=>{
                     return charg.value.toString().includes(searchInputValue.toString());
@@ -65,16 +67,16 @@ function GetAllCharges() {
         }
     }, [searchInputValue])
 
-    const ResultContainer = ({ classType }) => {
+    const ResultContainer = ({ chargProp }: { chargProp: AdminGetCharges }) => {
         return(
             <div style={{ border:"2px solid black", width:"12cm", marginBottom:"5px", padding:"10px"}}>
                 <div style={{ display:"flex", }}>
-                    <span>userId: {classType.userId}</span>
-                    <button onClick={()=>onClickHandler(classType)} style={{ marginLeft:"auto"}}>충전</button>
+                    <span>userId: {chargProp.userId.toString()}</span>
+                    <button onClick={()=>onClickHandler(chargProp)} style={{ marginLeft:"auto"}}>충전</button>
                 </div>
                 <div style={{ display:"flex"}}>
-                    <span>cash: {classType.value}</span>
-                    <span style={{ marginLeft:"auto"}}>msg: {classType.msg}</span>
+                    <span>cash: {chargProp.value}</span>
+                    <span style={{ marginLeft:"auto"}}>msg: {chargProp.msg}</span>
                 </div>
             </div>
         )
@@ -82,7 +84,6 @@ function GetAllCharges() {
 
   return (
     <div id='recent' style={ CommonStyle }>
-        <AllowOnlyAdmin />
         <h1 style={{  fontSize: "80px", height:"1.5cm" }}>Get AllCharges</h1>
         <div style={{ display:"flex", flexDirection:"row", textAlign:"center"}}>
             <select id="selectOption" value={selectValue} onChange={(e)=>setSelectValue(e.target.value)} style={{ height:"0.65cm" }}>
@@ -93,10 +94,10 @@ function GetAllCharges() {
         </div>
         {searchInputValue === "" ? (
             value.length !== 0 && (
-                value.map((charg, index)=>{
+                value.map((charg: AdminGetCharges, index: number)=>{
                     return (
                         <div key={`charges${index}`} style={{ display:"flex", flexWrap:"wrap", width:"42cm", justifyContent:"center"}}>
-                            <ResultContainer classType={charg}/>
+                            <ResultContainer chargProp={charg}/>
                         </div>
                     )
                 })    
@@ -107,7 +108,7 @@ function GetAllCharges() {
                     result.map((charg, index)=>{
                         return (
                             <div key={`charges${index}`} style={{ display:"flex", flexWrap:"wrap", width:"42cm", justifyContent:"center"}}>
-                                <ResultContainer classType={charg}/>
+                                <ResultContainer chargProp={charg}/>
                             </div>
                         )
                     })

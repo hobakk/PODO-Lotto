@@ -74,7 +74,7 @@ const getUsers = async () => {
 
 const getAdminCharges = async () => {
     const { data } = await api.get("/admin/charges");
-    return data.data;
+    return data;
 }
 
 const getSearch = async ({ msg, cash }) => {
@@ -93,7 +93,7 @@ const setAdmin = async ({ userId, msg }) => {
 
 const upCash = async (inputValue) => {
     const { data } = await api.patch("/admin/users/up-cash", inputValue);
-    return data.code;
+    return data;
 }
 
 const downCash = async (inputValue) => {
