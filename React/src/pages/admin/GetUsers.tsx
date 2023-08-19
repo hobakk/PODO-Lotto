@@ -3,75 +3,75 @@ import { useMutation } from 'react-query'
 import { downCash, getUsers, setRoleFromAdmin, setStatusFromAdmin, setAdmin } from '../../api/useUserApi'
 import { CommonStyle } from '../../components/Styles';
 import { useNavigate } from 'react-router-dom';
-import { AllowOnlyAdmin } from '../../components/CheckRole';
+import { Res, UserAllIf, errorType } from '../../shared/TypeMenu';
+import { AllowOnlyAdmin, useAllowType } from '../../hooks/AllowType';
 
 function GetUsers() {
+  useAllowType(AllowOnlyAdmin);
   const navigate = useNavigate();
-  const [cash, setCash] = useState({});
-  const [value, setValue] = useState([]);
-  const [render, setRender] = useState(true);
-  const [searchInputValue, setSearchInputValue] = useState("");
-  const [role, setRole] = useState({});
-  const [result, setResult] = useState([]);
-  const [status, setStatus] = useState({});
-  const [key, setkey] = useState({});
+  const [cash, setCash] = useState<{ [key: number]: number }>({});
+  const [value, setValue] = useState<UserAllIf[]>([]);
+  const [render, setRender] = useState<boolean>(true);
+  const [searchInputValue, setSearchInputValue] = useState<string>("");
+  const [role, setRole] = useState<{ [key: string]: string }>({});
+  const [result, setResult] = useState<UserAllIf[]>([]);
+  const [status, setStatus] = useState<{ [key: number]: string }>({});
+  const [key, setkey] = useState<{ [key: number]: string }>({});
 
   const getUsersMutation = useMutation(getUsers, {
-    onSuccess: (res) =>{
-      setValue(res);
+    onSuccess: (res: Res) =>{
+      setValue(res.data);
     }
   })
 
   const downCashMutation = useMutation(downCash, {
-    onSuccess: (res)=>{
-      if  (res === 200) {
+    onSuccess: (res: Res)=>{
+      if  (res.code === 200) {
         alert("차감완료");
         setRender(!render);
       }
     },
-    onError: (err)=>{
-      if  (err.status === 500) {
+    onError: (err: errorType)=>{
+      if  (err.code === 500) {
         alert(err.message);
       }
     }
   })
 
   const setRoleMutation = useMutation(setRoleFromAdmin, {
-    onSuccess: (res)=>{
-      if (res === 200) {
+    onSuccess: (res: Res)=>{
+      if (res.code === 200) {
         setRender(!render);
       }
     },
-    onError: (err)=>{
-      if (err.status === 500) {
+    onError: (err: errorType)=>{
+      if (err.code === 500) {
         alert(err.message);
       }
     }
   })
 
   const setStatusMutation = useMutation(setStatusFromAdmin, {
-    onSuccess: (res)=>{
-      if (res === 200) {
+    onSuccess: (res: Res)=>{
+      if (res.code === 200) {
         setRender(!render);
       }
     },
-    onError: (err)=>{
-      if (err.status === 500) {
+    onError: (err: errorType)=>{
+      if (err.message) {
         alert(err.message);
-      } else if (err.status === 400) {
-        alert(err.msg);
-      }
+      } 
     }
   })
 
   const setAdminMutation = useMutation(setAdmin, {
-    onSuccess: (res)=>{
-      if (res === 200) {
+    onSuccess: (res: Res)=>{
+      if (res.code === 200) {
         setRender(!render);
       }
     },
-    onError: (err)=>{
-      if (err.status === 500) {
+    onError: (err: errorType)=>{
+      if (err.code === 500) {
         alert(err.message);
       }
     }
@@ -95,37 +95,38 @@ function GetUsers() {
     }
   }, [searchInputValue])
 
-  const onClickHandler = (userId) => {
+  const onClickHandler = (userId: number) => {
     const CashRequest = {
       userId,
-      value: cash[`Cash${userId}`],
+      value: cash[userId],
       msg: "문의하세요"
     }
     console.log(CashRequest)
     downCashMutation.mutate(CashRequest);
   }
 
-  const onChangeHandler = (e) => {
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    console.log(name, value)
     setCash({
       ...cash,
+      [name]: parseInt(value),
+    })
+  }
+  const selectOnChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setRole({
+      ...role,
       [name]: value,
     })
   }
-  const selectOnChangeHandler = (e, userId) => {
-    setRole({
-      ...role,
-      [userId]: e.target.value,
-    })
-  }
-  const statusOnChangeHandler = (e, userId) => {
+  const statusOnChangeHandler = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
     setStatus({
       ...status,
-      [userId]: e.target.value,
+      [name]: value,
     })
   }
-  const keyOnChangeHandler = (e) => {
+  const keyOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setkey({
       ...key,
@@ -133,7 +134,7 @@ function GetUsers() {
     })
   }
 
-  const roleOnClickHandler = (userId) => {
+  const roleOnClickHandler = (userId: number) => {
     if (role[userId] === "ADMIN") {
       navigate("/");
     } else {
@@ -141,22 +142,22 @@ function GetUsers() {
       setRoleMutation.mutate({ userId, msg });
     }
   }
-  const statusOnClickHandler = (userId) => {
+  const statusOnClickHandler = (userId: number) => {
     const msg = status[userId];
     setStatusMutation.mutate({ userId, msg });
   }
-  const securityKeyOnClickHandler = (userId) => {
-    const msg = key[`Key${userId}`];
+  const securityKeyOnClickHandler = (userId: number) => {
+    const msg = key[userId];
     setAdminMutation.mutate({ userId, msg });
   }
 
-  const MapFirstStyle = {
+  const MapFirstStyle: React.CSSProperties = {
     display: 'flex',
     width: "42cm",
     alignContent: "center",
     justifyContent: "center",
   }
-  const MapSecondStyle = {
+  const MapSecondStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
     border: "3px solid black",
@@ -164,17 +165,15 @@ function GetUsers() {
     marginBottom: "5px"
   }
 
-  useEffect(()=>{console.log(key[`Key3`])}, [key])
-
-  const ResultContainer = ({ entityType }) => {
+  const ResultContainer = ({ entityType }: { entityType: UserAllIf} ) => {
     return (
       <div style={MapSecondStyle}>
         <div style={{ display:"flex", padding: "10px" }}>
           <span>id: {entityType.id}</span>
           <span style={{ margin: "auto" }}>Cash: {entityType.cash}</span>
           <input 
-            name={`Cash${entityType.id}`}
-            value={cash[`Cash${entityType.id}`]}
+            name={`${entityType.id}`}
+            value={cash[entityType.id]}
             onChange={onChangeHandler}
           />
           <button onClick={()=>onClickHandler(entityType.id)}>포인트 차감</button>
@@ -185,7 +184,7 @@ function GetUsers() {
         </div>
         <div style={{ display:"flex", padding: "10px" }}>
           <span>Role: {entityType.role.split("_")[1]}</span>
-          <select value={role[entityType.id]} onChange={(e)=>selectOnChangeHandler(e, entityType.id)} style={{ marginLeft: "auto" }}>
+          <select value={role[entityType.id]} onChange={selectOnChangeHandler} name={`${entityType.id}`} style={{ marginLeft: "auto" }}>
             <option value="USER">USER</option>
             <option value="PAID">PAID</option>
             <option value="ADMIN">ADMIN</option>
@@ -196,8 +195,8 @@ function GetUsers() {
             // input box 에 문자, 숫자등 1개씩만 값이 타이핑됨
             <> 
               <input 
-                value={key[`Key${entityType.id}`]} 
-                name={`Key${entityType.id}`}
+                value={key[entityType.id]} 
+                name={`${entityType.id}`}
                 onChange={keyOnChangeHandler} 
                 placeholder='Key 입력'
               />
@@ -207,7 +206,7 @@ function GetUsers() {
         </div>
         <div style={{ display:"flex", padding: "10px" }}>
           <span>Status: {entityType.status}</span>
-          <select value={status[entityType.id]} onChange={(e)=>statusOnChangeHandler(e, entityType.id)} style={{ marginLeft: "auto" }}>
+          <select value={status[entityType.id]} onChange={statusOnChangeHandler} style={{ marginLeft: "auto" }}>
             <option value="ACTIVE">ACTIVE</option>
             <option value="SUSPENDED">SUSPENDED</option>
             <option value="DORMANT">DORMANT</option>
@@ -220,7 +219,6 @@ function GetUsers() {
 
   return (
     <div id='recent' style={ CommonStyle }>
-      <AllowOnlyAdmin />
         <h1 style={{  fontSize: "80px", height:"1.5cm"}}>Get Users</h1>
         <input onChange={(e)=>setSearchInputValue(e.target.value)} placeholder='검색할 값을 입력해주세요' style={{ marginBottom:"1cm", width:"7cm", height:"0.5cm" }}/>
         {searchInputValue === "" ? (

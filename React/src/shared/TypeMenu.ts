@@ -28,6 +28,17 @@ export type UserIfState = {
     statement: Record<string, any>;
 };
 
+export type UserAllIf = {
+    id: number;
+    email: string;
+    password: string;
+    nickname: string;
+    cash: string;
+    role: string;
+    status: string;
+    statement: Record<string, any>;
+};
+
 export type AdminGetCharges = {
     userId: Number,
     msg: string,

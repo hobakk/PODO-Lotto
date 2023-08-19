@@ -69,7 +69,7 @@ const getStatement = async () => {
 // Admin
 const getUsers = async () => {
     const { data } = await api.get("/admin/users");
-    return data.data;
+    return data;
 }
 
 const getAdminCharges = async () => {
@@ -88,7 +88,7 @@ const getSearch = async ({ msg, cash }) => {
 
 const setAdmin = async ({ userId, msg }) => {
     const { data } = await api.patch(`/admin/users/${userId}`, msg);
-    return data.code;
+    return data;
 }
 
 const upCash = async (inputValue) => {
@@ -98,7 +98,7 @@ const upCash = async (inputValue) => {
 
 const downCash = async (inputValue) => {
     const { data } = await api.patch("/admin/users/down-cash", inputValue);
-    return data.code;
+    return data;
 }
 
 const createLotto = async () => {
@@ -108,7 +108,7 @@ const createLotto = async () => {
 
 const setStatusFromAdmin = async ({ userId, msg }) => {
     const { data } = await api.patch(`/admin/status/${userId}`, msg);
-    return data.code;
+    return data;
 }
 
 const setWinNumber = async ( inputValue ) => {
@@ -123,7 +123,7 @@ const setWinNumber = async ( inputValue ) => {
 const setRoleFromAdmin = async ({ userId, msg }) => {
     try {
         const { data } = await api.patch(`/admin/role/${userId}`, msg);
-        return data.code;
+        return data;
     } catch (error) {
         throw error;
     }
