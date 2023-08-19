@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import javax.servlet.http.Cookie;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -32,11 +33,17 @@ public class TokenControllerTest {
 	@MockBean
 	private TokenService tokenService;
 
+	private Cookie cookie;
+
+	@BeforeEach
+	public void setup() {
+		cookie = new Cookie("accessToken", "bearer tokenValue");
+	}
+
 	@Test
 	public void getInformationAfterCheckLogin() throws Exception {
 		UserIfAndCookieResponse userIfAndCookieResponse =	new UserIfAndCookieResponse(
-			new MyInformationResponse(TestDataFactory.user()),
-			new Cookie("accessToken", "bearer tokenValue"));
+			new MyInformationResponse(TestDataFactory.user()), cookie);
 
 		when(tokenService.getInformationAfterCheckLogin(any(TokenRequest.class))).thenReturn(userIfAndCookieResponse);
 
@@ -52,8 +59,6 @@ public class TokenControllerTest {
 
 	@Test
 	public void renewAccessToken() throws Exception {
-		Cookie cookie = new Cookie("accessToken", "bearer tokenValue");
-
 		when(tokenService.renewAccessToken(anyString())).thenReturn(cookie);
 
 		mockMvc.perform(post("/api/jwt/renew/access").with(csrf())
