@@ -3,7 +3,6 @@ package com.example.sixnumber.lotto.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,7 +123,7 @@ public class SixNumberServiceTest {
 
 	@Test
 	void getRecentBuyNumbers_success() {
-		when(sixNumberRepository.findByRecentBuyNumbers(anyLong())).thenReturn(List.of(sixNumber));
+		when(sixNumberRepository.findByRecentBuyNumbers(anyLong())).thenReturn(Optional.of(sixNumber));
 
 		ItemApiResponse<?> response = sixNumberService.getRecentBuyNumbers(saveUser);
 
@@ -134,7 +133,7 @@ public class SixNumberServiceTest {
 
 	@Test
 	void getRecentBuyNumbers_fail_isEmpty() {
-		when(sixNumberRepository.findByRecentBuyNumbers(anyLong())).thenReturn(new ArrayList<>());
+		when(sixNumberRepository.findByRecentBuyNumbers(anyLong())).thenReturn(Optional.empty());
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> sixNumberService.getRecentBuyNumbers(saveUser));
 
