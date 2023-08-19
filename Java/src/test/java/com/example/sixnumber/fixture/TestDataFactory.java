@@ -1,6 +1,7 @@
 package com.example.sixnumber.fixture;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.lotto.dto.WinNumberRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
+import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
@@ -47,6 +49,8 @@ public class TestDataFactory {
 	public static Lotto lotto() {
 		return new Lotto("Stats", "lotto", YearMonth.of(2023,5), countList(), "1 2 3 4 5 6");
 	}
+
+	public static SixNumber sixNumber() { return new SixNumber(7L, LocalDateTime.now(), List.of("1 2 3 4 5 6")); }
 
 	public static SignupRequest signupRequest() {
 		return new SignupRequest(
