@@ -22,6 +22,7 @@ import com.example.sixnumber.fixture.WithCustomMockUser;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
@@ -79,7 +80,9 @@ class UserControllerTest {
 	@Test
 	@WithMockUser
 	public void Signin() throws Exception {
-		when(userService.signIn(any(SigninRequest.class))).thenReturn("AccessT,RefreshT");
+		TokenDto tokenDto = new TokenDto("AccessT","RefreshT");
+
+		when(userService.signIn(any(SigninRequest.class))).thenReturn(tokenDto);
 
 		mockMvc.perform(post("/api/users/signin").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
