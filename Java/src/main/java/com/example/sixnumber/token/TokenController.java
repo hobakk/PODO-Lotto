@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
-import com.example.sixnumber.global.dto.TokenRequest;
+import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.user.dto.MyInformationResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class TokenController {
 
 	@PostMapping("/check/login")
 	public ResponseEntity<ItemApiResponse<MyInformationResponse>> getInformationAfterCheckLogin(
-		@RequestBody TokenRequest request,
+		@RequestBody TokenDto request,
 		HttpServletResponse response
 	) {
 		UserIfAndCookieResponse userIfAndCookieResponse = tokenService.getInformationAfterCheckLogin(request);

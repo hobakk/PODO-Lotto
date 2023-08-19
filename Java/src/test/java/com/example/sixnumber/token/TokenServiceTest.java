@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.sixnumber.fixture.TestDataFactory;
-import com.example.sixnumber.global.dto.TokenRequest;
+import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
@@ -32,12 +32,12 @@ public class TokenServiceTest {
 	private Manager manager;
 
 	private User saveUser;
-	private TokenRequest tokenRequest;
+	private TokenDto tokenDto;
 
 	@BeforeEach
 	public void setup() {
 		saveUser = TestDataFactory.user();
-		tokenRequest = TestDataFactory.tokenRequest();
+		tokenDto = TestDataFactory.tokenRequest();
 	}
 
 	@Test
@@ -47,7 +47,7 @@ public class TokenServiceTest {
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		UserIfAndCookieResponse response = tokenService.getInformationAfterCheckLogin(tokenRequest);
+		UserIfAndCookieResponse response = tokenService.getInformationAfterCheckLogin(tokenDto);
 
 		verify(jwtProvider).validateToken(anyString());
 		verify(jwtProvider).getTokenInUserId(anyString());
@@ -66,7 +66,7 @@ public class TokenServiceTest {
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		UserIfAndCookieResponse response = tokenService.getInformationAfterCheckLogin(tokenRequest);
+		UserIfAndCookieResponse response = tokenService.getInformationAfterCheckLogin(tokenDto);
 
 		verify(jwtProvider).validateToken(anyString());
 		verify(jwtProvider).validateRefreshToken(anyString());
@@ -83,7 +83,7 @@ public class TokenServiceTest {
 		when(jwtProvider.validateRefreshToken(anyString())).thenReturn(idEmail);
 
 		Assertions.assertThrows(IllegalArgumentException.class,
-			() -> tokenService.getInformationAfterCheckLogin(tokenRequest));
+			() -> tokenService.getInformationAfterCheckLogin(tokenDto));
 
 		verify(jwtProvider).validateRefreshToken(anyString());
 	}
@@ -93,7 +93,7 @@ public class TokenServiceTest {
 		when(jwtProvider.validateRefreshToken(anyString())).thenThrow(ExpiredJwtException.class);
 
 		Assertions.assertThrows(CustomException.class,
-			() -> tokenService.getInformationAfterCheckLogin(tokenRequest));
+			() -> tokenService.getInformationAfterCheckLogin(tokenDto));
 
 		verify(jwtProvider).validateRefreshToken(anyString());
 	}

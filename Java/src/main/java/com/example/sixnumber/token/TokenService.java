@@ -5,7 +5,7 @@ import javax.servlet.http.Cookie;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.sixnumber.global.dto.TokenRequest;
+import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.global.util.JwtProvider;
@@ -23,7 +23,7 @@ public class TokenService {
 	private final JwtProvider jwtProvider;
 	private final Manager manager;
 
-	public UserIfAndCookieResponse getInformationAfterCheckLogin(TokenRequest request) {
+	public UserIfAndCookieResponse getInformationAfterCheckLogin(TokenDto request) {
 		if (jwtProvider.validateToken(request.getAccessToken())) {
 			User user = manager.findUser(jwtProvider.getTokenInUserId(request.getAccessToken()));
 			MyInformationResponse myInformationResponse = new MyInformationResponse(user);
