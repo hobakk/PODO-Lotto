@@ -40,7 +40,7 @@ public class TokenControllerTest {
 
 		when(tokenService.getInformationAfterCheckLogin(any(TokenRequest.class))).thenReturn(userIfAndCookieResponse);
 
-		mockMvc.perform(post("/api/jwt/refresh/check").with(csrf())
+		mockMvc.perform(post("/api/jwt/check/login").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(TestDataFactory.tokenRequest())))
 			.andExpect(status().isOk())
