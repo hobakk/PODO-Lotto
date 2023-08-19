@@ -118,16 +118,14 @@ public class AdminService {
 
 		if (!statusList.contains(request.getMsg())) throw new CustomException(INVALID_INPUT);
 
-		String targetStatusStr = target.getStatus().toString();
-
-		if (targetStatusStr.equals(request.getMsg())) throw new IllegalArgumentException("이미 적용되어 있는 상태코드 입니다");
-
 		Status status = null;
 		switch (request.getMsg()) {
 			case "ACTIVE" -> status = Status.ACTIVE;
 			case "SUSPENDED" -> status = Status.SUSPENDED;
 			case "DORMANT" -> status = Status.DORMANT;
 		}
+
+		if (target.getStatus().equals(status)) throw new IllegalArgumentException("이미 적용되어 있는 상태코드 입니다");
 
 		target.setStatus(status);
 
