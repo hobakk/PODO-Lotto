@@ -1,6 +1,6 @@
 package com.example.sixnumber.lotto.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +28,13 @@ public class SixNumber {
 	@Column(name = "userId")
 	private Long userId;
 	@Column(name = "buyDate", nullable = false)
-	private LocalDate buyDate;
+	private LocalDateTime buyDate;
 
 	@ElementCollection
 	@OrderColumn(name = "number_index")
 	private List<String> numberList = new ArrayList<>(6);
 
-	public SixNumber(Long userId, LocalDate buyDate, List<String> numberList) {
+	public SixNumber(Long userId, LocalDateTime buyDate, List<String> numberList) {
 		this.userId = userId;
 		this.buyDate = buyDate;
 		this.numberList = numberList;

@@ -3,6 +3,7 @@ package com.example.sixnumber.lotto.service;
 import static com.example.sixnumber.global.exception.ErrorCode.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -64,7 +65,7 @@ public class SixNumberService {
 			topNumbers.add(result);
 		}
 
-		SixNumber sixNumber = new SixNumber(user.getId(), LocalDate.now(), topNumbers);
+		SixNumber sixNumber = new SixNumber(user.getId(), LocalDateTime.now(), topNumbers);
 		sixNumberRepository.save(sixNumber);
 		saveMainLottoList(topNumbers);
 
@@ -124,16 +125,16 @@ public class SixNumberService {
 			Thread.currentThread().interrupt();
 		}
 
-		SixNumber sixNumber = new SixNumber(user.getId(), LocalDate.now(), topNumbers);
+		SixNumber sixNumber = new SixNumber(user.getId(), LocalDateTime.now(), topNumbers);
 		sixNumberRepository.save(sixNumber);
 		saveMainLottoList(topNumbers);
 		return ListApiResponse.ok("요청 성공", topNumbers);
 	}
 
-	public ItemApiResponse<List<String>> getRecentBuyNumbers(User user) {
-		List<SixNumber> sixNumberList = sixNumberRepository.findByRecentBuyNumbers(user.getId());
-		if (sixNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
-		return ItemApiResponse.ok("최근 구매 번호 조회 성공", sixNumberList.get(0).getNumberList());
+	public ItemApiResponse<SixNumber> getRecentBuyNumbers(User user) {
+		SixNumber recentBuyNumbers = sixNumberRepository.findByRecentBuyNumbers(user.getId())
+			.orElseThrow(() -> new IllegalArgumentException("해당 정보가 존재하지 않습니다"));
+		return ItemApiResponse.ok("최근 구매 번호 조회 성공", recentBuyNumbers);
 	}
 
 	private void confirmationProcess(BuyNumberRequest buyNumberRequest, StatisticalNumberRequest statisticalNumberRequest, User userIf) {
