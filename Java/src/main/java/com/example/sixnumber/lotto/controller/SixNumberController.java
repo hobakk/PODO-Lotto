@@ -1,7 +1,5 @@
 package com.example.sixnumber.lotto.controller;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
+import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.service.SixNumberService;
 import com.example.sixnumber.user.entity.User;
 
@@ -36,7 +35,7 @@ public class SixNumberController {
 	}
 
 	@GetMapping("/recent")
-	public ResponseEntity<ItemApiResponse<List<String>>> getRecentBuyNumbers(@AuthenticationPrincipal User user) {
+	public ResponseEntity<ItemApiResponse<SixNumber>> getRecentBuyNumbers(@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(sixNumberService.getRecentBuyNumbers(user));
 	}
 }

@@ -78,7 +78,7 @@ public class SixNumberControllerTest {
 	@Test
 	public void GetRecentBuyNumber() throws Exception {
 		when(sixNumberService.getRecentBuyNumbers(any(User.class))).thenReturn(
-			ItemApiResponse.ok("최근 구매 번호 조회 성공", topNumbers));
+			ItemApiResponse.ok("최근 구매 번호 조회 성공", TestDataFactory.sixNumber()));
 
 		mockMvc.perform(get("/api/sixnum/recent").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
