@@ -28,6 +28,7 @@ import com.example.sixnumber.fixture.TestUtil;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.exception.StatusNotActiveException;
@@ -148,14 +149,15 @@ public class UserServiceTest {
 		when(jwtProvider.refreshToken(saveUser.getEmail(), saveUser.getId())).thenReturn("sampleRT");
 		when(jwtProvider.accessToken(saveUser.getEmail(), saveUser.getId())).thenReturn("sampleAT");
 
-		String Token = userService.signIn(signinRequest);
+		TokenDto tokenDto = userService.signIn(signinRequest);
 
 		verify(manager).findUser(anyString());
 		verify(redisDao).overlapLogin(anyLong());
 		verify(passwordEncoder).matches(anyString(), anyString());
 		verify(jwtProvider).refreshToken(saveUser.getEmail(), saveUser.getId());
 		verify(jwtProvider).accessToken(saveUser.getEmail(), saveUser.getId());
-		assertEquals(Token, "sampleAT,sampleRT");
+		assertEquals(tokenDto.getAccessToken(), "sampleAT");
+		assertEquals(tokenDto.getRefreshToken(), "sampleRT");
 		assertEquals(saveUser.getStatus(), Status.ACTIVE);
 	}
 
