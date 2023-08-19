@@ -72,10 +72,10 @@ Redis Cache 사용해서 속도 개선
 <br/><br/><h2>Token [Code](https://github.com/hobakk/Lotto/blob/c1b1dc8b1453c1dbe0ff26ad7b5b9a054a20ca95/Java/src/main/java/com/example/sixnumber/token/TokenService.java)</h2>
 
 ### 1. 로그인체크 이후 UserInfo 반환
-- React 새로고침 시 Redux가 초기화되어 AccessTokne 이 만료되지 않았다면 UserInfo 를 Redux state 에 업데이트
-- AccessTokne 이 만료되었다면 RefreshToken 의 만료를 체크하고 상황에 맞는 동작 진행
+- FE: 새로고침 시 Redux Store 가 초기화되어 AccessToken 이 만료되지 않았다면 UserInfo 를 반환하여 Redux Store 에 업데이트
+- AccessTokne 이 만료되었다면 RefreshToken 의 만료를 체크하고 유효하다면 AccessToken 재발급 및 UserInfo 반환
 ### 2. RefreshToken 갱신
-- FE 에서 Res.code 401 을 받았을 때 FE 에서 보낸 RefreshToken 을 valid 하고 유효하면 AccessToken 을 갱신
+- FE: error code 401 을 받았을 때 FE 로 부터 받은 RefreshToken 을 valid 하고 유효하면 AccessToken 을 갱신
 
 <br/><br/><h2>Scheduler [Code](https://github.com/hobakk/Lotto/blob/c1b1dc8b1453c1dbe0ff26ad7b5b9a054a20ca95/Java/src/main/java/com/example/sixnumber/global/scheduler/GlobalScheduler.java)</h2>
 
