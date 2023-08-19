@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.exception.StatusNotActiveException;
@@ -78,12 +79,12 @@ public class UserService {
 		return ApiResponse.create("회원가입 완료");
 	}
 
-	public String signIn(SigninRequest request) {
+	public TokenDto signIn(SigninRequest request) {
 		User user = manager.findUser(request.getEmail());
 		redisDao.overlapLogin(user.getId());
 
 		if (!user.getStatus().equals(Status.ACTIVE)) {
-			String msg = "";
+			String msg;
 			switch (user.getStatus()) {
 				case SUSPENDED -> msg = "정지된 계정입니다";
 				case DORMANT -> msg = "탈퇴한 계정입니다";
@@ -99,7 +100,7 @@ public class UserService {
 		String refreshToken = jwtProvider.refreshToken(user.getEmail(), user.getId());
 		redisDao.setValues(user.getId(), refreshToken);
 
-		return accessToken + "," + refreshToken;
+		return new TokenDto(accessToken, refreshToken);
 	}
 
 	public ApiResponse logout(Long userId) {

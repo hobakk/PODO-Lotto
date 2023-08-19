@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.sixnumber.global.dto.ApiResponse;
 import com.example.sixnumber.global.dto.ItemApiResponse;
 import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
@@ -42,11 +43,11 @@ public class UserController {
 
 	@PostMapping("/signin")
 	public ResponseEntity<ApiResponse> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
-		String[] token = userService.signIn(request).split(",");
-		Cookie accessToken = new Cookie("accessToken", token[0]);
+		TokenDto tokenDto = userService.signIn(request);
+		Cookie accessToken = new Cookie("accessToken", tokenDto.getAccessToken());
 		accessToken.setPath("/");
 		response.addCookie(accessToken);
-		Cookie refreshToken = new Cookie("refreshToken", token[1]);
+		Cookie refreshToken = new Cookie("refreshToken", tokenDto.getRefreshToken());
 		refreshToken.setPath("/");
 		response.addCookie(refreshToken);
 		return ResponseEntity.ok(ApiResponse.ok("로그인 성공"));
