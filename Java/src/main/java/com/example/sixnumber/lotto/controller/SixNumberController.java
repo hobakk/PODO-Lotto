@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sixnumber.global.dto.ItemApiResponse;
+import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.lotto.entity.SixNumber;
@@ -25,12 +26,12 @@ public class SixNumberController {
 	private final SixNumberService sixNumberService;
 
 	@PostMapping("")
-	public ResponseEntity<?> buyNumbers(@RequestBody BuyNumberRequest buyNumberRequest, @AuthenticationPrincipal User user) {
+	public ResponseEntity<ListApiResponse<String>> buyNumbers(@RequestBody BuyNumberRequest buyNumberRequest, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(sixNumberService.buyNumber(buyNumberRequest, user));
 	}
 
 	@PostMapping("/repetition")
-	public ResponseEntity<?> statisticalNumber(@RequestBody StatisticalNumberRequest BuyRepetitionNumberRequest, @AuthenticationPrincipal User user) {
+	public ResponseEntity<ListApiResponse<String>> statisticalNumber(@RequestBody StatisticalNumberRequest BuyRepetitionNumberRequest, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(sixNumberService.statisticalNumber(BuyRepetitionNumberRequest, user));
 	}
 
