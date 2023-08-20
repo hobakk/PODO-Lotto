@@ -1,5 +1,7 @@
 package com.example.sixnumber.user.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.sixnumber.global.dto.ApiResponse;
-import com.example.sixnumber.global.dto.ItemApiResponse;
-import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
@@ -31,47 +31,54 @@ public class AdminController {
 	private final AdminService adminService;
 
 	@GetMapping("/users")
-	public ResponseEntity<ListApiResponse<UsersResponse>> getUsers() {
+	public ResponseEntity<UnifiedResponse<List<UsersResponse>>> getUsers() {
 		return ResponseEntity.ok(adminService.getUsers());
 	}
 
 	@GetMapping("/charges")
-	public ResponseEntity<ListApiResponse<AdminGetChargingResponse>> getCharges() {
+	public ResponseEntity<UnifiedResponse<List<AdminGetChargingResponse>>> getCharges() {
 		return ResponseEntity.ok(adminService.getCharges());
 	}
 
 	@GetMapping("/search")
-	public ResponseEntity<ItemApiResponse<AdminGetChargingResponse>> searchCharging(@RequestParam("msg") String msg, @RequestParam("cash") int cash) {
+	public ResponseEntity<UnifiedResponse<AdminGetChargingResponse>> searchCharging(
+		@RequestParam("msg") String msg,
+		@RequestParam("cash") int cash)
+	{
 		return ResponseEntity.ok(adminService.searchCharging(msg, cash));
 	}
 
 	@PatchMapping("/users/{userId}")
-	public ResponseEntity<ApiResponse> setAdmin(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<?>> setAdmin(
+		@PathVariable Long userId,
+		@RequestBody OnlyMsgRequest request,
+		@AuthenticationPrincipal User user)
+	{
 		return ResponseEntity.ok(adminService.setAdmin(request, user, userId));
 	}
 
 	@PatchMapping("/users/up-cash")
-	public ResponseEntity<ApiResponse> upCash(@RequestBody CashRequest cashRequest) {
+	public ResponseEntity<UnifiedResponse<?>> upCash(@RequestBody CashRequest cashRequest) {
 		return ResponseEntity.ok(adminService.upCash(cashRequest));
 	}
 
 	@PatchMapping("/users/down-cash")
-	public ResponseEntity<ApiResponse> downCash(@RequestBody CashRequest cashRequest) {
+	public ResponseEntity<UnifiedResponse<?>> downCash(@RequestBody CashRequest cashRequest) {
 		return ResponseEntity.ok(adminService.downCash(cashRequest));
 	}
 
 	@PostMapping("/lotto")
-	public ResponseEntity<ApiResponse> createLotto(@AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<?>> createLotto(@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(adminService.createLotto(user.getEmail()));
 	}
 
 	@PatchMapping("/status/{userId}")
-	public ResponseEntity<ApiResponse> setStatus(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<?>> setStatus(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(adminService.setStatus(user, userId, request));
 	}
 
 	@PatchMapping("/role/{userId}")
-	public ResponseEntity<ApiResponse> setRole(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<?>> setRole(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(adminService.setRole(user, userId, request));
 	}
 }

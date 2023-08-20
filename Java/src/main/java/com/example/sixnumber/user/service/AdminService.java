@@ -7,14 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.sixnumber.global.dto.ApiResponse;
-import com.example.sixnumber.global.dto.ItemApiResponse;
-import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
@@ -44,37 +41,38 @@ public class AdminService {
 	private final Manager manager;
 
 	// 보안관련 더 생각해봐야함
-	public ApiResponse setAdmin(OnlyMsgRequest request, User user, Long userId) {
+	public UnifiedResponse<?> setAdmin(OnlyMsgRequest request, User user, Long userId) {
 		String KEY = "AdminSecurityKey";
 		if (!request.getMsg().equals(KEY)) throw new IllegalArgumentException("설정된 KEY값이 아닙니다");
 
 		User target = confirmationProcess(user, userId);
 		target.setAdmin();
-		return ApiResponse.ok("변경 완료");
+		return UnifiedResponse.ok("변경 완료");
 	}
 
 	// page 처리 필요함
-	public ListApiResponse<UsersResponse> getUsers() {
-		return ListApiResponse.ok("조회 성공", userRepository.findAll().stream().map(UsersResponse::new).collect(Collectors.toList()));
+	public UnifiedResponse<List<UsersResponse>> getUsers() {
+		List<UsersResponse> userAllList = userRepository.findAll().stream().map(UsersResponse::new).toList();
+		return UnifiedResponse.ok("조회 성공", userAllList);
 	}
 
-	public ListApiResponse<AdminGetChargingResponse> getCharges() {
+	public UnifiedResponse<List<AdminGetChargingResponse>> getCharges() {
 		List<String> valueList = redisDao.multiGet("All");
 
 		List<AdminGetChargingResponse> userChargesValues = valueList.stream()
 			.map(AdminGetChargingResponse::new).toList();
-		return ListApiResponse.ok("조회 성공", userChargesValues);
+		return UnifiedResponse.ok("조회 성공", userChargesValues);
 	}
 
-	public ItemApiResponse<AdminGetChargingResponse> searchCharging(String msg, int cash) {
+	public UnifiedResponse<AdminGetChargingResponse> searchCharging(String msg, int cash) {
 		String searchStr = msg + "-" + cash;
 		List<String> value = redisDao.multiGet(searchStr);
 		AdminGetChargingResponse response = new AdminGetChargingResponse(value.get(0));
-		return ItemApiResponse.ok("조회 성공", response);
+		return UnifiedResponse.ok("조회 성공", response);
 	}
 
 	// 결제에 대해서 고민해봐야함 현재 로직은 특정 계좌에 msg 와 value 가 확인되면 수동으로 넣어주는 방식
-	public ApiResponse upCash(CashRequest cashRequest) {
+	public UnifiedResponse<?> upCash(CashRequest cashRequest) {
 		User user = manager.findUser(cashRequest.getUserId());
 		String key = cashRequest.getUserId() + "-" + cashRequest.getMsg() + "-" + cashRequest.getCash();
 		// searchCharging 에서 검증되어 넘어온 Request 이기에 값이 있는지에 대한 체크는 건너뛰어도 된다 생각함
@@ -83,10 +81,10 @@ public class AdminService {
 		user.setStatement(LocalDate.now() + "," + cashRequest.getCash() +"원 충전");
 		user.setCash("+", cashRequest.getCash());
 		user.setTimeOutCount(0);
-		return ApiResponse.ok("충전 완료");
+		return UnifiedResponse.ok("충전 완료");
 	}
 
-	public ApiResponse downCash(CashRequest cashRequest) {
+	public UnifiedResponse<?> downCash(CashRequest cashRequest) {
 		User user = manager.findUser(cashRequest.getUserId());
 		if (user.getCash() < cashRequest.getCash()) {
 			throw new IllegalArgumentException("해당 유저가 보유한 금액보다 많습니다");
@@ -94,11 +92,11 @@ public class AdminService {
 
 		user.setCash("-", cashRequest.getCash());
 		user.setStatement(LocalDate.now() + "," + cashRequest.getMsg() + ": " + cashRequest.getCash() + "원 차감");
-		return ApiResponse.ok("차감 완료");
+		return UnifiedResponse.ok("차감 완료");
 	}
 
 	//초기 로또메인 만들기 위한 코드, 이후 사용할 일이 적어서 코드 중복사용을 안해서 생기는 불이익이 없을거라 생각
-	public ApiResponse createLotto(String email) {
+	public UnifiedResponse<?> createLotto(String email) {
 		Optional<Lotto> findMain = lottoRepository.findByMain();
 
 		if (findMain.isPresent()) throw new IllegalArgumentException("메인 로또가 이미 생성되어 있습니다");
@@ -109,10 +107,10 @@ public class AdminService {
 		}
 		Lotto lotto = new Lotto("main", email, null, countList,  "");
 		lottoRepository.save(lotto);
-		return ApiResponse.ok("생성 완료");
+		return UnifiedResponse.ok("생성 완료");
 	}
 
-	public ApiResponse setStatus(User user, Long userId, OnlyMsgRequest request) {
+	public UnifiedResponse<?> setStatus(User user, Long userId, OnlyMsgRequest request) {
 		User target = confirmationProcess(user, userId);
 		List<String> statusList = Arrays.asList("ACTIVE", "SUSPENDED", "DORMANT");
 
@@ -132,10 +130,10 @@ public class AdminService {
 		if (target.getStatus().equals(Status.SUSPENDED) || target.getStatus().equals(Status.DORMANT)) {
 			redisDao.deleteInRedisValueIsNotNull(target.getId());
 		}
-		return ApiResponse.ok("상태 변경 완료");
+		return UnifiedResponse.ok("상태 변경 완료");
 	}
 
-	public ApiResponse setRole(User user, Long userId, OnlyMsgRequest request) {
+	public UnifiedResponse<?> setRole(User user, Long userId, OnlyMsgRequest request) {
 		User target = confirmationProcess(user, userId);
 
 		UserRole changeRole = null;
@@ -147,7 +145,7 @@ public class AdminService {
 		if (target.getRole().equals(changeRole)) throw new IllegalArgumentException("동일한 권한입니다");
 
 		target.setRole(changeRole);
-		return ApiResponse.ok("권한 변경 완료");
+		return UnifiedResponse.ok("권한 변경 완료");
 	}
 
 	private User confirmationProcess(User user, Long userId) {
