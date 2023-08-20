@@ -1,6 +1,8 @@
 package com.example.sixnumber.user.controller;
 
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -19,10 +21,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.WithCustomMockUser;
-import com.example.sixnumber.global.dto.ApiResponse;
-import com.example.sixnumber.global.dto.ItemApiResponse;
-import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.dto.TokenDto;
+import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
@@ -52,7 +52,7 @@ class UserControllerTest {
 	@Test
 	@WithMockUser
 	public void Signup() throws Exception {
-		when(userService.signUp(any(SignupRequest.class))).thenReturn(ApiResponse.create("회원가입 완료"));
+		when(userService.signUp(any(SignupRequest.class))).thenReturn(UnifiedResponse.create("회원가입 완료"));
 
 		mockMvc.perform(post("/api/users/signup").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -66,7 +66,7 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser(status = Status.DORMANT)
 	public void Signup_ReJoin() throws Exception {
-		when(userService.signUp(any(SignupRequest.class))).thenReturn(ApiResponse.ok("재가입 완료"));
+		when(userService.signUp(any(SignupRequest.class))).thenReturn(UnifiedResponse.ok("재가입 완료"));
 
 		mockMvc.perform(post("/api/users/signup").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -98,7 +98,7 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void Logout() throws Exception {
-		when(userService.logout(anyLong())).thenReturn(ApiResponse.ok("로그아웃 성공"));
+		when(userService.logout(anyLong())).thenReturn(UnifiedResponse.ok("로그아웃 성공"));
 
 		mockMvc.perform(post("/api/users/logout").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +113,7 @@ class UserControllerTest {
 	@WithCustomMockUser
 	public void	Withdraw() throws Exception {
 		when(userService.withdraw(any(OnlyMsgRequest.class), anyString()))
-			.thenReturn(ApiResponse.ok("회원 탈퇴 완료"));
+			.thenReturn(UnifiedResponse.ok("회원 탈퇴 완료"));
 
 		mockMvc.perform(patch("/api/users/withdraw").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -129,7 +129,7 @@ class UserControllerTest {
 		User user = TestDataFactory.user();
 
 		when(userService.getCashNickname(any(User.class))).thenReturn(
-			ItemApiResponse.ok("조회 성공", new CashNicknameResponse(user)));
+			UnifiedResponse.ok("조회 성공", new CashNicknameResponse(user)));
 
 		mockMvc.perform(get("/api/users/cash").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
@@ -146,7 +146,7 @@ class UserControllerTest {
 		ChargingResponse response = new ChargingResponse("7-홍길동전-2000");
 		List<ChargingResponse> responses = List.of(response);
 
-		when(userService.getCharges(anyLong())).thenReturn(ListApiResponse.ok("신청 리스트 조회 성공", responses));
+		when(userService.getCharges(anyLong())).thenReturn(UnifiedResponse.ok("신청 리스트 조회 성공", responses));
 
 		mockMvc.perform(get("/api/users/charging").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
@@ -161,7 +161,7 @@ class UserControllerTest {
 	@WithCustomMockUser
 	public void Charging() throws Exception {
 		when(userService.charging(any(ChargingRequest.class), any(User.class)))
-			.thenReturn(ApiResponse.ok("요청 성공"));
+			.thenReturn(UnifiedResponse.ok("요청 성공"));
 
 		mockMvc.perform(post("/api/users/charging").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -175,7 +175,7 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void SetPaid() throws Exception {
-		when(userService.setPaid(any(OnlyMsgRequest.class), anyString())).thenReturn(ApiResponse.ok("권한 변경 성공"));
+		when(userService.setPaid(any(OnlyMsgRequest.class), anyString())).thenReturn(UnifiedResponse.ok("권한 변경 성공"));
 
 		mockMvc.perform(patch("/api/users/paid").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -189,7 +189,7 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser(role = UserRole.ROLE_PAID)
 	public void SetPaid_Release() throws Exception {
-		when(userService.setPaid(any(OnlyMsgRequest.class), anyString())).thenReturn(ApiResponse.ok("해지 신청 성공"));
+		when(userService.setPaid(any(OnlyMsgRequest.class), anyString())).thenReturn(UnifiedResponse.ok("해지 신청 성공"));
 
 		mockMvc.perform(patch("/api/users/paid").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -203,7 +203,7 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void Update() throws Exception {
-		when(userService.update(any(SignupRequest.class), any(User.class))).thenReturn(ApiResponse.ok("수정 완료"));
+		when(userService.update(any(SignupRequest.class), any(User.class))).thenReturn(UnifiedResponse.ok("수정 완료"));
 
 		mockMvc.perform(patch("/api/users/update").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -219,7 +219,7 @@ class UserControllerTest {
 	public void GetStatement() throws Exception {
 		StatementResponse response = new StatementResponse(("2023-07-14,테스트").split(","));
 
-		when(userService.getStatement(anyString())).thenReturn(ListApiResponse.ok("거래내역 조회 완료", List.of(response)));
+		when(userService.getStatement(anyString())).thenReturn(UnifiedResponse.ok("거래내역 조회 완료", List.of(response)));
 
 		mockMvc.perform(get("/api/users/statement").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
@@ -236,7 +236,7 @@ class UserControllerTest {
 		User user = TestDataFactory.user();
 		MyInformationResponse response = new MyInformationResponse(user);
 
-		when(userService.getMyInformation(anyLong())).thenReturn(ItemApiResponse.ok("조회 성공", response));
+		when(userService.getMyInformation(anyLong())).thenReturn(UnifiedResponse.ok("조회 성공", response));
 
 		mockMvc.perform(get("/api/users/my-information").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
@@ -249,7 +249,7 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void CheckPW() throws Exception {
-		when(userService.checkPW(any(OnlyMsgRequest.class), anyString())).thenReturn(ApiResponse.ok("본인확인 성공"));
+		when(userService.checkPW(any(OnlyMsgRequest.class), anyString())).thenReturn(UnifiedResponse.ok("본인확인 성공"));
 
 		mockMvc.perform(post("/api/users/check-pw").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)

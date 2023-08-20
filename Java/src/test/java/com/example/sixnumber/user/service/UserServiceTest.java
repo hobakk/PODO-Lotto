@@ -25,10 +25,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.TestUtil;
-import com.example.sixnumber.global.dto.ApiResponse;
-import com.example.sixnumber.global.dto.ItemApiResponse;
-import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.dto.TokenDto;
+import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.exception.StatusNotActiveException;
@@ -82,13 +80,13 @@ public class UserServiceTest {
 		String encodedPassword = "ePassword";
 		when(passwordEncoder.encode(signupRequest.getPassword())).thenReturn(encodedPassword);
 
-		ApiResponse response = userService.signUp(signupRequest);
+		UnifiedResponse<?> response = userService.signUp(signupRequest);
 
 		verify(userRepository).existsUserByEmail(anyString());
 		verify(userRepository).existsUserByNickname(anyString());
 		verify(userRepository).save(any(User.class));
 		assertEquals(201, response.getCode());
-		assertEquals("회원가입 완료", response.getMsg());
+		assertEquals("회원가입 완료", response.getMessage());
 	}
 
 	@Test
@@ -101,7 +99,7 @@ public class UserServiceTest {
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
-		ApiResponse response = userService.signUp(request);
+		UnifiedResponse<?> response = userService.signUp(request);
 
 		verify(userRepository).findByStatusAndEmail(eq(Status.DORMANT), anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
@@ -109,7 +107,7 @@ public class UserServiceTest {
 		assertEquals(saveUser.getStatus(), Status.ACTIVE);
 		assertNull(saveUser.getWithdrawExpiration());
 		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "재가입 완료");
+		assertEquals(response.getMessage(), "재가입 완료");
 	}
 
 	@Test
@@ -205,10 +203,10 @@ public class UserServiceTest {
 
 	@Test
 	void logout() {
-		ApiResponse response = userService.logout(saveUser.getId());
+		UnifiedResponse<?> response = userService.logout(saveUser.getId());
 
 		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMsg(), "로그아웃 성공");
+		assertEquals(response.getMessage(), "로그아웃 성공");
 		verify(redisDao).deleteValues(anyLong());
 	}
 
@@ -219,12 +217,12 @@ public class UserServiceTest {
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
-		ApiResponse response = userService.withdraw(request, saveUser.getEmail());
+		UnifiedResponse<?> response = userService.withdraw(request, saveUser.getEmail());
 
 		verify(manager).findUser(anyString());
 		assertEquals(saveUser.getStatus(), Status.DORMANT);
 		assertNotNull(saveUser.getWithdrawExpiration());
-		TestUtil.ApiAsserEquals(response, 200, "회원 탈퇴 완료");
+		TestUtil.UnifiedResponseEquals(response, 200, "회원 탈퇴 완료");
 	}
 
 	@Test
@@ -246,11 +244,11 @@ public class UserServiceTest {
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
-		ApiResponse response = userService.setPaid(request, saveUser.getEmail());
+		UnifiedResponse<?> response = userService.setPaid(request, saveUser.getEmail());
 
 		verify(manager).findUser(anyString());
 		assertEquals(saveUser.getCancelPaid(), true);
-		TestUtil.ApiAsserEquals(response, 200, "해지 신청 성공");
+		TestUtil.UnifiedResponseEquals(response, 200, "해지 신청 성공");
 	}
 
 	@Test
@@ -274,14 +272,14 @@ public class UserServiceTest {
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
-		ApiResponse response = userService.setPaid(request, saveUser.getEmail());
+		UnifiedResponse<?> response = userService.setPaid(request, saveUser.getEmail());
 
 		verify(manager).findUser(anyString());
 		assertEquals(saveUser.getCash(), 1000);
 		assertEquals(saveUser.getRole(), UserRole.ROLE_PAID);
 		assertNotNull(saveUser.getPaymentDate());
 		assertNotNull(saveUser.getStatement());
-		TestUtil.ApiAsserEquals(response, 200, "권한 변경 성공");
+		TestUtil.UnifiedResponseEquals(response, 200, "권한 변경 성공");
 	}
 
 	@ParameterizedTest
@@ -306,23 +304,23 @@ public class UserServiceTest {
 
 	@Test
 	void getCashNickname() {
-		ItemApiResponse<CashNicknameResponse> response = userService.getCashNickname(saveUser);
+		UnifiedResponse<CashNicknameResponse> response = userService.getCashNickname(saveUser);
 
-		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");
+		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공", CashNicknameResponse.class);
 	}
 
 	@Test
 	void charging_success() {
 		ChargingRequest request = TestDataFactory.chargingRequest();
 
-		ApiResponse response = userService.charging(request, saveUser);
+		UnifiedResponse<?> response = userService.charging(request, saveUser);
 
 		verify(redisDao, times(1)).getKeysList(anyLong());
 		verify(redisDao, times(1)).getKeysList(anyString());
 		verify(redisDao).setValues(anyString(), anyString(), anyLong(), any());
 		verify(userRepository).save(saveUser);
 		assertEquals(saveUser.getTimeOutCount(), 1);
-		TestUtil.ApiAsserEquals(response, 200, "요청 성공");
+		TestUtil.UnifiedResponseEquals(response, 200, "요청 성공");
 	}
 
 	@Test
@@ -362,10 +360,10 @@ public class UserServiceTest {
 
 	@Test
 	void getCharges_success() {
-		ListApiResponse<ChargingResponse> response = userService.getCharges(saveUser.getId());
+		UnifiedResponse<List<ChargingResponse>> response = userService.getCharges(saveUser.getId());
 
 		verify(redisDao).multiGet(anyLong());
-		TestUtil.ListApiAssertEquals(response, 200, "신청 리스트 조회 성공");
+		TestUtil.UnifiedResponseListEquals(response, 200, "신청 리스트 조회 성공");
 	}
 
 	@Test
@@ -374,11 +372,11 @@ public class UserServiceTest {
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
-		ListApiResponse<StatementResponse> response = userService.getStatement(saveUser.getEmail());
+		UnifiedResponse<List<StatementResponse>> response = userService.getStatement(saveUser.getEmail());
 
 		verify(manager).findUser(anyString());
 		assertEquals(response.getData().size(), 1);
-		TestUtil.ListApiAssertEquals(response, 200, "거래내역 조회 완료");
+		TestUtil.UnifiedResponseListEquals(response, 200, "거래내역 조회 완료");
 	}
 
 	@Test
@@ -397,11 +395,11 @@ public class UserServiceTest {
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 		when(passwordEncoder.encode(anyString())).thenReturn("passwordE");
 
-		ApiResponse response = userService.update(request, saveUser);
+		UnifiedResponse<?> response = userService.update(request, saveUser);
 
 		verify(passwordEncoder).matches(anyString(), anyString());
 		verify(passwordEncoder).encode(anyString());
-		TestUtil.ApiAsserEquals(response, 200, "수정 완료");
+		TestUtil.UnifiedResponseEquals(response, 200, "수정 완료");
 	}
 
 	@Test
@@ -418,10 +416,10 @@ public class UserServiceTest {
 	void getMyInformation() {
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		ItemApiResponse<MyInformationResponse> response = userService.getMyInformation(saveUser.getId());
+		UnifiedResponse<MyInformationResponse> response = userService.getMyInformation(saveUser.getId());
 
 		verify(manager).findUser(anyLong());
-		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");
+		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공", MyInformationResponse.class);
 	}
 
 	@Test
@@ -431,10 +429,10 @@ public class UserServiceTest {
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
-		ApiResponse response = userService.checkPW(request, saveUser.getPassword());
+		UnifiedResponse<?> response = userService.checkPW(request, saveUser.getPassword());
 
 		verify(passwordEncoder).matches(anyString(), anyString());
-		TestUtil.ApiAsserEquals(response, 200, "본인확인 성공");
+		TestUtil.UnifiedResponseEquals(response, 200, "본인확인 성공");
 	}
 
 	@Test
