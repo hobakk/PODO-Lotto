@@ -20,9 +20,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.TestUtil;
-import com.example.sixnumber.global.dto.ApiResponse;
-import com.example.sixnumber.global.dto.ItemApiResponse;
-import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
@@ -71,11 +69,11 @@ public class AdminServiceTest {
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		ApiResponse response = adminService.setAdmin(request, admin, saveUser.getId());
+		UnifiedResponse<?> response = adminService.setAdmin(request, admin, saveUser.getId());
 
 		verify(manager).findUser(anyLong());
 		assertEquals(saveUser.getRole(), UserRole.ROLE_ADMIN);
-		TestUtil.ApiAsserEquals(response, 200, "변경 완료");
+		TestUtil.UnifiedResponseEquals(response, 200, "변경 완료");
 	}
 
 	@Test
@@ -91,10 +89,10 @@ public class AdminServiceTest {
 	void getUsers() {
 		when(userRepository.findAll()).thenReturn(List.of(saveUser));
 
-		ListApiResponse<UsersResponse> response = adminService.getUsers();
+		UnifiedResponse<List<UsersResponse>> response = adminService.getUsers();
 
 		verify(userRepository).findAll();
-		TestUtil.ListApiAssertEquals(response, 200, "조회 성공");
+		TestUtil.UnifiedResponseListEquals(response, 200, "조회 성공");
 	}
 
 	@Test
@@ -103,11 +101,11 @@ public class AdminServiceTest {
 
 		when(redisDao.multiGet(anyString())).thenReturn(values);
 
-		ListApiResponse<AdminGetChargingResponse> response = adminService.getCharges();
+		UnifiedResponse<List<AdminGetChargingResponse>> response = adminService.getCharges();
 
 		verify(redisDao).multiGet(anyString());
 		assertEquals(response.getData().size(), 3);
-		TestUtil.ListApiAssertEquals(response, 200, "조회 성공");
+		TestUtil.UnifiedResponseListEquals(response, 200, "조회 성공");
 	}
 
 	@Test
@@ -119,10 +117,10 @@ public class AdminServiceTest {
 
 		when(redisDao.multiGet(anyString())).thenReturn(values);
 
-		ItemApiResponse<AdminGetChargingResponse> response = adminService.searchCharging(msg, cash);
+		UnifiedResponse<AdminGetChargingResponse> response = adminService.searchCharging(msg, cash);
 
 		verify(redisDao).multiGet(anyString());
-		TestUtil.ItemApiAssertEquals(response, 200, "조회 성공");
+		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공", AdminGetChargingResponse.class);
 	}
 
 	@Test
@@ -131,14 +129,14 @@ public class AdminServiceTest {
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		ApiResponse response = adminService.upCash(request);
+		UnifiedResponse<?> response = adminService.upCash(request);
 
 		verify(manager).findUser(anyLong());
 		verify(redisDao).deleteValues(anyString());
 		assertEquals(saveUser.getCash(), 11000);
 		assertNotNull(saveUser.getStatement().get(0));
 		assertEquals(saveUser.getTimeOutCount(), 0);
-		TestUtil.ApiAsserEquals(response, 200, "충전 완료");
+		TestUtil.UnifiedResponseEquals(response, 200, "충전 완료");
 	}
 
 	@Test
@@ -147,12 +145,12 @@ public class AdminServiceTest {
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		ApiResponse response = adminService.downCash(request);
+		UnifiedResponse<?> response = adminService.downCash(request);
 
 		verify(manager).findUser(anyLong());
 		assertEquals(saveUser.getCash(), 1000);
 		assertNotNull(saveUser.getStatement().get(0));
-		TestUtil.ApiAsserEquals(response, 200, "차감 완료");
+		TestUtil.UnifiedResponseEquals(response, 200, "차감 완료");
 	}
 
 	@Test
@@ -172,11 +170,11 @@ public class AdminServiceTest {
 		Optional<Lotto> empty = Optional.empty();
 		when(lottoRepository.findByMain()).thenReturn(empty);
 
-		ApiResponse response = adminService.createLotto("email");
+		UnifiedResponse<?> response = adminService.createLotto("email");
 
 		verify(lottoRepository).findByMain();
 		verify(lottoRepository).save(any(Lotto.class));
-		TestUtil.ApiAsserEquals(response, 200, "생성 완료");
+		TestUtil.UnifiedResponseEquals(response, 200, "생성 완료");
 	}
 
 	@Test
@@ -199,11 +197,11 @@ public class AdminServiceTest {
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		ApiResponse response = adminService.setStatus(admin, saveUser.getId(), request);
+		UnifiedResponse<?> response = adminService.setStatus(admin, saveUser.getId(), request);
 
 		verify(manager).findUser(anyLong());
 		assertEquals(saveUser.getStatus(), Status.ACTIVE);
-		TestUtil.ApiAsserEquals(response, 200, "상태 변경 완료");
+		TestUtil.UnifiedResponseEquals(response, 200, "상태 변경 완료");
 	}
 
 	@ParameterizedTest
@@ -217,11 +215,11 @@ public class AdminServiceTest {
 		// setStatus_success_active 에서 redisTemlate 값이 없을 때 검증되서 값이 있을 경우만 검증함
 		when(redisDao.deleteInRedisValueIsNotNull(anyLong())).thenReturn(true);
 
-		ApiResponse response = adminService.setStatus(admin, saveUser.getId(), request);
+		UnifiedResponse<?> response = adminService.setStatus(admin, saveUser.getId(), request);
 
 		verify(manager).findUser(anyLong());
 		verify(redisDao).deleteInRedisValueIsNotNull(anyLong());
-		TestUtil.ApiAsserEquals(response, 200, "상태 변경 완료");
+		TestUtil.UnifiedResponseEquals(response, 200, "상태 변경 완료");
 	}
 
 	@Test
@@ -256,10 +254,10 @@ public class AdminServiceTest {
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		ApiResponse response = adminService.setRole(admin, saveUser.getId(), request);
+		UnifiedResponse<?> response = adminService.setRole(admin, saveUser.getId(), request);
 
 		verify(manager).findUser(anyLong());
-		TestUtil.ApiAsserEquals(response, 200, "권한 변경 완료");
+		TestUtil.UnifiedResponseEquals(response, 200, "권한 변경 완료");
 	}
 
 	@Test
