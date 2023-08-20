@@ -4,6 +4,12 @@ export type errorType = {
     exceptionType: string;
 };
 
+export type Res = {
+    code: number;
+    message: string;
+    data: any;
+};
+
 export type WinNumber = {
     time: string;
     date: string;
@@ -13,10 +19,10 @@ export type WinNumber = {
     bonus: number;
 };
 
-export type Res = {
-    code: number;
-    message: string;
-    data: any;
+export type SixNumber = {
+    id: number;
+    userId: number;
+    buyDate: Date;
 };
 
 export type UserIfState = {
