@@ -40,7 +40,33 @@ export type UserAllIf = {
 };
 
 export type AdminGetCharges = {
-    userId: Number,
+    userId: number,
     msg: string,
     value: number,
+};
+
+export type ChargingRequest = {
+    msg: string,
+    cash: number,
+}
+
+export type SignupRequest = {
+    email: string,
+    password: string,
+    nickname: string,
+}
+
+export type ApiResponse = {
+    code: number,
+    msg: string,
+};
+
+export type ItemResponse<T> = {
+    apiResponse: ApiResponse,
+    data: T,
+};
+
+export type ListResponse<T> = {
+    apiResponse: ApiResponse,
+    data: T[],
 };
