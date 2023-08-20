@@ -1,5 +1,10 @@
-import { ApiResponse, ChargingRequest, ItemResponse, ListResponse, SignupRequest, UserIfState } from "../shared/TypeMenu";
+import { ApiResponse, ItemResponse, ListResponse, SignupRequest, UserIfState } from "../shared/TypeMenu";
 import { api } from "./config";
+
+export type ChargingRequest = {
+    msg: string,
+    cash: number,
+}
 
 export const getInformation = async (): Promise<ItemResponse<UserIfState>> => {
     const { data } = await api.get(`/users/my-information`);
@@ -39,7 +44,7 @@ export const setCharges = async (inputValue: ChargingRequest) => {
     }
 }
 
-export const getCharges = async (): Promise<ListResponse<{cash: number, msg: string}[]>> => {
+export const getCharges = async (): Promise<ListResponse<ChargingRequest[]>> => {
     try {
         const { data } = await api.get("/users/charging");
         return data;    

@@ -45,11 +45,6 @@ export type AdminGetCharges = {
     value: number,
 };
 
-export type ChargingRequest = {
-    msg: string,
-    cash: number,
-}
-
 export type SignupRequest = {
     email: string,
     password: string,
