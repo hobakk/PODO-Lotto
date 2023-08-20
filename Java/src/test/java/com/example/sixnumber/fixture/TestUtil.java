@@ -2,22 +2,24 @@ package com.example.sixnumber.fixture;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.example.sixnumber.global.dto.ApiResponse;
-import com.example.sixnumber.global.dto.ItemApiResponse;
-import com.example.sixnumber.global.dto.ListApiResponse;
+import java.util.List;
+
+import com.example.sixnumber.global.dto.UnifiedResponse;
 
 public class TestUtil {
-	public static void ApiAsserEquals(ApiResponse response, int code, String msg) {
-		assertEquals(response.getMsg(), msg);
+	public static <T> void UnifiedResponseEquals(UnifiedResponse<T> response, int code, String msg) {
+		assertEquals(response.getMessage(), msg);
 		assertEquals(response.getCode(), code);
 	}
-	public static <T> void ItemApiAssertEquals(ItemApiResponse<T> response, int code, String msg) {
-		assertEquals(response.getMsg(), msg);
+
+	public static <T> void UnifiedResponseEquals(UnifiedResponse<T> response, int code, String msg, Class<T> clazz) {
+		assertEquals(response.getMessage(), msg);
 		assertEquals(response.getCode(), code);
-		assertNotNull(response.getData());
+		if (clazz != null) assertNotNull(response.getData());
 	}
-	public static <T> void ListApiAssertEquals(ListApiResponse<T> response, int code, String msg) {
-		assertEquals(response.getMsg(), msg);
+
+	public static <T> void UnifiedResponseListEquals(UnifiedResponse<List<T>> response, int code, String msg) {
+		assertEquals(response.getMessage(), msg);
 		assertEquals(response.getCode(), code);
 		assertNotNull(response.getData());
 	}
