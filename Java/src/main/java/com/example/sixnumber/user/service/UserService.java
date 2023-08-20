@@ -15,10 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.sixnumber.global.dto.ApiResponse;
-import com.example.sixnumber.global.dto.ItemApiResponse;
-import com.example.sixnumber.global.dto.ListApiResponse;
 import com.example.sixnumber.global.dto.TokenDto;
+import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.exception.StatusNotActiveException;
@@ -53,7 +51,7 @@ public class UserService {
 	private final RedisDao redisDao;
 	private final Manager manager;
 
-	public ApiResponse signUp(SignupRequest request) {
+	public UnifiedResponse<?> signUp(SignupRequest request) {
 		Optional<User> dormantUser = userRepository.findByStatusAndEmail(Status.DORMANT, request.getEmail());
 		if (dormantUser.isPresent()) {
 			User user = dormantUser.get();
@@ -61,7 +59,7 @@ public class UserService {
 				user.setStatus(Status.ACTIVE);
 				user.setWithdrawExpiration(null);
 				userRepository.save(user);
-				return ApiResponse.ok("재가입 완료");
+				return UnifiedResponse.ok("재가입 완료");
 			}
 		}
 
@@ -76,7 +74,7 @@ public class UserService {
 		User user = new User(request, password);
 		user.setStatement(LocalDate.now() + ",회원가입 기념 1000원 증정");
 		userRepository.save(user);
-		return ApiResponse.create("회원가입 완료");
+		return UnifiedResponse.create("회원가입 완료");
 	}
 
 	public TokenDto signIn(SigninRequest request) {
@@ -103,12 +101,12 @@ public class UserService {
 		return new TokenDto(accessToken, refreshToken);
 	}
 
-	public ApiResponse logout(Long userId) {
+	public UnifiedResponse<?> logout(Long userId) {
 		redisDao.deleteValues(userId);
-		return ApiResponse.ok("로그아웃 성공");
+		return UnifiedResponse.ok("로그아웃 성공");
 	}
 
-	public ApiResponse withdraw(OnlyMsgRequest request, String email) {
+	public UnifiedResponse<?> withdraw(OnlyMsgRequest request, String email) {
 		String withdrawMsg = "회원탈퇴";
 
 		if (!request.getMsg().equals(withdrawMsg)) {
@@ -117,10 +115,10 @@ public class UserService {
 		User user = manager.findUser(email);
 		user.setStatus(Status.DORMANT);
 		user.setWithdrawExpiration(LocalDate.now().plusMonths(1));
-		return ApiResponse.ok("회원 탈퇴 완료");
+		return UnifiedResponse.ok("회원 탈퇴 완료");
 	}
 
-	public ApiResponse setPaid(OnlyMsgRequest request, String email) {
+	public UnifiedResponse<?> setPaid(OnlyMsgRequest request, String email) {
 		User user = manager.findUser(email);
 
 		if (request.getMsg().equals("월정액 해지")) {
@@ -128,7 +126,7 @@ public class UserService {
 			if (Boolean.TRUE.equals(user.getCancelPaid())) throw new OverlapException("프리미엄 해제 신청을 이미 하셨습니다");
 
 			user.setCancelPaid(true);
-			return ApiResponse.ok("해지 신청 성공");
+			return UnifiedResponse.ok("해지 신청 성공");
 		}
 
 		if (user.getCash() < 5000 || user.getRole().equals(UserRole.ROLE_PAID)) {
@@ -138,15 +136,15 @@ public class UserService {
 		user.setRole(UserRole.ROLE_PAID);
 		user.setPaymentDate(LocalDate.now().plusDays(31));
 		user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
-		return ApiResponse.ok("권한 변경 성공");
+		return UnifiedResponse.ok("권한 변경 성공");
 	}
 
-	public ItemApiResponse<CashNicknameResponse> getCashNickname(User user) {
-		return ItemApiResponse.ok("조회 성공", new CashNicknameResponse(user)) ;
+	public UnifiedResponse<CashNicknameResponse> getCashNickname(User user) {
+		return UnifiedResponse.ok("조회 성공", new CashNicknameResponse(user)) ;
 	}
 
 	// 요청을 최대 3번까지 할 수 있고 12시간 기준으로 삭제되기에 충전 요청 취소를 만들지 않아도 된다 판단함
-	public ApiResponse charging(ChargingRequest chargingRequest, User user) {
+	public UnifiedResponse<?> charging(ChargingRequest chargingRequest, User user) {
 		Set<String> keys = redisDao.getKeysList(user.getId());
 
 		if (keys.size() >= 3) throw new IllegalArgumentException("처리되지 않은 요청사항이 많습니다");
@@ -161,19 +159,19 @@ public class UserService {
 		redisDao.setValues(value, value, (long) 12, TimeUnit.HOURS);
 		user.setTimeOutCount(1);
 		userRepository.save(user);
-		return ApiResponse.ok("요청 성공");
+		return UnifiedResponse.ok("요청 성공");
 	}
 
-	public ListApiResponse<ChargingResponse> getCharges(Long userId) {
+	public UnifiedResponse<List<ChargingResponse>> getCharges(Long userId) {
 		List<String> values = redisDao.multiGet(userId);
 
 		List<ChargingResponse> responses = values.stream()
 			.map(ChargingResponse::new)
 			.collect(Collectors.toList());
-		return ListApiResponse.ok("신청 리스트 조회 성공", responses);
+		return UnifiedResponse.ok("신청 리스트 조회 성공", responses);
 	}
 
-	public ApiResponse update(SignupRequest request, User user) {
+	public UnifiedResponse<?> update(SignupRequest request, User user) {
 		// password 를 프론트로 보내지 않기로 결정함 (보안 문제)
 		String password = request.getPassword();
 		if (password.equals("")) {
@@ -202,10 +200,10 @@ public class UserService {
 
 		user.update(userIf);
 		userRepository.save(user);
-		return ApiResponse.ok("수정 완료");
+		return UnifiedResponse.ok("수정 완료");
 	}
 
-	public ListApiResponse<StatementResponse> getStatement(String email) {
+	public UnifiedResponse<List<StatementResponse>> getStatement(String email) {
 		User user = manager.findUser(email);
 
 		if (user.getStatement().size() == 0)
@@ -218,20 +216,20 @@ public class UserService {
 				return new StatementResponse(localDateMsg);
 			})
 			.toList();
-		return ListApiResponse.ok("거래내역 조회 완료", response);
+		return UnifiedResponse.ok("거래내역 조회 완료", response);
 	}
 
-	public ItemApiResponse<MyInformationResponse> getMyInformation(Long userId) {
+	public UnifiedResponse<MyInformationResponse> getMyInformation(Long userId) {
 		User userIf = manager.findUser(userId);
 		MyInformationResponse response = new MyInformationResponse(userIf);
-		return ItemApiResponse.ok("조회 성공", response);
+		return UnifiedResponse.ok("조회 성공", response);
 	}
 
-	public ApiResponse checkPW(OnlyMsgRequest request, String encodedPassword) {
+	public UnifiedResponse<?> checkPW(OnlyMsgRequest request, String encodedPassword) {
 		if (!passwordEncoder.matches(request.getMsg(), encodedPassword)) {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
 		}
 
-		return ApiResponse.ok("본인확인 성공");
+		return UnifiedResponse.ok("본인확인 성공");
 	}
 }
