@@ -41,7 +41,7 @@ public class UnifiedResponse<T> {
 		return new UnifiedResponse<>(CREATED, msg);
 	}
 
-	public static <T> UnifiedResponse<T> create(String message, T data) {
-		return new UnifiedResponse<>(CREATED, message, data);
+	public static <T> UnifiedResponse<T> create(String msg, T data) {
+		return new UnifiedResponse<>(CREATED, msg, data);
 	}
 }

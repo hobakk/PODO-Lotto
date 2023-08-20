@@ -20,8 +20,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.sixnumber.global.dto.ItemApiResponse;
-import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
@@ -46,7 +45,7 @@ public class SixNumberService {
 	private final Manager manager;
 	private final Random rd = new Random();
 
-	public ListApiResponse<String> buyNumber(BuyNumberRequest request, User user) {
+	public UnifiedResponse<List<String>> buyNumber(BuyNumberRequest request, User user) {
 		confirmationProcess(request, null,  user);
 
 		List<String> topNumbers = new ArrayList<>();
@@ -70,10 +69,10 @@ public class SixNumberService {
 		saveMainLottoList(topNumbers);
 
 		// 임시로 값을 확인하기 위해 ListApiResponse 를 사용
-		return ListApiResponse.ok("요청 성공", topNumbers);
+		return UnifiedResponse.ok("요청 성공", topNumbers);
 	}
 
-	public ListApiResponse<String> statisticalNumber(StatisticalNumberRequest request, User user) {
+	public UnifiedResponse<List<String>> statisticalNumber(StatisticalNumberRequest request, User user) {
 		confirmationProcess(null, request, user);
 
 		// server 에 올렸을 때 비용문제가 발생할거라 이용에 제한을 줄 필요가 있음
@@ -128,13 +127,13 @@ public class SixNumberService {
 		SixNumber sixNumber = new SixNumber(user.getId(), LocalDateTime.now(), topNumbers);
 		sixNumberRepository.save(sixNumber);
 		saveMainLottoList(topNumbers);
-		return ListApiResponse.ok("요청 성공", topNumbers);
+		return UnifiedResponse.ok("요청 성공", topNumbers);
 	}
 
-	public ItemApiResponse<SixNumber> getRecentBuyNumbers(User user) {
+	public UnifiedResponse<SixNumber> getRecentBuyNumbers(User user) {
 		SixNumber recentBuyNumbers = sixNumberRepository.findByRecentBuyNumbers(user.getId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 정보가 존재하지 않습니다"));
-		return ItemApiResponse.ok("최근 구매 번호 조회 성공", recentBuyNumbers);
+		return UnifiedResponse.ok("최근 구매 번호 조회 성공", recentBuyNumbers);
 	}
 
 	private void confirmationProcess(BuyNumberRequest buyNumberRequest, StatisticalNumberRequest statisticalNumberRequest, User userIf) {
