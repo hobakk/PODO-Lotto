@@ -16,7 +16,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.TestUtil;
@@ -49,8 +48,6 @@ public class AdminServiceTest {
 	private RedisDao redisDao;
 	@Mock
 	private Manager manager;
-	@Mock
-	private RedisTemplate<String, String> redisTemplate;
 
 	private User saveUser;
 	private User admin;
@@ -190,8 +187,7 @@ public class AdminServiceTest {
 
 	@Test
 	void setStatus_success_active() {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn("ACTIVE");
+		OnlyMsgRequest request = new OnlyMsgRequest("ACTIVE");
 
 		saveUser.setStatus(Status.SUSPENDED);
 
@@ -207,8 +203,7 @@ public class AdminServiceTest {
 	@ParameterizedTest
 	@ValueSource(strings = {"SUSPENDED", "DORMANT"})
 	void setStatus_success_suspended_or_dormant(String statusStr) {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn(statusStr);
+		OnlyMsgRequest request = new OnlyMsgRequest(statusStr);
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
@@ -224,8 +219,7 @@ public class AdminServiceTest {
 
 	@Test
 	void setStatus_fail_incorrectMsg() {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn("false");
+		OnlyMsgRequest request = new OnlyMsgRequest("false");
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
@@ -237,8 +231,7 @@ public class AdminServiceTest {
 
 	@Test
 	void setStatus_fail_overlapStatus() {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn("ACTIVE");
+		OnlyMsgRequest request = new OnlyMsgRequest("ACTIVE");
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
@@ -249,8 +242,7 @@ public class AdminServiceTest {
 
 	@Test
 	void setRole_success() {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn("PAID");
+		OnlyMsgRequest request = new OnlyMsgRequest("PAID");
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
@@ -262,8 +254,7 @@ public class AdminServiceTest {
 
 	@Test
 	void setRole_fail_incorrect() {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn("USER");
+		OnlyMsgRequest request = new OnlyMsgRequest("USER");
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
