@@ -85,8 +85,7 @@ public class UserServiceTest {
 		verify(userRepository).existsUserByEmail(anyString());
 		verify(userRepository).existsUserByNickname(anyString());
 		verify(userRepository).save(any(User.class));
-		assertEquals(201, response.getCode());
-		assertEquals("회원가입 완료", response.getMessage());
+		TestUtil.UnifiedResponseEquals(response, 201, "회원가입 완료");
 	}
 
 	@Test
@@ -106,8 +105,7 @@ public class UserServiceTest {
 		verify(userRepository).save(any(User.class));
 		assertEquals(saveUser.getStatus(), Status.ACTIVE);
 		assertNull(saveUser.getWithdrawExpiration());
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMessage(), "재가입 완료");
+		TestUtil.UnifiedResponseEquals(response, 200, "재가입 완료");
 	}
 
 	@Test
@@ -205,9 +203,8 @@ public class UserServiceTest {
 	void logout() {
 		UnifiedResponse<?> response = userService.logout(saveUser.getId());
 
-		assertEquals(response.getCode(), 200);
-		assertEquals(response.getMessage(), "로그아웃 성공");
 		verify(redisDao).deleteValues(anyLong());
+		TestUtil.UnifiedResponseEquals(response, 200, "로그아웃 성공");
 	}
 
 	@Test
@@ -227,12 +224,10 @@ public class UserServiceTest {
 
 	@Test
 	void withdraw_fail_incorrectMsg() {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn("incorrectMsg");
+		OnlyMsgRequest request = new OnlyMsgRequest("incorrectMsg");
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.withdraw(request, saveUser.getEmail()));
-
-		verify(request).getMsg();
+		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> userService.withdraw(request, saveUser.getEmail()));
 	}
 
 	@Test
@@ -253,22 +248,19 @@ public class UserServiceTest {
 
 	@Test
 	void setUser_fail_USER() {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn("월정액 해지");
+		OnlyMsgRequest request = new OnlyMsgRequest("월정액 해지");
 
 		// saveUser.getRole() = UserRole.USER
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.setPaid(request, saveUser.getEmail()));
 
-		verify(request).getMsg();
 		verify(manager).findUser(anyString());
 	}
 
 	@Test
 	void setPaid_success() {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn("false");
+		OnlyMsgRequest request = new OnlyMsgRequest("false");
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
@@ -285,8 +277,7 @@ public class UserServiceTest {
 	@ParameterizedTest
 	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#setPaidTestData")
 	void setPaid_fail_lowCash_Or_Role(int cash, UserRole role) {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn("false");
+		OnlyMsgRequest request = new OnlyMsgRequest("false");
 
 		User user = mock(User.class);
 		when(user.getEmail()).thenReturn("test@email.com");
@@ -298,7 +289,6 @@ public class UserServiceTest {
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.setPaid(request, user.getEmail()));
 
-		verify(request).getMsg();
 		verify(manager).findUser(anyString());
 	}
 
@@ -424,8 +414,7 @@ public class UserServiceTest {
 
 	@Test
 	void checkPW_success() {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn("ePassword");
+		OnlyMsgRequest request = new OnlyMsgRequest("ePassword");
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
@@ -437,8 +426,7 @@ public class UserServiceTest {
 
 	@Test
 	void checkPW_fail_incorrectPW() {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn("false");
+		OnlyMsgRequest request = new OnlyMsgRequest("false");
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
