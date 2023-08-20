@@ -56,6 +56,12 @@ export type SignupRequest = {
     nickname: string,
 }
 
+export type upDownCashRequest = {
+    userId: number,
+    msg: string,
+    cash: number,
+}
+
 export type ApiResponse = {
     code: number,
     msg: string,
