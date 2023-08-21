@@ -1,11 +1,10 @@
 package com.example.sixnumber.lotto.service;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.time.YearMonth;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,14 +37,11 @@ public class LottoServiceTest {
 
 	@BeforeEach
 	public void setup() {
-		lotto = mock(Lotto.class);
+		lotto = TestDataFactory.lotto();
 	}
 
 	@Test
 	void mainTopNumbers() {
-		List<Integer> countList = Arrays.asList(4,5,6,7,8,9);
-		when(lotto.getCountList()).thenReturn(countList);
-
 		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
 
 		when(manager.revisedTopIndicesAsStr(anyList())).thenReturn("1 2 3 4 5 6");
@@ -53,10 +49,9 @@ public class LottoServiceTest {
 		LottoResponse response = lottoService.mainTopNumbers();
 
 		verify(lottoRepository).findByMain();
-		verify(lotto).getCountList();
 		verify(manager).revisedTopIndicesAsStr(anyList());
 		assertEquals(response.getValue(), "1 2 3 4 5 6");
-		assertEquals(response.getCountList(), countList);
+		assertEquals(response.getCountList(), TestDataFactory.countList());
 	}
 
 	@Test
@@ -70,8 +65,6 @@ public class LottoServiceTest {
 
 	@Test
 	void getTopNumberForMonth() {
-		Lotto lotto = TestDataFactory.lotto();
-
 		when(lottoRepository.findByTopNumbersForMonth(lotto.getCreationDate())).thenReturn(Optional.of(lotto));
 
 		LottoResponse response = lottoService.getTopNumberForMonth(lotto.getCreationDate());
@@ -92,7 +85,6 @@ public class LottoServiceTest {
 
 	@Test
 	void getAllMonthStats_success() {
-		Lotto lotto = TestDataFactory.lotto();
 		when(lottoRepository.findAllByMonthStats()).thenReturn(List.of(lotto));
 
 		YearMonthResponse response = lottoService.getAllMonthStats();
