@@ -7,11 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.sixnumber.global.dto.ApiResponse;
-import com.example.sixnumber.global.dto.ItemApiResponse;
-import com.example.sixnumber.lotto.service.WinNumberService;
+import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.lotto.dto.WinNumberRequest;
 import com.example.sixnumber.lotto.dto.WinNumberResponse;
+import com.example.sixnumber.lotto.service.WinNumberService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,13 +21,13 @@ public class WinNumberController {
 	private final WinNumberService winNumberService;
 
 	@GetMapping("")
-	public ResponseEntity<ItemApiResponse<WinNumberResponse>> getWinNumbers() {
-		return ResponseEntity.ok(ItemApiResponse.ok("조회 성공", winNumberService.getWinNumbers()));
+	public ResponseEntity<UnifiedResponse<WinNumberResponse>> getWinNumbers() {
+		return ResponseEntity.ok(UnifiedResponse.ok("조회 성공", winNumberService.getWinNumbers()));
 	}
 
 	@PostMapping("/set")
-	public ResponseEntity<ApiResponse> setWinNumber(@RequestBody WinNumberRequest request) {
+	public ResponseEntity<UnifiedResponse<?>> setWinNumber(@RequestBody WinNumberRequest request) {
 		winNumberService.setWinNumbers(request);
-		return ResponseEntity.ok(ApiResponse.ok("등록 성공"));
+		return ResponseEntity.ok(UnifiedResponse.ok("등록 성공"));
 	}
 }
