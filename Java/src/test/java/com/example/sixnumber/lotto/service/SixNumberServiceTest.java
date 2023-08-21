@@ -18,8 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.TestUtil;
-import com.example.sixnumber.global.dto.ItemApiResponse;
-import com.example.sixnumber.global.dto.ListApiResponse;
+import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
@@ -62,7 +61,7 @@ public class SixNumberServiceTest {
 
 		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
 
-		ListApiResponse<String> response = sixNumberService.buyNumber(buyNumberRequest, saveUser);
+		UnifiedResponse<List<String>> response = sixNumberService.buyNumber(buyNumberRequest, saveUser);
 
 		verify(manager).findUser(anyLong());
 		verify(lottoRepository).findByMain();
@@ -70,7 +69,7 @@ public class SixNumberServiceTest {
 		List<String> data = response.getData();
 		assertNotNull(saveUser.getStatement());
 		assertEquals(data.size(), 5);
-		TestUtil.ListApiAssertEquals(response, 200, "요청 성공");
+		TestUtil.UnifiedResponseListEquals(response, 200, "요청 성공");
 	}
 
 	@Test
@@ -96,7 +95,7 @@ public class SixNumberServiceTest {
 
 		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
 
-		ListApiResponse<String> response = sixNumberService.statisticalNumber(request, saveUser);
+		UnifiedResponse<List<String>> response = sixNumberService.statisticalNumber(request, saveUser);
 
 		verify(manager).findUser(anyLong());
 		verify(lottoRepository).findByMain();
@@ -104,7 +103,7 @@ public class SixNumberServiceTest {
 		List<String> data = response.getData();
 		assertNotNull(saveUser.getStatement());
 		assertEquals(data.size(), 5);
-		TestUtil.ListApiAssertEquals(response, 200, "요청 성공");
+		TestUtil.UnifiedResponseListEquals(response, 200, "요청 성공");
 	}
 
 	@ParameterizedTest
@@ -125,10 +124,10 @@ public class SixNumberServiceTest {
 	void getRecentBuyNumbers_success() {
 		when(sixNumberRepository.findByRecentBuyNumbers(anyLong())).thenReturn(Optional.of(sixNumber));
 
-		ItemApiResponse<?> response = sixNumberService.getRecentBuyNumbers(saveUser);
+		UnifiedResponse<SixNumber> response = sixNumberService.getRecentBuyNumbers(saveUser);
 
 		verify(sixNumberRepository).findByRecentBuyNumbers(anyLong());
-		TestUtil.ItemApiAssertEquals(response, 200, "최근 구매 번호 조회 성공");
+		TestUtil.UnifiedResponseEquals(response, 200, "최근 구매 번호 조회 성공", SixNumber.class);
 	}
 
 	@Test
