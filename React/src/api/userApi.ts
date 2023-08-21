@@ -1,4 +1,4 @@
-import { ApiResponse, ItemResponse, ListResponse, SignupRequest, UserIfState } from "../shared/TypeMenu";
+import { UnifiedResponse, SignupRequest, UserIfState } from "../shared/TypeMenu";
 import { api } from "./config";
 
 export type ChargingRequest = {
@@ -6,17 +6,17 @@ export type ChargingRequest = {
     cash: number,
 }
 
-export const getInformation = async (): Promise<ItemResponse<UserIfState>> => {
+export const getInformation = async (): Promise<UnifiedResponse<UserIfState>> => {
     const { data } = await api.get(`/users/my-information`);
     return data.data;
 }
 
-export const logout = async (): Promise<ApiResponse> => {
+export const logout = async (): Promise<UnifiedResponse<undefined>> => {
     const { data } = await api.post(`/users/logout`);
     return data;
 }
 
-export const getCashNickname = async (): Promise<ItemResponse<{cash: number, nickname: string}>> => {
+export const getCashNickname = async (): Promise<UnifiedResponse<{cash: number, nickname: string}>> => {
     const { data } = await api.get("/users/cash");
     return data;
 }
@@ -25,7 +25,7 @@ export const withdraw = async (msg: string): Promise<void> => {
     await api.patch("/users/withdraw", msg);
 }
 
-export const checkPW = async (msg: string): Promise<ApiResponse> => {
+export const checkPW = async (msg: string): Promise<UnifiedResponse<undefined>> => {
     const { data } = await api.post("/users/check-pw", msg);
     return data;
 }
@@ -44,7 +44,7 @@ export const setCharges = async (inputValue: ChargingRequest) => {
     }
 }
 
-export const getCharges = async (): Promise<ListResponse<ChargingRequest[]>> => {
+export const getCharges = async (): Promise<UnifiedResponse<ChargingRequest[]>> => {
     try {
         const { data } = await api.get("/users/charging");
         return data;    
@@ -53,7 +53,7 @@ export const getCharges = async (): Promise<ListResponse<ChargingRequest[]>> => 
     }
 }
 
-export const setPaid = async (msg: string): Promise<ApiResponse> => {
+export const setPaid = async (msg: string): Promise<UnifiedResponse<undefined>> => {
     try {
         const { data } = await api.patch("/users/paid", msg);
         return data;
@@ -62,7 +62,7 @@ export const setPaid = async (msg: string): Promise<ApiResponse> => {
     }
 }
     
-export const getStatement = async (): Promise<ListResponse<{localDate: string, msg: string}[]>> => {
+export const getStatement = async (): Promise<UnifiedResponse<{localDate: string, msg: string}[]>> => {
     try {
         const { data } = await api.get("/users/statement");
         return data;

@@ -1,4 +1,4 @@
-import { ItemResponse } from "../shared/TypeMenu";
+import { UnifiedResponse } from "../shared/TypeMenu";
 import { api } from "./config";
 
 type LottoResponse = {
@@ -6,7 +6,7 @@ type LottoResponse = {
     value: string,
 }
 
-export const getMainTopNumber = async (): Promise<ItemResponse<LottoResponse>> => {
+export const getMainTopNumber = async (): Promise<UnifiedResponse<LottoResponse>> => {
     try {
         const { data } = await api.get("/lotto/main");
         return data;
@@ -15,7 +15,7 @@ export const getMainTopNumber = async (): Promise<ItemResponse<LottoResponse>> =
     }
 }
 
-export const getTopNumberForMonth = async (yearMonth: string): Promise<ItemResponse<LottoResponse>> => {
+export const getTopNumberForMonth = async (yearMonth: string): Promise<UnifiedResponse<LottoResponse>> => {
     try {
         const { data } = await api.get("/lotto/yearMonth", {
             params: {
@@ -28,7 +28,7 @@ export const getTopNumberForMonth = async (yearMonth: string): Promise<ItemRespo
     }
 }
 
-export const getAllMonthStats = async (): Promise<ItemResponse<{yearMonthList: string[]}>> => {
+export const getAllMonthStats = async (): Promise<UnifiedResponse<{yearMonthList: string[]}>> => {
     try {
         const { data } = await api.get("/lotto/yearMonth/all");
         return data;   

@@ -1,7 +1,7 @@
-import { ItemResponse, ListResponse, SixNumber } from "../shared/TypeMenu";
+import { UnifiedResponse, SixNumber } from "../shared/TypeMenu";
 import { api } from "./config";
 
-export const buyNumber = async (value: number): Promise<ListResponse<string>> => {
+export const buyNumber = async (value: number): Promise<UnifiedResponse<string[]>> => {
     try {
         const { data } = await api.post("/sixnum", value);
         return data;
@@ -10,7 +10,8 @@ export const buyNumber = async (value: number): Promise<ListResponse<string>> =>
     }
 }
 
-export const statisticalNumber = async (values: {value: number, repetition: number}): Promise<ListResponse<string>> => {
+export const statisticalNumber = async (values: {value: number, repetition: number})
+: Promise<UnifiedResponse<string[]>> => {
     try {
         const { data } = await api.post("/sixnum/repetition", values);
         return data.data;
@@ -19,7 +20,7 @@ export const statisticalNumber = async (values: {value: number, repetition: numb
     }
 }
 
-export const getRecentNumber = async (): Promise<ItemResponse<SixNumber>> => {
+export const getRecentNumber = async (): Promise<UnifiedResponse<SixNumber>> => {
     try {
         const res = await api.get("/sixnum/recent")
         return res.data;

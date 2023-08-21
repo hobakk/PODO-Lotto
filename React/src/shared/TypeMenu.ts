@@ -1,4 +1,4 @@
-export type errorType = {
+export type Err = {
     code: number;
     message: string;
     exceptionType: string;
@@ -63,17 +63,8 @@ export type upDownCashRequest = {
     cash: number,
 }
 
-export type ApiResponse = {
+export type UnifiedResponse<T> = {
     code: number,
     msg: string,
-};
-
-export type ItemResponse<T> = {
-    apiResponse: ApiResponse,
-    data: T,
-};
-
-export type ListResponse<T> = {
-    apiResponse: ApiResponse,
-    data: T[],
+    data?: T,
 };
