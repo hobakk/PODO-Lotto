@@ -68,7 +68,6 @@ public class SixNumberService {
 		sixNumberRepository.save(sixNumber);
 		saveMainLottoList(topNumbers);
 
-		// 임시로 값을 확인하기 위해 ListApiResponse 를 사용
 		return UnifiedResponse.ok("요청 성공", topNumbers);
 	}
 
