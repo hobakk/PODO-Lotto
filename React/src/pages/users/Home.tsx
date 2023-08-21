@@ -3,15 +3,15 @@ import { getWinNumber } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';
 import { CommonStyle, CommonLink, } from '../../components/Styles';
 import { ChangingNumStyle } from '../../components/Manufacturing';
-import { Res, WinNumber, errorType } from '../../shared/TypeMenu';
+import { WinNumber, Err, UnifiedResponse } from '../../shared/TypeMenu';
 
 function Home() {
   const [value, setValue] = useState<WinNumber[]>([]);
   const [isEmpty, setBoolean] = useState<boolean>(true);
   
-  const getWinnumberMutation = useMutation(getWinNumber, {
-    onSuccess: (res: Res)=>{
-      if (res.code === 200) {
+  const getWinnumberMutation = useMutation<UnifiedResponse<{winNumberList: WinNumber[]}>, Err>(getWinNumber, {
+    onSuccess: (res: UnifiedResponse<{winNumberList: WinNumber[]}>)=>{
+      if (res.code === 200 && res.data !== undefined) {
         const sortedValue = res.data.winNumberList.slice().sort((a: WinNumber, b: WinNumber) => {
           return new Date(b.date).getTime() - new Date(a.date).getTime();
         });
@@ -19,7 +19,7 @@ function Home() {
         setBoolean(false);
       }
     },
-    onError: (err: errorType)=>{
+    onError: (err: Err)=>{
       if (err.code === 500) {
         setValue([]);
       }
