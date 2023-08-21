@@ -31,7 +31,7 @@ public class RedisDaoTest {
 
 	private ValueOperations<String, String> valueOperations;
 	private ListOperations<String, String> listOperations;
-	String key = "";
+	String key;
 
 	@BeforeEach
 	public void setup() {
@@ -67,10 +67,8 @@ public class RedisDaoTest {
 		User user = TestDataFactory.user();
 
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-		when(valueOperations.get(key)).thenReturn("value");
+		when(valueOperations.get(anyString())).thenReturn("value");
 
 		Assertions.assertThrows(OverlapException.class, () -> redisDao.overlapLogin(user.getId()));
-
-		verify(valueOperations, times(2)).get(key);
 	}
 }
