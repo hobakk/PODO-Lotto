@@ -5,7 +5,7 @@ import { checkLoginAndgetUserIf } from '../api/noneUserApi';
 import { setUserIf } from '../modules/userIfSlice';
 import { deleteToken, getAccessTAndRefreshT } from '../shared/Cookie';
 import { RootState } from '../config/configStore';
-import { errorType } from '../shared/TypeMenu';
+import { Err, UserIfState, UnifiedResponse } from '../shared/TypeMenu';
 
 function useCheckLogin() {
     const dispatch = useDispatch();
@@ -13,14 +13,14 @@ function useCheckLogin() {
     const [isLogin, setData] = useState<boolean>(false);
     const [accessToken, refreshToken] = getAccessTAndRefreshT();
 
-    const checkLoginMutation = useMutation(checkLoginAndgetUserIf, {
-        onSuccess: (res)=>{
-            if  (res.code === 200) {
+    const checkLoginMutation = useMutation<UnifiedResponse<UserIfState>, Err, string[]>(checkLoginAndgetUserIf, {
+        onSuccess: (res: UnifiedResponse<UserIfState>)=>{
+            if  (res.code === 200 && res.data !== undefined) {
                 dispatch(setUserIf(res.data));
                 setData(true)
             }
         },
-        onError: (err: errorType)=>{
+        onError: (err: Err)=>{
             if  (err.message === "SignatureException") {
                 deleteToken();
             }
