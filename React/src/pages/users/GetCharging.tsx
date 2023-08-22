@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
-import { getCharges } from '../../api/useUserApi'
+import { ChargingDto, getCharges } from '../../api/userApi'
 import { useMutation } from 'react-query'
-import { Res, errorType } from '../../shared/TypeMenu';
+import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function GetCharging() {
-  const [chargValue, setChargValue] = useState<{cash: number, msg: string}[]>([]);
+  const [chargValue, setChargValue] = useState<ChargingDto[]>([]);
   const isAllow = useAllowType(AllowLogin);
-  const getChargesMutation = useMutation(getCharges, {
-    onSuccess: (res: Res)=>{
-      if (res.data !== null) {
+  const getChargesMutation = useMutation<UnifiedResponse<ChargingDto[]>, Err>(getCharges, {
+    onSuccess: (res)=>{
+      if (res.code === 200 && res.data) {
         setChargValue(res.data);
       }
     },
-    onError: (err: errorType)=>{
+    onError: (err)=>{
       if  (err.code === 500) {
-        alert(err.message);
+        alert(err.msg);
       }
     }
   })

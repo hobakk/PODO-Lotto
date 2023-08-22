@@ -10,7 +10,7 @@ function Home() {
   const [isEmpty, setBoolean] = useState<boolean>(true);
   
   const getWinnumberMutation = useMutation<UnifiedResponse<{winNumberList: WinNumber[]}>, Err>(getWinNumber, {
-    onSuccess: (res: UnifiedResponse<{winNumberList: WinNumber[]}>)=>{
+    onSuccess: (res)=>{
       if (res.code === 200 && res.data !== undefined) {
         const sortedValue = res.data.winNumberList.slice().sort((a: WinNumber, b: WinNumber) => {
           return new Date(b.date).getTime() - new Date(a.date).getTime();
@@ -19,7 +19,7 @@ function Home() {
         setBoolean(false);
       }
     },
-    onError: (err: Err)=>{
+    onError: (err)=>{
       if (err.code === 500) {
         setValue([]);
       }
