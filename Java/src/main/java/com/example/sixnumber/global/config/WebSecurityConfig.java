@@ -14,9 +14,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.sixnumber.global.scurity.JwtSecurityFilter;
-import com.example.sixnumber.global.scurity.UserDetailsServiceImpl;
-import com.example.sixnumber.global.util.JwtProvider;
-import com.example.sixnumber.global.util.RedisDao;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,9 +22,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-	private final UserDetailsServiceImpl userDetailsService;
-	private final JwtProvider jwtProvider;
-	private final RedisDao redisDao;
+	private final JwtSecurityFilter jwtSecurityFilter;
+	private final JwtEntryPoint jwtEntryPoint;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -49,12 +45,14 @@ public class WebSecurityConfig {
 			.authorizeRequests()
 				.antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
 				.antMatchers("/api/users/signin", "/api/users/signup", "/api/winnumber",
-					"/api/users/my-information", "/api/jwt/check/login", "/api/jwt/renew/access").permitAll()
+					"/api/users/my-information", "/api/jwt/**").permitAll()
 				.antMatchers("/api/admin/**", "/api/winnumber/set").hasRole("ADMIN")
 				.antMatchers("/api/lotto/**", "/api/lotto/yearMonth/all").hasAnyRole("ADMIN", "PAID")
-				.antMatchers("/**").authenticated();
+				.antMatchers("/**").authenticated()
+			.and()
+			.exceptionHandling().authenticationEntryPoint(jwtEntryPoint);
 
-		http.addFilterBefore(new JwtSecurityFilter(userDetailsService, jwtProvider, redisDao), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
