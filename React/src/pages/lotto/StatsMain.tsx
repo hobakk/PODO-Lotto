@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
 import { useMutation } from 'react-query';
-import { getMainTopNumber } from '../../api/useUserApi';
+import { LottoResponse, getMainTopNumber } from '../../api/lottoApi';
 import { NumSentenceResult } from '../../components/Manufacturing';
 import StatsContainer from '../../components/StatsContainer';
-import { Res } from '../../shared/TypeMenu';
+import { Err, UnifiedResponse } from '../../shared/TypeMenu';
 import { AllowNotRoleUser, useAllowType } from '../../hooks/AllowType';
 
 function StatsMain() {
-    const [value, setValue] = useState<{countList: string[], value: string}>({countList: [], value: ""});
+    const [value, setValue] = useState<LottoResponse>({countList: [], value: ""});
     const isAllow = useAllowType(AllowNotRoleUser);
 
-    const MainMutation = useMutation(getMainTopNumber, {
-        onSuccess: (res: Res)=>{
+    const MainMutation = useMutation<UnifiedResponse<LottoResponse>, Err>(getMainTopNumber, {
+        onSuccess: (res)=>{
+            if (res.code === 200 && res.data)
             setValue(res.data);
+        },
+        onError: (err)=>{
+            if (err.msg) alert(err.msg);
         }
     })
 
