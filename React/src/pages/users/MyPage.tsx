@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { CommonStyle, CommonP, CommonLink } from '../../components/Styles'
-import { withdraw } from '../../api/useUserApi';
+import { withdraw } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { setStatus } from '../../modules/userIfSlice';
 import LogoutMutation from '../../components/LogoutMutation';
 import { RootState } from '../../config/configStore';
 import { AllowLogin, useAllowType } from '../../hooks/AllowType';
+import { Err, UnifiedResponse } from '../../shared/TypeMenu';
 
 function MyPage() {
     const userIf = useSelector((state: RootState)=>state.userIf);
@@ -15,7 +16,7 @@ function MyPage() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [role, setRole] = useState<string>("일반");
-    const [msg, setMsg] = useState<string>("");
+    const [withdrawMsg, setWithdrawMsg] = useState<string>("");
 
     useEffect(()=>{
         if (isAllow) {
@@ -31,18 +32,20 @@ function MyPage() {
 
     const logoutMutation = LogoutMutation();
 
-    const withdrawMutation = useMutation(withdraw, {
-        onSuccess: ()=>{
-            dispatch(setStatus("DORMANT"));
-            navigate("/");
-            logoutMutation.mutate();
+    const withdrawMutation = useMutation<UnifiedResponse<undefined>, void, string>(withdraw, {
+        onSuccess: (res)=>{
+            if  (res.code === 200) {
+                dispatch(setStatus("DORMANT"));
+                navigate("/");
+                logoutMutation.mutate();
+            }
         }
     });
 
     const sunmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (msg === "회원탈퇴") {
-            withdrawMutation.mutate(msg);
+        if (withdrawMsg === "회원탈퇴") {
+            withdrawMutation.mutate(withdrawMsg);
         } else {
             alert("잘못된 문자열 입력");
         }
@@ -53,6 +56,10 @@ function MyPage() {
         fontSize: "20px",
         marginTop: "30px",
         marginLeft: "4cm"
+    }
+
+    const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setWithdrawMsg(e.target.value);
     }
 
   return (
@@ -72,7 +79,7 @@ function MyPage() {
             {role !== "관리자" && (
                 <div style={{ marginTop: '5cm', }}>
                     <form id='form' onSubmit={sunmitHandler}>
-                        <input onChange={(e)=>setMsg(e.target.value)} placeholder='회원탈퇴 입력'/>
+                        <input onChange={onChangeHandler} type='text' placeholder='회원탈퇴 입력'/>
                         <button>회원탈퇴</button>
                     </form>
                 </div>
