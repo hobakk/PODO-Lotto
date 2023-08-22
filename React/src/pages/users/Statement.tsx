@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
-import { getStatement } from '../../api/useUserApi'
+import { getStatement } from '../../api/userApi'
 import { useMutation } from 'react-query'
-import { Res, errorType } from '../../shared/TypeMenu';
+import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function Statement() {
@@ -10,13 +10,15 @@ function Statement() {
     const [value, setValue] = useState<{localDate: string, msg: string}[]>([]);
     const isAllow: boolean = useAllowType(AllowLogin);
 
-    const StateMnetMutation = useMutation(getStatement, {
-        onSuccess: (res: Res)=>{
-            setAssign(true);
-            setValue(res.data);
+    const StateMnetMutation = useMutation<UnifiedResponse<{localDate: string, msg: string}[]>, Err>(getStatement, {
+        onSuccess: (res)=>{
+            if (res.code === 200 && res.data) {
+                setAssign(true);
+                setValue(res.data);
+            }
         },
-        onError: (err: errorType)=>{
-            alert(err.message);
+        onError: (err)=>{
+            alert(err.msg);
         }
     });
 
