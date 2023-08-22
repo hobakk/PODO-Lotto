@@ -1,37 +1,39 @@
 import React, { useEffect, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
 import { useMutation } from 'react-query';
-import { getAllMonthStats, getTopNumberForMonth } from '../../api/useUserApi';
+import { AllMonthProps, LottoResponse, getAllMonthStats, getTopNumberForMonth } from '../../api/lottoApi';
 import { NumSentenceResult } from '../../components/Manufacturing';
 import StatsContainer from '../../components/StatsContainer';
-import { Res, errorType } from '../../shared/TypeMenu';
+import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 import { AllowNotRoleUser, useAllowType } from '../../hooks/AllowType';
 
 function StatsMonth() {
     useAllowType(AllowNotRoleUser);
     const [yMList, setYMList] = useState<string[]>([]);
     const [yearMonth, setYearMonth] = useState<string>("");
-    const [value, setValue] = useState<{countList: string[], value: string}>({countList: [], value: ""});
+    const [value, setValue] = useState<LottoResponse>({countList: [], value: ""});
     const [render, setRender] = useState<boolean>(true);
 
-    const allMonthStatsMutation = useMutation(getAllMonthStats, {
-        onSuccess: (res: Res)=>{
+    const allMonthStatsMutation = useMutation<UnifiedResponse<AllMonthProps>, Err>(getAllMonthStats, {
+        onSuccess: (res)=>{
+            if (res.code === 200 && res.data)
             setYMList(res.data.yearMonthList);
         },
-        onError: (err: errorType)=>{
+        onError: (err)=>{
             if (err.code === 500) {
-                alert(err.message);
+                alert(err.msg);
             }
         }
     })
 
-    const getMonthStatsMutation = useMutation(getTopNumberForMonth, {
-        onSuccess: (res: Res)=>{
+    const getMonthStatsMutation = useMutation<UnifiedResponse<LottoResponse>, Err, string>(getTopNumberForMonth, {
+        onSuccess: (res)=>{
+            if (res.code === 200 && res.data)
             setValue(res.data);
         },
-        onError: (err: errorType)=>{
+        onError: (err)=>{
             if (err.code === 500) {
-                alert(err.message);
+                alert(err.msg);
             }
         }
     })
