@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
-import { buyNumber } from '../../api/useUserApi';
+import { buyNumber } from '../../api/sixNumberApi';
 import { useMutation } from 'react-query';
 import { ResultContainer } from '../../components/Manufacturing';
 import { AllowLogin, useAllowType } from '../../hooks/AllowType';
-import { Res } from '../../shared/TypeMenu';
+import { UnifiedResponse } from '../../shared/TypeMenu';
 
 function StatisticalNumber() {
     useAllowType(AllowLogin);
@@ -28,8 +28,9 @@ function StatisticalNumber() {
         height: "30px",
     }
     
-    const buyNumberMutation = useMutation(buyNumber, {
-        onSuccess: (res: Res)=>{
+    const buyNumberMutation = useMutation<UnifiedResponse<string[]>, void, number>(buyNumber, {
+        onSuccess: (res)=>{
+            if (res.code === 200 && res.data)
             setValue(res.data);
         }
     });
