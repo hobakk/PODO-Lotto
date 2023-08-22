@@ -2,21 +2,22 @@ import React, { useEffect, useState } from 'react'
 import { ResultContainer } from '../../components/Manufacturing'
 import { useMutation } from 'react-query'
 import { CommonStyle } from '../../components/Styles';
-import { getRecentNumber } from '../../api/useUserApi';
-import { Res, errorType } from '../../shared/TypeMenu';
+import { getRecentNumber } from '../../api/sixNumberApi';
+import { UnifiedResponse, Err, SixNumber } from '../../shared/TypeMenu';
 import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function RecentNumber() {
     const [value, setValue] = useState<string[]>([]);
     const isAllow = useAllowType(AllowLogin);
 
-    const getRecentNumMutation = useMutation(getRecentNumber, {
-        onSuccess: (res: Res)=>{
-            setValue(res.data);
+    const getRecentNumMutation = useMutation<UnifiedResponse<SixNumber>, Err>(getRecentNumber, {
+        onSuccess: (res)=>{
+            if (res.code === 200 && res.data?.numberList)
+            setValue(res.data.numberList);
         },
-        onError: (err: errorType)=>{
+        onError: (err)=>{
             if (err.code === 500) {
-                alert(err.message);
+                alert(err.msg);
             }
         } 
     })
