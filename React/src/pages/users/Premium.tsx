@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
 import { SignBorder, CommonStyle } from '../../components/Styles'
-import { getCashNickname, setPaid } from '../../api/useUserApi'
+import { getCashNickname, setPaid, CashNicknameDto } from '../../api/userApi'
 import { useMutation } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { setCashNickname, setRole } from '../../modules/userIfSlice'
 import { useNavigate } from 'react-router-dom'
 import { RootState } from '../../config/configStore'
-import { Res, errorType } from '../../shared/TypeMenu'
+import { UnifiedResponse, Err } from '../../shared/TypeMenu'
 import { AllowLogin, useAllowType } from '../../hooks/AllowType'
 
 function Premium() {
@@ -24,13 +24,16 @@ function Premium() {
         fontSize: "18px",
     }
 
-    const getCashNicknameMutation = useMutation(getCashNickname, {
-        onSuccess: (res: Res)=>{
-            dispatch(setCashNickname(res.data));
+    const getCashNicknameMutation = useMutation<UnifiedResponse<CashNicknameDto>>(getCashNickname, {
+        onSuccess: (res)=>{
+            if (res.code === 200 && res.data) {
+                dispatch(setCashNickname(res.data));
+            }
         }
     });
-    const setPaidMutation = useMutation(setPaid, {
-        onSuccess: (res: Res)=>{
+
+    const setPaidMutation = useMutation<UnifiedResponse<undefined>, Err, string>(setPaid, {
+        onSuccess: (res)=>{
             if (res.code == 200) {
                 dispatch(setRole("ROLE_PAID"));
                 getCashNicknameMutation.mutate();
@@ -38,22 +41,23 @@ function Premium() {
                 alert("Premiun 적용 완료");
             }
         },
-        onError: (error: errorType)=>{    
+        onError: (error)=>{    
             if (error.code === 500) {
-                alert(error.message);
+                alert(error.msg);
             }
         }
     });
-    const setUserMutation = useMutation(setPaid, {
-        onSuccess: (res: Res)=>{
+
+    const setUserMutation = useMutation<UnifiedResponse<undefined>, Err, string>(setPaid, {
+        onSuccess: (res)=>{
             if (res.code == 200) {
                 navigate("/");
                 alert("Premiun 해제 완료");
             }
         },
-        onError: (error: errorType)=>{
+        onError: (error)=>{
             if (error.code === 400) {
-                alert(error.message);
+                alert(error.msg);
             }
         }    
     });
