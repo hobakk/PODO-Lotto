@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
-import { buyNumber } from '../../api/useUserApi';
+import { buyNumber } from '../../api/sixNumberApi';
 import { useMutation } from 'react-query';
 import GetUserIfMutation from '../../components/GetUserIfMutation';
 import { ResultContainer } from '../../components/Manufacturing';
-import { Res, errorType } from '../../shared/TypeMenu';
+import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function BuyNumber() {
@@ -30,19 +30,17 @@ function BuyNumber() {
         }
     }, [])
 
-    const buyNumberMutation = useMutation(buyNumber, {
-        onSuccess: (res: Res)=>{
-            if  (res.data !== null) {
+    const buyNumberMutation = useMutation<UnifiedResponse<string[]>, Err, number>(buyNumber, {
+        onSuccess: (res)=>{
+            if  (res.code === 200 && res.data) {
                 setValue(res.data);
                 setData(false);
                 getUserIfMutation.mutate();
             }
         },
-        onError: (err: errorType)=>{
-            if (err.code === 500) {
-                alert(err.message);
-            } else if (err.code === 400) {
-                alert(err.message);
+        onError: (err)=>{
+            if (err.msg) {
+                alert(err.msg);
             }
         }
     });
