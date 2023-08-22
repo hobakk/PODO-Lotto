@@ -2,33 +2,31 @@ import React, { ReactElement, useEffect, useRef, useState } from 'react'
 import { CommonStyle, SignBorder } from '../../components/Styles'
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
-import { signin } from '../../api/noneUserApi';
+import { signin, SigninRequest } from '../../api/noneUserApi';
 import { InputBox } from '../../components/Styles';
 import GetUserIfMutation from '../../components/GetUserIfMutation';
-import { errorType } from '../../shared/TypeMenu';
+import { Err, UnifiedResponse } from '../../shared/TypeMenu';
 
 function Signin() {
     const emailRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
     const getUserIfMutation = GetUserIfMutation();
-    const signinMutation = useMutation(signin,{
-        onSuccess: ()=>{
-            console.log("로그인 완료")
-            getUserIfMutation.mutate();
-            navigate("/");
+
+    const signinMutation = useMutation<UnifiedResponse<undefined>, Err, SigninRequest>(signin,{
+        onSuccess: (res)=>{
+            if  (res.code === 200){
+                getUserIfMutation.mutate();
+                navigate("/");
+            }
         },
-        onError: (err: errorType)=>{
-            if  (err.code === 500) {
-                alert(err.message);
-            } else if (err.code !== 500) {
-                alert(err.message);
-            } else {
-                console.log(err);
+        onError: (err)=>{
+            if  (err.msg) {
+                alert(err.msg);
             }
         }
     });
 
-    const [inputValue, setInputValue] = useState({
+    const [inputValue, setInputValue] = useState<SigninRequest>({
         email: "",
         password: "",
     });
