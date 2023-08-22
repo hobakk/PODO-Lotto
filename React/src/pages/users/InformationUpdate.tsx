@@ -1,41 +1,40 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { CommonStyle, CommonP, InputBox } from '../../components/Styles'
-import { checkPW, update } from '../../api/useUserApi';
+import { checkPW, update } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import LogoutMutation from '../../components/LogoutMutation';
 import { RootState } from '../../config/configStore';
 import { useSelector } from 'react-redux';
-import { Res, errorType } from '../../shared/TypeMenu';
+import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 import { AllowLogin, useAllowType } from '../../hooks/AllowType';
+import { SignupRequest } from '../../api/noneUserApi';
 
 function InformationUpdate() {
-    type InputProps = { email: string, password: string, nickname: string }
-
+    useAllowType(AllowLogin);
     const userIf = useSelector((state: RootState)=>state.userIf);
     const [password, setPassword] = useState<string>("");
     const pwRef = useRef<HTMLInputElement>(null);
     const [isPassword, setIsPassword] = useState<boolean>(false);
-    useAllowType(AllowLogin);
-    const [inputValue, setInputValue] = useState<InputProps>({
+    const [inputValue, setInputValue] = useState<SignupRequest>({
         email: "",
         password: "",
         nickname: "",
     }); 
-    const [result, setResult] = useState<InputProps>({
+    const [result, setResult] = useState<SignupRequest>({
         email: "",
         password: "",
         nickname: "",
     });
 
-    const checkPWMutation = useMutation(checkPW, {
-        onSuccess: (res: Res)=>{
+    const checkPWMutation = useMutation<UnifiedResponse<undefined>, Err, string>(checkPW, {
+        onSuccess: (res)=>{
             if (res.code === 200) {
                 setIsPassword(true);
             }
         },  
-        onError: (err: errorType)=>{
+        onError: (err)=>{
             if (err.code === 500) {
-                alert(err.message);
+                alert(err.msg);
             }
         }
     })
@@ -53,18 +52,16 @@ function InformationUpdate() {
 
     const logoutMutation = LogoutMutation();
 
-    const updateMutation = useMutation(update, {
-        onSuccess: (res: Res)=>{
+    const updateMutation = useMutation<UnifiedResponse<undefined>, Err, SignupRequest>(update, {
+        onSuccess: (res)=>{
             if  (res.code === 200) {
                 logoutMutation.mutate();
                 alert("회원정보 수정완료 재 로그인 해주세요")
             } 
         },
-        onError: (err: errorType)=>{
-            if (err.code === 500) {
-                alert(err.message);
-            } else {
-                alert(err.message);
+        onError: (err)=>{
+            if (err.exceptionType === "OverlapException") {
+                alert(err.msg);
             }
         } 
     })
