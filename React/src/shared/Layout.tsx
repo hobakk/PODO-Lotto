@@ -42,7 +42,7 @@ const layoutStyles: React.CSSProperties = {
 }
 
 type UserIf = {
-  cash: string;
+  cash: number;
   nickname: string;
   role: string;
 }
@@ -52,8 +52,8 @@ function Header() {
   const logoutMutation = LogoutMutation();
   const userIf = useSelector((state: RootState)=>state.userIf) as UserIf;
   const isLogin = useCheckLogin();
-  const [cash, setCash] = useState<string | undefined>();
-  const [nickname, setNickname] = useState<string | undefined>("");
+  const [cash, setCash] = useState<number>();
+  const [nickname, setNickname] = useState<string>("");
 
   useEffect(()=>{
     setCash(userIf.cash);
