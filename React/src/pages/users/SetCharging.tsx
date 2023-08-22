@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { InputBox, SignBorder, CommonStyle } from '../../components/Styles'
-import { setCharges } from '../../api/useUserApi';
+import { ChargingDto, setCharges } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import { Res, errorType } from '../../shared/TypeMenu';
+import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function SetCharging() {
     const navigate = useNavigate();
     useAllowType(AllowLogin);
-    const [inputValue, setInputValue] = useState<{cash: number, msg: string}>({
+    const [inputValue, setInputValue] = useState<ChargingDto>({
         cash: 0,
         msg: "",
     });
@@ -21,19 +21,15 @@ function SetCharging() {
         })
     }
 
-    const chargingMutation = useMutation(setCharges, {
-        onSuccess: (res: Res)=>{
+    const chargingMutation = useMutation<UnifiedResponse<ChargingDto[]>, Err, ChargingDto>(setCharges, {
+        onSuccess: (res)=>{
             if (res.code == 200) {
                 navigate("/get-charging");
             }
         },
-        onError: (err: errorType)=>{
-            if  (err.code === 500) {
-                alert(err.message);
-            } else if (err.code === 400) {
-                alert(err.message);
-            } else if (err.code === 403) {
-                alert(err.message);
+        onError: (err)=>{
+            if  (err.msg) {
+                alert(err.msg);
             }
         }
     })
