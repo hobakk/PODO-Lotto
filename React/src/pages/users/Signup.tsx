@@ -1,31 +1,29 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { SignBorder, CommonStyle, InputBox } from '../../components/Styles'
 import { Link, useNavigate } from 'react-router-dom';
-import { signup } from '../../api/noneUserApi';
+import { signup, SignupRequest } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';
-import { errorType } from '../../shared/TypeMenu';
+import { Err, UnifiedResponse } from '../../shared/TypeMenu';
 
 function Signiup() {
-  type InputValue = {
-    email: string,
-    password: string,
-    nickname: string, 
-  }
 
   const emailRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const [inputValue, setInputValue] = useState<InputValue>({
+  const [inputValue, setInputValue] = useState<SignupRequest>({
     email: "",
     password: "",
     nickname: "",
   });
-  const signupMutation = useMutation(signup, {
-    onSuccess: ()=>{
-      console.log("회원가입 완료");
-      navigate("/signin");
+
+  const signupMutation = useMutation<UnifiedResponse<undefined>, Err, SignupRequest>(signup, {
+    onSuccess: (res)=>{
+      if (res.code === 200 || res.code === 201) {
+        alert(res.msg);
+        navigate("/signin");
+      }
     }, 
-    onError: (err: errorType)=>{
-      alert(err.message);
+    onError: (err)=>{
+      alert(err.msg);
     }
   })
 
