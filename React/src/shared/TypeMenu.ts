@@ -1,12 +1,18 @@
+export type UnifiedResponse<T> = {
+    code: number,
+    msg: string,
+    data?: T,
+};
+
 export type Err = {
     code: number;
-    message: string;
+    msg: string;
     exceptionType: string;
 };
 
 export type Res = {
     code: number;
-    message: string;
+    msg: string;
     data: any;
 };
 
@@ -23,12 +29,13 @@ export type SixNumber = {
     id: number;
     userId: number;
     buyDate: Date;
+    numberList?: string[];
 };
 
 export type UserIfState = {
     email: string;
     nickname: string;
-    cash: string;
+    cash: number;
     role: string;
     status: string;
     statement: Record<string, any>;
@@ -39,7 +46,7 @@ export type UserAllIf = {
     email: string;
     password: string;
     nickname: string;
-    cash: string;
+    cash: number;
     role: string;
     status: string;
     statement: Record<string, any>;
@@ -51,20 +58,8 @@ export type AdminGetCharges = {
     value: number,
 };
 
-export type SignupRequest = {
-    email: string,
-    password: string,
-    nickname: string,
-}
-
 export type upDownCashRequest = {
     userId: number,
     msg: string,
     cash: number,
 }
-
-export type UnifiedResponse<T> = {
-    code: number,
-    msg: string,
-    data?: T,
-};
