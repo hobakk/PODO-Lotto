@@ -30,11 +30,6 @@ function Home() {
     if (isEmpty === true) {
       getWinnumberMutation.mutate();
     }
-  }, [])
-  useEffect(()=>{
-    if (isEmpty === true) {
-      getWinnumberMutation.mutate();
-    }
   }, [isEmpty])
 
   const Rectangle: React.CSSProperties = {

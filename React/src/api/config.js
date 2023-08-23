@@ -10,13 +10,13 @@ const signApi = axios.create({
 
 const api = axios.create({
     baseURL: url,
+    withCredentials: true,
 })
 
 api.interceptors.request.use(
     (config) => {
         config.headers['Content-Type'] = 'application/json';
         config.headers['Authorization'] = `Bearer ${getCookie("accessToken")}`;
-        config.headers['Refresh-Token'] = `Bearer ${getCookie("refreshToken")}`;
         return config;
     },
     (error) => {
@@ -30,7 +30,11 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
+        console.log(error);
+        // if (error.response.data.code)
+
         const result = error.response.data;
+        console.log(result);
         return Promise.reject(result);
     }
 )

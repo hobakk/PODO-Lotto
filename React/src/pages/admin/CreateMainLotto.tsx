@@ -1,22 +1,22 @@
 import React from 'react'
 import { useMutation } from 'react-query';
-import { createLotto } from '../../api/useUserApi';
+import { createLotto } from '../../api/adminApi';
 import { CommonStyle } from '../../components/Styles';
 import { useNavigate } from 'react-router-dom';
-import { Res, errorType } from '../../shared/TypeMenu';
+import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 import { AllowOnlyAdmin, useAllowType } from '../../hooks/AllowType';
 
 function CreateMainLotto() {
     useAllowType(AllowOnlyAdmin);
     const navigate = useNavigate();
-    const setMainLottoMutation = useMutation(createLotto, {
-        onSuccess: (res: Res) => {
-            alert(res.message);
+    const setMainLottoMutation = useMutation<UnifiedResponse<undefined>, Err>(createLotto, {
+        onSuccess: (res) => {
+            alert(res.msg);
             navigate("/");
         },
-        onError: (err: errorType)=>{
+        onError: (err)=>{
             if (err.code === 500) {
-                alert(err.message);
+                alert(err.msg);
             }
         }
     })

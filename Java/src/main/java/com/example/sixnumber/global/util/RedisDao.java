@@ -7,7 +7,9 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.ErrorCode;
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class RedisDao {
+	private final JwtProvider jwtProvider;
 	private final RedisTemplate<String, String> redisTemplate;
 	private final String RTK = "RT: ";
 	private final String STMT = "STMT: ";
@@ -89,5 +92,21 @@ public class RedisDao {
 	public void overlapLogin(Long userId) {
 		boolean isNull = deleteInRedisValueIsNotNull(userId);
 		if (isNull) throw new OverlapException("중복된 로그인입니다");
+	}
+
+	public boolean isEqualsBlackList(String key) {
+		ValueOperations<String, String> values = redisTemplate.opsForValue();
+		return values.get(key) != null;
+	}
+
+	public void setBlackList(String token) {
+		if (jwtProvider.validateToken(token)) {
+			ValueOperations<String, String> values = redisTemplate.opsForValue();
+			Long remainingTime = jwtProvider.getRemainingTime(token);
+			if (remainingTime != 0) {
+				values.set(token, "Black", jwtProvider.getRemainingTime(token), TimeUnit.MILLISECONDS);
+			}
+
+		} else throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "만료된 accessToken 입니다");
 	}
 }

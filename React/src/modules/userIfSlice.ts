@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserIfState } from "../shared/TypeMenu";
+import { CashNicknameDto } from "../api/userApi";
 
 const initialState: UserIfState = {
     email: "",
     nickname: "",
-    cash: "",
+    cash: 0,
     role: "",
     status: "",
     statement: {},
@@ -29,7 +30,7 @@ const userIfSlice = createSlice({
         setRole: (state, action: PayloadAction<string>) => {
             state.role = action.payload;
         },
-        setCashNickname: (state, action: PayloadAction<{ cash: string; nickname: string }>) => {
+        setCashNickname: (state, action: PayloadAction<CashNicknameDto>) => {
             const { cash, nickname } = action.payload;
             state.cash = cash;
             state.nickname = nickname;

@@ -18,7 +18,7 @@ function Statement() {
             }
         },
         onError: (err)=>{
-            alert(err.msg);
+            console.log(err);
         }
     });
 
