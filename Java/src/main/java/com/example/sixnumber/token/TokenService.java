@@ -40,9 +40,9 @@ public class TokenService {
 		}
 	}
 
-	public Cookie renewAccessToken(String refreshToken) {
-		return createCookie(refreshToken);
-	}
+	// public Cookie renewAccessToken(String refreshToken) {
+	// 	return createCookie(refreshToken);
+	// }
 
 	private Cookie createCookie(String refreshToken) {
 		String[] idEmail = jwtProvider.validateRefreshToken(refreshToken);
