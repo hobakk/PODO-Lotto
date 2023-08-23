@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
-import { downCash, getUsers, setRoleFromAdmin, setStatusFromAdmin, setAdmin } from '../../api/useUserApi'
+import { downCash, getUsers, setRoleFromAdmin, setStatusFromAdmin, setAdmin, UserIdMsgProps } from '../../api/adminApi';
 import { CommonStyle } from '../../components/Styles';
 import { useNavigate } from 'react-router-dom';
-import { Res, UserAllIf, errorType } from '../../shared/TypeMenu';
+import { UnifiedResponse, UserAllIf, Err, upDownCashRequest } from '../../shared/TypeMenu';
 import { AllowOnlyAdmin, useAllowType } from '../../hooks/AllowType';
 
 function GetUsers() {
@@ -18,61 +18,62 @@ function GetUsers() {
   const [status, setStatus] = useState<{ [key: number]: string }>({});
   const [key, setkey] = useState<{ [key: number]: string }>({});
 
-  const getUsersMutation = useMutation(getUsers, {
-    onSuccess: (res: Res) =>{
+  const getUsersMutation = useMutation<UnifiedResponse<UserAllIf[]>>(getUsers, {
+    onSuccess: (res) =>{
+      if (res.code === 200 && res.data)
       setValue(res.data);
     }
   })
 
-  const downCashMutation = useMutation(downCash, {
-    onSuccess: (res: Res)=>{
+  const downCashMutation = useMutation<UnifiedResponse<undefined>, Err, upDownCashRequest>(downCash, {
+    onSuccess: (res)=>{
       if  (res.code === 200) {
         alert("차감완료");
         setRender(!render);
       }
     },
-    onError: (err: errorType)=>{
+    onError: (err)=>{
       if  (err.code === 500) {
-        alert(err.message);
+        alert(err.msg);
       }
     }
   })
 
-  const setRoleMutation = useMutation(setRoleFromAdmin, {
-    onSuccess: (res: Res)=>{
+  const setRoleMutation = useMutation<UnifiedResponse<undefined>, Err, UserIdMsgProps>(setRoleFromAdmin, {
+    onSuccess: (res)=>{
       if (res.code === 200) {
         setRender(!render);
       }
     },
-    onError: (err: errorType)=>{
+    onError: (err)=>{
       if (err.code === 500) {
-        alert(err.message);
+        alert(err.msg);
       }
     }
   })
 
-  const setStatusMutation = useMutation(setStatusFromAdmin, {
-    onSuccess: (res: Res)=>{
+  const setStatusMutation = useMutation<UnifiedResponse<undefined>, Err, UserIdMsgProps>(setStatusFromAdmin, {
+    onSuccess: (res)=>{
       if (res.code === 200) {
         setRender(!render);
       }
     },
-    onError: (err: errorType)=>{
-      if (err.message) {
-        alert(err.message);
+    onError: (err)=>{
+      if (err.msg) {
+        alert(err.msg);
       } 
     }
   })
 
-  const setAdminMutation = useMutation(setAdmin, {
-    onSuccess: (res: Res)=>{
+  const setAdminMutation = useMutation<UnifiedResponse<undefined>, Err, UserIdMsgProps>(setAdmin, {
+    onSuccess: (res)=>{
       if (res.code === 200) {
         setRender(!render);
       }
     },
-    onError: (err: errorType)=>{
+    onError: (err)=>{
       if (err.code === 500) {
-        alert(err.message);
+        alert(err.msg);
       }
     }
   })
@@ -98,7 +99,7 @@ function GetUsers() {
   const onClickHandler = (userId: number) => {
     const CashRequest = {
       userId,
-      value: cash[userId],
+      cash: cash[userId],
       msg: "문의하세요"
     }
     console.log(CashRequest)
