@@ -1,10 +1,22 @@
 import axios from "axios";
 import { signApi } from "./config";
-import { UnifiedResponse, Err, SignupRequest, UserIfState, WinNumber } from "../shared/TypeMenu";
+import { UnifiedResponse, Err, UserIfState, WinNumber } from "../shared/TypeMenu";
 
-const signin = async (emailPassword: {email: string, password: string}): Promise<void> => {
+export type SigninRequest = {
+    email: string,
+    password: string
+}
+
+export type SignupRequest = {
+    email: string,
+    password: string,
+    nickname: string,
+}
+
+const signin = async (emailPassword: SigninRequest): Promise<UnifiedResponse<undefined>> => {
     try {
-        await signApi.post(`/signin`, emailPassword);    
+        const response = await signApi.post(`/signin`, emailPassword);    
+        return response.data;
     } catch (error: any) {
         throw error.response.data;
     }
@@ -37,7 +49,7 @@ const checkLoginAndgetUserIf = async (tokens: string[]): Promise<UnifiedResponse
         }, {
             withCredentials: true,
         });
-        console.log(res);
+        console.log(res.data);
         return res.data;
     } catch (error: any) {
         if (error.response.data.message ===

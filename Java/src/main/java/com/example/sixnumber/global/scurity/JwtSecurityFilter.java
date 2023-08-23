@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.sixnumber.global.exception.BlackListException;
 import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.RedisDao;
@@ -31,7 +32,6 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class JwtSecurityFilter extends OncePerRequestFilter {
-
 	private final UserDetailsServiceImpl userDetailsService;
 	private final JwtProvider jwtProvider;
 	private final RedisDao redisDao;
@@ -40,17 +40,19 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 		String token = jwtProvider.resolveToken(request);
-		String refreshTokenInCookie = jwtProvider.getTokenValueInCookie(request ,REFRESH_TOKEN);
+		String refreshTokenInCookie = jwtProvider.getTokenValueInCookie(request ,"refreshToken");
 
 		if (token != null) {
 			try {
-				if (!jwtProvider.filterChainValidateToken(token)) {
+				if (!jwtProvider.filterChainValidateToken(token))
 					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
-				}
+
+				if (redisDao.isEqualsBlackList(token)) throw new BlackListException("Blacked Token");
 
 				Long id = jwtProvider.getClaims(token).get("id", Long.class);
-				if (!redisDao.checkKey(id)) {
-					redisDao.deleteValues(id);
+				String refreshTokenInRedis = redisDao.getValue(id);
+				if (!refreshTokenInRedis.equals(refreshTokenInCookie) || jwtProvider.isTokenExpired(refreshTokenInRedis)) {
+					redisDao.setBlackList(token);
 					throw new OverlapException("중복 로그인 입니다");
 				}
 
@@ -61,12 +63,19 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 				String email = claims.getSubject();
 
 				if (validateRefreshCookie(refreshTokenInCookie, userId)) {
-					String newAccessToken = jwtProvider.accessToken(email, userId);
-					Cookie cookie = new Cookie("accessToken", newAccessToken);
-					cookie.setPath("/");
-					response.addCookie(cookie);
+					responseAddAccessToken(response, userId, email);
 					createAuthentication(userId);
 				} else throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken");
+			} catch (BlackListException e) {
+				 if (refreshTokenInCookie != null) {
+					String[] idEmail = jwtProvider.getIdEmail(refreshTokenInCookie).split(",");
+					Long id = Long.parseLong(idEmail[0]);
+					String refreshTokenInRedis = redisDao.getValue(id);
+					if (refreshTokenInCookie.equals(refreshTokenInRedis)) {
+						responseAddAccessToken(response, id, idEmail[1]);
+						createAuthentication(id);
+					} else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "RefreshToken 불일치");
+				} else throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshTokenInCookie");
 			}
 		}
 
@@ -80,6 +89,13 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 		if (refreshTokenInCookie == null) return false;
 
 		return refreshTokenInCookie.equals(inRedisValue);
+	}
+
+	private void responseAddAccessToken(HttpServletResponse response, Long userId, String email) {
+		String newAccessToken = jwtProvider.accessToken(email, userId);
+		Cookie cookie = new Cookie("accessToken", newAccessToken);
+		cookie.setPath("/");
+		response.addCookie(cookie);
 	}
 
 	private void createAuthentication(Long userId) {
