@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
-import { getAdminCharges, upCash } from '../../api/useUserApi'
+import { getAdminCharges, upCash } from '../../api/adminApi';
 import { CommonStyle } from '../../components/Styles';
 import { useNavigate } from 'react-router-dom';
-import { AdminGetCharges, Res, errorType } from '../../shared/TypeMenu';
+import { AdminGetCharges, UnifiedResponse, Err } from '../../shared/TypeMenu';
 import { AllowOnlyAdmin, useAllowType } from '../../hooks/AllowType';
 
 function GetAllCharges() {
@@ -15,20 +15,21 @@ function GetAllCharges() {
     const [searchInputValue, setSearchInputValue] = useState<string>("");
     const [result, setResult] = useState<AdminGetCharges[]>([]);
 
-    const getAllChargingMutation = useMutation(getAdminCharges, {
-        onSuccess: (res: Res)=>{
+    const getAllChargingMutation = useMutation<UnifiedResponse<AdminGetCharges[]>, Err>(getAdminCharges, {
+        onSuccess: (res)=>{
+            if (res.code === 200 && res.data)
             setValue(res.data);
         },
-        onError: (err: errorType)=>{
+        onError: (err)=>{
             if (err.code === 500) {
-                alert(err.message);
+                alert(err.msg);
                 navigate("/");
             }
         }
     })
 
-    const upCashMutation = useMutation(upCash, {
-        onSuccess: (res: Res)=>{
+    const upCashMutation = useMutation<UnifiedResponse<undefined>, void, AdminGetCharges>(upCash, {
+        onSuccess: (res)=>{
             if (res.code === 200) {
                 setRender(!render);
             }
@@ -44,7 +45,6 @@ function GetAllCharges() {
     }, [selectValue])
 
     const onClickHandler = (charg: AdminGetCharges) => {
-        console.log(charg);
         upCashMutation.mutate(charg);
     }
 
