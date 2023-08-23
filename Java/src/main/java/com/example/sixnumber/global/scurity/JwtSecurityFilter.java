@@ -1,7 +1,5 @@
 package com.example.sixnumber.global.scurity;
 
-import static com.example.sixnumber.global.util.JwtProvider.*;
-
 import java.io.IOException;
 
 import javax.servlet.FilterChain;
