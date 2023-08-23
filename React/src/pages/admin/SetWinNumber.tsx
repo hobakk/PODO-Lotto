@@ -1,19 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
 import { useMutation } from 'react-query';
-import { setWinNumber } from '../../api/useUserApi';
-import { Res, errorType } from '../../shared/TypeMenu';
+import { WinNumberRequest, setWinNumber } from '../../api/adminApi';
+import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 import { AllowOnlyAdmin, useAllowType } from '../../hooks/AllowType';
 
 function SetWinNumber() {
-    type WinNumberRequest = {
-        date: string,
-        time: number,
-        prize: number,
-        winner: number,
-        numbers: string,
-    }
-
     useAllowType(AllowOnlyAdmin);
     const dateRef = useRef<HTMLInputElement>(null);
     const [inputValue, setInputValue] = useState<WinNumberRequest>({
@@ -24,12 +16,13 @@ function SetWinNumber() {
         numbers: "",
     });
 
-    const setWinNumberMutation = useMutation(setWinNumber, {
-        onSuccess: (res: Res)=>{
-            alert(res.message);
+    const setWinNumberMutation = useMutation<UnifiedResponse<undefined>, Err, WinNumberRequest>(setWinNumber, {
+        onSuccess: (res)=>{
+            if (res.code === 200)
+            alert(res.msg);
         },
-        onError: (err: errorType)=>{
-            alert(err.message);
+        onError: (err)=>{
+            alert(err.msg);
         }
     })
 
