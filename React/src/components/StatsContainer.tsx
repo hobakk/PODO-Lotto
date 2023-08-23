@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { ChangingNumStyle } from './Manufacturing';
 
-export const StatsContainer = ({ res }: {res: string[]}) => {
-    const [countList, setCountList] = useState<string[]>([]);
+export const StatsContainer = ({ res }: {res: number[]}) => {
+    const [countList, setCountList] = useState<number[]>([]);
 
     useEffect(()=>{
         if (res !== null) {

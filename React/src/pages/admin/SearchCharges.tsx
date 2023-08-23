@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
 import { useMutation } from 'react-query';
-import { getSearch } from '../../api/useUserApi';
-import { AdminGetCharges, Res, errorType } from '../../shared/TypeMenu';
+import { getSearch } from '../../api/adminApi';
+import { UnifiedResponse, Err, AdminGetCharges } from '../../shared/TypeMenu';
 import { AllowOnlyAdmin, useAllowType } from '../../hooks/AllowType';
+import { ChargingDto } from '../../api/userApi';
 
 function SearchCharges() {
     useAllowType(AllowOnlyAdmin);
@@ -17,16 +18,17 @@ function SearchCharges() {
         value: 0,
     });
 
-    const getSearchMutation = useMutation(getSearch, {
-        onSuccess: (res: Res)=>{
-            if (res.code === 200) {
+    const getSearchMutation = useMutation<UnifiedResponse<AdminGetCharges>, Err, ChargingDto>(getSearch, {
+        onSuccess: (res)=>{
+            if (res.code === 200 && res.data) {
                 setValue(res.data);
             }
         },
-        onError: (err: errorType) => {
+        onError: (err) => {
             if (err.code === 500) {
-                alert(err.message);
+                alert(err.msg);
             }
+
             setValue({userId: 0, msg: "", value: 0});
         }
     })

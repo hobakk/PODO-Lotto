@@ -48,9 +48,9 @@ public class WebSecurityConfig {
 					"/api/users/my-information", "/api/jwt/**").permitAll()
 				.antMatchers("/api/admin/**", "/api/winnumber/set").hasRole("ADMIN")
 				.antMatchers("/api/lotto/**", "/api/lotto/yearMonth/all").hasAnyRole("ADMIN", "PAID")
-				.antMatchers("/**").authenticated()
-			.and()
-			.exceptionHandling().authenticationEntryPoint(jwtEntryPoint);
+				.antMatchers("/**").authenticated();
+			// .and()
+			// .exceptionHandling().authenticationEntryPoint(jwtEntryPoint);
 
 		http.addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class);
 

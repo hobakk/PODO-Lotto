@@ -1,5 +1,6 @@
-import { AdminGetCharges, UnifiedResponse, UserAllIf, WinNumber, upDownCashRequest } from "../shared/TypeMenu";
+import { AdminGetCharges, UnifiedResponse, UserAllIf, upDownCashRequest } from "../shared/TypeMenu";
 import { api } from "./config";
+import { ChargingDto } from "./userApi";
 
 export const getUsers = async (): Promise<UnifiedResponse<UserAllIf[]>> => {
     const { data } = await api.get("/admin/users");
@@ -11,40 +12,61 @@ export const getAdminCharges = async (): Promise<UnifiedResponse<AdminGetCharges
     return data;
 }
 
-export const getSearch = async ({ msg, cash }: {msg: string, cash: number}): Promise<UnifiedResponse<AdminGetCharges>> => {
+export const getSearch = async ( msgCash: ChargingDto ): Promise<UnifiedResponse<AdminGetCharges>> => {
     const { data } = await api.get("/admin/search", { params: {
-        msg,
-        cash,
+        msg: msgCash.msg,
+        cash: msgCash.cash,
     }});
     return data;
 }
 
-export const setAdmin = async ({ userId, msg }: {userId: number, msg: string}): Promise<UnifiedResponse<undefined>> => {
-    const { data } = await api.patch(`/admin/users/${userId}`, msg);
-    return data;
-}
-
-export const upCash = async (inputValue: upDownCashRequest): Promise<UnifiedResponse<undefined>> => {
+export const upCash = async (inputValue: AdminGetCharges): Promise<UnifiedResponse<undefined>> => {
     const { data } = await api.patch("/admin/users/up-cash", inputValue);
     return data;
 }
 
 export const downCash = async (inputValue: upDownCashRequest): Promise<UnifiedResponse<undefined>> => {
-    const { data } = await api.patch("/admin/users/down-cash", inputValue);
-    return data;
+    try {
+        const { data } = await api.patch("/admin/users/down-cash", inputValue);
+        return data;
+    } catch (error) {
+        throw error;
+    }
 }
 
 export const createLotto = async (): Promise<UnifiedResponse<undefined>> => {
-    const { data } = await api.post("/admin/lotto");
-    return data;
+    try {
+        const { data } = await api.post("/admin/lotto");
+        return data;    
+    } catch (error) {
+        throw error;
+    }
 }
 
-export const setStatusFromAdmin = async ({ userId, msg }: {userId: number, msg: string}): Promise<UnifiedResponse<undefined>> => {
-    const { data } = await api.patch(`/admin/status/${userId}`, msg);
-    return data;
+export type UserIdMsgProps = {
+    userId: number,
+    msg: string,
 }
 
-export const setRoleFromAdmin = async ({ userId, msg }: {userId: number, msg: string}): Promise<UnifiedResponse<undefined>>  => {
+export const setAdmin = async ({ userId, msg }: UserIdMsgProps): Promise<UnifiedResponse<undefined>> => {
+    try {
+        const { data } = await api.patch(`/admin/users/${userId}`, msg);
+        return data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const setStatusFromAdmin = async ({ userId, msg }: UserIdMsgProps): Promise<UnifiedResponse<undefined>> => {
+    try {
+        const { data } = await api.patch(`/admin/status/${userId}`, msg);
+        return data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const setRoleFromAdmin = async ({ userId, msg }: UserIdMsgProps): Promise<UnifiedResponse<undefined>>  => {
     try {
         const { data } = await api.patch(`/admin/role/${userId}`, msg);
         return data;
@@ -53,7 +75,15 @@ export const setRoleFromAdmin = async ({ userId, msg }: {userId: number, msg: st
     }
 }
 
-export const setWinNumber = async (inputValue: WinNumber): Promise<UnifiedResponse<undefined>> => {
+export type WinNumberRequest = {
+    date: string,
+    time: number,
+    prize: number,
+    winner: number,
+    numbers: string,
+}
+
+export const setWinNumber = async (inputValue: WinNumberRequest): Promise<UnifiedResponse<undefined>> => {
     try {
         const { data } = await api.post("/winnumber/set", inputValue);
         return data;

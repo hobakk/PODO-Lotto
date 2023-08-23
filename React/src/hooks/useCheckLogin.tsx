@@ -14,14 +14,14 @@ function useCheckLogin() {
     const [accessToken, refreshToken] = getAccessTAndRefreshT();
 
     const checkLoginMutation = useMutation<UnifiedResponse<UserIfState>, Err, string[]>(checkLoginAndgetUserIf, {
-        onSuccess: (res: UnifiedResponse<UserIfState>)=>{
-            if  (res.code === 200 && res.data !== undefined) {
+        onSuccess: (res)=>{
+            if  (res.code === 200 && res.data) {
                 dispatch(setUserIf(res.data));
                 setData(true)
             }
         },
-        onError: (err: Err)=>{
-            if  (err.message === "SignatureException") {
+        onError: (err)=>{
+            if  (err.msg === "SignatureException") {
                 deleteToken();
             }
         }
@@ -29,9 +29,9 @@ function useCheckLogin() {
 
     useEffect(()=>{
         const { email, nickname, role } = userIf;
-        if (!email && !nickname && !role && accessToken !== undefined && refreshToken !== undefined) {
+        if (!email && !nickname && !role && refreshToken !== undefined) {
             checkLoginMutation.mutate([ accessToken, refreshToken ]);
-        } else if (email && nickname && role && accessToken !== undefined && refreshToken !== undefined) {
+        } else if (email && nickname && role && refreshToken !== undefined) {
             setData(true);
         } else {
             setData(false);

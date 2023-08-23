@@ -91,9 +91,11 @@ public class JwtProvider {
 	}
 
 	public String getTokenValueInCookie(HttpServletRequest request,  String key) {
-		Cookie cookieValue = Arrays.stream(request.getCookies())
-			.filter(cookie -> cookie.getName().equals(key)).findFirst().orElse(null);
-		if (cookieValue != null) return cookieValue.getValue();
+		if (request.getCookies() != null && request.getCookies().length == 2) {
+			Cookie cookieValue = Arrays.stream(request.getCookies())
+				.filter(cookie -> cookie.getName().equals(key)).findFirst().orElse(null);
+			if (cookieValue != null) return cookieValue.getValue();
+		}
 
 		return null;
 	}
@@ -105,7 +107,7 @@ public class JwtProvider {
 	public Boolean validateToken(String token) {
 		try {
 			Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-		return true;
+			return true;
 		} catch (ExpiredJwtException e) {
 			log.info("Expired Token, 만려된 토큰 입니다");
 		} catch (SecurityException | MalformedJwtException e) {
@@ -157,9 +159,15 @@ public class JwtProvider {
 		getClaims(token).setExpiration(new Date());
 	}
 
+	public Long getRemainingTime(String token) {
+		Date expirationDate = getClaims(token).getExpiration();
+		Instant now = Instant.now();
+		long remainingMillis = expirationDate.toInstant().toEpochMilli() - now.toEpochMilli();
+		return Math.max(remainingMillis, 0);
+	}
+
 	public boolean isTokenExpired(String token) {
 		Date expirationDate = getClaims(token).getExpiration();
-		if	(expirationDate == null || expirationDate.before(new Date())) return true;
-		return false;
+		return expirationDate == null || expirationDate.before(new Date());
 	}
 }
