@@ -1,15 +1,16 @@
 package com.example.sixnumber.token;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
+import com.example.sixnumber.user.dto.CookiesResponse;
 import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.entity.User;
 
@@ -23,15 +24,21 @@ public class TokenService {
 	private final JwtProvider jwtProvider;
 	private final Manager manager;
 
-	public UserIfAndCookieResponse getInformationAfterCheckLogin(TokenDto request) {
-		if (jwtProvider.validateToken(request.getAccessToken())) {
-			User user = manager.findUser(jwtProvider.getTokenInUserId(request.getAccessToken()));
+	public UserIfAndCookieResponse getInformationAfterCheckLogin(HttpServletRequest request) {
+		CookiesResponse cookies = jwtProvider.getTokenValueInCookie(request);
+		if (cookies == null) throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+
+		String accessToken = cookies.getAccessCookie().getValue();
+		String refreshToken = cookies.getRefreshCookie().getValue();
+
+		if (jwtProvider.validateToken(accessToken)) {
+			User user = manager.findUser(jwtProvider.getTokenInUserId(accessToken));
 			MyInformationResponse myInformationResponse = new MyInformationResponse(user);
 			return new UserIfAndCookieResponse(myInformationResponse);
 		} else {
 			try {
-				Cookie cookie = createCookie(request.getRefreshToken());
-				User user = manager.findUser(jwtProvider.getTokenInUserId(request.getRefreshToken()));
+				Cookie cookie = createCookie(refreshToken);
+				User user = manager.findUser(jwtProvider.getTokenInUserId(refreshToken));
 				MyInformationResponse myInformationResponse = new MyInformationResponse(user);
 				return new UserIfAndCookieResponse(myInformationResponse, cookie);
 			} catch (ExpiredJwtException e) {
