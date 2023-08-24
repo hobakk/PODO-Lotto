@@ -109,7 +109,7 @@ public class UserService {
 	}
 
 	public UnifiedResponse<?> logout(HttpServletRequest request, Long userId) {
-		String accessToken = jwtProvider.getTokenValueInCookie(request, JwtProvider.ACCESS_TOKEN);
+		String accessToken = jwtProvider.getTokenValueInCookie(request).getAccessCookie().getValue();
 		redisDao.deleteValues(userId);
 		redisDao.setBlackList(accessToken);
 		return UnifiedResponse.ok("로그아웃 성공");
