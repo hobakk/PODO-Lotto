@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -142,16 +144,15 @@ public class UserServiceTest {
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
-		when(jwtProvider.refreshToken(saveUser.getEmail(), saveUser.getId())).thenReturn("sampleRT");
-		when(jwtProvider.accessToken(saveUser.getEmail(), saveUser.getId())).thenReturn("sampleAT");
+		when(jwtProvider.refreshToken(eq(saveUser.getEmail()), eq(saveUser.getId()), anyString())).thenReturn("sampleRT");
+		when(jwtProvider.accessToken(anyString())).thenReturn("sampleAT");
 
 		TokenDto tokenDto = userService.signIn(signinRequest);
 
 		verify(manager).findUser(anyString());
-		verify(redisDao).overlapLogin(anyLong());
 		verify(passwordEncoder).matches(anyString(), anyString());
-		verify(jwtProvider).refreshToken(saveUser.getEmail(), saveUser.getId());
-		verify(jwtProvider).accessToken(saveUser.getEmail(), saveUser.getId());
+		verify(jwtProvider).refreshToken(eq(saveUser.getEmail()), eq(saveUser.getId()), anyString());
+		verify(jwtProvider).accessToken(anyString());
 		assertEquals(tokenDto.getAccessToken(), "sampleAT");
 		assertEquals(tokenDto.getRefreshToken(), "sampleRT");
 		assertEquals(saveUser.getStatus(), Status.ACTIVE);
@@ -201,9 +202,14 @@ public class UserServiceTest {
 
 	@Test
 	void logout() {
-		UnifiedResponse<?> response = userService.logout(saveUser.getId());
+		HttpServletRequest request = mock(HttpServletRequest.class);
+
+		when(jwtProvider.getTokenValueInCookie(request, "accessToken")).thenReturn("accessTokenValue");
+
+		UnifiedResponse<?> response = userService.logout(request, saveUser.getId());
 
 		verify(redisDao).deleteValues(anyLong());
+		verify(redisDao).setBlackList(anyString());
 		TestUtil.UnifiedResponseEquals(response, 200, "로그아웃 성공");
 	}
 
