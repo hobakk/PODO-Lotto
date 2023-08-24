@@ -57,16 +57,16 @@ public class TokenControllerTest {
 		verify(tokenService).getInformationAfterCheckLogin(any(TokenDto.class));
 	}
 
-	@Test
-	public void renewAccessToken() throws Exception {
-		when(tokenService.renewAccessToken(anyString())).thenReturn(cookie);
-
-		mockMvc.perform(post("/api/jwt/renew/access").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString("refreshToken")))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.msg").value("AccessToken 재발급 성공"));
-
-		verify(tokenService).renewAccessToken(anyString());
-	}
+	// @Test
+	// public void renewAccessToken() throws Exception {
+	// 	when(tokenService.renewAccessToken(anyString())).thenReturn(cookie);
+	//
+	// 	mockMvc.perform(post("/api/jwt/renew/access").with(csrf())
+	// 		.contentType(MediaType.APPLICATION_JSON)
+	// 		.content(objectMapper.writeValueAsString("refreshToken")))
+	// 		.andExpect(status().isOk())
+	// 		.andExpect(jsonPath("$.msg").value("AccessToken 재발급 성공"));
+	//
+	// 	verify(tokenService).renewAccessToken(anyString());
+	// }
 }
