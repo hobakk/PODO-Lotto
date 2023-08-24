@@ -14,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -23,11 +22,9 @@ import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.RedisDao;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 
-@Component
 @RequiredArgsConstructor
 public class JwtSecurityFilter extends OncePerRequestFilter {
 	private final UserDetailsServiceImpl userDetailsService;
@@ -44,35 +41,28 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 			try {
 				if (!jwtProvider.filterChainValidateToken(token))
 					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
+				if (redisDao.isEqualsBlackList(token))
+					throw new BlackListException(null, jwtProvider.getClaims(token), "Blacked");
 
-				if (redisDao.isEqualsBlackList(token)) throw new BlackListException("Blacked Token");
-
-				Long id = jwtProvider.getClaims(token).get("id", Long.class);
-				String refreshTokenInRedis = redisDao.getValue(id);
+				String refreshPointer = jwtProvider.getClaims(token).getSubject();
+				String refreshTokenInRedis = redisDao.getValue(refreshPointer);
 				if (!refreshTokenInRedis.equals(refreshTokenInCookie) || jwtProvider.isTokenExpired(refreshTokenInRedis)) {
 					redisDao.setBlackList(token);
 					throw new OverlapException("중복 로그인 입니다");
 				}
 
-				createAuthentication(id);
+				createAuthentication(jwtProvider.getTokenInUserId(refreshTokenInRedis));
 			} catch (ExpiredJwtException e) {
-				Claims claims = e.getClaims();
-				Long userId = claims.get("id", Long.class);
-				String email = claims.getSubject();
-
-				if (validateRefreshCookie(refreshTokenInCookie, userId)) {
-					responseAddAccessToken(response, userId, email);
-					createAuthentication(userId);
-				} else throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken");
+				String refreshPointer = e.getClaims().getSubject();
+				if (inValidRefreshInCookie(refreshTokenInCookie, refreshPointer, response)) {
+					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken");
+				}
 			} catch (BlackListException e) {
-				 if (refreshTokenInCookie != null) {
-					String[] idEmail = jwtProvider.getIdEmail(refreshTokenInCookie).split(",");
-					Long id = Long.parseLong(idEmail[0]);
-					String refreshTokenInRedis = redisDao.getValue(id);
-					if (refreshTokenInCookie.equals(refreshTokenInRedis)) {
-						responseAddAccessToken(response, id, idEmail[1]);
-						createAuthentication(id);
-					} else throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "RefreshToken 불일치");
+				String refreshPointer = e.getClaims().getSubject();
+				if (refreshTokenInCookie != null) {
+					if (inValidRefreshInCookie(refreshTokenInCookie, refreshPointer, response)) {
+						throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken");
+					}
 				} else throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshTokenInCookie");
 			}
 		}
@@ -80,17 +70,19 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 		filterChain.doFilter(request, response);
 	}
 
-	private boolean validateRefreshCookie(String refreshTokenInCookie, Long userId) {
-		String inRedisValue = redisDao.getValue(userId);
-		if (inRedisValue == null) return false;
+	private boolean inValidRefreshInCookie(String refreshTokenInCookie, String refreshPointer,
+		HttpServletResponse response) {
 
-		if (refreshTokenInCookie == null) return false;
+		String inRedisValue = redisDao.getValue(refreshPointer);
+		if (!refreshTokenInCookie.equals(inRedisValue)) return true;
 
-		return refreshTokenInCookie.equals(inRedisValue);
+		String newAccessToken = jwtProvider.accessToken(refreshPointer);
+		updateAccessTokenCookie(response, newAccessToken);
+		createAuthentication(jwtProvider.getTokenInUserId(inRedisValue));
+		return false;
 	}
 
-	private void responseAddAccessToken(HttpServletResponse response, Long userId, String email) {
-		String newAccessToken = jwtProvider.accessToken(email, userId);
+	private void updateAccessTokenCookie(HttpServletResponse response, String newAccessToken) {
 		Cookie cookie = new Cookie("accessToken", newAccessToken);
 		cookie.setPath("/");
 		response.addCookie(cookie);
