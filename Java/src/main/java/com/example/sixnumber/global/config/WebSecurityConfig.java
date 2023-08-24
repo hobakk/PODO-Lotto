@@ -14,6 +14,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.sixnumber.global.scurity.JwtSecurityFilter;
+import com.example.sixnumber.global.scurity.UserDetailsServiceImpl;
+import com.example.sixnumber.global.util.JwtProvider;
+import com.example.sixnumber.global.util.RedisDao;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,8 +24,9 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
-
-	private final JwtSecurityFilter jwtSecurityFilter;
+	private final UserDetailsServiceImpl userDetailsService;
+	private final JwtProvider jwtProvider;
+	private final RedisDao redisDao;
 	private final JwtEntryPoint jwtEntryPoint;
 
 	@Bean
@@ -52,7 +56,7 @@ public class WebSecurityConfig {
 			// .and()
 			// .exceptionHandling().authenticationEntryPoint(jwtEntryPoint);
 
-		http.addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(new JwtSecurityFilter(userDetailsService, jwtProvider, redisDao), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
