@@ -175,4 +175,11 @@ public class JwtProvider {
 		Date expirationDate = getClaims(token).getExpiration();
 		return expirationDate == null || expirationDate.before(new Date());
 	}
+
+	public Cookie createCookie(String key, String tokenValue) {
+		Cookie cookie = new Cookie(key, tokenValue);
+		cookie.setPath("/");
+		cookie.setHttpOnly(true);
+		return cookie;
+	}
 }

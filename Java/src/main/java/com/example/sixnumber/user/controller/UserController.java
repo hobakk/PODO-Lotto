@@ -2,7 +2,6 @@ package com.example.sixnumber.user.controller;
 
 import java.util.List;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
+import com.example.sixnumber.user.dto.CookiesResponse;
 import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -44,13 +43,9 @@ public class UserController {
 
 	@PostMapping("/signin")
 	public ResponseEntity<UnifiedResponse<?>> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
-		TokenDto tokenDto = userService.signIn(request);
-		Cookie accessToken = new Cookie("accessToken", tokenDto.getAccessToken());
-		accessToken.setPath("/");
-		response.addCookie(accessToken);
-		Cookie refreshToken = new Cookie("refreshToken", tokenDto.getRefreshToken());
-		refreshToken.setPath("/");
-		response.addCookie(refreshToken);
+		CookiesResponse cookies = userService.signIn(request);
+		response.addCookie(cookies.getAccessCookie());
+		response.addCookie(cookies.getRefreshCookie());
 		return ResponseEntity.ok(UnifiedResponse.ok("로그인 성공"));
 	}
 

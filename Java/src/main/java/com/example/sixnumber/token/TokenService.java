@@ -27,7 +27,7 @@ public class TokenService {
 		if (jwtProvider.validateToken(request.getAccessToken())) {
 			User user = manager.findUser(jwtProvider.getTokenInUserId(request.getAccessToken()));
 			MyInformationResponse myInformationResponse = new MyInformationResponse(user);
-			return new UserIfAndCookieResponse(myInformationResponse, null);
+			return new UserIfAndCookieResponse(myInformationResponse);
 		} else {
 			try {
 				Cookie cookie = createCookie(request.getRefreshToken());
@@ -49,8 +49,6 @@ public class TokenService {
 
 		String pointer = jwtProvider.getClaims(refreshToken).get("key", String.class);
 		String accessToken = jwtProvider.accessToken(pointer);
-		Cookie cookie = new Cookie("accessToken", accessToken);
-		cookie.setPath("/");
-		return cookie;
+		return jwtProvider.createCookie("accessToken", accessToken);
 	}
 }

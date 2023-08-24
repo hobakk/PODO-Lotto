@@ -46,7 +46,8 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 
 				String refreshPointer = jwtProvider.getClaims(token).getSubject();
 				String refreshTokenInRedis = redisDao.getValue(refreshPointer);
-				if (!refreshTokenInRedis.equals(refreshTokenInCookie) || jwtProvider.isTokenExpired(refreshTokenInRedis)) {
+				// 참고: refreshToken timeout 되면 자동 삭제
+				if (!refreshTokenInRedis.equals(refreshTokenInCookie)) {
 					redisDao.setBlackList(token);
 					throw new OverlapException("중복 로그인 입니다");
 				}
@@ -83,8 +84,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	}
 
 	private void updateAccessTokenCookie(HttpServletResponse response, String newAccessToken) {
-		Cookie cookie = new Cookie("accessToken", newAccessToken);
-		cookie.setPath("/");
+		Cookie cookie = jwtProvider.createCookie("accessToken", newAccessToken);
 		response.addCookie(cookie);
 	}
 

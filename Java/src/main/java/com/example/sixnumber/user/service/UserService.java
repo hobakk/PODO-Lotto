@@ -12,13 +12,13 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.OverlapException;
@@ -29,6 +29,7 @@ import com.example.sixnumber.global.util.RedisDao;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
+import com.example.sixnumber.user.dto.CookiesResponse;
 import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -80,7 +81,7 @@ public class UserService {
 		return UnifiedResponse.create("회원가입 완료");
 	}
 
-	public TokenDto signIn(SigninRequest request) {
+	public CookiesResponse signIn(SigninRequest request) {
 		User user = manager.findUser(request.getEmail());
 
 		if (!user.getStatus().equals(Status.ACTIVE)) {
@@ -101,7 +102,10 @@ public class UserService {
 		String accessToken = jwtProvider.accessToken(refreshPointer);
 		String refreshToken = jwtProvider.refreshToken(user.getEmail(), user.getId(), refreshPointer);
 		redisDao.setRefreshToken(refreshPointer, refreshToken, (long) 7, TimeUnit.DAYS);
-		return new TokenDto(accessToken, refreshToken);
+
+		Cookie accessCookie = jwtProvider.createCookie("accessToken", accessToken);
+		Cookie refreshCookie = jwtProvider.createCookie("refreshToken", refreshToken);
+		return new CookiesResponse(accessCookie, refreshCookie);
 	}
 
 	public UnifiedResponse<?> logout(HttpServletRequest request, Long userId) {
