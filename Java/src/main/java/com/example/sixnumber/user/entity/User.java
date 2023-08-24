@@ -65,6 +65,8 @@ public class User implements UserDetails {
 	private List<String> statement;
 	@Column(name = "timeOutCount")
 	private int timeOutCount;
+	@Column(name = "refreshPointer")
+	private String refreshPointer;
 
 	public User(SignupRequest request, String password) {
 		this.email = request.getEmail();
@@ -75,6 +77,7 @@ public class User implements UserDetails {
 		this.cash = 1000;
 		this.statement = new ArrayList<>();
 		this.timeOutCount = 0;
+		this.refreshPointer = null;
 	}
 
 	// Controller Test
@@ -129,6 +132,10 @@ public class User implements UserDetails {
 	public void setTimeOutCount(int num) {
 		if (num == 0) this.timeOutCount = 0;
 		else this.timeOutCount += num;
+	}
+
+	public void setRefreshPointer(String refreshPointer) {
+		this.refreshPointer = refreshPointer;
 	}
 
 	// test code
