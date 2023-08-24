@@ -37,26 +37,30 @@ public class JwtProvider {
 		this.redisTemplate = redisTemplate;
 	}
 
-	public static final String REFRESH_TOKEN = "refreshToken";
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	public static final String BEARER_PREFIX = "Bearer";
 	private static final Duration expire = Duration.ofMinutes(5);
 	private static final Duration refreshExpire = Duration.ofDays(7);
 
 
-	public String accessToken(String email, Long userId) {
+	public String accessToken(String refreshPointer) {
 		Instant now = Instant.now();
 		Instant expiration = now.plus(expire);
-		return setToken(email, userId, now, expiration);
+		HashMap<String, Object> headers = new HashMap<>();
+		headers.put("typ", "JWT");
+		headers.put("alg", "HS256");
+		return Jwts.builder()
+			.setHeader(headers)
+			.setSubject(refreshPointer)
+			.setIssuedAt(Date.from(now))
+			.setExpiration(Date.from(expiration))
+			.signWith(secretKey)
+			.compact();
 	}
 
-	public String refreshToken(String email, Long userId) {
+	public String refreshToken(String email, Long userId, String refreshPointer) {
 		Instant now = Instant.now();
 		Instant expiration = now.plus(refreshExpire);
-		return setToken(email, userId, now, expiration);
-	}
-
-	public String setToken(String email, Long userId, Instant now, Instant expiration) {
 		HashMap<String, Object> headers = new HashMap<>();
 		headers.put("typ", "JWT");
 		headers.put("alg", "HS256");
@@ -64,6 +68,7 @@ public class JwtProvider {
 			.setHeader(headers)
 			.setSubject(email)
 			.claim("id", userId)
+			.claim("key", refreshPointer)
 			.setIssuedAt(Date.from(now))
 			.setExpiration(Date.from(expiration))
 			.signWith(secretKey)
