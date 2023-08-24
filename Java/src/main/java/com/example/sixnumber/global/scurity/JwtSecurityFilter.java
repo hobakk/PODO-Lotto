@@ -18,9 +18,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.sixnumber.global.exception.BlackListException;
-import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.RedisDao;
+import com.example.sixnumber.user.dto.CookiesResponse;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
@@ -34,53 +34,56 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		String token = jwtProvider.resolveToken(request);
-		String refreshTokenInCookie = jwtProvider.getTokenValueInCookie(request ,JwtProvider.REFRESH_TOKEN);
+		CookiesResponse cookies = jwtProvider.getTokenValueInCookie(request);
 
-		if (token != null) {
+		if (cookies.getAccessCookie() != null && cookies.getRefreshCookie() != null) {
 			try {
-				if (!jwtProvider.filterChainValidateToken(token))
-					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
-				if (redisDao.isEqualsBlackList(token))
-					throw new BlackListException(null, jwtProvider.getClaims(token), "Blacked");
+				String accessToken = cookies.getAccessCookie().getValue();
+				String refreshToken = cookies.getRefreshCookie().getValue();
 
-				String refreshPointer = jwtProvider.getClaims(token).getSubject();
-				String refreshTokenInRedis = redisDao.getValue(refreshPointer);
-				// 참고: refreshToken timeout 되면 자동 삭제
-				if (!refreshTokenInRedis.equals(refreshTokenInCookie)) {
-					redisDao.setBlackList(token);
-					throw new OverlapException("중복 로그인 입니다");
+				if (!jwtProvider.filterChainValidateToken(accessToken))
+					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
+				if (redisDao.isEqualsBlackList(accessToken))
+					throw new BlackListException(null, jwtProvider.getClaims(accessToken), "Blacked");
+
+				String refreshPointer = jwtProvider.getClaims(accessToken).getSubject();
+				// 중복 로그인에 대한 대처를 더 생각해 봐야함
+				if (isDifferent(refreshToken, refreshPointer)) {
+					redisDao.setBlackList(accessToken);
+					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "RefreshToken is different");
 				}
 
-				createAuthentication(jwtProvider.getTokenInUserId(refreshTokenInRedis));
+				createAuthentication(jwtProvider.getTokenInUserId(refreshToken));
 			} catch (ExpiredJwtException e) {
 				String refreshPointer = e.getClaims().getSubject();
-				if (inValidRefreshInCookie(refreshTokenInCookie, refreshPointer, response)) {
+				if (validateRefreshInCookie(cookies.getRefreshCookie().getValue(), refreshPointer, response)) {
 					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken");
 				}
-			} catch (BlackListException e) {
+			} catch (BlackListException e) { // 더 깊게 고민해 봐야함
 				String refreshPointer = e.getClaims().getSubject();
-				if (refreshTokenInCookie != null) {
-					if (inValidRefreshInCookie(refreshTokenInCookie, refreshPointer, response)) {
-						throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken");
-					}
-				} else throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshTokenInCookie");
+				if (validateRefreshInCookie(cookies.getRefreshCookie().getValue(), refreshPointer, response)) {
+					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken");
+				}
 			}
 		}
 
 		filterChain.doFilter(request, response);
 	}
 
-	private boolean inValidRefreshInCookie(String refreshTokenInCookie, String refreshPointer,
+	private boolean validateRefreshInCookie(String refreshTokenInCookie, String refreshPointer,
 		HttpServletResponse response) {
 
-		String inRedisValue = redisDao.getValue(refreshPointer);
-		if (!refreshTokenInCookie.equals(inRedisValue)) return true;
+		if (isDifferent(refreshTokenInCookie, refreshPointer)) return true;
 
 		String newAccessToken = jwtProvider.accessToken(refreshPointer);
 		updateAccessTokenCookie(response, newAccessToken);
-		createAuthentication(jwtProvider.getTokenInUserId(inRedisValue));
+		createAuthentication(jwtProvider.getTokenInUserId(refreshTokenInCookie));
 		return false;
+	}
+
+	private boolean isDifferent(String refreshTokenInCookie, String refreshPointer) {
+		String inRedisValue = redisDao.getValue(refreshPointer);
+		return !refreshTokenInCookie.equals(inRedisValue);
 	}
 
 	private void updateAccessTokenCookie(HttpServletResponse response, String newAccessToken) {

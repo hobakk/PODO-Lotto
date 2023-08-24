@@ -13,4 +13,9 @@ public class CookiesResponse {
 		this.accessCookie = accessCookie;
 		this.refreshCookie = refreshCookie;
 	}
+
+	public CookiesResponse() {
+		this.accessCookie = null;
+		this.refreshCookie = null;
+	}
 }

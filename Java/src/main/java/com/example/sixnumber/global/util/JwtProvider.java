@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import com.example.sixnumber.user.dto.CookiesResponse;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -44,7 +46,7 @@ public class JwtProvider {
 	private static final Duration expire = Duration.ofMinutes(5);
 	private static final Duration refreshExpire = Duration.ofDays(7);
 
-
+	// String refreshPointer = UUID.toString();
 	public String accessToken(String refreshPointer) {
 		Instant now = Instant.now();
 		Instant expiration = now.plus(expire);
@@ -70,7 +72,7 @@ public class JwtProvider {
 			.setHeader(headers)
 			.setSubject(email)
 			.claim("id", userId)
-			.claim("key", refreshPointer)
+			.claim("key", refreshPointer) // accessToken 재발급시 필요
 			.setIssuedAt(Date.from(now))
 			.setExpiration(Date.from(expiration))
 			.signWith(secretKey)
@@ -95,16 +97,6 @@ public class JwtProvider {
 			.getSubject();
 
 		return userId + "," + email;
-	}
-
-	public String getTokenValueInCookie(HttpServletRequest request,  String key) {
-		if (request.getCookies() != null && request.getCookies().length == 2) {
-			Cookie cookieValue = Arrays.stream(request.getCookies())
-				.filter(cookie -> cookie.getName().equals(key)).findFirst().orElse(null);
-			if (cookieValue != null) return cookieValue.getValue();
-		}
-
-		return null;
 	}
 
 	public Long getTokenInUserId(String token) {
@@ -183,5 +175,16 @@ public class JwtProvider {
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);
 		return cookie;
+	}
+
+	public CookiesResponse getTokenValueInCookie(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		if (cookies == null || cookies.length != 2) return new CookiesResponse();
+
+		Cookie access = Arrays.stream(cookies).filter(
+			cookie -> cookie.getName().equals(JwtProvider.ACCESS_TOKEN)).findFirst().orElse(null);
+		Cookie refresh = Arrays.stream(cookies).filter(
+			cookie -> cookie.getName().equals(JwtProvider.REFRESH_TOKEN)).findFirst().orElse(null);
+		return new CookiesResponse(access, refresh);
 	}
 }
