@@ -13,7 +13,7 @@ const signApi = axios.create({
 
 const api = axios.create({
     headers: {
-        'Access-Control-Allow-Origin': 'http://localhost:8080'
+        'Access-Control-Allow-Origin': 'http://localhost:8080',
     },
     baseURL: url,
     withCredentials: true,
@@ -22,7 +22,6 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         config.headers['Content-Type'] = 'application/json';
-        config.headers['Authorization'] = `Bearer ${getCookie("accessToken")}`;
         return config;
     },
     (error) => {
