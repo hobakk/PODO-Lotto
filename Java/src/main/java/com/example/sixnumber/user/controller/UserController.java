@@ -3,6 +3,7 @@ package com.example.sixnumber.user.controller;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseEntity;
@@ -54,8 +55,8 @@ public class UserController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<UnifiedResponse<?>> logout(@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.logout(user.getId()));
+	public ResponseEntity<UnifiedResponse<?>> logout(HttpServletRequest request, @AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(userService.logout(request, user.getId()));
 	}
 
 	@PatchMapping("/withdraw")

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpStatus;
@@ -13,7 +12,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.ErrorCode;
-import com.example.sixnumber.global.exception.OverlapException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,15 +23,9 @@ public class RedisDao {
 	private final String RTK = "RT: ";
 	private final String STMT = "STMT: ";
 
-	public String getValue(Long userId) {
+	public String getValue(String refreshToken) {
 		ValueOperations<String, String> values = redisTemplate.opsForValue();
-		String inRedisValue = values.get(RTK + userId);
-		return inRedisValue == null ? "" : inRedisValue;
-	}
-
-	public boolean checkKey(Long userId) {
-		ValueOperations<String, String> values = redisTemplate.opsForValue();
-		return values.get(RTK + userId) != null;
+		return values.get(RTK + refreshToken);
 	}
 
 	public Set<String> getKeysList(Object object) {
@@ -57,9 +49,9 @@ public class RedisDao {
 		return values.multiGet(keys);
 	}
 
-	public void setValues(Long userId, String data) {
+	public void setRefreshToken(String refreshPointer, String data, Long time, TimeUnit timeUnit) {
 		ValueOperations<String, String> values = redisTemplate.opsForValue();
-		values.set(RTK + userId, data);
+		values.set(RTK + refreshPointer, data, time, timeUnit);
 	}
 
 	public void setValues(String key, String data, Long time, TimeUnit timeUnit) {
@@ -67,13 +59,13 @@ public class RedisDao {
 		values.set(STMT + key, data, time, timeUnit);
 	}
 
-	public List<String> getValuesList(String key) {
-		ListOperations<String, String> listOperations = redisTemplate.opsForList();
-		if (listOperations.range(key, 0, -1).isEmpty())
-			throw new IllegalArgumentException("당첨 번호 정보가 존재하지 않습니다");
-
-		return listOperations.range(key, 0, -1);
-	}
+	// public List<String> getValuesList(String key) {
+	// 	ListOperations<String, String> listOperations = redisTemplate.opsForList();
+	// 	if (listOperations.range(key, 0, -1).isEmpty())
+	// 		throw new IllegalArgumentException("당첨 번호 정보가 존재하지 않습니다");
+	//
+	// 	return listOperations.range(key, 0, -1);
+	// }
 
 	public void deleteValues(Object object) {
 		if (object instanceof Long userId) redisTemplate.delete(RTK + userId);
@@ -81,17 +73,9 @@ public class RedisDao {
 		else throw new CustomException(ErrorCode.INVALID_INPUT);
 	}
 
-	public boolean deleteInRedisValueIsNotNull(Long userId) {
-		if (!getValue(userId).equals("")) {
-			deleteValues(userId);
-			return true;
-		}
-		return false;
-	}
-
-	public void overlapLogin(Long userId) {
-		boolean isNull = deleteInRedisValueIsNotNull(userId);
-		if (isNull) throw new OverlapException("중복된 로그인입니다");
+	public void deleteInRedisValueIsNotNull(String refreshPointer) {
+		String refreshToken = getValue(refreshPointer);
+		if (refreshToken != null) redisTemplate.delete(refreshToken);
 	}
 
 	public boolean isEqualsBlackList(String key) {

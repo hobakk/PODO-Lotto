@@ -45,10 +45,10 @@ public class TokenService {
 	// }
 
 	private Cookie createCookie(String refreshToken) {
-		String[] idEmail = jwtProvider.validateRefreshToken(refreshToken);
-		if (idEmail != null && idEmail.length != 2) throw new IllegalArgumentException("RefreshToken exception");
+		if (jwtProvider.isTokenExpired(refreshToken)) throw new CustomException(ErrorCode.EXPIRED_TOKEN);
 
-		String accessToken = jwtProvider.accessToken(idEmail[1], Long.parseLong(idEmail[0]));
+		String pointer = jwtProvider.getClaims(refreshToken).get("key", String.class);
+		String accessToken = jwtProvider.accessToken(pointer);
 		Cookie cookie = new Cookie("accessToken", accessToken);
 		cookie.setPath("/");
 		return cookie;
