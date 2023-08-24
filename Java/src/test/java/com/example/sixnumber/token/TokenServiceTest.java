@@ -61,7 +61,7 @@ public class TokenServiceTest {
 
 		when(jwtProvider.validateToken(anyString())).thenReturn(false);
 		when(jwtProvider.validateRefreshToken(anyString())).thenReturn(idEmail);
-		when(jwtProvider.accessToken(anyString(), anyLong())).thenReturn("tokenValue");
+		when(jwtProvider.accessToken(anyString())).thenReturn("tokenValue");
 		when(jwtProvider.getTokenInUserId(anyString())).thenReturn(saveUser.getId());
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
@@ -70,7 +70,7 @@ public class TokenServiceTest {
 
 		verify(jwtProvider).validateToken(anyString());
 		verify(jwtProvider).validateRefreshToken(anyString());
-		verify(jwtProvider).accessToken(anyString(), anyLong());
+		verify(jwtProvider).accessToken(anyString());
 		verify(jwtProvider).getTokenInUserId(anyString());
 		verify(manager).findUser(anyLong());
 		assertNotNull(response);

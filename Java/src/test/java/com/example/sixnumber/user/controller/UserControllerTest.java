@@ -10,6 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -98,7 +100,7 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void Logout() throws Exception {
-		when(userService.logout(anyLong())).thenReturn(UnifiedResponse.ok("로그아웃 성공"));
+		when(userService.logout(any(HttpServletRequest.class), anyLong())).thenReturn(UnifiedResponse.ok("로그아웃 성공"));
 
 		mockMvc.perform(post("/api/users/logout").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -106,7 +108,7 @@ class UserControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("로그아웃 성공"));
 
-		verify(userService).logout(anyLong());
+		verify(userService).logout(any(HttpServletRequest.class), anyLong());
 	}
 
 	@Test

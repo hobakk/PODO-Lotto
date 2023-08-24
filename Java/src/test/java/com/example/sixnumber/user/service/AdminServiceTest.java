@@ -207,13 +207,10 @@ public class AdminServiceTest {
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		// setStatus_success_active 에서 redisTemlate 값이 없을 때 검증되서 값이 있을 경우만 검증함
-		when(redisDao.deleteInRedisValueIsNotNull(anyLong())).thenReturn(true);
-
 		UnifiedResponse<?> response = adminService.setStatus(admin, saveUser.getId(), request);
 
 		verify(manager).findUser(anyLong());
-		verify(redisDao).deleteInRedisValueIsNotNull(anyLong());
+		verify(redisDao).deleteInRedisValueIsNotNull(saveUser.getRefreshPointer());
 		TestUtil.UnifiedResponseEquals(response, 200, "상태 변경 완료");
 	}
 
