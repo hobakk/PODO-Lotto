@@ -8,8 +8,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -79,7 +82,6 @@ public class UserService {
 
 	public TokenDto signIn(SigninRequest request) {
 		User user = manager.findUser(request.getEmail());
-		redisDao.overlapLogin(user.getId());
 
 		if (!user.getStatus().equals(Status.ACTIVE)) {
 			String msg;
@@ -94,15 +96,18 @@ public class UserService {
 			throw new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다");
 		}
 
-		String accessToken = jwtProvider.accessToken(user.getEmail(), user.getId());
-		String refreshToken = jwtProvider.refreshToken(user.getEmail(), user.getId());
-		redisDao.setValues(user.getId(), refreshToken);
-
+		String refreshPointer = UUID.randomUUID().toString();
+		user.setRefreshPointer(refreshPointer);
+		String accessToken = jwtProvider.accessToken(refreshPointer);
+		String refreshToken = jwtProvider.refreshToken(user.getEmail(), user.getId(), refreshPointer);
+		redisDao.setRefreshToken(refreshPointer, refreshToken, (long) 7, TimeUnit.DAYS);
 		return new TokenDto(accessToken, refreshToken);
 	}
 
-	public UnifiedResponse<?> logout(Long userId) {
+	public UnifiedResponse<?> logout(HttpServletRequest request, Long userId) {
+		String accessToken = jwtProvider.getTokenValueInCookie(request, "accessToken");
 		redisDao.deleteValues(userId);
+		redisDao.setBlackList(accessToken);
 		return UnifiedResponse.ok("로그아웃 성공");
 	}
 

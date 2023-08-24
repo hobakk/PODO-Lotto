@@ -128,7 +128,7 @@ public class AdminService {
 		target.setStatus(status);
 
 		if (target.getStatus().equals(Status.SUSPENDED) || target.getStatus().equals(Status.DORMANT)) {
-			redisDao.deleteInRedisValueIsNotNull(target.getId());
+			redisDao.deleteInRedisValueIsNotNull(target.getRefreshPointer());
 		}
 		return UnifiedResponse.ok("상태 변경 완료");
 	}
