@@ -35,7 +35,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 		String token = jwtProvider.resolveToken(request);
-		String refreshTokenInCookie = jwtProvider.getTokenValueInCookie(request ,"refreshToken");
+		String refreshTokenInCookie = jwtProvider.getTokenValueInCookie(request ,JwtProvider.REFRESH_TOKEN);
 
 		if (token != null) {
 			try {
@@ -84,7 +84,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	}
 
 	private void updateAccessTokenCookie(HttpServletResponse response, String newAccessToken) {
-		Cookie cookie = jwtProvider.createCookie("accessToken", newAccessToken);
+		Cookie cookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, newAccessToken);
 		response.addCookie(cookie);
 	}
 

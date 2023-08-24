@@ -49,6 +49,6 @@ public class TokenService {
 
 		String pointer = jwtProvider.getClaims(refreshToken).get("key", String.class);
 		String accessToken = jwtProvider.accessToken(pointer);
-		return jwtProvider.createCookie("accessToken", accessToken);
+		return jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken);
 	}
 }

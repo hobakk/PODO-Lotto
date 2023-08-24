@@ -103,13 +103,13 @@ public class UserService {
 		String refreshToken = jwtProvider.refreshToken(user.getEmail(), user.getId(), refreshPointer);
 		redisDao.setRefreshToken(refreshPointer, refreshToken, (long) 7, TimeUnit.DAYS);
 
-		Cookie accessCookie = jwtProvider.createCookie("accessToken", accessToken);
-		Cookie refreshCookie = jwtProvider.createCookie("refreshToken", refreshToken);
+		Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken);
+		Cookie refreshCookie = jwtProvider.createCookie(JwtProvider.REFRESH_TOKEN, refreshToken);
 		return new CookiesResponse(accessCookie, refreshCookie);
 	}
 
 	public UnifiedResponse<?> logout(HttpServletRequest request, Long userId) {
-		String accessToken = jwtProvider.getTokenValueInCookie(request, "accessToken");
+		String accessToken = jwtProvider.getTokenValueInCookie(request, JwtProvider.ACCESS_TOKEN);
 		redisDao.deleteValues(userId);
 		redisDao.setBlackList(accessToken);
 		return UnifiedResponse.ok("로그아웃 성공");
