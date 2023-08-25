@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.Test;
@@ -23,11 +24,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.WithCustomMockUser;
-import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
+import com.example.sixnumber.user.dto.CookiesResponse;
 import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -82,17 +83,17 @@ class UserControllerTest {
 	@Test
 	@WithMockUser
 	public void Signin() throws Exception {
-		TokenDto tokenDto = new TokenDto("AccessT","RefreshT");
+		CookiesResponse response = TestDataFactory.cookiesResponse();
 
-		when(userService.signIn(any(SigninRequest.class))).thenReturn(tokenDto);
+		when(userService.signIn(any(SigninRequest.class))).thenReturn(response);
 
 		mockMvc.perform(post("/api/users/signin").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(TestDataFactory.signinRequest())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("로그인 성공"))
-			.andExpect(cookie().value("accessToken", "AccessT"))
-			.andExpect(cookie().value("refreshToken", "RefreshT"));
+			.andExpect(cookie().value("accessToken", "accessTokenValue"))
+			.andExpect(cookie().value("refreshToken", "refreshTokenValue"));
 
 		verify(userService).signIn(any(SigninRequest.class));
 	}
@@ -100,15 +101,21 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void Logout() throws Exception {
-		when(userService.logout(any(HttpServletRequest.class), anyLong())).thenReturn(UnifiedResponse.ok("로그아웃 성공"));
+		Cookie access = new Cookie("accessToken", null);
+		Cookie refresh = new Cookie("refreshToken", null);
+
+		when(userService.logout(any(HttpServletRequest.class), any(User.class)))
+			.thenReturn(new CookiesResponse(access, refresh));
 
 		mockMvc.perform(post("/api/users/logout").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(99L)))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.msg").value("로그아웃 성공"));
+			.andExpect(jsonPath("$.msg").value("로그아웃 성공"))
+			.andExpect(cookie().value("accessToken", (String) null))
+			.andExpect(cookie().value("refreshToken", (String) null));
 
-		verify(userService).logout(any(HttpServletRequest.class), anyLong());
+		verify(userService).logout(any(HttpServletRequest.class), any(User.class));
 	}
 
 	@Test
