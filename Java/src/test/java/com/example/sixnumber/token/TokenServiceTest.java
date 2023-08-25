@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.Assertions;
@@ -17,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.sixnumber.fixture.TestDataFactory;
-import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
@@ -38,19 +35,18 @@ public class TokenServiceTest {
 	private Manager manager;
 
 	private User saveUser;
-	private TokenDto tokenDto;
+	private HttpServletRequest request;
+	private CookiesResponse cookies;
 
 	@BeforeEach
 	public void setup() {
 		saveUser = TestDataFactory.user();
-		tokenDto = TestDataFactory.tokenRequest();
+		request = mock(HttpServletRequest.class);
+		cookies = TestDataFactory.cookiesResponse();
 	}
 
 	@Test
 	void getInformationAfterCheckLogin_ValidAccessToken() {
-		HttpServletRequest request = mock(HttpServletRequest.class);
-		CookiesResponse cookies = TestDataFactory.cookiesResponse();
-
 		when(jwtProvider.getTokenValueInCookie(request)).thenReturn(cookies);
 
 		when(jwtProvider.validateToken(anyString())).thenReturn(true);
@@ -68,25 +64,15 @@ public class TokenServiceTest {
 	}
 
 	@Test
-	void getInformationAfterCheckLogin_Fail_CookiesIsNull() {
-		HttpServletRequest request = mock(HttpServletRequest.class);
-
-		when(jwtProvider.getTokenValueInCookie(request)).thenReturn(new CookiesResponse());
-
-		Assertions.assertThrows(CustomException.class, ()->tokenService.getInformationAfterCheckLogin(request));
-
-		verify(jwtProvider).getTokenValueInCookie(request);
-	}
-
-	@Test
 	void getInformationAfterCheckLogin_InvalidAccessToken() {
-		HttpServletRequest request = mock(HttpServletRequest.class);
-		CookiesResponse cookies = TestDataFactory.cookiesResponse();
+		Claims claims = mock(Claims.class);
+		when(claims.getSubject()).thenReturn("refreshTokenPointer");
 
+		when(jwtProvider.getTokenValueInCookie(request)).thenReturn(cookies);
 		when(jwtProvider.validateToken(anyString())).thenReturn(false);
 		when(jwtProvider.isTokenExpired(anyString())).thenReturn(false);
-		when(jwtProvider.getClaims(anyString())).thenReturn(any(Claims.class));
-		when(jwtProvider.accessToken(anyString())).thenReturn(cookies.getAccessCookie().getValue());
+		when(jwtProvider.getClaims(anyString())).thenReturn(claims);
+		when(jwtProvider.accessToken(claims.getSubject())).thenReturn(cookies.getAccessCookie().getValue());
 		when(jwtProvider.createCookie(anyString(), anyString())).thenReturn(cookies.getAccessCookie());
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
@@ -99,28 +85,28 @@ public class TokenServiceTest {
 		verify(jwtProvider).accessToken(anyString());
 		verify(jwtProvider).createCookie(anyString(), anyString());
 		verify(manager).findUser(anyLong());
-		assertNotNull(response);
+		assertNotNull(response.getResponse());
+		assertNotNull(response.getCookie());
 	}
 
 	@Test
-	void getInformationAfterCheckLogin_fail_isNull() {
-		String[] idEmail = {"anyLong"};
+	void getInformationAfterCheckLogin_Fail_CookiesIsNull() {
+		when(jwtProvider.getTokenValueInCookie(request)).thenReturn(new CookiesResponse());
 
-		when(jwtProvider.validateRefreshToken(anyString())).thenReturn(idEmail);
+		Assertions.assertThrows(CustomException.class, ()->tokenService.getInformationAfterCheckLogin(request));
 
-		Assertions.assertThrows(IllegalArgumentException.class,
-			() -> tokenService.getInformationAfterCheckLogin(tokenDto));
-
-		verify(jwtProvider).validateRefreshToken(anyString());
+		verify(jwtProvider).getTokenValueInCookie(request);
 	}
 
 	@Test
 	void getInformationAfterCheckLogin_fail_ExpiredJwtException() {
-		when(jwtProvider.validateRefreshToken(anyString())).thenThrow(ExpiredJwtException.class);
+		when(jwtProvider.getTokenValueInCookie(request)).thenReturn(cookies);
+		when(jwtProvider.validateToken(cookies.getAccessCookie().getValue())).thenReturn(false);
+		when(jwtProvider.isTokenExpired(cookies.getRefreshCookie().getValue())).thenThrow(ExpiredJwtException.class);
 
 		Assertions.assertThrows(CustomException.class,
-			() -> tokenService.getInformationAfterCheckLogin(tokenDto));
+			() -> tokenService.getInformationAfterCheckLogin(request));
 
-		verify(jwtProvider).validateRefreshToken(anyString());
+		verify(jwtProvider).isTokenExpired(anyString());
 	}
 }
