@@ -24,6 +24,7 @@ import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.user.dto.CookiesResponse;
 import com.example.sixnumber.user.entity.User;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 
 @ExtendWith(MockitoExtension.class)
@@ -79,21 +80,24 @@ public class TokenServiceTest {
 
 	@Test
 	void getInformationAfterCheckLogin_InvalidAccessToken() {
-		String[] idEmail = {"7", "anyString"};
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		CookiesResponse cookies = TestDataFactory.cookiesResponse();
 
 		when(jwtProvider.validateToken(anyString())).thenReturn(false);
-		when(jwtProvider.validateRefreshToken(anyString())).thenReturn(idEmail);
-		when(jwtProvider.accessToken(anyString())).thenReturn("tokenValue");
-		when(jwtProvider.getTokenInUserId(anyString())).thenReturn(saveUser.getId());
+		when(jwtProvider.isTokenExpired(anyString())).thenReturn(false);
+		when(jwtProvider.getClaims(anyString())).thenReturn(any(Claims.class));
+		when(jwtProvider.accessToken(anyString())).thenReturn(cookies.getAccessCookie().getValue());
+		when(jwtProvider.createCookie(anyString(), anyString())).thenReturn(cookies.getAccessCookie());
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		UserIfAndCookieResponse response = tokenService.getInformationAfterCheckLogin(tokenDto);
+		UserIfAndCookieResponse response = tokenService.getInformationAfterCheckLogin(request);
 
 		verify(jwtProvider).validateToken(anyString());
-		verify(jwtProvider).validateRefreshToken(anyString());
+		verify(jwtProvider).isTokenExpired(anyString());
+		verify(jwtProvider).getClaims(anyString());
 		verify(jwtProvider).accessToken(anyString());
-		verify(jwtProvider).getTokenInUserId(anyString());
+		verify(jwtProvider).createCookie(anyString(), anyString());
 		verify(manager).findUser(anyLong());
 		assertNotNull(response);
 	}
