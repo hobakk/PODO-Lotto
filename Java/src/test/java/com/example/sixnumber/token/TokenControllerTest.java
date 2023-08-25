@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.sixnumber.fixture.TestDataFactory;
-import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -42,10 +42,11 @@ public class TokenControllerTest {
 
 	@Test
 	public void getInformationAfterCheckLogin() throws Exception {
+		HttpServletRequest request = mock(HttpServletRequest.class);
 		UserIfAndCookieResponse userIfAndCookieResponse =	new UserIfAndCookieResponse(
 			new MyInformationResponse(TestDataFactory.user()), cookie);
 
-		when(tokenService.getInformationAfterCheckLogin(any(TokenDto.class))).thenReturn(userIfAndCookieResponse);
+		when(tokenService.getInformationAfterCheckLogin(request)).thenReturn(userIfAndCookieResponse);
 
 		mockMvc.perform(post("/api/jwt/check/login").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -54,7 +55,7 @@ public class TokenControllerTest {
 			.andExpect(jsonPath("$.msg").value("조회 및 재발급 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
-		verify(tokenService).getInformationAfterCheckLogin(any(TokenDto.class));
+		verify(tokenService).getInformationAfterCheckLogin(request);
 	}
 
 	// @Test
