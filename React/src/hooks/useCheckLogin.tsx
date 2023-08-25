@@ -10,31 +10,37 @@ import { Err, UserIfState, UnifiedResponse } from '../shared/TypeMenu';
 function useCheckLogin() {
     const dispatch = useDispatch();
     const userIf = useSelector((state: RootState)=>state.userIf);
-    const [isLogin, setData] = useState<boolean>(false);
-    const [accessToken, refreshToken] = getAccessTAndRefreshT();
+    const [isLogin, setIsLogin] = useState<boolean>(false);
+    // const [accessToken, refreshToken] = getAccessTAndRefreshT();
 
-    const checkLoginMutation = useMutation<UnifiedResponse<UserIfState>, Err, string[]>(checkLoginAndgetUserIf, {
+    const checkLoginMutation = useMutation<UnifiedResponse<UserIfState>, Err>(checkLoginAndgetUserIf, {
         onSuccess: (res)=>{
             if  (res.code === 200 && res.data) {
+                console.log(res.data)
                 dispatch(setUserIf(res.data));
-                setData(true)
+                setIsLogin(true)
             }
         },
         onError: (err)=>{
-            if  (err.msg === "SignatureException") {
-                deleteToken();
+            if (err.msg) {
+                alert(err.msg);
             }
+
+            setIsLogin(false);
         }
     })
 
     useEffect(()=>{
         const { email, nickname, role } = userIf;
-        if (!email && !nickname && !role && refreshToken !== undefined) {
-            checkLoginMutation.mutate([ accessToken, refreshToken ]);
-        } else if (email && nickname && role && refreshToken !== undefined) {
-            setData(true);
+        if (!email && !nickname && !role) {
+            const timer = setTimeout(()=>{
+                checkLoginMutation.mutate();
+            }, 1000)
+            return ()=> clearTimeout(timer);
+        } else if (email && nickname && role) {
+            setIsLogin(true);
         } else {
-            setData(false);
+            setIsLogin(false);
         }
     }, [userIf])
   

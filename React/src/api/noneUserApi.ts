@@ -41,12 +41,9 @@ const getWinNumber = async (): Promise<UnifiedResponse<{winNumberList: WinNumber
     }
 }
 
-const checkLoginAndgetUserIf = async (tokens: string[]): Promise<UnifiedResponse<UserIfState>> => {
+const checkLoginAndgetUserIf = async (): Promise<UnifiedResponse<UserIfState>> => {
     try {
         const res = await axios.post(`${process.env.REACT_APP_SPRING_URL}/jwt/check/login`, {
-            accessToken: tokens[0],
-            refreshToken: tokens[1],
-        }, {
             withCredentials: true,
         });
         console.log(res.data);
