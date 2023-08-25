@@ -26,7 +26,7 @@ public class TokenService {
 
 	public UserIfAndCookieResponse getInformationAfterCheckLogin(HttpServletRequest request) {
 		CookiesResponse cookies = jwtProvider.getTokenValueInCookie(request);
-		if (cookies == null) throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+		if (cookies.getRefreshCookie() == null) throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
 
 		String accessToken = cookies.getAccessCookie().getValue();
 		String refreshToken = cookies.getRefreshCookie().getValue();
@@ -54,7 +54,7 @@ public class TokenService {
 	private Cookie createCookie(String refreshToken) {
 		if (jwtProvider.isTokenExpired(refreshToken)) throw new CustomException(ErrorCode.EXPIRED_TOKEN);
 
-		String pointer = jwtProvider.getClaims(refreshToken).get("key", String.class);
+		String pointer = jwtProvider.getClaims(refreshToken).getSubject();
 		String accessToken = jwtProvider.accessToken(pointer);
 		return jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken);
 	}
