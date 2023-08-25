@@ -39,6 +39,7 @@ public class TestDataFactory {
 		user.setCash("+", 5000);
 		user.setRole(UserRole.ROLE_USER);
 		user.setStatus(Status.ACTIVE);
+		user.setRefreshPointer("refreshTokenPointer");
 		return user;
 	}
 

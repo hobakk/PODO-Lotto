@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +29,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.TestUtil;
-import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.OverlapException;
@@ -141,22 +141,28 @@ public class UserServiceTest {
 	@Test
 	void signin_success() {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
+		CookiesResponse cookies = TestDataFactory.cookiesResponse();
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
-		when(jwtProvider.refreshToken(eq(saveUser.getEmail()), eq(saveUser.getId()), anyString())).thenReturn("sampleRT");
-		when(jwtProvider.accessToken(anyString())).thenReturn("sampleAT");
+		when(jwtProvider.refreshToken(eq(saveUser.getEmail()), eq(saveUser.getId()), anyString()))
+			.thenReturn(cookies.getRefreshCookie().getValue());
+		when(jwtProvider.accessToken(anyString())).thenReturn(cookies.getAccessCookie().getValue());
+		when(jwtProvider.createCookie(anyString(), anyString())).thenReturn(cookies.getAccessCookie());
+		when(jwtProvider.createCookie(anyString(), anyString())).thenReturn(cookies.getRefreshCookie());
 
-		TokenDto tokenDto = userService.signIn(signinRequest);
+		CookiesResponse response = userService.signIn(signinRequest);
 
 		verify(manager).findUser(anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
 		verify(jwtProvider).refreshToken(eq(saveUser.getEmail()), eq(saveUser.getId()), anyString());
 		verify(jwtProvider).accessToken(anyString());
-		assertEquals(tokenDto.getAccessToken(), "sampleAT");
-		assertEquals(tokenDto.getRefreshToken(), "sampleRT");
+		verify(redisDao).setRefreshToken(anyString(), anyString(), anyLong(), any(TimeUnit.class));
+		verify(jwtProvider, times(2)).createCookie(anyString(), anyString());
+		assertNotNull(response.getAccessCookie());
+		assertNotNull(response.getRefreshCookie());
 		assertEquals(saveUser.getStatus(), Status.ACTIVE);
 	}
 
@@ -206,16 +212,20 @@ public class UserServiceTest {
 	void logout() {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		CookiesResponse cookies = TestDataFactory.cookiesResponse();
+		Cookie access = new Cookie("accessToken", null);
+		Cookie refresh = new Cookie("refreshToken", null);
 
 		when(jwtProvider.getTokenValueInCookie(request)).thenReturn(cookies);
+		when(jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null)).thenReturn(access);
+		when(jwtProvider.createCookie(JwtProvider.REFRESH_TOKEN, null)).thenReturn(refresh);
 
 		CookiesResponse response = userService.logout(request, saveUser);
 
-		verify(redisDao).deleteValues(anyString(), JwtProvider.REFRESH_TOKEN);
-		verify(redisDao).setBlackList(anyString());
-		verify(jwtProvider, times(2)).createCookie(anyString(), null);
-		assertEquals(response.getAccessCookie(), cookies.getAccessCookie());
-		assertEquals(response.getRefreshCookie(), cookies.getRefreshCookie());
+		verify(redisDao).deleteValues(anyString(), eq(JwtProvider.REFRESH_TOKEN));
+		verify(redisDao).setBlackList(cookies.getAccessCookie().getValue());
+		verify(jwtProvider, times(2)).createCookie(anyString(), eq(null));
+		assertNull(response.getAccessCookie().getValue());
+		assertNull(response.getRefreshCookie().getValue());
 	}
 
 	@Test
