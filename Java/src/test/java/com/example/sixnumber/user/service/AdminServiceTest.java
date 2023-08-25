@@ -129,7 +129,7 @@ public class AdminServiceTest {
 		UnifiedResponse<?> response = adminService.upCash(request);
 
 		verify(manager).findUser(anyLong());
-		verify(redisDao).deleteValues(anyString());
+		verify(redisDao).deleteValues(anyString(), anyString());
 		assertEquals(saveUser.getCash(), 11000);
 		assertNotNull(saveUser.getStatement().get(0));
 		assertEquals(saveUser.getTimeOutCount(), 0);
