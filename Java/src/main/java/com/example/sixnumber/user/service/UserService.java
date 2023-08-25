@@ -108,11 +108,17 @@ public class UserService {
 		return new CookiesResponse(accessCookie, refreshCookie);
 	}
 
-	public UnifiedResponse<?> logout(HttpServletRequest request, Long userId) {
-		String accessToken = jwtProvider.getTokenValueInCookie(request).getAccessCookie().getValue();
-		redisDao.deleteValues(userId);
+	public CookiesResponse logout(HttpServletRequest request, User user) {
+		CookiesResponse cookies= jwtProvider.getTokenValueInCookie(request);
+		String accessToken = cookies.getAccessCookie().getValue();
+		redisDao.deleteValues(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
 		redisDao.setBlackList(accessToken);
-		return UnifiedResponse.ok("로그아웃 성공");
+
+		Cookie access = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null);
+		Cookie refresh = jwtProvider.createCookie(JwtProvider.REFRESH_TOKEN, null);
+		access.setMaxAge(0);
+		refresh.setMaxAge(0);
+		return new CookiesResponse(access, refresh);
 	}
 
 	public UnifiedResponse<?> withdraw(OnlyMsgRequest request, String email) {
