@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.servlet.http.Cookie;
+
 import org.junit.jupiter.params.provider.Arguments;
 
 import com.example.sixnumber.global.dto.TokenDto;
@@ -21,6 +23,7 @@ import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
+import com.example.sixnumber.user.dto.CookiesResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -109,6 +112,12 @@ public class TestDataFactory {
 			5,
 			1000
 		);
+	}
+
+	public static CookiesResponse cookiesResponse() {
+		Cookie access = new Cookie("accessToken", "accessTokenValue");
+		Cookie refresh = new Cookie("refreshToken", "refreshTokenValue");
+		return new CookiesResponse(access, refresh);
 	}
 
 	public static Set<String> keys() {
