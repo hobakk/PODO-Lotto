@@ -67,10 +67,9 @@ public class RedisDao {
 	// 	return listOperations.range(key, 0, -1);
 	// }
 
-	public void deleteValues(Object object) {
-		if (object instanceof Long userId) redisTemplate.delete(RTK + userId);
-		else if (object instanceof String key) redisTemplate.delete(STMT + key);
-		else throw new CustomException(ErrorCode.INVALID_INPUT);
+	public void deleteValues(String value, String subject) {
+		if (subject.equals(JwtProvider.REFRESH_TOKEN)) redisTemplate.delete(RTK + value);
+		else redisTemplate.delete(STMT + value);
 	}
 
 	public void deleteInRedisValueIsNotNull(String refreshPointer) {
