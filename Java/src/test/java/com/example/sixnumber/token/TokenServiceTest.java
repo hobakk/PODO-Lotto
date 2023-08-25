@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
+import com.example.sixnumber.user.dto.CookiesResponse;
 import com.example.sixnumber.user.entity.User;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -42,13 +45,19 @@ public class TokenServiceTest {
 
 	@Test
 	void getInformationAfterCheckLogin_ValidAccessToken() {
+		HttpServletRequest request = mock(HttpServletRequest.class);
+		CookiesResponse cookies = TestDataFactory.cookiesResponse();
+
+		when(jwtProvider.getTokenValueInCookie(request)).thenReturn(cookies);
+
 		when(jwtProvider.validateToken(anyString())).thenReturn(true);
 		when(jwtProvider.getTokenInUserId(anyString())).thenReturn(saveUser.getId());
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		UserIfAndCookieResponse response = tokenService.getInformationAfterCheckLogin(tokenDto);
+		UserIfAndCookieResponse response = tokenService.getInformationAfterCheckLogin(request);
 
+		verify(jwtProvider).getTokenValueInCookie(request);
 		verify(jwtProvider).validateToken(anyString());
 		verify(jwtProvider).getTokenInUserId(anyString());
 		assertNull(response.getCookie());
