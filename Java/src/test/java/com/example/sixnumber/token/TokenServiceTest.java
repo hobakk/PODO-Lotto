@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Optional;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.Assertions;
@@ -62,6 +64,17 @@ public class TokenServiceTest {
 		verify(jwtProvider).getTokenInUserId(anyString());
 		assertNull(response.getCookie());
 		assertNotNull(response.getResponse());
+	}
+
+	@Test
+	void getInformationAfterCheckLogin_Fail_CookiesIsNull() {
+		HttpServletRequest request = mock(HttpServletRequest.class);
+
+		when(jwtProvider.getTokenValueInCookie(request)).thenReturn(new CookiesResponse());
+
+		Assertions.assertThrows(CustomException.class, ()->tokenService.getInformationAfterCheckLogin(request));
+
+		verify(jwtProvider).getTokenValueInCookie(request);
 	}
 
 	@Test
