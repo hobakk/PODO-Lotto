@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.jupiter.api.Assertions;
@@ -38,6 +39,7 @@ import com.example.sixnumber.global.util.RedisDao;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
+import com.example.sixnumber.user.dto.CookiesResponse;
 import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -203,14 +205,17 @@ public class UserServiceTest {
 	@Test
 	void logout() {
 		HttpServletRequest request = mock(HttpServletRequest.class);
+		CookiesResponse cookies = TestDataFactory.cookiesResponse();
 
-		when(jwtProvider.getTokenValueInCookie(request, "accessToken")).thenReturn("accessTokenValue");
+		when(jwtProvider.getTokenValueInCookie(request)).thenReturn(cookies);
 
-		UnifiedResponse<?> response = userService.logout(request, saveUser.getId());
+		CookiesResponse response = userService.logout(request, saveUser);
 
-		verify(redisDao).deleteValues(anyLong());
+		verify(redisDao).deleteValues(anyString(), JwtProvider.REFRESH_TOKEN);
 		verify(redisDao).setBlackList(anyString());
-		TestUtil.UnifiedResponseEquals(response, 200, "로그아웃 성공");
+		verify(jwtProvider, times(2)).createCookie(anyString(), null);
+		assertEquals(response.getAccessCookie(), cookies.getAccessCookie());
+		assertEquals(response.getRefreshCookie(), cookies.getRefreshCookie());
 	}
 
 	@Test
