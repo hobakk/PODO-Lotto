@@ -50,8 +50,14 @@ public class UserController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<UnifiedResponse<?>> logout(HttpServletRequest request, @AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.logout(request, user.getId()));
+	public ResponseEntity<UnifiedResponse<?>> logout(@AuthenticationPrincipal User user,
+		HttpServletRequest request,
+		HttpServletResponse response
+	) {
+		CookiesResponse cookies = userService.logout(request, user);
+		response.addCookie(cookies.getAccessCookie());
+		response.addCookie(cookies.getRefreshCookie());
+		return ResponseEntity.ok(UnifiedResponse.ok("로그아웃 성공"));
 	}
 
 	@PatchMapping("/withdraw")
