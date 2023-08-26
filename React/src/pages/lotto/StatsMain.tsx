@@ -32,7 +32,9 @@ function StatsMain() {
         <h1 style={{  fontSize: "80px", height: "1cm" }}>Stats Main</h1>
         <div style={{ marginBottom: "2cm"}}>
                 {value.value !== "" &&(
-                    <span style={{ textAlign: "center"}}>{NumSentenceResult(value.value)}</span>
+                    <span style={{ textAlign: "center"}}>
+                        <NumSentenceResult numSentence={value.value} />
+                    </span>
                 )}
         </div>
         {value.countList.length !== 0 &&(

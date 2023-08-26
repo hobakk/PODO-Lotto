@@ -64,7 +64,9 @@ function StatsMonth() {
                     이전으로 돌아가기
                 </button>
                 <div style={{ marginBottom: "2cm"}}>
-                    <span style={{ textAlign: "center"}}>{NumSentenceResult(value.value)}</span>
+                    <span style={{ textAlign: "center"}}>
+                        <NumSentenceResult numSentence={value.value} />
+                    </span>
                 </div>
                 {value.countList.length !== 0 &&(
                     <StatsContainer res={value.countList}/>
