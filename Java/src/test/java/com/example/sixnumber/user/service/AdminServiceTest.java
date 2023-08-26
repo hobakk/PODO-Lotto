@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.TestUtil;
@@ -61,8 +62,8 @@ public class AdminServiceTest {
 
 	@Test
 	void setAdmin_success() {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn("AdminSecurityKey");
+		ReflectionTestUtils.setField(adminService, "KEY", "AdminSecurityKey");
+		OnlyMsgRequest request = new OnlyMsgRequest("AdminSecurityKey");
 
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
@@ -75,8 +76,7 @@ public class AdminServiceTest {
 
 	@Test
 	void setAdmin_fail_incorrectKey() {
-		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
-		when(request.getMsg()).thenReturn("false");
+		OnlyMsgRequest request = new OnlyMsgRequest("false");
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.setAdmin(request, admin, saveUser.getId()));
 	}
