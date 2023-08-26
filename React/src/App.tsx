@@ -2,7 +2,8 @@ import React from 'react';
 import Router from './shared/Router';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
-import store from './config/configStore';
+import { store, persistor} from './config/configStore';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const queryClient = new QueryClient();
 
@@ -10,7 +11,9 @@ function App() {
   return (
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-        <Router />
+        <PersistGate persistor={persistor}>
+          <Router />
+        </PersistGate>
       </QueryClientProvider>
     </Provider>
   )
