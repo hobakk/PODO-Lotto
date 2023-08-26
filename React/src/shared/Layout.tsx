@@ -5,7 +5,6 @@ import { CommonLink, LogoutStyle} from '../components/Styles';
 import LogoutMutation from '../components/LogoutMutation';
 import MenuContainer from '../components/MenuContainer';
 import { AdminMenuValue, LottoMenuValue, StatsMenuValue, UserMenuValue } from './MenuValue';
-import useCheckLogin from '../hooks/useCheckLogin';
 import { RootState } from '../config/configStore';
 
 const mainColor = `#9957F0`;
@@ -51,13 +50,19 @@ function Header() {
   const navigate = useNavigate();
   const logoutMutation = LogoutMutation();
   const userIf = useSelector((state: RootState)=>state.userIf) as UserIf;
-  const isLogin = useCheckLogin();
+  const [isLogin, setIsLogin] = useState<boolean>(false);
   const [cash, setCash] = useState<number>();
   const [nickname, setNickname] = useState<string>("");
 
   useEffect(()=>{
-    setCash(userIf.cash);
-    setNickname(userIf.nickname);
+    const { nickname, role } = userIf;
+    if  (nickname !== "" && role !== "") {
+      setCash(userIf.cash);
+      setNickname(userIf.nickname);
+      setIsLogin(true);
+    } else {
+      setIsLogin(false);
+    }
   }, [userIf]);
 
   return (

@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../api/userApi';
 import { logoutUser } from '../modules/userIfSlice';
-import { deleteToken } from '../shared/Cookie';
 import { UnifiedResponse } from '../shared/TypeMenu';
 
 function LogoutMutation() {
@@ -16,7 +15,6 @@ function LogoutMutation() {
             if (res.code === 200) {
                 dispatch(logoutUser());
                 navigate("/");
-                deleteToken();
             }
         }
     })
