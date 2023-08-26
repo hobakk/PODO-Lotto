@@ -11,7 +11,6 @@ function GetUserIfMutation() {
 
     const getIfMutation = useMutation<UnifiedResponse<UserIfState>>(getInformation, {
         onSuccess: (res)=>{
-            console.log(res)
             if (res.code === 200 && res.data)
             dispatch(setUserIf(res.data));
         }

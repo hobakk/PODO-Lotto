@@ -38,7 +38,7 @@ export type UserIfState = {
     cash: number;
     role: string;
     status: string;
-    statement: Record<string, any>;
+    statement: Record<string, string>;
 };
 
 export type UserAllIf = {

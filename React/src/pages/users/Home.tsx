@@ -63,7 +63,7 @@ function Home() {
         ):(
           value.map((result)=>{
             return (
-              <div key={result.time} style={Rectangle}>
+              <div key={`WinNumber${result.time}`} style={Rectangle}>
                 <div style={{ display: "flex", height: "1.2cm" }}>
                   <p>
                     <span style={SpanStyle}>{result.time}</span>회 당첨결과
@@ -73,21 +73,17 @@ function Home() {
                   </p>
                 </div>
                 <div style={{ display: "flex", height: "1.2cm" }}>
-                  <p>
-                    1등 총 당첨금 <span style={SpanStyle}>{result.prize.toLocaleString()}</span>원
-                  </p>
-                  <p style={{ marginLeft: "auto"}}>
-                    당첨인원 <span style={SpanStyle}>{result.winner}</span>명
-                  </p>
+                  <p>1등 총 당첨금 <span style={SpanStyle}>{result.prize.toLocaleString()}</span>원</p>
+                  <p style={{ marginLeft: "auto"}}>당첨인원 <span style={SpanStyle}>{result.winner}</span>명</p>
                 </div>
                 <div style={{ display: "flex", height: "1.5cm", marginTop: "10px", justifyContent: "center", textAlign: "center", alignItems: "center"}}>
                   <div style={{ display: "flex", marginLeft: "auto"}}>
                     {result.topNumberList.map((num, index)=>{
-                      return <div key={index}>{ChangingNumStyle({num, index})}</div>
+                      return <div key={`topNumberList${index}`}>{ChangingNumStyle({num, index})}</div>
                     })}
                   </div>
                   <span style={{...SpanStyle, marginLeft: "5px", marginRight: "5px",}}>+</span>
-                  <div style={{ display: "flex", marginLeft: "5px"}}>{ChangingNumStyle({num: result.bonus, index: 0})}</div>
+                  <div style={{ display: "flex", marginLeft: "5px"}}>{ChangingNumStyle({num: result.bonus, index: 7})}</div>
                 </div>
               </div>
             )})
