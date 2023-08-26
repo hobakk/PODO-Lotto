@@ -22,6 +22,9 @@ spring:
   jwt:
     secret-key: ${SECRET_KEY}
 
+  admin:
+    set-admin-key: ${ADMIN_KEY}
+
 #  security:
 #    oauth2:
 #      client:
