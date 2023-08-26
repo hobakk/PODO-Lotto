@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Objects;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -14,13 +13,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import com.example.sixnumber.user.dto.CookiesResponse;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -30,17 +27,15 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class JwtProvider {
 	private final SecretKey secretKey;
-	private final RedisTemplate<String, String> redisTemplate;
 
-	public JwtProvider(RedisTemplate<String, String> redisTemplate, @Value("${spring.jwt.secret-key}") String keyValue) {
+	public JwtProvider(@Value("${spring.jwt.secret-key}") String keyValue) {
 		String keyBase64Encoded = Base64.getEncoder().encodeToString(keyValue.getBytes());
 		byte[] decodedKey = Base64.getDecoder().decode(keyBase64Encoded);
 		this.secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
-		this.redisTemplate = redisTemplate;
 	}
 
-	public static final String AUTHORIZATION_HEADER = "Authorization";
-	public static final String BEARER_PREFIX = "Bearer";
+	// public static final String AUTHORIZATION_HEADER = "Authorization";
+	// public static final String BEARER_PREFIX = "Bearer";
 	public static final String REFRESH_TOKEN = "refreshToken";
 	public static final String ACCESS_TOKEN = "accessToken";
 	private static final Duration expire = Duration.ofMinutes(5);
@@ -79,26 +74,6 @@ public class JwtProvider {
 			.compact();
 	}
 
-	public String resolveToken(HttpServletRequest request) {
-		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-		if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
-			return bearerToken.substring(7);
-		}
-		return null;
-	}
-
-	public String getIdEmail(String token) {
-		Long userId = getClaims(token).get("id", Long.class);
-		String email = Jwts.parserBuilder()
-			.setSigningKey(secretKey)
-			.build()
-			.parseClaimsJws(token)
-			.getBody()
-			.getSubject();
-
-		return userId + "," + email;
-	}
-
 	public Long getTokenInUserId(String token) {
 		return getClaims(token).get("id", Long.class);
 	}
@@ -107,8 +82,6 @@ public class JwtProvider {
 		try {
 			Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
 			return true;
-		} catch (ExpiredJwtException e) {
-			log.info("Expired Token, 만려된 토큰 입니다");
 		} catch (SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
 		} catch (UnsupportedJwtException e) {
@@ -117,33 +90,6 @@ public class JwtProvider {
 			log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
 		}
 		return false;
-	}
-
-	public Boolean filterChainValidateToken(String token) {
-		try {
-			Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-			return true;
-		} catch (SecurityException | MalformedJwtException e) {
-			log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
-		} catch (UnsupportedJwtException e) {
-			log.info("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-		} catch (IllegalArgumentException e) {
-			log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
-		}
-		return false;
-	}
-
-	public String[] validateRefreshToken(String refreshToken) {
-		String[] idEmail = getIdEmail(refreshToken).split(",");
-		String refreshTokenInRedis = redisTemplate.opsForValue().get("RT: " + idEmail[0]);
-
-		if (Objects.isNull(refreshTokenInRedis)
-			|| !refreshToken.equals(refreshTokenInRedis) || isTokenExpired(refreshTokenInRedis)) {
-			redisTemplate.delete("RT: " + idEmail[0]);
-			return null;
-		}
-
-		return idEmail;
 	}
 
 	public Claims getClaims(String token) {
@@ -152,10 +98,6 @@ public class JwtProvider {
 			.build()
 			.parseClaimsJws(token)
 			.getBody();
-	}
-
-	public void setExpire(String token) {
-		getClaims(token).setExpiration(new Date());
 	}
 
 	public Long getRemainingTime(String token) {
@@ -187,4 +129,41 @@ public class JwtProvider {
 			cookie -> cookie.getName().equals(JwtProvider.REFRESH_TOKEN)).findFirst().orElse(null);
 		return new CookiesResponse(access, refresh);
 	}
+
+	// public void setExpire(String token) {
+	// 	getClaims(token).setExpiration(new Date());
+	// }
+
+	// public String[] validateRefreshToken(String refreshToken) {
+	// 	String[] idEmail = getIdEmail(refreshToken).split(",");
+	// 	String refreshTokenInRedis = redisTemplate.opsForValue().get("RT: " + idEmail[0]);
+	//
+	// 	if (Objects.isNull(refreshTokenInRedis)
+	// 		|| !refreshToken.equals(refreshTokenInRedis) || isTokenExpired(refreshTokenInRedis)) {
+	// 		redisTemplate.delete("RT: " + idEmail[0]);
+	// 		return null;
+	// 	}
+	//
+	// 	return idEmail;
+	// }
+
+	// public String getIdEmail(String token) {
+	// 	Long userId = getClaims(token).get("id", Long.class);
+	// 	String email = Jwts.parserBuilder()
+	// 		.setSigningKey(secretKey)
+	// 		.build()
+	// 		.parseClaimsJws(token)
+	// 		.getBody()
+	// 		.getSubject();
+	//
+	// 	return userId + "," + email;
+	// }
+
+	// public String resolveToken(HttpServletRequest request) {
+	// 	String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+	// 	if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
+	// 		return bearerToken.substring(7);
+	// 	}
+	// 	return null;
+	// }
 }
