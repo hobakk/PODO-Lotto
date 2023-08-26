@@ -17,6 +17,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -130,9 +132,11 @@ public class SixNumberService {
 	}
 
 	public UnifiedResponse<SixNumber> getRecentBuyNumbers(User user) {
-		SixNumber recentBuyNumbers = sixNumberRepository.findByRecentBuyNumbers(user.getId())
-			.orElseThrow(() -> new IllegalArgumentException("해당 정보가 존재하지 않습니다"));
-		return UnifiedResponse.ok("최근 구매 번호 조회 성공", recentBuyNumbers);
+		Pageable pageable = PageRequest.of(0, 1);
+		List<SixNumber> recentBuyNumbers = sixNumberRepository.findByRecentBuyNumbers(user.getId(), pageable);
+		if (recentBuyNumbers.get(0) == null) throw new CustomException(NO_MATCHING_INFO_FOUND);
+
+		return UnifiedResponse.ok("최근 구매 번호 조회 성공", recentBuyNumbers.get(0));
 	}
 
 	private void confirmationProcess(BuyNumberRequest buyNumberRequest, StatisticalNumberRequest statisticalNumberRequest, User userIf) {
