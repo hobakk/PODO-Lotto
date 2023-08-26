@@ -3,6 +3,7 @@ package com.example.sixnumber.lotto.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,10 +16,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Pageable;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.TestUtil;
 import com.example.sixnumber.global.dto.UnifiedResponse;
+import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
@@ -122,20 +125,20 @@ public class SixNumberServiceTest {
 
 	@Test
 	void getRecentBuyNumbers_success() {
-		when(sixNumberRepository.findByRecentBuyNumbers(anyLong())).thenReturn(Optional.of(sixNumber));
+		when(sixNumberRepository.findByRecentBuyNumbers(anyLong(), any(Pageable.class))).thenReturn(List.of(sixNumber));
 
 		UnifiedResponse<SixNumber> response = sixNumberService.getRecentBuyNumbers(saveUser);
 
-		verify(sixNumberRepository).findByRecentBuyNumbers(anyLong());
+		verify(sixNumberRepository).findByRecentBuyNumbers(anyLong(), any(Pageable.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "최근 구매 번호 조회 성공", SixNumber.class);
 	}
 
 	@Test
 	void getRecentBuyNumbers_fail_isEmpty() {
-		when(sixNumberRepository.findByRecentBuyNumbers(anyLong())).thenReturn(Optional.empty());
+		when(sixNumberRepository.findByRecentBuyNumbers(anyLong(), any(Pageable.class))).thenReturn(new ArrayList<>());
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> sixNumberService.getRecentBuyNumbers(saveUser));
+		Assertions.assertThrows(CustomException.class, () -> sixNumberService.getRecentBuyNumbers(saveUser));
 
-		verify(sixNumberRepository).findByRecentBuyNumbers(anyLong());
+		verify(sixNumberRepository).findByRecentBuyNumbers(anyLong(), any(Pageable.class));
 	}
 }
