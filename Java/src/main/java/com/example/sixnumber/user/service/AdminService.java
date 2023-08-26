@@ -27,28 +27,23 @@ import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
 
+import lombok.AllArgsConstructor;
+
 @Service
 @Transactional
+@AllArgsConstructor
 public class AdminService {
 
-	private final String KEY;
+	@Value("${spring.admin.set-admin-key}")
+	private String KEY;
 	private final UserRepository userRepository;
 	private final LottoRepository lottoRepository;
 	private final RedisDao redisDao;
 	private final Manager manager;
 
-	public AdminService(UserRepository userRepository, LottoRepository lottoRepository, RedisDao redisDao,
-		Manager manager, @Value("${spring.admin.set-admin-key}") String key) {
-		this.userRepository = userRepository;
-		this.lottoRepository = lottoRepository;
-		this.redisDao = redisDao;
-		this.manager = manager;
-		this.KEY = key;
-	}
-
 	// 보안관련 더 생각해봐야함
 	public UnifiedResponse<?> setAdmin(OnlyMsgRequest request, User user, Long userId) {
-		if (!request.getMsg().equals(KEY)) throw new IllegalArgumentException("설정된 KEY값이 아닙니다");
+		if (!request.getMsg().equals(KEY)) throw new IllegalArgumentException("설정된 Key 값이 아닙니다");
 
 		User target = confirmationProcess(user, userId);
 		target.setAdmin();
