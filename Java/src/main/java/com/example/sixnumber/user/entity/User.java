@@ -150,6 +150,23 @@ public class User implements UserDetails {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof User user))
+			return false;
+
+		return id.equals(user.id) && nickname.equals(user.nickname);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = id.hashCode();
+		result = 31 * result + email.hashCode();
+		return result;
+	}
+
+	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Collection<GrantedAuthority> authorities = new HashSet<>();
 		for (UserRole eachRole : UserRole.values()) {
