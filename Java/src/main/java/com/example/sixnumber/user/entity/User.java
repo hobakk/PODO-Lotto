@@ -28,6 +28,7 @@ import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -70,6 +71,7 @@ public class User implements UserDetails {
 	private int timeOutCount;
 	@Column(name = "refreshPointer")
 	private String refreshPointer;
+	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<SixNumber> sixNumberList;
 
@@ -156,7 +158,7 @@ public class User implements UserDetails {
 		if (!(o instanceof User user))
 			return false;
 
-		return id.equals(user.id) && nickname.equals(user.nickname);
+		return id.equals(user.id) && email.equals(user.email);
 	}
 
 	@Override
