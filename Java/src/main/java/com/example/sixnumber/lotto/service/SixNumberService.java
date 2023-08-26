@@ -133,10 +133,9 @@ public class SixNumberService {
 
 	public UnifiedResponse<SixNumber> getRecentBuyNumbers(User user) {
 		Pageable pageable = PageRequest.of(0, 1);
-		List<SixNumber> recentBuyNumbers = sixNumberRepository.findByRecentBuyNumbers(user.getId(), pageable);
-		if (recentBuyNumbers.size() == 0) throw new CustomException(NO_MATCHING_INFO_FOUND);
-
-		return UnifiedResponse.ok("최근 구매 번호 조회 성공", recentBuyNumbers.get(0));
+		List<SixNumber> recentBuyNumberList = sixNumberRepository.findByRecentBuyNumbers(user, pageable);
+		if (recentBuyNumberList.size() == 0) throw new CustomException(NO_MATCHING_INFO_FOUND);
+		return UnifiedResponse.ok("최근 구매 번호 조회 성공", recentBuyNumberList.get(0));
 	}
 
 	private void confirmationProcess(BuyNumberRequest buyNumberRequest, StatisticalNumberRequest statisticalNumberRequest, User userIf) {
