@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
@@ -22,6 +24,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -67,6 +70,8 @@ public class User implements UserDetails {
 	private int timeOutCount;
 	@Column(name = "refreshPointer")
 	private String refreshPointer;
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<SixNumber> sixNumberList;
 
 	public User(SignupRequest request, String password) {
 		this.email = request.getEmail();
@@ -78,6 +83,7 @@ public class User implements UserDetails {
 		this.statement = new ArrayList<>();
 		this.timeOutCount = 0;
 		this.refreshPointer = null;
+		this.sixNumberList = new ArrayList<>();
 	}
 
 	// Controller Test

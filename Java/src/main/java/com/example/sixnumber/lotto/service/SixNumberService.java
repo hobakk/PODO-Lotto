@@ -66,7 +66,7 @@ public class SixNumberService {
 			topNumbers.add(result);
 		}
 
-		SixNumber sixNumber = new SixNumber(user.getId(), LocalDateTime.now(), topNumbers);
+		SixNumber sixNumber = new SixNumber(user, LocalDateTime.now(), topNumbers);
 		sixNumberRepository.save(sixNumber);
 		saveMainLottoList(topNumbers);
 
@@ -125,7 +125,7 @@ public class SixNumberService {
 			Thread.currentThread().interrupt();
 		}
 
-		SixNumber sixNumber = new SixNumber(user.getId(), LocalDateTime.now(), topNumbers);
+		SixNumber sixNumber = new SixNumber(user, LocalDateTime.now(), topNumbers);
 		sixNumberRepository.save(sixNumber);
 		saveMainLottoList(topNumbers);
 		return UnifiedResponse.ok("요청 성공", topNumbers);
