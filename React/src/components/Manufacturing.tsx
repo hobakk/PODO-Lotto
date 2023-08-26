@@ -17,11 +17,13 @@ export const ChangingNumStyle = ({ num, index }: {num: number, index: number}) =
     return <WinNumberStyle key={`numbers-${index}`} color={color} style={{ marginRight: "7px"}}>{num}</WinNumberStyle>
 }
 
-export const NumSentenceResult = (numSentence: string) => {
+export const NumSentenceResult = ({ numSentence }: { numSentence: string }) => {
   return (
       <div key={`sentence-${numSentence}`} style={{ marginTop: "30px" }}>
           <div style={{ display: "flex"}}>
-            {numSentence.split(" ").map((num, index)=>ChangingNumStyle({ num: parseInt(num), index: index }))}
+            {numSentence.split(" ").map((num, index)=>(
+              <ChangingNumStyle key={`num-${index}`} num={parseInt(num)} index={index} />
+            ))}
           </div>
       </div>
   )
@@ -48,13 +50,11 @@ export const ResultContainer = ({numSentenceList}: {numSentenceList: string[]}) 
 
     return (
       <div>
-        {line.map((numList, index)=>{
-            return (
+        {line.map((numList, index) => (
               <div key={`${line}${index}`} style={Style}>
-                {NumSentenceResult(numList)}
+                <NumSentenceResult key={`num-sentence-${index}`} numSentence={numList} />
               </div>
-            )
-          })
+            ))
         }
       </div>  
     )
