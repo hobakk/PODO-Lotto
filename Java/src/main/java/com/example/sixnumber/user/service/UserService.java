@@ -5,6 +5,7 @@ import static com.example.sixnumber.global.exception.ErrorCode.*;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -26,6 +27,7 @@ import com.example.sixnumber.global.exception.StatusNotActiveException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
+import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
@@ -238,6 +240,15 @@ public class UserService {
 		User userIf = manager.findUser(userId);
 		MyInformationResponse response = new MyInformationResponse(userIf);
 		return UnifiedResponse.ok("조회 성공", response);
+	}
+
+	public UnifiedResponse<List<SixNumber>> getBuySixNumberList(Long userId) {
+		User userIf = manager.findUser(userId);
+		List<SixNumber> sixNumberList = userIf.getSixNumberList();
+		Collections.reverse(sixNumberList);
+		if (sixNumberList.size() >= 10) sixNumberList.subList(0, 10);
+
+		return UnifiedResponse.ok("조회 성공", sixNumberList);
 	}
 
 	public UnifiedResponse<?> checkPW(OnlyMsgRequest request, String encodedPassword) {

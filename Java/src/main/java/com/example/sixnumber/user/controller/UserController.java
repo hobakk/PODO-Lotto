@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sixnumber.global.dto.UnifiedResponse;
+import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
@@ -107,5 +108,10 @@ public class UserController {
 	@PostMapping("/check-pw")
 	public ResponseEntity<UnifiedResponse<?>> checkPW(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.checkPW(request, user.getPassword()));
+	}
+
+	@GetMapping("/sixnumber-list")
+	public ResponseEntity<UnifiedResponse<List<SixNumber>>> getBuySixNumberList(@AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(userService.getBuySixNumberList(user.getId()));
 	}
 }
