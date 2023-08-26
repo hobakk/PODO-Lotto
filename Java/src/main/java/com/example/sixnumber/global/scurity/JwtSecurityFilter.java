@@ -41,7 +41,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 				String accessToken = cookies.getAccessCookie().getValue();
 				String refreshToken = cookies.getRefreshCookie().getValue();
 
-				if (!jwtProvider.filterChainValidateToken(accessToken))
+				if (!jwtProvider.validateToken(accessToken))
 					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
 				if (redisDao.isEqualsBlackList(accessToken))
 					throw new BlackListException(null, jwtProvider.getClaims(accessToken), "Blacked");

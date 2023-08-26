@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.ErrorCode;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -83,13 +84,16 @@ public class RedisDao {
 	}
 
 	public void setBlackList(String token) {
-		if (jwtProvider.validateToken(token)) {
-			ValueOperations<String, String> values = redisTemplate.opsForValue();
-			Long remainingTime = jwtProvider.getRemainingTime(token);
-			if (remainingTime != 0) {
-				values.set(token, "Black", jwtProvider.getRemainingTime(token), TimeUnit.MILLISECONDS);
-			}
-
-		} else throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "만료된 accessToken 입니다");
+		try {
+			if (jwtProvider.validateToken(token)) {
+				ValueOperations<String, String> values = redisTemplate.opsForValue();
+				Long remainingTime = jwtProvider.getRemainingTime(token);
+				if (remainingTime != 0) {
+					values.set(token, "Black", jwtProvider.getRemainingTime(token), TimeUnit.MILLISECONDS);
+				}
+			} else throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "만료된 accessToken 입니다");
+		} catch (ExpiredJwtException e) {
+			return;
+		}
 	}
 }
