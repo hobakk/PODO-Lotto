@@ -36,6 +36,7 @@ import com.example.sixnumber.global.exception.StatusNotActiveException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
+import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
@@ -469,5 +470,18 @@ public class UserServiceTest {
 		Assertions.assertThrows(IllegalArgumentException.class, ()->userService.checkPW(request, saveUser.getPassword()));
 
 		verify(passwordEncoder).matches(anyString(), anyString());
+	}
+
+	@Test
+	void getBuySixNumberList_success() {
+		User user = mock(User.class);
+		when(user.getSixNumberList()).thenReturn(List.of(TestDataFactory.sixNumber()));
+
+		when(manager.findUser(anyLong())).thenReturn(user);
+
+		UnifiedResponse<List<SixNumberResponse>> response = userService.getBuySixNumberList(anyLong());
+
+		verify(manager).findUser(anyLong());
+		TestUtil.UnifiedResponseListEquals(response, 200, "조회 성공");
 	}
 }
