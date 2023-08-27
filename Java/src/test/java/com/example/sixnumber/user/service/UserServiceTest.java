@@ -209,6 +209,21 @@ public class UserServiceTest {
 	}
 
 	@Test
+	void signin_fail_OverlapException() {
+		SigninRequest signinRequest = TestDataFactory.signinRequest();
+
+		when(manager.findUser(anyString())).thenReturn(saveUser);
+		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+		when(redisDao.getValue(anyString())).thenReturn("notNull");
+
+		Assertions.assertThrows(OverlapException.class, () -> userService.signIn(signinRequest));
+
+		verify(manager).findUser(anyString());
+		verify(redisDao).getValue(anyString());
+		verify(redisDao).deleteInRedisValueIsNotNull(anyString());
+	}
+
+	@Test
 	void logout() {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		CookiesResponse cookies = TestDataFactory.cookiesResponse();
