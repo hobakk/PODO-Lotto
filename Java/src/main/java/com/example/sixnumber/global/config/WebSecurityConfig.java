@@ -51,7 +51,7 @@ public class WebSecurityConfig {
 				.antMatchers("/api/users/signin", "/api/users/signup", "/api/winnumber",
 					"/api/users/my-information", "/api/jwt/**").permitAll()
 				.antMatchers("/api/admin/**", "/api/winnumber/set").hasRole("ADMIN")
-				.antMatchers("/api/lotto/**", "/api/lotto/yearMonth/all").hasAnyRole("ADMIN", "PAID")
+				.antMatchers("/api/lotto/**", "/api/lotto/yearMonth/all", "/api/users/sixnumber-list").hasAnyRole("ADMIN", "PAID")
 				.antMatchers("/**").authenticated();
 			// .and()
 			// .exceptionHandling().authenticationEntryPoint(jwtEntryPoint);
