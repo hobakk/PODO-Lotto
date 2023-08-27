@@ -110,7 +110,7 @@ public class UserService {
 			redisDao.setRefreshToken(refreshPointer, refreshToken, (long) 7, TimeUnit.DAYS);
 			cookies = createCookies(accessToken, refreshToken);
 		} else {
-			redisDao.deleteInRedisValueIsNotNull(user.getRefreshPointer());
+			redisDao.deleteValues(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
 			throw new OverlapException("중복 로그인 입니다");
 		}
 
@@ -250,6 +250,8 @@ public class UserService {
 	public UnifiedResponse<List<SixNumberResponse>> getBuySixNumberList(Long userId) {
 		User userIf = manager.findUser(userId);
 		List<SixNumber> sixNumberList = userIf.getSixNumberList();
+		if (sixNumberList.size() == 0) throw new CustomException(NO_MATCHING_INFO_FOUND);
+
 		Collections.reverse(sixNumberList);
 		if (sixNumberList.size() >= 10) sixNumberList.subList(0, 10);
 
