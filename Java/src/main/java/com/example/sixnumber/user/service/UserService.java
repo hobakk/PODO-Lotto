@@ -99,15 +99,20 @@ public class UserService {
 			throw new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다");
 		}
 
-		String refreshPointer = UUID.randomUUID().toString();
-		user.setRefreshPointer(refreshPointer);
-		String accessToken = jwtProvider.accessToken(refreshPointer);
-		String refreshToken = jwtProvider.refreshToken(user.getEmail(), user.getId(), refreshPointer);
-		redisDao.setRefreshToken(refreshPointer, refreshToken, (long) 7, TimeUnit.DAYS);
-
-		Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken);
-		Cookie refreshCookie = jwtProvider.createCookie(JwtProvider.REFRESH_TOKEN, refreshToken);
-		return new CookiesResponse(accessCookie, refreshCookie);
+		CookiesResponse cookies;
+		String refreshInRedis = redisDao.getValue(user.getRefreshPointer());
+		if (refreshInRedis == null) {
+			String refreshPointer = UUID.randomUUID().toString();
+			user.setRefreshPointer(refreshPointer);
+			String accessToken = jwtProvider.accessToken(refreshPointer);
+			String refreshToken = jwtProvider.refreshToken(user.getEmail(), user.getId(), refreshPointer);
+			redisDao.setRefreshToken(refreshPointer, refreshToken, (long) 7, TimeUnit.DAYS);
+			cookies = createCookies(accessToken, refreshToken);
+		} else {
+			String accessToken = jwtProvider.accessToken(user.getRefreshPointer());
+			cookies = createCookies(accessToken, refreshInRedis);
+		}
+		return cookies;
 	}
 
 	public CookiesResponse logout(HttpServletRequest request, User user) {
@@ -116,10 +121,8 @@ public class UserService {
 		redisDao.deleteValues(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
 		redisDao.setBlackList(accessToken);
 
-		Cookie access = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null);
-		Cookie refresh = jwtProvider.createCookie(JwtProvider.REFRESH_TOKEN, null);
-		access.setMaxAge(0);
-		refresh.setMaxAge(0);
+		Cookie access = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null, 0);
+		Cookie refresh = jwtProvider.createCookie(JwtProvider.REFRESH_TOKEN, null, 0);
 		return new CookiesResponse(access, refresh);
 	}
 
@@ -257,5 +260,11 @@ public class UserService {
 		}
 
 		return UnifiedResponse.ok("본인확인 성공");
+	}
+
+	private CookiesResponse createCookies(String accessToken, String refreshToken) {
+		Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken, 300);
+		Cookie refreshCookie = jwtProvider.createCookie(JwtProvider.REFRESH_TOKEN, refreshToken, 604800);
+		return new CookiesResponse(accessCookie, refreshCookie);
 	}
 }
