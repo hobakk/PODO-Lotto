@@ -112,10 +112,11 @@ public class JwtProvider {
 		return expirationDate == null || expirationDate.before(new Date());
 	}
 
-	public Cookie createCookie(String key, String tokenValue) {
+	public Cookie createCookie(String key, String tokenValue, int maxAge) {
 		Cookie cookie = new Cookie(key, tokenValue);
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);
+		cookie.setMaxAge(maxAge);
 		return cookie;
 	}
 

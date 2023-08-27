@@ -87,7 +87,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	}
 
 	private void updateAccessTokenCookie(HttpServletResponse response, String newAccessToken) {
-		Cookie cookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, newAccessToken);
+		Cookie cookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, newAccessToken, 300);
 		response.addCookie(cookie);
 	}
 
