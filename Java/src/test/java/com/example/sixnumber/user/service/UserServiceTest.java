@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -483,5 +484,17 @@ public class UserServiceTest {
 
 		verify(manager).findUser(anyLong());
 		TestUtil.UnifiedResponseListEquals(response, 200, "조회 성공");
+	}
+
+	@Test
+	void getBuySixNumberList_fail_isEmpty() {
+		User user = mock(User.class);
+		when(user.getSixNumberList()).thenReturn(new ArrayList<>());
+
+		when(manager.findUser(anyLong())).thenReturn(user);
+
+		Assertions.assertThrows(CustomException.class, () -> userService.getBuySixNumberList(anyLong()));
+
+		verify(manager).findUser(anyLong());
 	}
 }
