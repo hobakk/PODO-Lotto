@@ -150,8 +150,8 @@ public class UserServiceTest {
 		when(jwtProvider.refreshToken(eq(saveUser.getEmail()), eq(saveUser.getId()), anyString()))
 			.thenReturn(cookies.getRefreshCookie().getValue());
 		when(jwtProvider.accessToken(anyString())).thenReturn(cookies.getAccessCookie().getValue());
-		when(jwtProvider.createCookie(anyString(), anyString())).thenReturn(cookies.getAccessCookie());
-		when(jwtProvider.createCookie(anyString(), anyString())).thenReturn(cookies.getRefreshCookie());
+		when(jwtProvider.createCookie(anyString(), anyString(), anyInt())).thenReturn(cookies.getAccessCookie());
+		when(jwtProvider.createCookie(anyString(), anyString(), anyInt())).thenReturn(cookies.getRefreshCookie());
 
 		CookiesResponse response = userService.signIn(signinRequest);
 
@@ -160,7 +160,7 @@ public class UserServiceTest {
 		verify(jwtProvider).refreshToken(eq(saveUser.getEmail()), eq(saveUser.getId()), anyString());
 		verify(jwtProvider).accessToken(anyString());
 		verify(redisDao).setRefreshToken(anyString(), anyString(), anyLong(), any(TimeUnit.class));
-		verify(jwtProvider, times(2)).createCookie(anyString(), anyString());
+		verify(jwtProvider, times(2)).createCookie(anyString(), anyString(), anyInt());
 		assertNotNull(response.getAccessCookie());
 		assertNotNull(response.getRefreshCookie());
 		assertEquals(saveUser.getStatus(), Status.ACTIVE);
@@ -216,14 +216,14 @@ public class UserServiceTest {
 		Cookie refresh = new Cookie("refreshToken", null);
 
 		when(jwtProvider.getTokenValueInCookie(request)).thenReturn(cookies);
-		when(jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null)).thenReturn(access);
-		when(jwtProvider.createCookie(JwtProvider.REFRESH_TOKEN, null)).thenReturn(refresh);
+		when(jwtProvider.createCookie(anyString(), eq(null), anyInt())).thenReturn(access);
+		when(jwtProvider.createCookie(anyString(), eq(null), anyInt())).thenReturn(refresh);
 
 		CookiesResponse response = userService.logout(request, saveUser);
 
 		verify(redisDao).deleteValues(anyString(), eq(JwtProvider.REFRESH_TOKEN));
 		verify(redisDao).setBlackList(cookies.getAccessCookie().getValue());
-		verify(jwtProvider, times(2)).createCookie(anyString(), eq(null));
+		verify(jwtProvider, times(2)).createCookie(anyString(), eq(null), anyInt());
 		assertNull(response.getAccessCookie().getValue());
 		assertNull(response.getRefreshCookie().getValue());
 	}
