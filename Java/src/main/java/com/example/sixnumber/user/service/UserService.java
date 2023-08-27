@@ -27,6 +27,7 @@ import com.example.sixnumber.global.exception.StatusNotActiveException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
+import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
@@ -246,13 +247,14 @@ public class UserService {
 		return UnifiedResponse.ok("조회 성공", response);
 	}
 
-	public UnifiedResponse<List<SixNumber>> getBuySixNumberList(Long userId) {
+	public UnifiedResponse<List<SixNumberResponse>> getBuySixNumberList(Long userId) {
 		User userIf = manager.findUser(userId);
 		List<SixNumber> sixNumberList = userIf.getSixNumberList();
 		Collections.reverse(sixNumberList);
 		if (sixNumberList.size() >= 10) sixNumberList.subList(0, 10);
 
-		return UnifiedResponse.ok("조회 성공", sixNumberList);
+		List<SixNumberResponse> response = sixNumberList.stream().map(SixNumberResponse::new).toList();
+		return UnifiedResponse.ok("조회 성공", response);
 	}
 
 	public UnifiedResponse<?> checkPW(OnlyMsgRequest request, String encodedPassword) {
