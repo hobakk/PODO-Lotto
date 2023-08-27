@@ -18,6 +18,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.example.sixnumber.global.exception.BlackListException;
+import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.RedisDao;
 import com.example.sixnumber.user.dto.CookiesResponse;
@@ -41,8 +43,8 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 				String accessToken = cookies.getAccessCookie().getValue();
 				String refreshToken = cookies.getRefreshCookie().getValue();
 
-				if (!jwtProvider.validateToken(accessToken))
-					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다");
+				if (!jwtProvider.validateToken(accessToken)) throw new CustomException(ErrorCode.INVALID_TOKEN);
+
 				if (redisDao.isEqualsBlackList(accessToken))
 					throw new BlackListException(null, jwtProvider.getClaims(accessToken), "Blacked");
 
@@ -64,6 +66,8 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 				if (validateRefreshInCookie(cookies.getRefreshCookie().getValue(), refreshPointer, response)) {
 					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken");
 				}
+			} catch (CustomException e) {
+				deleteCookies(response);
 			}
 		}
 
@@ -89,6 +93,13 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	private void updateAccessTokenCookie(HttpServletResponse response, String newAccessToken) {
 		Cookie cookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, newAccessToken, 300);
 		response.addCookie(cookie);
+	}
+
+	private void deleteCookies(HttpServletResponse response) {
+		Cookie access = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null, 0);
+		Cookie refresh = jwtProvider.createCookie(JwtProvider.REFRESH_TOKEN, null, 0);
+		response.addCookie(access);
+		response.addCookie(refresh);
 	}
 
 	private void createAuthentication(Long userId) {
