@@ -54,7 +54,7 @@ public class TestDataFactory {
 		return new Lotto("Stats", "lotto", YearMonth.of(2023,5), countList(), "1 2 3 4 5 6");
 	}
 
-	public static SixNumber sixNumber() { return new SixNumber(7L, LocalDateTime.now(), List.of("1 2 3 4 5 6")); }
+	public static SixNumber sixNumber() { return new SixNumber(user(), LocalDateTime.now(), List.of("1 2 3 4 5 6")); }
 
 	public static SignupRequest signupRequest() {
 		return new SignupRequest(

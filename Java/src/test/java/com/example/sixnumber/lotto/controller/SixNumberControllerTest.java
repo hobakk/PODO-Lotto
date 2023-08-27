@@ -20,6 +20,7 @@ import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.WithCustomMockUser;
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
+import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.lotto.service.SixNumberService;
 import com.example.sixnumber.user.entity.User;
@@ -76,8 +77,10 @@ public class SixNumberControllerTest {
 
 	@Test
 	public void GetRecentBuyNumber() throws Exception {
+		SixNumberResponse response = new SixNumberResponse(TestDataFactory.sixNumber());
+
 		when(sixNumberService.getRecentBuyNumbers(any(User.class))).thenReturn(
-			UnifiedResponse.ok("최근 구매 번호 조회 성공", TestDataFactory.sixNumber()));
+			UnifiedResponse.ok("최근 구매 번호 조회 성공", response));
 
 		mockMvc.perform(get("/api/sixnum/recent").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))

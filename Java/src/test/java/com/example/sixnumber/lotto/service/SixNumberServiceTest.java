@@ -24,6 +24,7 @@ import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
+import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.SixNumber;
@@ -125,20 +126,20 @@ public class SixNumberServiceTest {
 
 	@Test
 	void getRecentBuyNumbers_success() {
-		when(sixNumberRepository.findByRecentBuyNumbers(anyLong(), any(Pageable.class))).thenReturn(List.of(sixNumber));
+		when(sixNumberRepository.findByRecentBuyNumbers(any(User.class), any(Pageable.class))).thenReturn(List.of(sixNumber));
 
-		UnifiedResponse<SixNumber> response = sixNumberService.getRecentBuyNumbers(saveUser);
+		UnifiedResponse<SixNumberResponse> response = sixNumberService.getRecentBuyNumbers(saveUser);
 
-		verify(sixNumberRepository).findByRecentBuyNumbers(anyLong(), any(Pageable.class));
-		TestUtil.UnifiedResponseEquals(response, 200, "최근 구매 번호 조회 성공", SixNumber.class);
+		verify(sixNumberRepository).findByRecentBuyNumbers(any(User.class), any(Pageable.class));
+		TestUtil.UnifiedResponseEquals(response, 200, "최근 구매 번호 조회 성공", SixNumberResponse.class);
 	}
 
 	@Test
 	void getRecentBuyNumbers_fail_isEmpty() {
-		when(sixNumberRepository.findByRecentBuyNumbers(anyLong(), any(Pageable.class))).thenReturn(new ArrayList<>());
+		when(sixNumberRepository.findByRecentBuyNumbers(any(User.class), any(Pageable.class))).thenReturn(new ArrayList<>());
 
 		Assertions.assertThrows(CustomException.class, () -> sixNumberService.getRecentBuyNumbers(saveUser));
 
-		verify(sixNumberRepository).findByRecentBuyNumbers(anyLong(), any(Pageable.class));
+		verify(sixNumberRepository).findByRecentBuyNumbers(any(User.class), any(Pageable.class));
 	}
 }
