@@ -109,9 +109,10 @@ public class UserService {
 			redisDao.setRefreshToken(refreshPointer, refreshToken, (long) 7, TimeUnit.DAYS);
 			cookies = createCookies(accessToken, refreshToken);
 		} else {
-			String accessToken = jwtProvider.accessToken(user.getRefreshPointer());
-			cookies = createCookies(accessToken, refreshInRedis);
+			redisDao.deleteInRedisValueIsNotNull(user.getRefreshPointer());
+			throw new OverlapException("중복 로그인 입니다");
 		}
+
 		return cookies;
 	}
 
