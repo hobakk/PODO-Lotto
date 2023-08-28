@@ -1,6 +1,6 @@
 package com.example.sixnumber.lotto.dto;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import com.example.sixnumber.lotto.entity.SixNumber;
@@ -9,11 +9,13 @@ import lombok.Getter;
 
 @Getter
 public class SixNumberResponse {
-	private final LocalDateTime localDateTime;
+	private final String date;
 	private final List<String> numberList;
 
 	public SixNumberResponse(SixNumber sixNumber) {
-		this.localDateTime = sixNumber.getBuyDate();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분");
+
+		this.date = sixNumber.getBuyDate().format(formatter);
 		this.numberList = sixNumber.getNumberList();
 	}
 }
