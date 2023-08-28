@@ -50,7 +50,7 @@ function MenuContainer({ MenuValue }: {MenuValue: MenuType}) {
                         <div style={{ margin: "20px", justifyContent:"center" }}>
                             {MenuValue.content.map((item)=>{
                                 return (
-                                    <LiBox>
+                                    <LiBox key={item[1]}>
                                         <CustomLink to={`${item[1]}`}>{item[0]}</CustomLink>
                                     </LiBox>
                                 )
