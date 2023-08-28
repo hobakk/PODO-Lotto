@@ -86,3 +86,17 @@ export const getStatement = async (): Promise<UnifiedResponse<{localDate: string
         throw error;
     }
 }
+
+export type SixNumberResponse = {
+    date: string,
+    numberList: string[],
+}
+
+export const getBuySixNumberList= async (): Promise<UnifiedResponse<SixNumberResponse[]>> => {
+    try {
+        const { data } = await api.get("/users/sixnumber-list")
+        return data;
+    } catch (error: any) {
+        throw error;
+    }
+}
