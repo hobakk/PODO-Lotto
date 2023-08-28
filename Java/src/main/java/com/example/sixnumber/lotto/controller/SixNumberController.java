@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
-import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.lotto.service.SixNumberService;
 import com.example.sixnumber.user.entity.User;
@@ -43,7 +42,7 @@ public class SixNumberController {
 	}
 
 	@GetMapping("/recent")
-	public ResponseEntity<UnifiedResponse<SixNumberResponse>> getRecentBuyNumbers(@AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<List<String>>> getRecentBuyNumbers(@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(sixNumberService.getRecentBuyNumbers(user));
 	}
 }

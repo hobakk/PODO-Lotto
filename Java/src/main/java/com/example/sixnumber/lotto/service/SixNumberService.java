@@ -26,7 +26,6 @@ import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
-import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.SixNumber;
@@ -132,13 +131,12 @@ public class SixNumberService {
 		return UnifiedResponse.ok("요청 성공", topNumbers);
 	}
 
-	public UnifiedResponse<SixNumberResponse> getRecentBuyNumbers(User user) {
+	public UnifiedResponse<List<String>> getRecentBuyNumbers(User user) {
 		Pageable pageable = PageRequest.of(0, 1);
 		List<SixNumber> recentBuyNumberList = sixNumberRepository.findByRecentBuyNumbers(user, pageable);
 		if (recentBuyNumberList.size() == 0) throw new CustomException(NO_MATCHING_INFO_FOUND);
 
-		SixNumberResponse response = new SixNumberResponse(recentBuyNumberList.get(0));
-		return UnifiedResponse.ok("최근 구매 번호 조회 성공", response);
+		return UnifiedResponse.ok("최근 구매 번호 조회 성공", recentBuyNumberList.get(0).getNumberList());
 	}
 
 	private void confirmationProcess(BuyNumberRequest buyNumberRequest, StatisticalNumberRequest statisticalNumberRequest, User userIf) {

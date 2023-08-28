@@ -24,7 +24,6 @@ import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
-import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.SixNumber;
@@ -128,10 +127,10 @@ public class SixNumberServiceTest {
 	void getRecentBuyNumbers_success() {
 		when(sixNumberRepository.findByRecentBuyNumbers(any(User.class), any(Pageable.class))).thenReturn(List.of(sixNumber));
 
-		UnifiedResponse<SixNumberResponse> response = sixNumberService.getRecentBuyNumbers(saveUser);
+		UnifiedResponse<List<String>> response = sixNumberService.getRecentBuyNumbers(saveUser);
 
 		verify(sixNumberRepository).findByRecentBuyNumbers(any(User.class), any(Pageable.class));
-		TestUtil.UnifiedResponseEquals(response, 200, "최근 구매 번호 조회 성공", SixNumberResponse.class);
+		TestUtil.UnifiedResponseListEquals(response, 200, "최근 구매 번호 조회 성공");
 	}
 
 	@Test
