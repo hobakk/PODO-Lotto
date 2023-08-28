@@ -222,7 +222,7 @@ public class UserServiceTest {
 
 		verify(manager).findUser(anyString());
 		verify(redisDao).getValue(anyString());
-		verify(redisDao).deleteInRedisValueIsNotNull(anyString());
+		verify(redisDao).deleteValues(anyString(), anyString());
 	}
 
 	@Test
