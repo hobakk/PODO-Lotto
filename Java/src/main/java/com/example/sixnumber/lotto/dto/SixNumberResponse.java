@@ -13,7 +13,7 @@ public class SixNumberResponse {
 	private final List<String> numberList;
 
 	public SixNumberResponse(SixNumber sixNumber) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초");
 
 		this.date = sixNumber.getBuyDate().format(formatter);
 		this.numberList = sixNumber.getNumberList();
