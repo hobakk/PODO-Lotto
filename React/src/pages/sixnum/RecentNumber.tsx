@@ -10,10 +10,10 @@ function RecentNumber() {
     const [value, setValue] = useState<string[]>([]);
     const isAllow = useAllowType(AllowLogin);
 
-    const getRecentNumMutation = useMutation<UnifiedResponse<SixNumber>, Err>(getRecentNumber, {
+    const getRecentNumMutation = useMutation<UnifiedResponse<string[]>, Err>(getRecentNumber, {
         onSuccess: (res)=>{
-            if (res.code === 200 && res.data?.numberList)
-            setValue(res.data.numberList);
+            if (res.code === 200 && res.data)
+            setValue(res.data);
         },
         onError: (err)=>{
             if (err.code === 500) {

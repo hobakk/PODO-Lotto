@@ -20,7 +20,7 @@ export const statisticalNumber = async (values: {value: number, repetition: numb
     }
 }
 
-export const getRecentNumber = async (): Promise<UnifiedResponse<SixNumber>> => {
+export const getRecentNumber = async (): Promise<UnifiedResponse<string[]>> => {
     try {
         const res = await api.get("/sixnum/recent")
         return res.data;
