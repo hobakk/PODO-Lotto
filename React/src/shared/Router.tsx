@@ -21,6 +21,7 @@ import GetAllCharges from '../pages/admin/GetAllCharges'
 import SearchCharges from '../pages/admin/SearchCharges'
 import CreateMainLotto from '../pages/admin/CreateMainLotto'
 import SetWinNumber from '../pages/admin/SetWinNumber'
+import GetBuySixNumberList from '../pages/users/GetBuySixNumberList'
 
 const Router = () => {
   return (
@@ -47,6 +48,7 @@ const Router = () => {
                 <Route path='/admin/search' element={<SearchCharges />} />
                 <Route path='/admin/lotto' element={<CreateMainLotto />} />
                 <Route path='/admin/winnumber' element={<SetWinNumber />} />
+                <Route path='/sixnumber-list' element={<GetBuySixNumberList />} />
             </Routes>
         </Layout>
     </BrowserRouter>
