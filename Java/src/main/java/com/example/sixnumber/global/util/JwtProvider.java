@@ -122,12 +122,14 @@ public class JwtProvider {
 
 	public CookiesResponse getTokenValueInCookie(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
-		if (cookies == null || cookies.length != 2) return new CookiesResponse();
+		if (cookies == null) return new CookiesResponse();
+
+		Cookie refresh = Arrays.stream(cookies).filter(
+			cookie -> cookie.getName().equals(JwtProvider.REFRESH_TOKEN)).findFirst().orElse(null);
+		if (refresh == null) return new CookiesResponse();
 
 		Cookie access = Arrays.stream(cookies).filter(
 			cookie -> cookie.getName().equals(JwtProvider.ACCESS_TOKEN)).findFirst().orElse(null);
-		Cookie refresh = Arrays.stream(cookies).filter(
-			cookie -> cookie.getName().equals(JwtProvider.REFRESH_TOKEN)).findFirst().orElse(null);
 		return new CookiesResponse(access, refresh);
 	}
 
