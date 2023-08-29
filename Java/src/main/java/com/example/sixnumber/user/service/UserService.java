@@ -253,7 +253,7 @@ public class UserService {
 		if (sixNumberList.size() == 0) throw new CustomException(NO_MATCHING_INFO_FOUND);
 
 		Collections.reverse(sixNumberList);
-		if (sixNumberList.size() >= 10) sixNumberList.subList(0, 10);
+		if (sixNumberList.size() >= 10) sixNumberList = sixNumberList.subList(0, 10);
 
 		List<SixNumberResponse> response = sixNumberList.stream().map(SixNumberResponse::new).toList();
 		return UnifiedResponse.ok("조회 성공", response);
