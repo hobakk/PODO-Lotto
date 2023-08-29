@@ -134,6 +134,7 @@ public class UserService {
 		if (!request.getMsg().equals(withdrawMsg)) {
 			throw new IllegalArgumentException("잘못된 문자열 입력");
 		}
+
 		User user = manager.findUser(email);
 		user.setStatus(Status.DORMANT);
 		user.setWithdrawExpiration(LocalDate.now().plusMonths(1));
@@ -145,6 +146,7 @@ public class UserService {
 
 		if (request.getMsg().equals("월정액 해지")) {
 			if (!user.getRole().equals(UserRole.ROLE_PAID)) throw new IllegalArgumentException("월정액 사용자가 아닙니다");
+
 			if (Boolean.TRUE.equals(user.getCancelPaid())) throw new OverlapException("프리미엄 해제 신청을 이미 하셨습니다");
 
 			user.setCancelPaid(true);
@@ -154,6 +156,7 @@ public class UserService {
 		if (user.getCash() < 5000 || user.getRole().equals(UserRole.ROLE_PAID)) {
 			throw new IllegalArgumentException("금액이 부족하거나 이미 월정액 이용자입니다");
 		}
+
 		user.setCash("-", 5000);
 		user.setRole(UserRole.ROLE_PAID);
 		user.setPaymentDate(LocalDate.now().plusDays(31));
@@ -196,15 +199,14 @@ public class UserService {
 	public UnifiedResponse<?> update(SignupRequest request, User user) {
 		// password 를 프론트로 보내지 않기로 결정함 (보안 문제)
 		String password = request.getPassword();
-		if (password.equals("")) {
-			password = user.getPassword();
-		}
+		if (password.equals("")) password = user.getPassword();
 
 		List<String> userIf = Arrays.asList(user.getEmail(), user.getPassword(), user.getNickname());
 		List<String> inputData = Arrays.asList(request.getEmail(), password, request.getNickname());
 
 		if (userIf.equals(inputData)) throw new IllegalArgumentException("변경된 부분이 없습니다");
 
+		// 변경할 수 있는 값이 적고, 확실하여 하드 코딩해도 된다 판단함
 		for (int i = 0; i < userIf.size(); i++) {
 			if (i == 1) {
 				if (passwordEncoder.matches(inputData.get(i), userIf.get(i)) ||
@@ -227,9 +229,7 @@ public class UserService {
 
 	public UnifiedResponse<List<StatementResponse>> getStatement(String email) {
 		User user = manager.findUser(email);
-
-		if (user.getStatement().size() == 0)
-			throw new IllegalArgumentException("거래내역이 존재하지 않습니다");
+		if (user.getStatement().size() == 0) throw new IllegalArgumentException("거래내역이 존재하지 않습니다");
 
 		List<StatementResponse> response = user.getStatement()
 			.stream()
