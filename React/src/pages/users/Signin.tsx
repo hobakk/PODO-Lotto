@@ -20,7 +20,7 @@ function Signin() {
             }
         },
         onError: (err)=>{
-            if  (err.msg) {
+            if  (err.exceptionType === "OverlapException") {
                 alert(err.msg);
             }
         }

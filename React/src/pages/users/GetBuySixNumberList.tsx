@@ -52,25 +52,25 @@ function GetBuySixNumberList() {
     <div style={ CommonStyle }>
         <h1 style={{  fontSize: "60px" }}>최근 번호 조회</h1>
         {!show ? (
-          <div id='buttonList'>
+          <div>
             {date.length === 0 ? (
               <div> 값이 존재하지 않습니다 </div>
             ):(
-              <>
+              <div style={{ width:"27cm" }}>
                 {date.map((date, index) => (
                   <button
                     key={`date${index}`}
-                    style={{ fontSize:"20px", marginBottom:"5px" }}
+                    style={{ fontSize:"20px", marginBottom:"15px", marginRight:"15px" }}
                     onClick={()=>onClickHandler(date)}
                   >
                     {date}
                   </button>
                 ))}
-              </>
+              </div>
             )}
           </div>
         ):(
-          <div id='numberList'>
+          <div>
             {result.length !== 0 &&(
               <>
                 <button 
