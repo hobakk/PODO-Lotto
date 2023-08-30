@@ -15,7 +15,7 @@
   <img src="https://img.shields.io/badge/StyledComponents-DB7093?style=for-the-badge&logo=StyledComponents&logoColor=black">
 </div><br/>
 
-<br/><h2>User [Code](https://github.com/hobakk/Lotto/blob/7c6cced50a7bb5cedc14f057d48ddc2147975ccb/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L53)</h2>
+<br/><h2>User [Code](https://github.com/hobakk/Lotto/blob/6daf87ae8f743fd3f639894d6304bb6795b45ca2/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L53)</h2>
 
 ### 1. 회원가입, 회원탈퇴
 - 회원탈퇴 당일로 부터 1달간 데이터유지
@@ -36,7 +36,7 @@
 - 조회: 닉네임,캐쉬, 충전요청, 거래내역, 회원정보, 비밀번호 재확인, 최근 구매한 번호 리스트
 - 수정: 회원정보
 
-<br/><br/><h2>Admin [Code](https://github.com/hobakk/Lotto/blob/c1b1dc8b1453c1dbe0ff26ad7b5b9a054a20ca95/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java)</h2>
+<br/><br/><h2>Admin [Code](https://github.com/hobakk/Lotto/blob/331722f5f4e2f3da9b55a35fa9b411b69fda7c57/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L35)</h2>
 
 ### 1. 모든 유저 조회, 모든 충전요청 조회
 - FE: 조회된 정보들을 Nickname, cash 값으로 필터링
@@ -45,7 +45,7 @@
 - 조회: 충전요청 검색
 - 수정: 관리자 등록, 충전, 차감, 상태 수정, 권한 수정
 
-<br/><br/><h2>Lotto [Code](https://github.com/hobakk/Lotto/blob/c1b1dc8b1453c1dbe0ff26ad7b5b9a054a20ca95/Java/src/main/java/com/example/sixnumber/lotto/service/LottoService.java)</h2>
+<br/><br/><h2>Lotto [Code](https://github.com/hobakk/Lotto/blob/331722f5f4e2f3da9b55a35fa9b411b69fda7c57/Java/src/main/java/com/example/sixnumber/lotto/service/LottoService.java#L24)</h2>
 
 Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.tistory.com/131)
 ### 1. 메인 로또 통계
@@ -53,7 +53,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 ### 2. 월 통계, 저장된 월 통계 YearMonth(index)
 - entryTtl 제한을 두지 않음
 
-<br/><br/><h2>SixNumber [Code](https://github.com/hobakk/Lotto/blob/c1b1dc8b1453c1dbe0ff26ad7b5b9a054a20ca95/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java)</h2>
+<br/><br/><h2>SixNumber [Code](https://github.com/hobakk/Lotto/blob/331722f5f4e2f3da9b55a35fa9b411b69fda7c57/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L43)</h2>
 
 ### 1. 랜덤 번호 추천
 ### 2. 반복 연산된 번호 추천 [code](https://github.com/hobakk/Lotto/blob/main/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L75-L131)
@@ -61,7 +61,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 - MultiThread 를 사용하여 23.5% 속도 개선 -> [Blog](https://holloweyed-snail.tistory.com/127)
 - 주어진 조건에 따라 무작위로 숫자를 생성하고, 그 중에서 가장 자주 등장하는 숫자를 찾아 리스트로 반환
 
-<br/><br/><h2>WinNumber [Code](https://github.com/hobakk/Lotto/blob/c1b1dc8b1453c1dbe0ff26ad7b5b9a054a20ca95/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java)</h2>
+<br/><br/><h2>WinNumber [Code](https://github.com/hobakk/Lotto/blob/331722f5f4e2f3da9b55a35fa9b411b69fda7c57/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L25)</h2>
 
 Redis Cache 사용해서 속도 개선
 ### 1. 당첨번호 조회
@@ -69,15 +69,12 @@ Redis Cache 사용해서 속도 개선
 ### 2. 당첨번호 등록
 - @CachePut 을 적용하여 저장되어 있는 RedisCache 를 갱신
 
-<br/><br/><h2>Token [Code](https://github.com/hobakk/Lotto/blob/c1b1dc8b1453c1dbe0ff26ad7b5b9a054a20ca95/Java/src/main/java/com/example/sixnumber/token/TokenService.java)</h2>
+<br/><br/><h2>JwtSecurityFilter [Code](https://github.com/hobakk/Lotto/blob/6daf87ae8f743fd3f639894d6304bb6795b45ca2/Java/src/main/java/com/example/sixnumber/global/scurity/JwtSecurityFilter.java#L31)</h2>
 
-### 1. 로그인체크 이후 UserInfo 반환
-- FE: 새로고침 시 Redux Store 가 초기화되어 AccessToken 이 만료되지 않았다면 UserInfo 를 반환하여 Redux Store 에 업데이트
-- AccessTokne 이 만료되었다면 RefreshToken 의 만료를 체크하고 유효하다면 AccessToken 재발급 및 UserInfo 반환
-### 2. RefreshToken 갱신
-- FE: error code 401 을 받았을 때 FE 로 부터 받은 RefreshToken 을 valid 하고 유효하면 AccessToken 을 갱신
+### 1. BlackList
+- accessToken 을 Redis 에서 BlackList 로 관리
 
-<br/><br/><h2>Scheduler [Code](https://github.com/hobakk/Lotto/blob/c1b1dc8b1453c1dbe0ff26ad7b5b9a054a20ca95/Java/src/main/java/com/example/sixnumber/global/scheduler/GlobalScheduler.java)</h2>
+<br/><br/><h2>Scheduler [Code](https://github.com/hobakk/Lotto/blob/331722f5f4e2f3da9b55a35fa9b411b69fda7c57/Java/src/main/java/com/example/sixnumber/global/scheduler/GlobalScheduler.java#L29)</h2>
 
 ### 1. 월 통계 생성
 - 현재 기준 저번달 통계가 존재하지 않을 때 통계를 생성 및 저장
