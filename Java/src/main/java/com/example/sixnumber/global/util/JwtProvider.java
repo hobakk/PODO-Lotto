@@ -92,6 +92,20 @@ public class JwtProvider {
 		return false;
 	}
 
+	public Boolean validateRefreshToken(String token) {
+		try {
+			Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+			return getRemainingTime(token) > 30 * 60 * 1000;
+		} catch (SecurityException | MalformedJwtException e) {
+			log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+		} catch (UnsupportedJwtException e) {
+			log.info("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+		} catch (IllegalArgumentException e) {
+			log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+		}
+		return false;
+	}
+
 	public Claims getClaims(String token) {
 		return Jwts.parserBuilder()
 			.setSigningKey(secretKey)
