@@ -17,6 +17,7 @@ import com.example.sixnumber.global.scurity.JwtSecurityFilter;
 import com.example.sixnumber.global.scurity.UserDetailsServiceImpl;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.RedisDao;
+import com.example.sixnumber.user.type.UserRole;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,10 +29,18 @@ public class WebSecurityConfig {
 	private final JwtProvider jwtProvider;
 	private final RedisDao redisDao;
 	private final JwtEntryPoint jwtEntryPoint;
+	private static final String[] URL_PERMIT_ALL = {
+		"/api/users/signin", "/api/users/signup", "/api/users/my-information", "/api/winnumber", "/api/jwt/**"
+	};
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public JwtSecurityFilter jwtSecurityFilter() {
+		return new JwtSecurityFilter(userDetailsService, jwtProvider, redisDao);
 	}
 
 	@Bean
@@ -44,20 +53,20 @@ public class WebSecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf().disable()
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			.and()
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+		http
 			.authorizeRequests()
 				.antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
-				.antMatchers("/api/users/signin", "/api/users/signup", "/api/winnumber",
-					"/api/users/my-information", "/api/jwt/**").permitAll()
+				.antMatchers(URL_PERMIT_ALL).permitAll()
 				.antMatchers("/api/admin/**", "/api/winnumber/set").hasRole("ADMIN")
-				.antMatchers("/api/lotto/**", "/api/lotto/yearMonth/all", "/api/users/sixnumber-list").hasAnyRole("ADMIN", "PAID")
-				.antMatchers("/**").authenticated();
-			// .and()
-			// .exceptionHandling().authenticationEntryPoint(jwtEntryPoint);
+				.antMatchers("/api/lotto/**", "/api/lotto/yearMonth/all", "/api/users/sixnumber-list")
+				.hasAnyAuthority(UserRole.ROLE_PAID.getAuthority(), UserRole.ROLE_ADMIN.getAuthority())
+				.antMatchers("/**").authenticated()
+			.and()
+			.exceptionHandling().authenticationEntryPoint(jwtEntryPoint);
 
-		http.addFilterBefore(new JwtSecurityFilter(userDetailsService, jwtProvider, redisDao), UsernamePasswordAuthenticationFilter.class);
-
+		http.addFilterBefore(jwtSecurityFilter(), UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 }

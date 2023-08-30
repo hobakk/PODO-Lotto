@@ -14,7 +14,8 @@ public enum ErrorCode {
 	EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "Expired Tokens, 만료된 토큰 입니다"),
 	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 Token 입니다"),
 	MISSING_DATA(HttpStatus.BAD_REQUEST, "UnifiedResponse data 가 누락되었습니다."),
-	NO_MATCHING_INFO_FOUND(HttpStatus.BAD_REQUEST, "일치하는 정보를 찾을 수 없습니다");
+	NO_MATCHING_INFO_FOUND(HttpStatus.BAD_REQUEST, "일치하는 정보를 찾을 수 없습니다"),
+	DONT_LOGIN(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요");
 
 	private final HttpStatus httpStatus;
 	private final String message;
