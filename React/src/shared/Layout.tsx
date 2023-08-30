@@ -77,7 +77,7 @@ function Header() {
         <MenuContainer MenuValue={LottoMenuValue} />
         <MenuContainer MenuValue={StatsMenuValue} />
         <MenuContainer MenuValue={UserMenuValue} />
-        {userIf.role === null &&(
+        {userIf.role !== null &&(
           userIf.role === "ROLE_ADMIN" &&(
             <MenuContainer MenuValue={AdminMenuValue} />
           ))

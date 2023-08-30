@@ -10,7 +10,7 @@ import lombok.Data;
 public class ErrorResponseEntity {
 	private int code;
 	private String exceptionType;
-	private String message;
+	private String msg;
 
 	public static ResponseEntity<ErrorResponseEntity> comprehensive(ErrorCode e) {
 		return ResponseEntity
@@ -18,7 +18,7 @@ public class ErrorResponseEntity {
 			.body(ErrorResponseEntity.builder()
 				.code(e.getHttpStatus().value())
 				.exceptionType(e.name())
-				.message(e.getMessage())
+				.msg(e.getMessage())
 				.build()
 			);
 	}
@@ -32,7 +32,7 @@ public class ErrorResponseEntity {
 			.body(ErrorResponseEntity.builder()
 				.code(e.getStatus().value())
 				.exceptionType(target)
-				.message(e.getMessage())
+				.msg(e.getMessage())
 				.build()
 			);
 	}
