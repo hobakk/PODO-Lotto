@@ -77,9 +77,11 @@ function Header() {
         <MenuContainer MenuValue={LottoMenuValue} />
         <MenuContainer MenuValue={StatsMenuValue} />
         <MenuContainer MenuValue={UserMenuValue} />
-        {userIf.role === "ROLE_ADMIN" &&(
-          <MenuContainer MenuValue={AdminMenuValue} />
-        )}
+        {userIf.role === null &&(
+          userIf.role === "ROLE_ADMIN" &&(
+            <MenuContainer MenuValue={AdminMenuValue} />
+          ))
+        }
       </div>
       <div style={{ marginRight:"15px" }}>
         {!isLogin ? (
