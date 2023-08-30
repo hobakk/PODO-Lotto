@@ -69,17 +69,21 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 				deleteCookies(response);
 			}
 		} else if (cookies.getAccessCookie() == null && cookies.getRefreshCookie() != null) {
-			String refreshToken = cookies.getRefreshCookie().getValue();
-			if (!jwtProvider.validateRefreshToken(refreshToken)) throw new CustomException(ErrorCode.INVALID_TOKEN);
+			try {
+				String refreshToken = cookies.getRefreshCookie().getValue();
+				if (!jwtProvider.validateRefreshToken(refreshToken)) throw new CustomException(ErrorCode.INVALID_TOKEN);
 
-			String refreshPointer = jwtProvider.getClaims(refreshToken).get("key", String.class);
-			if (isDifferent(refreshToken, refreshPointer)) {
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "RefreshToken is different");
+				String refreshPointer = jwtProvider.getClaims(refreshToken).get("key", String.class);
+				if (isDifferent(refreshToken, refreshPointer)) {
+					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "RefreshToken is different");
+				}
+
+				String newAccessToken = jwtProvider.accessToken(refreshPointer);
+				updateAccessTokenCookie(response, newAccessToken);
+				createAuthentication(jwtProvider.getTokenInUserId(refreshToken));
+			} catch (ExpiredJwtException e) {
+				deleteCookies(response);
 			}
-
-			String newAccessToken = jwtProvider.accessToken(refreshPointer);
-			updateAccessTokenCookie(response, newAccessToken);
-			createAuthentication(jwtProvider.getTokenInUserId(refreshToken));
 		}
 
 		filterChain.doFilter(request, response);
