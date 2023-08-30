@@ -42,7 +42,6 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 			try {
 				String accessToken = cookies.getAccessCookie().getValue();
 				String refreshToken = cookies.getRefreshCookie().getValue();
-
 				if (!jwtProvider.validateToken(accessToken)) throw new CustomException(ErrorCode.INVALID_TOKEN);
 
 				if (redisDao.isEqualsBlackList(accessToken))
@@ -69,6 +68,18 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 			} catch (CustomException e) {
 				deleteCookies(response);
 			}
+		} else if (cookies.getAccessCookie() == null && cookies.getRefreshCookie() != null) {
+			String refreshToken = cookies.getRefreshCookie().getValue();
+			if (!jwtProvider.validateToken(refreshToken)) throw new CustomException(ErrorCode.INVALID_TOKEN);
+
+			String refreshPointer = jwtProvider.getClaims(refreshToken).get("key", String.class);
+			if (isDifferent(refreshToken, refreshPointer)) {
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "RefreshToken is different");
+			}
+
+			String newAccessToken = jwtProvider.accessToken(refreshPointer);
+			updateAccessTokenCookie(response, newAccessToken);
+			createAuthentication(jwtProvider.getTokenInUserId(refreshToken));
 		}
 
 		filterChain.doFilter(request, response);
