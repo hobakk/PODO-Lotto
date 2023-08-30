@@ -34,5 +34,13 @@ const store = configureStore({
 
 const persistor = persistStore(store);
 
+const resetPersistor = () => {
+  try {
+    persistor.purge();
+  } catch (error) {
+    console.error("localStorage 초기화 오류", error);
+  }
+};
+
 export type RootState = ReturnType<typeof rootReducer>;
-export { store, persistor };
+export { store, persistor, resetPersistor };
