@@ -15,7 +15,7 @@
   <img src="https://img.shields.io/badge/StyledComponents-DB7093?style=for-the-badge&logo=StyledComponents&logoColor=black">
 </div><br/>
 
-<br/><h2>User [Code](https://github.com/hobakk/Lotto/blob/c1b1dc8b1453c1dbe0ff26ad7b5b9a054a20ca95/Java/src/main/java/com/example/sixnumber/user/service/UserService.java)</h2>
+<br/><h2>User [Code](https://github.com/hobakk/Lotto/blob/7c6cced50a7bb5cedc14f057d48ddc2147975ccb/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L53)</h2>
 
 ### 1. 회원가입, 회원탈퇴
 - 회원탈퇴 당일로 부터 1달간 데이터유지
@@ -33,7 +33,7 @@
 ### 4. 프리미엄
 - 스케줄러를 이용한 프리미엄 해제 및 결제 자동화
 ### 5. 나머지
-- 조회: 닉네임,캐쉬, 충전요청, 거래내역, 회원정보, 비밀번호 재확인
+- 조회: 닉네임,캐쉬, 충전요청, 거래내역, 회원정보, 비밀번호 재확인, 최근 구매한 번호 리스트
 - 수정: 회원정보
 
 <br/><br/><h2>Admin [Code](https://github.com/hobakk/Lotto/blob/c1b1dc8b1453c1dbe0ff26ad7b5b9a054a20ca95/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java)</h2>
