@@ -71,7 +71,8 @@ Redis Cache 사용해서 속도 개선
 
 <br/><br/><h2>JwtSecurityFilter [Code](https://github.com/hobakk/Lotto/blob/6daf87ae8f743fd3f639894d6304bb6795b45ca2/Java/src/main/java/com/example/sixnumber/global/scurity/JwtSecurityFilter.java#L31)</h2>
 
-### 1. 
+### 1. BlackList
+- accessToken 을 Redis 에서 BlackList 로 관리
 
 <br/><br/><h2>Scheduler [Code](https://github.com/hobakk/Lotto/blob/331722f5f4e2f3da9b55a35fa9b411b69fda7c57/Java/src/main/java/com/example/sixnumber/global/scheduler/GlobalScheduler.java#L29)</h2>
 
