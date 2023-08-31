@@ -13,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.sixnumber.global.scurity.CustomAccessDeniedHandler;
+import com.example.sixnumber.global.scurity.JwtEntryPoint;
 import com.example.sixnumber.global.scurity.JwtSecurityFilter;
 import com.example.sixnumber.global.scurity.UserDetailsServiceImpl;
 import com.example.sixnumber.global.util.JwtProvider;
@@ -29,6 +31,7 @@ public class WebSecurityConfig {
 	private final JwtProvider jwtProvider;
 	private final RedisDao redisDao;
 	private final JwtEntryPoint jwtEntryPoint;
+	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private static final String[] URL_PERMIT_ALL = {
 		"/api/users/signin", "/api/users/signup", "/api/users/my-information", "/api/winnumber", "/api/jwt/**"
 	};
@@ -44,29 +47,31 @@ public class WebSecurityConfig {
 	}
 
 	@Bean
-	public WebSecurityCustomizer webSecurityCustomizer() {
-		return web -> web.ignoring()
-			.requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-	}
-
-	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http
-			.csrf().disable()
-			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.csrf()
+				.disable()
+			.sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-		http
-			.authorizeRequests()
-				.antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
+		http.authorizeRequests()
+				.antMatchers(HttpMethod.OPTIONS).permitAll()
 				.antMatchers(URL_PERMIT_ALL).permitAll()
-				.antMatchers("/api/admin/**", "/api/winnumber/set").hasRole("ADMIN")
+				.antMatchers("/api/admin/**", "/api/winnumber/set").hasAuthority(UserRole.ROLE_ADMIN.getAuthority())
 				.antMatchers("/api/lotto/**", "/api/lotto/yearMonth/all", "/api/users/sixnumber-list")
-				.hasAnyAuthority(UserRole.ROLE_PAID.getAuthority(), UserRole.ROLE_ADMIN.getAuthority())
-				.antMatchers("/**").authenticated()
+				.hasAnyRole("PAID", "ADMIN")
+				.anyRequest().authenticated()
 			.and()
-			.exceptionHandling().authenticationEntryPoint(jwtEntryPoint);
+			.exceptionHandling()
+				.authenticationEntryPoint(jwtEntryPoint)
+				.accessDeniedHandler(customAccessDeniedHandler);
 
 		http.addFilterBefore(jwtSecurityFilter(), UsernamePasswordAuthenticationFilter.class);
 		return http.build();
+	}
+
+	@Bean
+	public WebSecurityCustomizer webSecurityCustomizer() {
+		return web -> web.ignoring()
+			.requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 	}
 }
