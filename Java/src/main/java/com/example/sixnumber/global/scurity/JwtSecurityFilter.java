@@ -37,21 +37,32 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 		CookiesResponse cookies = jwtProvider.getTokenValueInCookie(request);
+		String accessToken = cookies.getAccessCookie().getValue();
+		String refreshToken = cookies.getRefreshCookie().getValue();
 
-		if (cookies.getAccessCookie() != null && cookies.getRefreshCookie() != null) {
+		if (refreshToken != null) {
 			try {
-				String accessToken = cookies.getAccessCookie().getValue();
-				String refreshToken = cookies.getRefreshCookie().getValue();
-				if (!jwtProvider.validateToken(accessToken)) throw new CustomException(ErrorCode.INVALID_TOKEN);
+				if (accessToken != null) {
+					if (!jwtProvider.validateToken(accessToken)) throw new CustomException(ErrorCode.INVALID_TOKEN);
 
-				if (redisDao.isEqualsBlackList(accessToken))
-					throw new BlackListException(null, jwtProvider.getClaims(accessToken), "Blacked");
+					if (redisDao.isEqualsBlackList(accessToken)) {
+						throw new BlackListException(null, jwtProvider.getClaims(accessToken), "Blacked");
+					}
 
-				String refreshPointer = jwtProvider.getClaims(accessToken).getSubject();
-				// 중복 로그인에 대한 대처를 더 생각해 봐야함
-				if (isDifferent(refreshToken, refreshPointer)) {
-					redisDao.setBlackList(accessToken);
-					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "RefreshToken is different");
+					String refreshPointer = jwtProvider.getClaims(accessToken).getSubject();
+					if (isDifferent(refreshToken, refreshPointer)) {
+						redisDao.setBlackList(accessToken);
+						throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "RefreshToken is different");
+					}
+				} else {
+					if (!jwtProvider.validateRefreshToken(refreshToken)) {
+						throw new CustomException(ErrorCode.INVALID_TOKEN);
+					}
+
+					String refreshPointer = jwtProvider.getClaims(refreshToken).get("key", String.class);
+					if (validateRefreshInCookie(refreshToken, refreshPointer, response)) {
+						throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken");
+					}
 				}
 
 				createAuthentication(jwtProvider.getTokenInUserId(refreshToken));
@@ -66,22 +77,6 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 					throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 RefreshToken");
 				}
 			} catch (CustomException e) {
-				deleteCookies(response);
-			}
-		} else if (cookies.getAccessCookie() == null && cookies.getRefreshCookie() != null) {
-			try {
-				String refreshToken = cookies.getRefreshCookie().getValue();
-				if (!jwtProvider.validateRefreshToken(refreshToken)) throw new CustomException(ErrorCode.INVALID_TOKEN);
-
-				String refreshPointer = jwtProvider.getClaims(refreshToken).get("key", String.class);
-				if (isDifferent(refreshToken, refreshPointer)) {
-					throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "RefreshToken is different");
-				}
-
-				String newAccessToken = jwtProvider.accessToken(refreshPointer);
-				updateAccessTokenCookie(response, newAccessToken);
-				createAuthentication(jwtProvider.getTokenInUserId(refreshToken));
-			} catch (ExpiredJwtException e) {
 				deleteCookies(response);
 			}
 		}
@@ -102,6 +97,8 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 
 	private boolean isDifferent(String refreshTokenInCookie, String refreshPointer) {
 		String inRedisValue = redisDao.getValue(refreshPointer);
+		if (inRedisValue == null) return true; // refreshToken 의 TTL 이 만료되어 자동 삭제됬을 경우 생각해봐야함
+
 		return !refreshTokenInCookie.equals(inRedisValue);
 	}
 

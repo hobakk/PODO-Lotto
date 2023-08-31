@@ -15,9 +15,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.user.dto.CookiesResponse;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -96,6 +99,8 @@ public class JwtProvider {
 		try {
 			Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
 			return getRemainingTime(token) > 30 * 60 * 1000;
+		} catch (ExpiredJwtException e) {
+			throw new CustomException(ErrorCode.INVALID_TOKEN);
 		} catch (SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
 		} catch (UnsupportedJwtException e) {
@@ -135,15 +140,18 @@ public class JwtProvider {
 	}
 
 	public CookiesResponse getTokenValueInCookie(HttpServletRequest request) {
+		Cookie accessValueIsNull = new Cookie(JwtProvider.ACCESS_TOKEN, null);
+		Cookie refreshValueIsNull = new Cookie(JwtProvider.REFRESH_TOKEN, null);
+
 		Cookie[] cookies = request.getCookies();
 		if (cookies == null) return new CookiesResponse();
 
 		Cookie refresh = Arrays.stream(cookies).filter(
-			cookie -> cookie.getName().equals(JwtProvider.REFRESH_TOKEN)).findFirst().orElse(null);
-		if (refresh == null) return new CookiesResponse();
+			cookie -> cookie.getName().equals(JwtProvider.REFRESH_TOKEN)).findFirst().orElse(accessValueIsNull);
+		if (refresh.getValue() == null) return new CookiesResponse();
 
 		Cookie access = Arrays.stream(cookies).filter(
-			cookie -> cookie.getName().equals(JwtProvider.ACCESS_TOKEN)).findFirst().orElse(null);
+			cookie -> cookie.getName().equals(JwtProvider.ACCESS_TOKEN)).findFirst().orElse(refreshValueIsNull);
 		return new CookiesResponse(access, refresh);
 	}
 
