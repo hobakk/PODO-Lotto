@@ -2,6 +2,8 @@ package com.example.sixnumber.user.dto;
 
 import javax.servlet.http.Cookie;
 
+import com.example.sixnumber.global.util.JwtProvider;
+
 import lombok.Getter;
 
 @Getter
@@ -15,7 +17,7 @@ public class CookiesResponse {
 	}
 
 	public CookiesResponse() {
-		this.accessCookie = null;
-		this.refreshCookie = null;
+		this.accessCookie = new Cookie(JwtProvider.ACCESS_TOKEN, null);
+		this.refreshCookie = new Cookie(JwtProvider.REFRESH_TOKEN, null);
 	}
 }
