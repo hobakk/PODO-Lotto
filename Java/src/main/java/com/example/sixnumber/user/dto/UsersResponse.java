@@ -10,7 +10,6 @@ import lombok.Getter;
 public class UsersResponse {
 	private final Long id;
 	private final String email;
-	private final String password;
 	private final String nickname;
 	private final int cash;
 	private final UserRole role;
@@ -19,7 +18,6 @@ public class UsersResponse {
 	public UsersResponse(User user) {
 		this.id = user.getId();
 		this.email = user.getEmail();
-		this.password = user.getPassword();
 		this.nickname = user.getNickname();
 		this.cash = user.getCash();
 		this.role = user.getRole();

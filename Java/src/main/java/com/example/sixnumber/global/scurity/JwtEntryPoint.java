@@ -1,4 +1,4 @@
-package com.example.sixnumber.global.config;
+package com.example.sixnumber.global.scurity;
 
 import java.io.IOException;
 import java.io.OutputStream;
