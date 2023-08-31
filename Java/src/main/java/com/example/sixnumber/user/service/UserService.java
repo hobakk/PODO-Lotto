@@ -121,7 +121,7 @@ public class UserService {
 		CookiesResponse cookies= jwtProvider.getTokenValueInCookie(request);
 		String accessToken = cookies.getAccessCookie().getValue();
 		redisDao.deleteValues(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
-		redisDao.setBlackList(accessToken);
+		if (accessToken != null) redisDao.setBlackList(accessToken);
 
 		Cookie access = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null, 0);
 		Cookie refresh = jwtProvider.createCookie(JwtProvider.REFRESH_TOKEN, null, 0);
