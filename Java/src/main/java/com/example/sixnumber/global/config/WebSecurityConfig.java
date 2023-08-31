@@ -19,7 +19,6 @@ import com.example.sixnumber.global.scurity.JwtSecurityFilter;
 import com.example.sixnumber.global.scurity.UserDetailsServiceImpl;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.RedisDao;
-import com.example.sixnumber.user.type.UserRole;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,7 +32,7 @@ public class WebSecurityConfig {
 	private final JwtEntryPoint jwtEntryPoint;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private static final String[] URL_PERMIT_ALL = {
-		"/api/users/signin", "/api/users/signup", "/api/users/my-information", "/api/winnumber", "/api/jwt/**"
+		"/api/users/signin", "/api/users/signup", "/api/users/my-information", "/api/winnumber"
 	};
 
 	@Bean
@@ -48,24 +47,26 @@ public class WebSecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf()
-				.disable()
-			.sessionManagement()
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http
+			.csrf().disable()
+			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-		http.authorizeRequests()
-				.antMatchers(HttpMethod.OPTIONS).permitAll()
-				.antMatchers(URL_PERMIT_ALL).permitAll()
-				.antMatchers("/api/admin/**", "/api/winnumber/set").hasAuthority(UserRole.ROLE_ADMIN.getAuthority())
-				.antMatchers("/api/lotto/**", "/api/lotto/yearMonth/all", "/api/users/sixnumber-list")
-				.hasAnyRole("PAID", "ADMIN")
-				.anyRequest().authenticated()
 			.and()
 			.exceptionHandling()
 				.authenticationEntryPoint(jwtEntryPoint)
-				.accessDeniedHandler(customAccessDeniedHandler);
+				.accessDeniedHandler(customAccessDeniedHandler)
 
-		http.addFilterBefore(jwtSecurityFilter(), UsernamePasswordAuthenticationFilter.class);
+			.and()
+			.authorizeRequests()
+				.antMatchers(HttpMethod.OPTIONS).permitAll()
+				.antMatchers(URL_PERMIT_ALL).permitAll()
+				.antMatchers("/api/admin/**", "/api/winnumber/set").hasRole("ADMIN")
+				.antMatchers("/api/lotto/**", "/api/users/sixnumber-list").hasAnyRole("PAID", "ADMIN")
+				.anyRequest().authenticated()
+
+			.and()
+			.addFilterBefore(jwtSecurityFilter(), UsernamePasswordAuthenticationFilter.class);
+
 		return http.build();
 	}
 
