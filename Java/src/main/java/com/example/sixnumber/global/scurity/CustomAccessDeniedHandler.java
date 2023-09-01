@@ -1,7 +1,6 @@
 package com.example.sixnumber.global.scurity;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,25 +12,24 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
-import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.global.dto.ExceptionDto;
 import com.example.sixnumber.global.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
-	private static final CustomException exception = new CustomException(ErrorCode.BREAK_THE_ROLE);
+	private final ObjectMapper objectMapper;
+	private static final ExceptionDto exception = new ExceptionDto(ErrorCode.ACCESS_DENIED);
 
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response,
 		AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-		response.setStatus(HttpStatus.UNAUTHORIZED.value());
-
-		try (OutputStream os = response.getOutputStream()) {
-			ObjectMapper om = new ObjectMapper();
-			om.writeValue(os, exception);
-			os.flush();
-		}
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
+		response.setStatus(HttpStatus.FORBIDDEN.value());
+		objectMapper.writeValue(response.getWriter(), exception);
 	}
 }
