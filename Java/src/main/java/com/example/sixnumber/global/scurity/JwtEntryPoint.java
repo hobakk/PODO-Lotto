@@ -1,7 +1,6 @@
 package com.example.sixnumber.global.scurity;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -17,21 +16,20 @@ import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class JwtEntryPoint implements AuthenticationEntryPoint {
+	private final ObjectMapper objectMapper;
 	private static final CustomException exception = new CustomException(ErrorCode.DONT_LOGIN);
 
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
 		AuthenticationException authException) throws IOException, ServletException {
 
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8");
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
-
-		try (OutputStream os = response.getOutputStream()) {
-			ObjectMapper om = new ObjectMapper();
-			om.writeValue(os, exception);
-			os.flush();
-		}
+		objectMapper.writeValue(response.getWriter(), exception);
 	}
 }
