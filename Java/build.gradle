@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '19'
+sourceCompatibility = '11'
 
 configurations {
     compileOnly {
@@ -28,6 +28,7 @@ dependencies {
 
     // 스프링 시큐리티
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
 
     // JWT library
     implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
