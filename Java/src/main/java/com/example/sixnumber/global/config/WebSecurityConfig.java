@@ -32,7 +32,7 @@ public class WebSecurityConfig {
 	private final JwtEntryPoint jwtEntryPoint;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private static final String[] URL_PERMIT_ALL = {
-		"/api/users/signin", "/api/users/signup", "/api/users/my-information", "/api/winnumber"
+		"/api/users/signin", "/api/users/signup", "/api/winnumber"
 	};
 
 	@Bean
@@ -50,19 +50,20 @@ public class WebSecurityConfig {
 		http
 			.csrf().disable()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
-			.and()
-			.exceptionHandling()
-				.authenticationEntryPoint(jwtEntryPoint)
-				.accessDeniedHandler(customAccessDeniedHandler)
+			.and().cors()
 
 			.and()
 			.authorizeRequests()
 				.antMatchers(HttpMethod.OPTIONS).permitAll()
 				.antMatchers(URL_PERMIT_ALL).permitAll()
 				.antMatchers("/api/admin/**", "/api/winnumber/set").hasRole("ADMIN")
-				.antMatchers("/api/lotto/**", "/api/users/sixnumber-list").hasAnyRole("PAID", "ADMIN")
+				.antMatchers("/api/lotto/**", "/api/users/sixnumber-list").hasAnyRole("ADMIN", "PAID")
 				.anyRequest().authenticated()
+
+			.and()
+			.exceptionHandling()
+				.authenticationEntryPoint(jwtEntryPoint)
+				.accessDeniedHandler(customAccessDeniedHandler)
 
 			.and()
 			.addFilterBefore(jwtSecurityFilter(), UsernamePasswordAuthenticationFilter.class);
