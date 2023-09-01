@@ -1,11 +1,6 @@
 import axios from "axios";
-import React, { useEffect } from "react";
-import { ACCESS_DENIED, DONT_LOGIN } from "../shared/TypeMenu";
-import { useNavigate } from "react-router-dom";
 
 const url = `${process.env.REACT_APP_SPRING_URL}`
-const DONT_LOGIN = "DONT_LOGIN";
-const ACCESS_DENIED ="ACCESS_DENIED";
 
 const signApi = axios.create({
     headers: {
@@ -39,6 +34,9 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
+        const DONT_LOGIN = "DONT_LOGIN";
+        const ACCESS_DENIED = "ACCESS_DENIED";
+
         const result = error.response.data;
         console.log(result);
         if (result.exceptionType === DONT_LOGIN) {
