@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,9 @@ public class AdminService {
 
 	// page 처리 필요함
 	public UnifiedResponse<List<UsersResponse>> getUsers() {
-		List<UsersResponse> userAllList = userRepository.findAll().stream().map(UsersResponse::new).toList();
+		List<UsersResponse> userAllList = userRepository.findAll().stream()
+			.map(UsersResponse::new)
+			.collect(Collectors.toList());
 		return UnifiedResponse.ok("조회 성공", userAllList);
 	}
 
@@ -60,7 +63,8 @@ public class AdminService {
 		List<String> valueList = redisDao.multiGet("All");
 
 		List<AdminGetChargingResponse> userChargesValues = valueList.stream()
-			.map(AdminGetChargingResponse::new).toList();
+			.map(AdminGetChargingResponse::new)
+			.collect(Collectors.toList());
 		return UnifiedResponse.ok("조회 성공", userChargesValues);
 	}
 
@@ -116,11 +120,12 @@ public class AdminService {
 
 		if (!statusList.contains(request.getMsg())) throw new CustomException(INVALID_INPUT);
 
-		Status status = null;
+		Status status;
 		switch (request.getMsg()) {
-			case "ACTIVE" -> status = Status.ACTIVE;
-			case "SUSPENDED" -> status = Status.SUSPENDED;
-			case "DORMANT" -> status = Status.DORMANT;
+			case "ACTIVE": status = Status.ACTIVE; break;
+			case "SUSPENDED": status = Status.SUSPENDED; break;
+			case "DORMANT": status = Status.DORMANT; break;
+			default: throw new CustomException(INVALID_INPUT);
 		}
 
 		if (target.getStatus().equals(status)) throw new IllegalArgumentException("이미 적용되어 있는 상태코드 입니다");
@@ -136,10 +141,11 @@ public class AdminService {
 	public UnifiedResponse<?> setRole(User user, Long userId, OnlyMsgRequest request) {
 		User target = confirmationProcess(user, userId);
 
-		UserRole changeRole = null;
+		UserRole changeRole;
 		switch (request.getMsg()) {
-			case "USER" -> changeRole = UserRole.ROLE_USER;
-			case "PAID" -> changeRole = UserRole.ROLE_PAID;
+			case "USER": changeRole = UserRole.ROLE_USER; break;
+			case "PAID": changeRole = UserRole.ROLE_PAID; break;
+			default: throw new CustomException(INVALID_INPUT);
 		}
 
 		if (target.getRole().equals(changeRole)) throw new IllegalArgumentException("동일한 권한입니다");
