@@ -2,10 +2,10 @@ package com.example.sixnumber.global.exception;
 
 import org.springframework.http.HttpStatus;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public enum ErrorCode {
 	BREAK_THE_ROLE(HttpStatus.FORBIDDEN, "규정 위반으로 홈페이지를 이용할 수 없습니다"),
@@ -15,7 +15,8 @@ public enum ErrorCode {
 	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 Token 입니다"),
 	MISSING_DATA(HttpStatus.BAD_REQUEST, "UnifiedResponse data 가 누락되었습니다."),
 	NO_MATCHING_INFO_FOUND(HttpStatus.BAD_REQUEST, "일치하는 정보를 찾을 수 없습니다"),
-	DONT_LOGIN(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요");
+	DONT_LOGIN(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요"),
+	ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 리소스에 대한 권한이 없습니다");
 
 	private final HttpStatus httpStatus;
 	private final String message;
