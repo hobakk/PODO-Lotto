@@ -8,11 +8,15 @@ import lombok.Getter;
 public class ExceptionDto {
 	private final int code;
 	private final String exceptionType;
-	private final String msg;
+	private String msg;
 
 	public ExceptionDto(ErrorCode code) {
 		this.code = code.getHttpStatus().value();
 		this.exceptionType = code.name();
 		this.msg = code.getMessage();
+	}
+
+	public void setExceptionDtoChangedMsg(String newMsg) {
+		this.msg = newMsg;
 	}
 }
