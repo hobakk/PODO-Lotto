@@ -90,9 +90,9 @@ public class UserService {
 		if (!user.getStatus().equals(Status.ACTIVE)) {
 			String msg;
 			switch (user.getStatus()) {
-				case SUSPENDED -> msg = "정지된 계정입니다";
-				case DORMANT -> msg = "탈퇴한 계정입니다";
-				default -> msg = "잘못된 상태정보입니다";
+				case SUSPENDED: msg = "정지된 계정입니다"; break;
+				case DORMANT: msg = "탈퇴한 계정입니다"; break;
+				default: msg = "잘못된 상태정보입니다"; break;
 			} throw new StatusNotActiveException(msg);
 		}
 
@@ -237,7 +237,7 @@ public class UserService {
 				String[] localDateMsg = str.split(",");
 				return new StatementResponse(localDateMsg);
 			})
-			.toList();
+			.collect(Collectors.toList());
 		return UnifiedResponse.ok("거래내역 조회 완료", response);
 	}
 
@@ -255,7 +255,9 @@ public class UserService {
 		Collections.reverse(sixNumberList);
 		if (sixNumberList.size() >= 10) sixNumberList = sixNumberList.subList(0, 10);
 
-		List<SixNumberResponse> response = sixNumberList.stream().map(SixNumberResponse::new).toList();
+		List<SixNumberResponse> response = sixNumberList.stream()
+			.map(SixNumberResponse::new)
+			.collect(Collectors.toList());
 		return UnifiedResponse.ok("조회 성공", response);
 	}
 
