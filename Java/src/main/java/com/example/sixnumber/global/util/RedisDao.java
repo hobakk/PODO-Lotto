@@ -30,18 +30,18 @@ public class RedisDao {
 	}
 
 	public Set<String> getKeysList(Object object) {
-		if (object instanceof Long userId) return redisTemplate.keys("*" + RTK + userId + "*");
-		else if (object instanceof String key) return redisTemplate.keys("*" + key + "*");
+		if (object instanceof Long) return redisTemplate.keys("*" + RTK + object + "*");
+		else if (object instanceof String) return redisTemplate.keys("*" + object + "*");
 		else throw new CustomException(ErrorCode.INVALID_INPUT);
 	}
 
 	public List<String> multiGet(Object object) {
 		Set<String> keys;
-		if (object instanceof Long userId) {
-			keys = getKeysList(STMT + userId);
-		} else if (object instanceof String key) {
-			if (key.equals("All")) keys = getKeysList(STMT);
-			else keys = getKeysList(key);
+		if (object instanceof Long) {
+			keys = getKeysList(STMT + object);
+		} else if (object instanceof String) {
+			if (object.equals("All")) keys = getKeysList(STMT);
+			else keys = getKeysList(object);
 		} else throw new CustomException(ErrorCode.INVALID_INPUT);
 
 		if (keys.size() == 0) throw new IllegalArgumentException("충전 요청이 존재하지 않습니다");
