@@ -22,10 +22,10 @@ public class Manager {
 	private final UserRepository userRepository;
 
 	public User findUser(Object object) {
-		if (object instanceof Long userId) {
-			return userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
-		} else if (object instanceof String email) {
-			return userRepository.findByEmail(email).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+		if (object instanceof Long) {
+			return userRepository.findById((long) object).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+		} else if (object instanceof String) {
+			return userRepository.findByEmail((String) object).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 		} else throw new IllegalArgumentException("잘못된 접근입니다");
 	}
 
