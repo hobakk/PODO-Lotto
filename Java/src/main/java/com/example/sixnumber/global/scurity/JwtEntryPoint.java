@@ -12,7 +12,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.global.dto.ExceptionDto;
 import com.example.sixnumber.global.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtEntryPoint implements AuthenticationEntryPoint {
 	private final ObjectMapper objectMapper;
-	private static final CustomException exception = new CustomException(ErrorCode.DONT_LOGIN);
+	private static final ExceptionDto exception = new ExceptionDto(ErrorCode.DONT_LOGIN);
 
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response,
