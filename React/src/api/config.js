@@ -1,7 +1,11 @@
 import axios from "axios";
-import { getCookie } from "../shared/Cookie";
+import React, { useEffect } from "react";
+import { ACCESS_DENIED, DONT_LOGIN } from "../shared/TypeMenu";
+import { useNavigate } from "react-router-dom";
 
 const url = `${process.env.REACT_APP_SPRING_URL}`
+const DONT_LOGIN = "DONT_LOGIN";
+const ACCESS_DENIED ="ACCESS_DENIED";
 
 const signApi = axios.create({
     headers: {
@@ -36,6 +40,17 @@ api.interceptors.response.use(
     },
     (error) => {
         const result = error.response.data;
+        console.log(result);
+        if (result.exceptionType === DONT_LOGIN) {
+            alert(result.msg);
+            window.location.href = "/signin";
+            return Promise.resolve();
+        } else if (result.exceptionType === ACCESS_DENIED) {
+            alert(result.msg);
+            window.location.href = "/premium";
+            return Promise.resolve();
+        }
+
         return Promise.reject(result);
     }
 )
