@@ -3,11 +3,9 @@ import { CommonStyle } from '../../components/Styles'
 import { useMutation } from 'react-query';
 import { getSearch } from '../../api/adminApi';
 import { UnifiedResponse, Err, AdminGetCharges } from '../../shared/TypeMenu';
-import { AllowOnlyAdmin, useAllowType } from '../../hooks/AllowType';
 import { ChargingDto } from '../../api/userApi';
 
 function SearchCharges() {
-    useAllowType(AllowOnlyAdmin);
     const [inputValue, setInputValue] = useState<{msg: string, cash: number}>({
         msg: "",
         cash: 0,
@@ -67,7 +65,6 @@ function SearchCharges() {
 
   return (
     <div id='recent' style={{ ...CommonStyle, fontSize:"20px"}}>
-        <AllowOnlyAdmin />
         <h1 style={{  fontSize: "80px" }}>Search Charges</h1>
         {value.userId === 0 ? (
             <form onSubmit={onSubmitHandler}>
