@@ -5,7 +5,6 @@ import { useMutation } from 'react-query';
 import GetUserIfMutation from '../../components/GetUserIfMutation';
 import { ResultContainer } from '../../components/Manufacturing';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
-import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function BuyNumber() {
     const [num, setNum] = useState<number>(0);
@@ -13,7 +12,6 @@ function BuyNumber() {
     const [isEmpty, setData] = useState<boolean>(true);
     const numRef = useRef<HTMLInputElement>(null);
     const getUserIfMutation = GetUserIfMutation();
-    useAllowType(AllowLogin);
 
     const InputStyle: React.CSSProperties = {
         width: "5cm",
@@ -25,9 +23,8 @@ function BuyNumber() {
     }
     
     useEffect(()=>{ 
-        if (numRef.current) {
+        if (numRef.current)
             numRef.current.focus();
-        }
     }, [])
 
     const buyNumberMutation = useMutation<UnifiedResponse<string[]>, Err, number>(buyNumber, {
