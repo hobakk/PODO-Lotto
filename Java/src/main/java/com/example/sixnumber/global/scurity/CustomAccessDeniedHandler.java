@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 	private final ObjectMapper objectMapper;
 	private final RequestMatcher requestMatcher;
-	private static ExceptionDto exception;
 
 	public CustomAccessDeniedHandler(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
@@ -32,6 +31,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 	public void handle(HttpServletRequest request, HttpServletResponse response,
 		AccessDeniedException accessDeniedException) throws IOException, ServletException {
 
+		ExceptionDto exception;
 		if (requestMatcher.matches(request)) exception = new ExceptionDto(ErrorCode.ONLY_ADMIN_ACCESS_API);
  		else exception = new ExceptionDto(ErrorCode.ACCESS_DENIED);
 
