@@ -5,10 +5,8 @@ import { AllMonthProps, LottoResponse, getAllMonthStats, getTopNumberForMonth } 
 import { NumSentenceResult } from '../../components/Manufacturing';
 import StatsContainer from '../../components/StatsContainer';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
-import { AllowNotRoleUser, useAllowType } from '../../hooks/AllowType';
 
 function StatsMonth() {
-    useAllowType(AllowNotRoleUser);
     const [yMList, setYMList] = useState<string[]>([]);
     const [yearMonth, setYearMonth] = useState<string>("");
     const [value, setValue] = useState<LottoResponse>({countList: [], value: ""});
@@ -43,9 +41,8 @@ function StatsMonth() {
     }, [render])
 
     useEffect(()=>{
-        if (yearMonth !== "") {
-            getMonthStatsMutation.mutate(yearMonth);
-        }
+        if (yearMonth !== "") 
+        getMonthStatsMutation.mutate(yearMonth);
     }, [yearMonth])
 
     useEffect(()=>{
