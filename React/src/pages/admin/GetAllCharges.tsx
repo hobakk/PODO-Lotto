@@ -4,10 +4,8 @@ import { getAdminCharges, upCash } from '../../api/adminApi';
 import { CommonStyle } from '../../components/Styles';
 import { useNavigate } from 'react-router-dom';
 import { AdminGetCharges, UnifiedResponse, Err } from '../../shared/TypeMenu';
-import { AllowOnlyAdmin, useAllowType } from '../../hooks/AllowType';
 
 function GetAllCharges() {
-    useAllowType(AllowOnlyAdmin);
     const navigate = useNavigate();
     const [value, setValue] = useState<AdminGetCharges[]>([]);
     const [render, setRender] = useState<boolean>(true);
@@ -93,7 +91,7 @@ function GetAllCharges() {
             <input onChange={(e)=>setSearchInputValue(e.target.value)} placeholder='검색할 값을 입력해주세요' style={{ marginBottom:"1cm", width:"7cm", height:"0.5cm" }}/>
         </div>
         {searchInputValue === "" ? (
-            value.length !== 0 && (
+            value.length !== 0 ? (
                 value.map((charg: AdminGetCharges, index: number)=>{
                     return (
                         <div key={`charges${index}`} style={{ display:"flex", flexWrap:"wrap", width:"42cm", justifyContent:"center"}}>
@@ -101,6 +99,8 @@ function GetAllCharges() {
                         </div>
                     )
                 })    
+            ):(
+                <div>충전요청이 없습니다</div>
             )
         ):(
             <>
