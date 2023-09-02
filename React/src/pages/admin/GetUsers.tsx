@@ -4,10 +4,8 @@ import { downCash, getUsers, setRoleFromAdmin, setStatusFromAdmin, setAdmin, Use
 import { CommonStyle } from '../../components/Styles';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedResponse, UserAllIf, Err, upDownCashRequest } from '../../shared/TypeMenu';
-import { AllowOnlyAdmin, useAllowType } from '../../hooks/AllowType';
 
 function GetUsers() {
-  useAllowType(AllowOnlyAdmin);
   const navigate = useNavigate();
   const [cash, setCash] = useState<{ [key: number]: number }>({});
   const [value, setValue] = useState<UserAllIf[]>([]);
