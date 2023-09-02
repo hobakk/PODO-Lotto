@@ -3,10 +3,8 @@ import { CommonStyle } from '../../components/Styles'
 import { useMutation } from 'react-query';
 import { WinNumberRequest, setWinNumber } from '../../api/adminApi';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
-import { AllowOnlyAdmin, useAllowType } from '../../hooks/AllowType';
 
 function SetWinNumber() {
-    useAllowType(AllowOnlyAdmin);
     const dateRef = useRef<HTMLInputElement>(null);
     const [inputValue, setInputValue] = useState<WinNumberRequest>({
         date: "",
