@@ -3,12 +3,10 @@ import { ResultContainer } from '../../components/Manufacturing'
 import { useMutation } from 'react-query'
 import { CommonStyle } from '../../components/Styles';
 import { getRecentNumber } from '../../api/sixNumberApi';
-import { UnifiedResponse, Err, SixNumber } from '../../shared/TypeMenu';
-import { AllowLogin, useAllowType } from '../../hooks/AllowType';
+import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 
 function RecentNumber() {
     const [value, setValue] = useState<string[]>([]);
-    const isAllow = useAllowType(AllowLogin);
 
     const getRecentNumMutation = useMutation<UnifiedResponse<string[]>, Err>(getRecentNumber, {
         onSuccess: (res)=>{
@@ -22,11 +20,7 @@ function RecentNumber() {
         } 
     })
     
-    useEffect(()=>{
-        if (isAllow) {
-            getRecentNumMutation.mutate();
-        }
-    }, [isAllow])
+    useEffect(()=>{ getRecentNumMutation.mutate(); }, [])
 
   return (
     <div>
