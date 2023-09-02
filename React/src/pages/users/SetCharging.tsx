@@ -4,11 +4,9 @@ import { ChargingDto, setCharges } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
-import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function SetCharging() {
     const navigate = useNavigate();
-    useAllowType(AllowLogin);
     const [inputValue, setInputValue] = useState<ChargingDto>({
         cash: 0,
         msg: "",
