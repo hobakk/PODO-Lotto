@@ -36,16 +36,22 @@ api.interceptors.response.use(
     (error) => {
         const DONT_LOGIN = "DONT_LOGIN";
         const ACCESS_DENIED = "ACCESS_DENIED";
+        const ONLY_ADMIN_ACCESS_API = "ONLY_ADMIN_ACCESS_API";
 
         const result = error.response.data;
-        console.log(result);
-        if (result.exceptionType === DONT_LOGIN) {
+        const exceptionType = result.exceptionType;
+
+        if (exceptionType === DONT_LOGIN) {
             alert(result.msg);
             window.location.href = "/signin";
             return Promise.resolve();
-        } else if (result.exceptionType === ACCESS_DENIED) {
+        } else if (exceptionType === ACCESS_DENIED) {
             alert(result.msg);
             window.location.href = "/premium";
+            return Promise.resolve();
+        } else if (exceptionType === ONLY_ADMIN_ACCESS_API) {
+            alert(result.msg);
+            window.location.href = "/";
             return Promise.resolve();
         }
 
