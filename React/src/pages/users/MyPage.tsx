@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { setStatus } from '../../modules/userIfSlice';
 import LogoutMutation from '../../components/LogoutMutation';
 import { RootState } from '../../config/configStore';
-import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 import { UnifiedResponse } from '../../shared/TypeMenu';
 
 function MyPage() {
