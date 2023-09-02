@@ -4,10 +4,8 @@ import { createLotto } from '../../api/adminApi';
 import { CommonStyle } from '../../components/Styles';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
-import { AllowOnlyAdmin, useAllowType } from '../../hooks/AllowType';
 
 function CreateMainLotto() {
-    useAllowType(AllowOnlyAdmin);
     const navigate = useNavigate();
     const setMainLottoMutation = useMutation<UnifiedResponse<undefined>, Err>(createLotto, {
         onSuccess: (res) => {
