@@ -3,12 +3,10 @@ import { CommonStyle } from '../../components/Styles'
 import { getStatement } from '../../api/userApi'
 import { useMutation } from 'react-query'
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
-import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function Statement() {
     const [isAssign, setAssign] = useState<boolean>(false);
     const [value, setValue] = useState<{localDate: string, msg: string}[]>([]);
-    const isAllow: boolean = useAllowType(AllowLogin);
 
     const StateMnetMutation = useMutation<UnifiedResponse<{localDate: string, msg: string}[]>, Err>(getStatement, {
         onSuccess: (res)=>{
@@ -23,10 +21,10 @@ function Statement() {
     });
 
     useEffect(()=>{
-        if  (isAllow && isAssign === false) {
+        if  (isAssign === false) {
             StateMnetMutation.mutate();
         }
-    }, [isAllow])
+    }, [isAssign])
 
     const PStyle: React.CSSProperties = {
         border: "2px solid black",
