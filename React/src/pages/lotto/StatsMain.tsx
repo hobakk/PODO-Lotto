@@ -5,11 +5,9 @@ import { LottoResponse, getMainTopNumber } from '../../api/lottoApi';
 import { NumSentenceResult } from '../../components/Manufacturing';
 import StatsContainer from '../../components/StatsContainer';
 import { Err, UnifiedResponse } from '../../shared/TypeMenu';
-import { AllowNotRoleUser, useAllowType } from '../../hooks/AllowType';
 
 function StatsMain() {
     const [value, setValue] = useState<LottoResponse>({countList: [], value: ""});
-    const isAllow = useAllowType(AllowNotRoleUser);
 
     const MainMutation = useMutation<UnifiedResponse<LottoResponse>, Err>(getMainTopNumber, {
         onSuccess: (res)=>{
@@ -21,11 +19,7 @@ function StatsMain() {
         }
     })
 
-    useEffect(()=>{
-        if (isAllow) {
-            MainMutation.mutate();
-        }
-    }, [isAllow])
+    useEffect(()=>{ MainMutation.mutate(); }, [])
 
   return (
     <div id='recent' style={ CommonStyle }>
