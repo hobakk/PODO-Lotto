@@ -8,18 +8,17 @@ import { setStatus } from '../../modules/userIfSlice';
 import LogoutMutation from '../../components/LogoutMutation';
 import { RootState } from '../../config/configStore';
 import { AllowLogin, useAllowType } from '../../hooks/AllowType';
-import { Err, UnifiedResponse } from '../../shared/TypeMenu';
+import { UnifiedResponse } from '../../shared/TypeMenu';
 
 function MyPage() {
     const userIf = useSelector((state: RootState)=>state.userIf);
-    const isAllow = useAllowType(AllowLogin);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [role, setRole] = useState<string>("일반");
     const [withdrawMsg, setWithdrawMsg] = useState<string>("");
 
     useEffect(()=>{
-        if (isAllow) {
+        if (userIf.role !== "") {
             if (userIf.role == "ROLE_USER") {
                 setRole("일반");
             } else if (userIf.role == "ROLE_PAID") {
@@ -28,7 +27,7 @@ function MyPage() {
                 setRole("관리자");
             }
         }
-    }, [isAllow])
+    }, [userIf])
 
     const logoutMutation = LogoutMutation();
 
