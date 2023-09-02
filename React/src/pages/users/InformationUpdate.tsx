@@ -6,11 +6,9 @@ import LogoutMutation from '../../components/LogoutMutation';
 import { RootState } from '../../config/configStore';
 import { useSelector } from 'react-redux';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
-import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 import { SignupRequest } from '../../api/noneUserApi';
 
 function InformationUpdate() {
-    useAllowType(AllowLogin);
     const userIf = useSelector((state: RootState)=>state.userIf);
     const [password, setPassword] = useState<string>("");
     const pwRef = useRef<HTMLInputElement>(null);
