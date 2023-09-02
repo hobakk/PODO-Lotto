@@ -3,20 +3,17 @@ import { CommonStyle } from '../../components/Styles'
 import { buyNumber } from '../../api/sixNumberApi';
 import { useMutation } from 'react-query';
 import { ResultContainer } from '../../components/Manufacturing';
-import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 import { UnifiedResponse } from '../../shared/TypeMenu';
 
 function StatisticalNumber() {
-    useAllowType(AllowLogin);
     const [num, setNum] = useState<number>(0);
     const [repetition, setRepetition] = useState<number>(0);
     const [value, setValue] = useState<string[]>([]);
     const numRef = useRef<HTMLInputElement>(null);
 
     useEffect(()=>{
-        if (numRef.current) {
+        if (numRef.current) 
             numRef.current.focus();
-        }
     }, [])
 
     const InputStyle: React.CSSProperties = {
