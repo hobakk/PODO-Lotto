@@ -3,11 +3,9 @@ import { CommonStyle } from '../../components/Styles'
 import { ChargingDto, getCharges } from '../../api/userApi'
 import { useMutation } from 'react-query'
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
-import { AllowLogin, useAllowType } from '../../hooks/AllowType';
 
 function GetCharging() {
   const [chargValue, setChargValue] = useState<ChargingDto[]>([]);
-  const isAllow = useAllowType(AllowLogin);
   const getChargesMutation = useMutation<UnifiedResponse<ChargingDto[]>, Err>(getCharges, {
     onSuccess: (res)=>{
       if (res.code === 200 && res.data) {
@@ -21,11 +19,7 @@ function GetCharging() {
     }
   })
 
-  useEffect(()=>{
-    if (isAllow) {
-      getChargesMutation.mutate();
-    }
-  }, [isAllow])
+  useEffect(()=>{ getChargesMutation.mutate(); }, [])
 
   const BoxStyle: React.CSSProperties = {
     display:"flex",
