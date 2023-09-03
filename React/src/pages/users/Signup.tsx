@@ -6,7 +6,6 @@ import { useMutation } from 'react-query';
 import { Err, UnifiedResponse } from '../../shared/TypeMenu';
 
 function Signiup() {
-
   const emailRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState<SignupRequest>({
