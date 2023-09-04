@@ -29,7 +29,7 @@ import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
-import com.example.sixnumber.user.dto.CookiesResponse;
+import com.example.sixnumber.user.dto.CookieAndTokenResponse;
 import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -84,7 +84,7 @@ class UserControllerTest {
 	@Test
 	@WithMockUser
 	public void Signin() throws Exception {
-		CookiesResponse response = TestDataFactory.cookiesResponse();
+		CookieAndTokenResponse response = TestDataFactory.cookiesResponse();
 
 		when(userService.signIn(any(SigninRequest.class))).thenReturn(response);
 
@@ -93,8 +93,8 @@ class UserControllerTest {
 			.content(objectMapper.writeValueAsString(TestDataFactory.signinRequest())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("로그인 성공"))
-			.andExpect(cookie().value("accessToken", "accessTokenValue"))
-			.andExpect(cookie().value("refreshToken", "refreshTokenValue"));
+			.andExpect(jsonPath("$.data").isNotEmpty())
+			.andExpect(cookie().value("accessToken", "accessTokenValue"));
 
 		verify(userService).signIn(any(SigninRequest.class));
 	}
@@ -103,18 +103,15 @@ class UserControllerTest {
 	@WithCustomMockUser
 	public void Logout() throws Exception {
 		Cookie access = new Cookie("accessToken", null);
-		Cookie refresh = new Cookie("refreshToken", null);
 
-		when(userService.logout(any(HttpServletRequest.class), any(User.class)))
-			.thenReturn(new CookiesResponse(access, refresh));
+		when(userService.logout(any(HttpServletRequest.class), any(User.class))).thenReturn(access);
 
 		mockMvc.perform(post("/api/users/logout").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(99L)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("로그아웃 성공"))
-			.andExpect(cookie().value("accessToken", (String) null))
-			.andExpect(cookie().value("refreshToken", (String) null));
+			.andExpect(cookie().value("accessToken", (String) null));
 
 		verify(userService).logout(any(HttpServletRequest.class), any(User.class));
 	}
