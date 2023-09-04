@@ -47,11 +47,6 @@ public class WebSecurityConfig {
 	}
 
 	@Bean
-	public ExceptionHandlerFilter exceptionHandlerFilter() {
-		return new ExceptionHandlerFilter();
-	}
-
-	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf().disable()
@@ -73,7 +68,7 @@ public class WebSecurityConfig {
 
 			.and()
 			.addFilterBefore(jwtSecurityFilter(), UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(exceptionHandlerFilter(), JwtSecurityFilter.class);
+			.addFilterBefore(new ExceptionHandlerFilter(), JwtSecurityFilter.class);
 
 		return http.build();
 	}
