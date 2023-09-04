@@ -41,7 +41,7 @@ import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
-import com.example.sixnumber.user.dto.CookiesResponse;
+import com.example.sixnumber.user.dto.CookieAndTokenResponse;
 import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -143,29 +143,32 @@ public class UserServiceTest {
 	@Test
 	void signin_success() {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
-		CookiesResponse cookies = TestDataFactory.cookiesResponse();
+		CookieAndTokenResponse cookieAndTokenResponse = TestDataFactory.cookiesResponse();
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
 		when(jwtProvider.refreshToken(eq(saveUser.getEmail()), eq(saveUser.getId()), anyString()))
-			.thenReturn(cookies.getRefreshCookie().getValue());
-		when(jwtProvider.accessToken(anyString())).thenReturn(cookies.getAccessCookie().getValue());
-		when(jwtProvider.createCookie(anyString(), anyString(), anyInt())).thenReturn(cookies.getAccessCookie());
-		when(jwtProvider.createCookie(anyString(), anyString(), anyInt())).thenReturn(cookies.getRefreshCookie());
+			.thenReturn(cookieAndTokenResponse.getEnCodedRefreshToken());
+		when(jwtProvider.accessToken(anyString())).thenReturn(cookieAndTokenResponse.getAccessCookie().getValue());
+		when(jwtProvider.createCookie(anyString(), anyString(), anyInt()))
+			.thenReturn(cookieAndTokenResponse.getAccessCookie());
 
-		CookiesResponse response = userService.signIn(signinRequest);
+		when(passwordEncoder.encode(anyString())).thenReturn("EnCodedRefreshTokenValue");
+
+		CookieAndTokenResponse response = userService.signIn(signinRequest);
 
 		verify(manager).findUser(anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
+		verify(redisDao).getValue(anyString());
 		verify(jwtProvider).refreshToken(eq(saveUser.getEmail()), eq(saveUser.getId()), anyString());
 		verify(jwtProvider).accessToken(anyString());
 		verify(redisDao).setRefreshToken(anyString(), anyString(), anyLong(), any(TimeUnit.class));
-		verify(jwtProvider, times(2)).createCookie(anyString(), anyString(), anyInt());
+		verify(jwtProvider).createCookie(anyString(), anyString(), anyInt());
+		verify(passwordEncoder).encode(anyString());
 		assertNotNull(response.getAccessCookie());
-		assertNotNull(response.getRefreshCookie());
-		assertEquals(saveUser.getStatus(), Status.ACTIVE);
+		assertEquals(response.getEnCodedRefreshToken(), "EnCodedRefreshTokenValue");
 	}
 
 	@Test
@@ -228,21 +231,19 @@ public class UserServiceTest {
 	@Test
 	void logout() {
 		HttpServletRequest request = mock(HttpServletRequest.class);
-		CookiesResponse cookies = TestDataFactory.cookiesResponse();
+		CookieAndTokenResponse cookies = TestDataFactory.cookiesResponse();
+		String accessToken = "accessTokenValue";
 		Cookie access = new Cookie("accessToken", null);
-		Cookie refresh = new Cookie("refreshToken", null);
 
-		when(jwtProvider.getTokenValueInCookie(request)).thenReturn(cookies);
+		when(jwtProvider.getAccessTokenInCookie(request)).thenReturn(accessToken);
 		when(jwtProvider.createCookie(anyString(), eq(null), anyInt())).thenReturn(access);
-		when(jwtProvider.createCookie(anyString(), eq(null), anyInt())).thenReturn(refresh);
 
-		CookiesResponse response = userService.logout(request, saveUser);
+		Cookie cookie = userService.logout(request, saveUser);
 
 		verify(redisDao).deleteValues(anyString(), eq(JwtProvider.REFRESH_TOKEN));
 		verify(redisDao).setBlackList(cookies.getAccessCookie().getValue());
-		verify(jwtProvider, times(2)).createCookie(anyString(), eq(null), anyInt());
-		assertNull(response.getAccessCookie().getValue());
-		assertNull(response.getRefreshCookie().getValue());
+		verify(jwtProvider).createCookie(anyString(), eq(null), anyInt());
+		assertNotNull(cookie);
 	}
 
 	@Test
