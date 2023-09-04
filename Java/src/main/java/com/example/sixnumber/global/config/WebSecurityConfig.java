@@ -14,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.sixnumber.global.scurity.CustomAccessDeniedHandler;
+import com.example.sixnumber.global.scurity.ExceptionHandlerFilter;
 import com.example.sixnumber.global.scurity.JwtEntryPoint;
 import com.example.sixnumber.global.scurity.JwtSecurityFilter;
 import com.example.sixnumber.global.scurity.UserDetailsServiceImpl;
@@ -32,7 +33,7 @@ public class WebSecurityConfig {
 	private final JwtEntryPoint jwtEntryPoint;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private static final String[] URL_PERMIT_ALL = {
-		"/api/users/signin", "/api/users/signup", "/api/winnumber"
+		"/api/users/signin", "/api/users/signup", "/api/winnumber", "/api/jwt/re-issuance"
 	};
 
 	@Bean
@@ -43,6 +44,11 @@ public class WebSecurityConfig {
 	@Bean
 	public JwtSecurityFilter jwtSecurityFilter() {
 		return new JwtSecurityFilter(userDetailsService, jwtProvider, redisDao);
+	}
+
+	@Bean
+	public ExceptionHandlerFilter exceptionHandlerFilter() {
+		return new ExceptionHandlerFilter();
 	}
 
 	@Bean
@@ -66,7 +72,8 @@ public class WebSecurityConfig {
 				.accessDeniedHandler(customAccessDeniedHandler)
 
 			.and()
-			.addFilterBefore(jwtSecurityFilter(), UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(jwtSecurityFilter(), UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(exceptionHandlerFilter(), JwtSecurityFilter.class);
 
 		return http.build();
 	}
