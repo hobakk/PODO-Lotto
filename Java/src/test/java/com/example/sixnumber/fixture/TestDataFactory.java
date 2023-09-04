@@ -23,7 +23,7 @@ import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
-import com.example.sixnumber.user.dto.CookiesResponse;
+import com.example.sixnumber.user.dto.CookieAndTokenResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -115,10 +115,10 @@ public class TestDataFactory {
 		);
 	}
 
-	public static CookiesResponse cookiesResponse() {
+	public static CookieAndTokenResponse cookiesResponse() {
 		Cookie access = new Cookie("accessToken", "accessTokenValue");
-		Cookie refresh = new Cookie("refreshToken", "refreshTokenValue");
-		return new CookiesResponse(access, refresh);
+		String encodedRefreshToken = "EnCodedRefreshTokenValue";
+		return new CookieAndTokenResponse(access, encodedRefreshToken);
 	}
 
 	public static Set<String> keys() {
