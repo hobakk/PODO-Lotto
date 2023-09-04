@@ -138,12 +138,15 @@ public class JwtProvider {
 	public String getAccessTokenInCookie(HttpServletRequest request) {
 		Cookie accessValueIsNull = new Cookie(JwtProvider.ACCESS_TOKEN, null);
 
-		Cookie[] cookies = request.getCookies();
-		if (cookies.length == 0) return null;
+		try {
+			Cookie[] cookies = request.getCookies();
 
-		Cookie access = Arrays.stream(cookies).filter(
-			cookie -> cookie.getName().equals(JwtProvider.ACCESS_TOKEN)).findFirst().orElse(accessValueIsNull);
-		return access.getValue();
+			Cookie access = Arrays.stream(cookies).filter(
+				cookie -> cookie.getName().equals(JwtProvider.ACCESS_TOKEN)).findFirst().orElse(accessValueIsNull);
+			return access.getValue();
+		} catch (NullPointerException e) {
+			return null;
+		}
 	}
 
 	// public void setExpire(String token) {
