@@ -120,15 +120,13 @@ public class UserService {
 		return response;
 	}
 
-	public CookiesResponse logout(HttpServletRequest request, User user) {
-		CookiesResponse cookies= jwtProvider.getTokenValueInCookie(request);
-		String accessToken = cookies.getAccessCookie().getValue();
+	public Cookie logout(HttpServletRequest request, User user) {
+		String accessToken = jwtProvider.getAccessTokenInCookie(request);
 		redisDao.deleteValues(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
+		user.setRefreshPointer(null);
 		if (accessToken != null) redisDao.setBlackList(accessToken);
 
-		Cookie access = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null, 0);
-		Cookie refresh = jwtProvider.createCookie(JwtProvider.REFRESH_TOKEN, null, 0);
-		return new CookiesResponse(access, refresh);
+		return jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null, 0);
 	}
 
 	public UnifiedResponse<?> withdraw(OnlyMsgRequest request, String email) {
