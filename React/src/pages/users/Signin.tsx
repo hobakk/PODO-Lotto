@@ -6,15 +6,19 @@ import { signin, SigninRequest } from '../../api/noneUserApi';
 import { InputBox } from '../../components/Styles';
 import GetUserIfMutation from '../../components/GetUserIfMutation';
 import { Err, UnifiedResponse } from '../../shared/TypeMenu';
+import { useDispatch } from 'react-redux';
+import { setRefreshToken } from '../../modules/refreshTokenSlice';
 
 function Signin() {
     const emailRef = useRef<HTMLInputElement>(null);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const getUserIfMutation = GetUserIfMutation();
 
     const signinMutation = useMutation<UnifiedResponse<undefined>, Err, SigninRequest>(signin,{
         onSuccess: (res)=>{
-            if  (res.code === 200){
+            if  (res.code === 200 && res.data) {
+                dispatch(setRefreshToken(res.data));
                 getUserIfMutation.mutate();
                 navigate("/");
             }

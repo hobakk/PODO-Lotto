@@ -6,6 +6,7 @@ import { logout } from '../api/userApi';
 import { logoutUser } from '../modules/userIfSlice';
 import { UnifiedResponse } from '../shared/TypeMenu';
 import { resetPersistor } from '../config/configStore';
+import { resetRefreshToken } from '../modules/refreshTokenSlice';
 
 function LogoutMutation() {
     const dispatch = useDispatch();
@@ -15,6 +16,7 @@ function LogoutMutation() {
         onSuccess: (res) =>{
             if (res.code === 200) {
                 dispatch(logoutUser());
+                dispatch(resetRefreshToken());
                 localStorage.removeItem('persist:root');
                 resetPersistor();
                 navigate("/");
