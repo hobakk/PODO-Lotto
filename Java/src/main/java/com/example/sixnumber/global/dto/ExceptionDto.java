@@ -10,6 +10,12 @@ public class ExceptionDto {
 	private final String exceptionType;
 	private String msg;
 
+	public ExceptionDto(int code, String exceptionType, String msg) {
+		this.code = code;
+		this.exceptionType = exceptionType;
+		this.msg = msg;
+	}
+
 	public ExceptionDto(ErrorCode code) {
 		this.code = code.getHttpStatus().value();
 		this.exceptionType = code.name();

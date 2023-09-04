@@ -2,6 +2,7 @@ package com.example.sixnumber.user.controller;
 
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,7 +20,7 @@ import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
-import com.example.sixnumber.user.dto.CookiesResponse;
+import com.example.sixnumber.user.dto.CookieAndTokenResponse;
 import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -43,11 +44,10 @@ public class UserController {
 	}
 
 	@PostMapping("/signin")
-	public ResponseEntity<UnifiedResponse<?>> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
-		CookiesResponse cookies = userService.signIn(request);
-		response.addCookie(cookies.getAccessCookie());
-		response.addCookie(cookies.getRefreshCookie());
-		return ResponseEntity.ok(UnifiedResponse.ok("로그인 성공"));
+	public ResponseEntity<UnifiedResponse<String>> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
+		CookieAndTokenResponse result = userService.signIn(request);
+		response.addCookie(result.getAccessCookie());
+		return ResponseEntity.ok(UnifiedResponse.ok("로그인 성공", result.getEnCodedRefreshToken()));
 	}
 
 	@PostMapping("/logout")
@@ -55,9 +55,8 @@ public class UserController {
 		HttpServletRequest request,
 		HttpServletResponse response
 	) {
-		CookiesResponse cookies = userService.logout(request, user);
-		response.addCookie(cookies.getAccessCookie());
-		response.addCookie(cookies.getRefreshCookie());
+		Cookie access = userService.logout(request, user);
+		response.addCookie(access);
 		return ResponseEntity.ok(UnifiedResponse.ok("로그아웃 성공"));
 	}
 
