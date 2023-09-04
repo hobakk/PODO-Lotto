@@ -32,7 +32,7 @@ import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
-import com.example.sixnumber.user.dto.CookiesResponse;
+import com.example.sixnumber.user.dto.CookieAndTokenResponse;
 import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -84,7 +84,7 @@ public class UserService {
 		return UnifiedResponse.create("회원가입 완료");
 	}
 
-	public CookiesResponse signIn(SigninRequest request) {
+	public CookieAndTokenResponse signIn(SigninRequest request) {
 		User user = manager.findUser(request.getEmail());
 
 		if (!user.getStatus().equals(Status.ACTIVE)) {
@@ -100,7 +100,7 @@ public class UserService {
 			throw new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다");
 		}
 
-		CookiesResponse cookies;
+		CookieAndTokenResponse response;
 		String refreshInRedis = redisDao.getValue(user.getRefreshPointer());
 		if (refreshInRedis == null) {
 			String refreshPointer = UUID.randomUUID().toString();
@@ -108,13 +108,16 @@ public class UserService {
 			String accessToken = jwtProvider.accessToken(refreshPointer);
 			String refreshToken = jwtProvider.refreshToken(user.getEmail(), user.getId(), refreshPointer);
 			redisDao.setRefreshToken(refreshPointer, refreshToken, (long) 7, TimeUnit.DAYS);
-			cookies = createCookies(accessToken, refreshToken);
+
+			Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken, 300);
+			String enCodedRefreshToken = passwordEncoder.encode(refreshToken);
+			response = new CookieAndTokenResponse(accessCookie, enCodedRefreshToken);
 		} else {
 			redisDao.deleteValues(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
 			throw new OverlapException("중복 로그인 입니다");
 		}
 
-		return cookies;
+		return response;
 	}
 
 	public CookiesResponse logout(HttpServletRequest request, User user) {
@@ -267,11 +270,5 @@ public class UserService {
 		}
 
 		return UnifiedResponse.ok("본인확인 성공");
-	}
-
-	private CookiesResponse createCookies(String accessToken, String refreshToken) {
-		Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken, 300);
-		Cookie refreshCookie = jwtProvider.createCookie(JwtProvider.REFRESH_TOKEN, refreshToken, 604800);
-		return new CookiesResponse(accessCookie, refreshCookie);
 	}
 }
