@@ -27,10 +27,4 @@ public class TokenController {
 		response.addCookie(accessCookie);
 		return ResponseEntity.ok(UnifiedResponse.ok("AccessToken 재발급 성공"));
 	}
-
-	// @PostMapping("/renew/access")
-	// public ResponseEntity<UnifiedResponse<?>> renewAccessToken(@RequestBody String refreshToken, HttpServletResponse response) {
-	// 	response.addCookie(tokenService.renewAccessToken(refreshToken));
-	// 	return ResponseEntity.ok(UnifiedResponse.ok("AccessToken 재발급 성공"));
-	// }
 }

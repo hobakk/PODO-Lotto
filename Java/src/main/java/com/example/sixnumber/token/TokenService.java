@@ -34,16 +34,8 @@ public class TokenService {
 			throw new CustomException(ErrorCode.NO_MATCHING_INFO_FOUND);
 		}
 
-		if (!jwtProvider.validateRefreshToken(refreshTokenInRedis)) {
-			throw new CustomException(ErrorCode.INVALID_TOKEN);
-		}
-
 		return createCookie(refreshTokenInRedis, pointer);
 	}
-
-	// public Cookie renewAccessToken(String refreshToken) {
-	// 	return createCookie(refreshToken);
-	// }
 
 	private Cookie createCookie(String refreshToken, String pointer) {
 		if (!jwtProvider.validateRefreshToken(refreshToken)) throw new CustomException(ErrorCode.INVALID_TOKEN);
