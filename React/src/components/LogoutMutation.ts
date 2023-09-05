@@ -1,30 +1,23 @@
 import React from 'react'
 import { useMutation } from 'react-query';
-import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../api/userApi';
-import { logoutUser } from '../modules/userIfSlice';
 import { UnifiedResponse } from '../shared/TypeMenu';
-import { resetPersistor } from '../config/configStore';
-import { resetRefreshToken } from '../modules/refreshTokenSlice';
+import { persistor } from '../config/configStore';
 
 function LogoutMutation() {
-    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const purge = async () => { await persistor.purge(); }
 
     const logoutMutation = useMutation<UnifiedResponse<undefined>>(logout, {
-        onSuccess: (res) =>{
+        onSuccess: (res) => {
             if (res.code === 200) {
-                dispatch(logoutUser());
-                dispatch(resetRefreshToken());
-                localStorage.removeItem('persist:root');
-                resetPersistor();
+                purge();
                 navigate("/");
             }
         },
         onError: ()=>{ 
             console.log("로그아웃 에러");
-            dispatch(logoutUser());
         }
     })
 
