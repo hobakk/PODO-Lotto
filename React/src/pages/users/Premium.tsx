@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { SignBorder, CommonStyle } from '../../components/Styles'
 import { getCashNickname, setPaid, CashNicknameDto } from '../../api/userApi'
 import { useMutation } from 'react-query'
@@ -12,6 +12,7 @@ function Premium() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const userIf = useSelector((state: RootState)=>state.userIf);
+    const [userRole, setUserRole] = useState<string>("ROLE_USER");
 
     const borderDiv: React.CSSProperties = {
         border: "3px solid black",
@@ -21,6 +22,8 @@ function Premium() {
         textAlign: "center",
         fontSize: "18px",
     }
+
+    useEffect(()=>{ setUserRole(userIf.role) }, [userIf])
 
     const getCashNicknameMutation = useMutation<UnifiedResponse<CashNicknameDto>>(getCashNickname, {
         onSuccess: (res)=>{
@@ -67,26 +70,24 @@ function Premium() {
   return (
     <div style={ SignBorder }>
         <div style={ CommonStyle }>
-            {userIf.role !== "" && (
-                userIf.role === "ROLE_PAID" ? (
-                    <div>
-                        <h1 style={{  fontSize: "80px" }}>Release</h1>
-                        <div style={borderDiv}>
-                            <p>{userIf.nickname} 님은 Premium 등급입니다</p>
-                            <p>등급 변경은 매월 초에 업데이트됩니다</p>
-                            <button onClick={()=>{setUserMutation.mutate("월정액 해지")}} style={{ marginTop: "5cm" }}>프리미엄 해제하기</button>
-                        </div>  
-                    </div>
-                ):(
-                    <div>
-                        <h1 style={{  fontSize: "80px" }}>Premium</h1>
-                        <div style={borderDiv}>
-                            <p>매월 5000원 차감</p>
-                            <p>통계 서비스 이용 가능</p>
-                            <button onClick={(onClikcHandler)} style={{ marginTop: "5cm" }}>프리미엄 이용하기</button>
-                        </div>  
-                    </div>    
-                )
+            {userRole === "ROLE_PAID" ? (
+                <div>
+                    <h1 style={{  fontSize: "80px" }}>Release</h1>
+                    <div style={borderDiv}>
+                        <p>{userIf.nickname} 님은 Premium 등급입니다</p>
+                        <p>등급 변경은 매월 초에 업데이트됩니다</p>
+                        <button onClick={()=>{setUserMutation.mutate("월정액 해지")}} style={{ marginTop: "5cm" }}>프리미엄 해제하기</button>
+                    </div>  
+                </div>
+            ):(
+                <div>
+                    <h1 style={{  fontSize: "80px" }}>Premium</h1>
+                    <div style={borderDiv}>
+                        <p>매월 5000원 차감</p>
+                        <p>통계 서비스 이용 가능</p>
+                        <button onClick={(onClikcHandler)} style={{ marginTop: "5cm" }}>프리미엄 이용하기</button>
+                    </div>  
+                </div>    
             )}
         </div>
     </div>
