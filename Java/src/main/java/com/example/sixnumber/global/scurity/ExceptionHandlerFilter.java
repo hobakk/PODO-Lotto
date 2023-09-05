@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.sixnumber.global.dto.ExceptionDto;
-import com.example.sixnumber.global.exception.IsNullAccessTokenException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -29,7 +28,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
 		try {
 			filterChain.doFilter(request, response);
-		} catch (ExpiredJwtException | IsNullAccessTokenException e) {
+		} catch (ExpiredJwtException e) {
 			exceptionDto = new ExceptionDto(401, "RE_ISSUANCE", "");
 			setExceptionDto(response, exceptionDto);
 		}

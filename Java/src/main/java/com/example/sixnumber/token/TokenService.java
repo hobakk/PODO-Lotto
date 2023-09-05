@@ -49,6 +49,7 @@ public class TokenService {
 		if (!jwtProvider.validateRefreshToken(refreshToken)) throw new CustomException(ErrorCode.INVALID_TOKEN);
 
 		String accessToken = jwtProvider.accessToken(pointer);
-		return jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken, "oneWeek");
+		Long remainingSeconds = Math.max(jwtProvider.getRemainingTime(refreshToken) /1000, 0);
+		return jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken, remainingSeconds);
 	}
 }

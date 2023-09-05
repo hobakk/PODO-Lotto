@@ -14,35 +14,19 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.sixnumber.global.exception.IsNullAccessTokenException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.RedisDao;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public class JwtSecurityFilter extends OncePerRequestFilter {
 	private final UserDetailsServiceImpl userDetailsService;
-	private final RequestMatcher requestMatcher;
 	private final JwtProvider jwtProvider;
 	private final RedisDao redisDao;
-
-	public JwtSecurityFilter(UserDetailsServiceImpl userDetailsService, JwtProvider jwtProvider, RedisDao redisDao) {
-		String[] freePassUrls = { "/api/users/signin", "/api/users/signup", "/api/winnumber", "/api/jwt/re-issuance" };
-		this.userDetailsService = userDetailsService;
-		this.jwtProvider = jwtProvider;
-		this.redisDao = redisDao;
-		this.requestMatcher = request -> {
-			String requestUrl = request.getRequestURI();
-			for (String url : freePassUrls) {
-				if (requestUrl.startsWith(url)) {
-					return true;
-				}
-			}
-			return false;
-		};
-	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -67,8 +51,6 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 			}
 
 			createAuthentication(jwtProvider.getTokenInUserId(refreshToken));
-		} else {
-			if (!requestMatcher.matches(request)) throw new IsNullAccessTokenException();
 		}
 
 		filterChain.doFilter(request, response);

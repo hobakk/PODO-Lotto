@@ -132,7 +132,7 @@ public class JwtProvider {
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);
 		if (maxAge instanceof Integer) cookie.setMaxAge((int) maxAge);
-		else if (maxAge.equals("oneWeek")) cookie.setMaxAge(604800);
+		else if (maxAge.equals("oneWeek")) cookie.setMaxAge(603000);
 
 		return cookie;
 	}
