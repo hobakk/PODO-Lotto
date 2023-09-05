@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 const url = `${process.env.REACT_APP_SPRING_URL}`
 
@@ -26,36 +27,6 @@ api.interceptors.request.use(
     (error) => {
         console.log(error);
         return Promise.reject(error);
-    }
-)
-
-api.interceptors.response.use(
-    (response) => {
-        return response;
-    },
-    (error) => {
-        const DONT_LOGIN = "DONT_LOGIN";
-        const ACCESS_DENIED = "ACCESS_DENIED";
-        const ONLY_ADMIN_ACCESS_API = "ONLY_ADMIN_ACCESS_API";
-
-        const result = error.response.data;
-        const exceptionType = result.exceptionType;
-
-        if (exceptionType === DONT_LOGIN) {
-            alert(result.msg);
-            window.location.href = "/signin";
-            return Promise.resolve();
-        } else if (exceptionType === ACCESS_DENIED) {
-            alert(result.msg);
-            window.location.href = "/premium";
-            return Promise.resolve();
-        } else if (exceptionType === ONLY_ADMIN_ACCESS_API) {
-            alert(result.msg);
-            window.location.href = "/";
-            return Promise.resolve();
-        }
-
-        return Promise.reject(result);
     }
 )
 
