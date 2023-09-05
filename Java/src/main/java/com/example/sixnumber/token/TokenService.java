@@ -28,8 +28,9 @@ public class TokenService {
 		User target = manager.findUser(request.getEmail());
 		if (!target.getId().equals(request.getUserId())) throw new CustomException(ErrorCode.INVALID_INPUT);
 
-		String refreshTokenInRedis = redisDao.getValue(target.getRefreshPointer());
-		if (!encoder.matches(refreshTokenInRedis, request.getRefreshTokenValue())) {
+		String pointer = target.getRefreshPointer();
+		String refreshTokenInRedis = redisDao.getValue(pointer);
+		if (!encoder.matches(refreshTokenInRedis, request.getRefreshToken())) {
 			throw new CustomException(ErrorCode.NO_MATCHING_INFO_FOUND);
 		}
 
@@ -37,17 +38,16 @@ public class TokenService {
 			throw new CustomException(ErrorCode.INVALID_TOKEN);
 		}
 
-		return createCookie(refreshTokenInRedis);
+		return createCookie(refreshTokenInRedis, pointer);
 	}
 
 	// public Cookie renewAccessToken(String refreshToken) {
 	// 	return createCookie(refreshToken);
 	// }
 
-	private Cookie createCookie(String refreshToken) {
-		if (jwtProvider.isTokenExpired(refreshToken)) throw new CustomException(ErrorCode.EXPIRED_TOKEN);
+	private Cookie createCookie(String refreshToken, String pointer) {
+		if (!jwtProvider.validateRefreshToken(refreshToken)) throw new CustomException(ErrorCode.INVALID_TOKEN);
 
-		String pointer = jwtProvider.getClaims(refreshToken).getSubject();
 		String accessToken = jwtProvider.accessToken(pointer);
 		return jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken, 300);
 	}
