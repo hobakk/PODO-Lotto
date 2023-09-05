@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import javax.servlet.http.Cookie;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.sixnumber.fixture.TestDataFactory;
+import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
@@ -67,5 +69,20 @@ public class TokenServiceTest {
 		verify(jwtProvider).accessToken(anyString());
 		verify(jwtProvider).getRemainingTime(anyString());
 		assertNotNull(response);
+	}
+
+	@Test
+	void reIssuance_fail_incorrect() {
+		when(manager.findUser(anyString())).thenReturn(saveUser);
+
+		when(redisDao.getValue(anyString())).thenReturn(cookie.getValue());
+
+		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+
+		Assertions.assertThrows(CustomException.class, () -> tokenService.reIssuance(request));
+
+		verify(manager).findUser(anyString());
+		verify(redisDao).getValue(anyString());
+		verify(passwordEncoder).matches(anyString(), anyString());
 	}
 }
