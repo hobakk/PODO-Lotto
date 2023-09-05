@@ -41,10 +41,9 @@ export type UserIfState = {
     statement: Record<string, string>;
 };
 
-export type UserAllIf = {
-    id: number;
+export type UserDetailInfo = {
+    userId: number;
     email: string;
-    password: string;
     nickname: string;
     cash: number;
     role: string;

@@ -1,8 +1,8 @@
-import { AdminGetCharges, UnifiedResponse, UserAllIf, upDownCashRequest } from "../shared/TypeMenu";
+import { AdminGetCharges, UnifiedResponse, UserDetailInfo, upDownCashRequest } from "../shared/TypeMenu";
 import { api } from "./config";
 import { ChargingDto } from "./userApi";
 
-export const getUsers = async (): Promise<UnifiedResponse<UserAllIf[]>> => {
+export const getUsers = async (): Promise<UnifiedResponse<UserDetailInfo[]>> => {
     const { data } = await api.get("/admin/users");
     return data;
 }

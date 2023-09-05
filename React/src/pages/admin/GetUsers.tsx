@@ -3,20 +3,20 @@ import { useMutation } from 'react-query'
 import { downCash, getUsers, setRoleFromAdmin, setStatusFromAdmin, setAdmin, UserIdMsgProps } from '../../api/adminApi';
 import { CommonStyle } from '../../components/Styles';
 import { useNavigate } from 'react-router-dom';
-import { UnifiedResponse, UserAllIf, Err, upDownCashRequest } from '../../shared/TypeMenu';
+import { UnifiedResponse, UserDetailInfo, Err, upDownCashRequest } from '../../shared/TypeMenu';
 
 function GetUsers() {
   const navigate = useNavigate();
   const [cash, setCash] = useState<{ [key: number]: number }>({});
-  const [value, setValue] = useState<UserAllIf[]>([]);
+  const [value, setValue] = useState<UserDetailInfo[]>([]);
   const [render, setRender] = useState<boolean>(true);
   const [searchInputValue, setSearchInputValue] = useState<string>("");
   const [role, setRole] = useState<{ [key: string]: string }>({});
-  const [result, setResult] = useState<UserAllIf[]>([]);
+  const [result, setResult] = useState<UserDetailInfo[]>([]);
   const [status, setStatus] = useState<{ [key: number]: string }>({});
   const [key, setkey] = useState<{ [key: number]: string }>({});
 
-  const getUsersMutation = useMutation<UnifiedResponse<UserAllIf[]>>(getUsers, {
+  const getUsersMutation = useMutation<UnifiedResponse<UserDetailInfo[]>>(getUsers, {
     onSuccess: (res) =>{
       if (res.code === 200 && res.data)
       setValue(res.data);
@@ -164,18 +164,18 @@ function GetUsers() {
     marginBottom: "5px"
   }
 
-  const ResultContainer = ({ entityType }: { entityType: UserAllIf} ) => {
+  const ResultContainer = ({ entityType }: { entityType: UserDetailInfo} ) => {
     return (
       <div style={MapSecondStyle}>
         <div style={{ display:"flex", padding: "10px" }}>
-          <span>id: {entityType.id}</span>
+          <span>id: {entityType.userId}</span>
           <span style={{ margin: "auto" }}>Cash: {entityType.cash}</span>
           <input 
-            name={`${entityType.id}`}
-            value={cash[entityType.id]}
+            name={`${entityType.userId}`}
+            value={cash[entityType.userId]}
             onChange={onChangeHandler}
           />
-          <button onClick={()=>onClickHandler(entityType.id)}>포인트 차감</button>
+          <button onClick={()=>onClickHandler(entityType.userId)}>포인트 차감</button>
         </div>
         <div style={{ display:"flex", padding: "10px" }}>
           <span>Email: {entityType.email}</span>
@@ -183,34 +183,34 @@ function GetUsers() {
         </div>
         <div style={{ display:"flex", padding: "10px" }}>
           <span>Role: {entityType.role.split("_")[1]}</span>
-          <select value={role[entityType.id]} onChange={selectOnChangeHandler} name={`${entityType.id}`} style={{ marginLeft: "auto" }}>
+          <select value={role[entityType.userId]} onChange={selectOnChangeHandler} name={`${entityType.userId}`} style={{ marginLeft: "auto" }}>
             <option value="USER">USER</option>
             <option value="PAID">PAID</option>
             <option value="ADMIN">ADMIN</option>
           </select>
-          {role[entityType.id] !== "ADMIN" ? (
-            <button onClick={()=>roleOnClickHandler(entityType.id)}>수정하기</button>
+          {role[entityType.userId] !== "ADMIN" ? (
+            <button onClick={()=>roleOnClickHandler(entityType.userId)}>수정하기</button>
           ):(
             // input box 에 문자, 숫자등 1개씩만 값이 타이핑됨
             <> 
               <input 
-                value={key[entityType.id]} 
-                name={`${entityType.id}`}
+                value={key[entityType.userId]} 
+                name={`${entityType.userId}`}
                 onChange={keyOnChangeHandler} 
                 placeholder='Key 입력'
               />
-              <button onClick={()=>securityKeyOnClickHandler(entityType.id)}>관리자 지정</button>
+              <button onClick={()=>securityKeyOnClickHandler(entityType.userId)}>관리자 지정</button>
             </>
           )}
         </div>
         <div style={{ display:"flex", padding: "10px" }}>
           <span>Status: {entityType.status}</span>
-          <select value={status[entityType.id]} onChange={statusOnChangeHandler} style={{ marginLeft: "auto" }}>
+          <select value={status[entityType.userId]} onChange={statusOnChangeHandler} style={{ marginLeft: "auto" }}>
             <option value="ACTIVE">ACTIVE</option>
             <option value="SUSPENDED">SUSPENDED</option>
             <option value="DORMANT">DORMANT</option>
           </select>
-          <button onClick={()=>statusOnClickHandler(entityType.id)}>수정하기</button>
+          <button onClick={()=>statusOnClickHandler(entityType.userId)}>수정하기</button>
         </div>
       </div>  
     )
@@ -223,7 +223,7 @@ function GetUsers() {
         {searchInputValue === "" ? (
             value.filter(user=>user.role !== "ROLE_ADMIN").map(user=>{
               return (
-                <div key={user.id} style={MapFirstStyle}>
+                <div key={user.userId} style={MapFirstStyle}>
                   <ResultContainer entityType={user} />
                 </div>
               )
@@ -235,7 +235,7 @@ function GetUsers() {
             ):(
               result.map(item=>{
                 return (
-                  <div key={item.id} style={MapFirstStyle}>
+                  <div key={item.userId} style={MapFirstStyle}>
                     <ResultContainer entityType={item} />
                   </div>
                 )

@@ -10,6 +10,7 @@ import lombok.Getter;
 
 @Getter
 public class MyInformationResponse {
+	private final Long userId;
 	private final String email;
 	private final String nickname;
 	private final int cash;
@@ -18,6 +19,7 @@ public class MyInformationResponse {
 	private final List<String> statement;
 
 	public MyInformationResponse(User user) {
+		this.userId = user.getId();
 		this.email = user.getEmail();
 		this.nickname = user.getNickname();
 		this.cash = user.getCash();

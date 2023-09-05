@@ -1,8 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserIfState } from "../shared/TypeMenu";
+import { UserDetailInfo } from "../shared/TypeMenu";
 import { CashNicknameDto } from "../api/userApi";
+import { PURGE } from "redux-persist";
 
-const initialState: UserIfState = {
+const initialState: UserDetailInfo = {
+    userId: 0,
     email: "",
     nickname: "",
     cash: 0,
@@ -15,8 +17,9 @@ const userIfSlice = createSlice({
     name: "userIf",
     initialState,
     reducers: {
-        setUserIf: (state, action: PayloadAction<UserIfState>) => {
-            const { email, nickname, cash, role, status, statement } = action.payload;
+        setUserIf: (state, action: PayloadAction<UserDetailInfo>) => {
+            const { userId, email, nickname, cash, role, status, statement } = action.payload;
+            state.userId = userId;
             state.email = email;
             state.nickname = nickname;
             state.cash = cash;
@@ -35,9 +38,10 @@ const userIfSlice = createSlice({
             state.cash = cash;
             state.nickname = nickname;
         },
-        logoutUser: () => initialState,
-    }
+    },
+
+    extraReducers: (builder) => { builder.addCase(PURGE, () => initialState); }
 })
 
-export const { setUserIf, logoutUser, setStatus, setRole, setCashNickname } = userIfSlice.actions;
+export const { setUserIf, setStatus, setRole, setCashNickname } = userIfSlice.actions;
 export default userIfSlice.reducer;

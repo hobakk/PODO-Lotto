@@ -1,4 +1,4 @@
-import { UnifiedResponse, UserIfState } from "../shared/TypeMenu";
+import { UnifiedResponse, UserDetailInfo } from "../shared/TypeMenu";
 import { SignupRequest } from "./noneUserApi";
 import { api } from "./config";
 
@@ -12,7 +12,7 @@ export type CashNicknameDto = {
     nickname: string
 }
 
-export const getInformation = async (): Promise<UnifiedResponse<UserIfState>> => {
+export const getInformation = async (): Promise<UnifiedResponse<UserDetailInfo>> => {
     const { data } = await api.get(`/users/my-information`);
     return data;
 }
@@ -82,7 +82,6 @@ export const getStatement = async (): Promise<UnifiedResponse<{localDate: string
         const { data } = await api.get("/users/statement");
         return data;
     } catch (error: any) {
-        console.log(error)
         throw error;
     }
 }
