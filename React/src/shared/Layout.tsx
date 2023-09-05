@@ -6,6 +6,7 @@ import LogoutMutation from '../components/LogoutMutation';
 import MenuContainer from '../components/MenuContainer';
 import { AdminMenuValue, LottoMenuValue, StatsMenuValue, UserMenuValue } from './MenuValue';
 import { RootState } from '../config/configStore';
+import UesAxiosResponseInterceptor from '../hooks/UseAxiosResponseInterceptor';
 
 const mainColor = `#9957F0`;
 
@@ -47,6 +48,7 @@ type UserIf = {
 }
 
 function Header() {
+  UesAxiosResponseInterceptor();
   const navigate = useNavigate();
   const logoutMutation = LogoutMutation();
   const userIf = useSelector((state: RootState)=>state.userIf) as UserIf;

@@ -2,7 +2,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
 import userIfReducer from "../modules/userIfSlice";
 import refreshTokenReducer from "../modules/refreshTokenSlice";
-import { persistReducer, persistStore } from "redux-persist";
+import { persistReducer, persistStore, PURGE, PERSIST } from "redux-persist";
 import { encryptTransform } from 'redux-persist-transform-encrypt';
 import { PersistConfig, Transform } from "redux-persist/es/types";
 
@@ -16,33 +16,29 @@ const encryptor: Transform<any, any> = encryptTransform({
 });
 
 const persistConfig: PersistConfig<any>= {
-    key: "root",
-    storage,
-    transforms: [encryptor],
+  key: "root",
+  storage,
+  transforms: [encryptor],
 };
 
 const rootReducer = combineReducers({
-    userIf: userIfReducer,
-    refreshToken: refreshTokenReducer,
+  userIf: userIfReducer,
+  refreshToken: refreshTokenReducer,
 });
 
 const persistRootReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
-    reducer: persistRootReducer,
-    middleware: getDefaultMiddleware => getDefaultMiddleware({ serializableCheck: false }),
-    devTools: true,
+  reducer: persistRootReducer,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+    serializableCheck: {
+        ignoredActions: [PERSIST, PURGE],
+    },
+  }),
+  devTools: true,
 });
 
 const persistor = persistStore(store);
 
-const resetPersistor = () => {
-  try {
-    persistor.purge();
-  } catch (error) {
-    console.error("localStorage 초기화 오류", error);
-  }
-};
-
 export type RootState = ReturnType<typeof rootReducer>;
-export { store, persistor, resetPersistor };
+export { store, persistor };
