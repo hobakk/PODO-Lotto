@@ -109,7 +109,7 @@ public class UserService {
 			String refreshToken = jwtProvider.refreshToken(user.getEmail(), user.getId(), refreshPointer);
 			redisDao.setRefreshToken(refreshPointer, refreshToken, (long) 7, TimeUnit.DAYS);
 
-			Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken, 300);
+			Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken, "oneWeek");
 			String enCodedRefreshToken = passwordEncoder.encode(refreshToken);
 			response = new CookieAndTokenResponse(accessCookie, enCodedRefreshToken);
 		} else {

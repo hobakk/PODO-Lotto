@@ -127,11 +127,13 @@ public class JwtProvider {
 		return expirationDate == null || expirationDate.before(new Date());
 	}
 
-	public Cookie createCookie(String key, String tokenValue, int maxAge) {
+	public Cookie createCookie(String key, String tokenValue, Object maxAge) {
 		Cookie cookie = new Cookie(key, tokenValue);
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);
-		cookie.setMaxAge(maxAge);
+		if (maxAge instanceof Integer) cookie.setMaxAge((int) maxAge);
+		else if (maxAge.equals("oneWeek")) cookie.setMaxAge(604800);
+
 		return cookie;
 	}
 
