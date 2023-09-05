@@ -1,12 +1,17 @@
-package com.example.sixnumber.global.exception;
-
-import io.jsonwebtoken.ClaimJwtException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Header;
-
-public class BlackListException extends ClaimJwtException {
-
-	public BlackListException(Header header, Claims claims, String message) {
-		super(header, claims, message);
-	}
-}
+// package com.example.sixnumber.global.exception;
+//
+// import com.example.sixnumber.global.dto.ExceptionDto;
+//
+// import io.jsonwebtoken.ClaimJwtException;
+// import io.jsonwebtoken.Claims;
+//
+// public class BlackListException extends ClaimJwtException {
+// 	private final ExceptionDto exceptionDto;
+//
+// 	public BlackListException(Claims claims) {
+// 		super(null, claims, null);
+// 		this.exceptionDto = new ExceptionDto(401, "BLACKED", "허용되지 않는 AccessToken 입니다");
+// 	}
+//
+// 	public ExceptionDto getExceptionDto() { return exceptionDto; }
+// }
