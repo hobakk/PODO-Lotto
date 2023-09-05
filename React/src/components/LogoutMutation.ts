@@ -18,6 +18,8 @@ function LogoutMutation() {
         },
         onError: ()=>{ 
             console.log("로그아웃 에러");
+            purge();
+            navigate("/");
         }
     })
 

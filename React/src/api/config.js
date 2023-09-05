@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useSelector } from "react-redux";
 
 const url = `${process.env.REACT_APP_SPRING_URL}`
 
