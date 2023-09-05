@@ -85,4 +85,22 @@ public class TokenServiceTest {
 		verify(redisDao).getValue(anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
 	}
+
+	@Test
+	void reIssuance_fail_InValidRefreshToken() {
+		when(manager.findUser(anyString())).thenReturn(saveUser);
+
+		when(redisDao.getValue(anyString())).thenReturn(cookie.getValue());
+
+		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+
+		when(jwtProvider.validateRefreshToken(anyString())).thenReturn(false);
+
+		Assertions.assertThrows(CustomException.class, () -> tokenService.reIssuance(request));
+
+		verify(manager).findUser(anyString());
+		verify(redisDao).getValue(anyString());
+		verify(passwordEncoder).matches(anyString(), anyString());
+		verify(jwtProvider).validateRefreshToken(anyString());
+	}
 }
