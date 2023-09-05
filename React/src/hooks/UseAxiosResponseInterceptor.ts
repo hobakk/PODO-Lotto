@@ -35,21 +35,22 @@ const UesAxiosResponseInterceptor = () => {
                     navigate("/");
                     return Promise.resolve();
                 } else if (exceptionType === "RE_ISSUANCE") {
-                    await api.post(`/jwt/re-issuance`, {
-                        userId: userIf.userId,
-                        email: userIf.email,
-                        refreshToken: refreshToken,
-                    })
-                    .then((res) => {
+                    try {
+                        const res = await api.post(`/jwt/re-issuance`, {
+                            userId: userIf.userId,
+                            email: userIf.email,
+                            refreshToken: refreshToken,
+                        });
+
                         if (res.data.code === 200) {
                             console.log(config);
-                            return api(config);
+                            // return api(config);
                         }
-                    })
-                    .catch((err) => {
+                    } catch (err) {
                         console.log("userIf", userIf);
                         console.error("재발급 실패", err);
-                    })
+                        return Promise.reject(result);
+                    }
                 }
         
                 return Promise.reject(result);
@@ -57,7 +58,9 @@ const UesAxiosResponseInterceptor = () => {
         );
 
         return () => { api.interceptors.response.eject(interceptor); }
-    }, []);
-}
+    }, [reduxState.userIf, reduxState.refreshToken]);
+
+    return null;
+};
 
 export default UesAxiosResponseInterceptor;
