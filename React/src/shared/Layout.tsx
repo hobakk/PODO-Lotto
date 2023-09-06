@@ -27,7 +27,7 @@ const FooterStyles: React.CSSProperties = {
   color: 'white',
   alignItems: 'center',
   justifyContent: 'center',
-  fontSize: '12px',
+  marginTop: "10px",
 };
 
 const layoutStyles: React.CSSProperties = {
@@ -53,6 +53,7 @@ function Header() {
   const userIf = useSelector((state: RootState)=>state.userIf) as UserIf;
   const { nickname, role, cash } = userIf;
   const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [isHover, setIsHover] = useState<boolean>(false);
 
   const logoutHandler = () => {
     setIsLogin(false);
@@ -63,25 +64,21 @@ function Header() {
 
   return (
     <div style={ HeaderStyles }>
-      <div style={{ display:"flex", placeItems: "center",  width: "33%" }}>
-        <div id='LogoTitle' onClick={()=>{navigate("/")}} style={{ cursor: "pointer", marginLeft:"15px"}}>
+      <div style={{ display:"flex", placeItems: "center",  width: "30%" }}>
+        <div onClick={()=>{navigate("/")}} style={{ cursor: "pointer", marginLeft:"15px"}}>
           <img src={process.env.PUBLIC_URL + `/logo.png`} alt='Logo' style={{ width: "30px", height: "30px"}} />
         </div>
         <div onClick={()=>{navigate("/")}} style={{ marginLeft:"10px", cursor: "pointer"}}>
           <span style={{ fontSize: "24px" }}>PODO Lotto</span>
         </div>
       </div>
-      <div style={{ display:"flex", width: "34%", justifyContent: "center", height: "1cm" }}>
+      <div style={{ display:"flex", width: "40%", justifyContent: "center", height: "1cm" }}>
         <MenuContainer MenuValue={LottoMenuValue} />
         <MenuContainer MenuValue={StatsMenuValue} />
         <MenuContainer MenuValue={UserMenuValue} />
-        {userIf.role !== null &&(
-          userIf.role === "ROLE_ADMIN" &&(
-            <MenuContainer MenuValue={AdminMenuValue} />
-          ))
-        }
+        {userIf.role === "ROLE_ADMIN" && <MenuContainer MenuValue={AdminMenuValue}/> }
       </div>
-      <div style={{ display: "flex", justifyContent: "flex-end", width: "33%", marginRight: "15px" }}>
+      <div style={{ display: "flex", justifyContent: "flex-end", width: "30%", marginRight: "15px" }}>
         {!isLogin ? (
           <div style={{ fontSize:"18px"}}>
             <Link to={"/signin"} style={{ textDecoration: "none" }}>로그인</Link>
@@ -92,7 +89,14 @@ function Header() {
           <div>
             <CommonLink to={"/set-charging"} color={"#3E1F80"}>{cash}</CommonLink> 원  
             <CommonLink to={"/my-page"} color={"#F29135"}>{nickname}</CommonLink> 님 반갑습니다
-            <span style={LogoutStyle} onClick={logoutHandler}>로그아웃</span>
+            <span 
+              style={{ ...LogoutStyle, color: isHover ? "blue" : "black"}} 
+              onClick={logoutHandler} 
+              onMouseEnter={()=>setIsHover(true)}
+              onMouseLeave={()=>setIsHover(false)}
+            >
+              로그아웃
+            </span>
           </div>
         )}
       </div>

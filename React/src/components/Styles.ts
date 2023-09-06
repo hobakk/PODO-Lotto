@@ -65,6 +65,8 @@ export const MenuTitle =styled.p`
 export const Dropdown =styled.div`
   position: absolute;
   top: 113%;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: white;
   border: 6px solid #9957F0;
   padding: 10px 5px 10px 5px;
@@ -106,7 +108,6 @@ export const MenuDiv =styled.div<ColorProps>`
   cursor: pointer;
   width: 4cm;
   height: 43px;
-  margin-left: 80px;
   background-color: ${(props)=>props.color};
 `
 
