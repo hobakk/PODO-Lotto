@@ -15,8 +15,7 @@ const HeaderStyles: React.CSSProperties = {
   background: `linear-gradient(to bottom, white 90%, ${mainColor} 10%)`,
   height: '60px',
   display: 'flex',
-  flexDirection: "row",
-  alignItems: 'center',
+  placeItems: "center",
   fontWeight: '550',
 };
 
@@ -52,15 +51,11 @@ function Header() {
   const navigate = useNavigate();
   const logoutMutation = LogoutMutation();
   const userIf = useSelector((state: RootState)=>state.userIf) as UserIf;
+  const { nickname, role, cash } = userIf;
   const [isLogin, setIsLogin] = useState<boolean>(false);
-  const [cash, setCash] = useState<number>();
-  const [nickname, setNickname] = useState<string>("");
 
   useEffect(()=>{
-    const { nickname, role } = userIf;
     if  (nickname !== "" && role !== "") {
-      setCash(userIf.cash);
-      setNickname(userIf.nickname);
       setIsLogin(true);
     } else {
       setIsLogin(false);
@@ -92,10 +87,10 @@ function Header() {
             <Link to={"/signup"}> 회원가입</Link>
           </div>
         ):(
-          <div style={{ display:"flex", alignItems:'center', justifyContent: 'center', }}>
+          <div>
             <CommonLink to={"/set-charging"} color={"#3E1F80"}>{cash}</CommonLink> 원  
             <CommonLink to={"/my-page"} color={"#F29135"}>{nickname}</CommonLink> 님 반갑습니다
-            <div style={LogoutStyle} onClick={()=>logoutMutation.mutate()}>로그아웃</div>
+            <span style={LogoutStyle} onClick={()=>logoutMutation.mutate()}>로그아웃</span>
           </div>
         )}
       </div>

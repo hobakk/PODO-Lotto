@@ -89,6 +89,7 @@ export const CommonLink = styled(Link)<ColorProps>`
   color: ${(props)=>props.color};
   text-decoration: none;
   margin-left: 20px;
+  margin-right: 5px;
 
   &:hover {
     color: blue;
