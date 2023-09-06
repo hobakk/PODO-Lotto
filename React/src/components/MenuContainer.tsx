@@ -17,11 +17,11 @@ function MenuContainer({ MenuValue }: {MenuValue: MenuType}) {
 
     useEffect(()=>{
         if (isDropdown) {
-        setBackColor("#9957F0");
-        setSpanColor("white")
+            setBackColor("#9957F0");
+            setSpanColor("white")
         } else {
-        setBackColor("white");
-        setSpanColor("black");
+            setBackColor("white");
+            setSpanColor("black");
         }
     }, [isDropdown])
     
@@ -47,7 +47,7 @@ function MenuContainer({ MenuValue }: {MenuValue: MenuType}) {
                     <div style={navigationLinksStyles}>
                     <Dropdown>
                         <UlBox width="6cm">
-                        <div style={{ margin: "20px", justifyContent:"center" }}>
+                        <div style={{ padding:"10px", justifyContent:"center" }}>
                             {MenuValue.content.map((item)=>{
                                 return (
                                     <LiBox key={item[1]}>

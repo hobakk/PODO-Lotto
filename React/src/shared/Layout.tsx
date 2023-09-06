@@ -71,7 +71,7 @@ function Header() {
           <span style={{ fontSize: "24px" }}>PODO Lotto</span>
         </div>
       </div>
-      <div style={{ display:"flex", width: "34%", justifyContent: "center" }}>
+      <div style={{ display:"flex", width: "34%", justifyContent: "center", height: "1cm" }}>
         <MenuContainer MenuValue={LottoMenuValue} />
         <MenuContainer MenuValue={StatsMenuValue} />
         <MenuContainer MenuValue={UserMenuValue} />

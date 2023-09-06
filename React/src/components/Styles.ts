@@ -64,7 +64,7 @@ export const MenuTitle =styled.p`
 
 export const Dropdown =styled.div`
   position: absolute;
-  top: 115%;
+  top: 113%;
   background-color: white;
   border: 6px solid #9957F0;
   padding: 10px 5px 10px 5px;
@@ -104,8 +104,8 @@ export const CommonLink = styled(Link)<ColorProps>`
 
 export const MenuDiv =styled.div<ColorProps>`
   cursor: pointer;
-  width: 3cm;
-  height: 115%;
+  width: 4cm;
+  height: 43px;
   margin-left: 80px;
   background-color: ${(props)=>props.color};
 `
