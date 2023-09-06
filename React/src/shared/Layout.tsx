@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { CommonLink, LogoutStyle} from '../components/Styles';
@@ -54,23 +54,24 @@ function Header() {
   const { nickname, role, cash } = userIf;
   const [isLogin, setIsLogin] = useState<boolean>(false);
 
-  useEffect(()=>{
-    if  (nickname !== "" && role !== "") {
-      setIsLogin(true);
-    } else {
-      setIsLogin(false);
-    }
-  }, [userIf]);
+  const logoutHandler = () => {
+    setIsLogin(false);
+    logoutMutation.mutate();
+  }
+
+  useEffect(()=>{ if (nickname !== "" && role !== "") setIsLogin(true); }, [userIf]);
 
   return (
     <div style={ HeaderStyles }>
-      <div id='LogoTitle' onClick={()=>{navigate("/")}} style={{ cursor: "pointer", marginLeft:"15px"}}>
-        <img src={process.env.PUBLIC_URL + `/logo.png`} alt='Logo' style={{ width: "30px", height: "30px"}} />
+      <div style={{ display:"flex", placeItems: "center",  width: "33%" }}>
+        <div id='LogoTitle' onClick={()=>{navigate("/")}} style={{ cursor: "pointer", marginLeft:"15px"}}>
+          <img src={process.env.PUBLIC_URL + `/logo.png`} alt='Logo' style={{ width: "30px", height: "30px"}} />
+        </div>
+        <div onClick={()=>{navigate("/")}} style={{ marginLeft:"10px", cursor: "pointer"}}>
+          <span style={{ fontSize: "24px" }}>PODO Lotto</span>
+        </div>
       </div>
-      <div onClick={()=>{navigate("/")}} style={{ cursor: "pointer"}}>
-        <span style={{ fontSize: "26px" }}>PODO Lotto</span>
-      </div>
-      <div style={{ display:"flex", margin:"auto" }}>
+      <div style={{ display:"flex", width: "34%", justifyContent: "center" }}>
         <MenuContainer MenuValue={LottoMenuValue} />
         <MenuContainer MenuValue={StatsMenuValue} />
         <MenuContainer MenuValue={UserMenuValue} />
@@ -80,17 +81,18 @@ function Header() {
           ))
         }
       </div>
-      <div style={{ marginRight:"15px" }}>
+      <div style={{ display: "flex", justifyContent: "flex-end", width: "33%", marginRight: "15px" }}>
         {!isLogin ? (
-          <div>
-            <Link to={"/signin"}> 로그인 </Link> /
-            <Link to={"/signup"}> 회원가입</Link>
+          <div style={{ fontSize:"18px"}}>
+            <Link to={"/signin"} style={{ textDecoration: "none" }}>로그인</Link>
+            <span style={{ margin: "5px" }}>/</span>
+            <Link to={"/signup"} style={{ textDecoration: "none" }}>회원가입</Link>
           </div>
         ):(
           <div>
             <CommonLink to={"/set-charging"} color={"#3E1F80"}>{cash}</CommonLink> 원  
             <CommonLink to={"/my-page"} color={"#F29135"}>{nickname}</CommonLink> 님 반갑습니다
-            <span style={LogoutStyle} onClick={()=>logoutMutation.mutate()}>로그아웃</span>
+            <span style={LogoutStyle} onClick={logoutHandler}>로그아웃</span>
           </div>
         )}
       </div>

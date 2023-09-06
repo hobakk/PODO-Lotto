@@ -88,8 +88,8 @@ type ColorProps = {
 export const CommonLink = styled(Link)<ColorProps>`
   color: ${(props)=>props.color};
   text-decoration: none;
-  margin-left: 20px;
-  margin-right: 5px;
+  margin-left: 10px;
+  margin-right: 2px;
 
   &:hover {
     color: blue;
@@ -114,7 +114,7 @@ export const MenuSpan =styled.span<ColorProps>`
   color: ${(props)=>props.color};
   display: flex;
   justify-content: center;
-  font-size: 28px;
+  font-size: 25px;
 `
 
 export const WinNumberStyle =styled.div<ColorProps>`
