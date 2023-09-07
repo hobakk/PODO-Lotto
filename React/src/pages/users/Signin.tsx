@@ -52,24 +52,24 @@ function Signin() {
         <h3 style={{ fontSize: "80px"}}>Login</h3>
         <form onSubmit={submitHandler} style={{ fontSize: "30px" }}>
             <div style={{ marginBottom: "30px", width: "15cm", display: "flex",}}>
-                <span style={{ margin: "0", }}>Email:</span>
+                <span>Email:</span>
                 <InputBox 
                     type='text' 
                     name="email" 
                     ref={emailRef} 
                     placeholder='test@email.com'
-                    autoComplete='email' 
+                    autoComplete='current-email' 
                     onChange={onChangeHandler} 
                     style={{ marginLeft:"auto", textAlign: "center", }}
                 />
             </div>
             <div style={{ marginBottom: "30px", width: "15cm", display: "flex",}}>
-                <span style={{ margin: "0", }}>Password:</span>
+                <span>Password:</span>
                 <InputBox 
                     type='password' 
                     name='password' 
                     placeholder='**************' 
-                    autoComplete='password' 
+                    autoComplete='current-password' 
                     onChange={onChangeHandler} 
                     style={{ marginLeft:"auto", textAlign: "center", }}
                 />

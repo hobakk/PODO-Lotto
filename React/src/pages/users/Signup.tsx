@@ -40,35 +40,52 @@ function Signiup() {
   }
 
   return (
-    <div style={ SignBorder }>
-      <div style={ CommonStyle }>
-        <h3 style={{ fontSize: "80px"}}>Signup</h3>
-        <form onSubmit={sunmitHandler} style={{ fontSize: "30px", display: "flex", flexDirection: "column", }}>
-          <div>
-            <span>Email : </span>
-            <InputBox onChange={onChangeHandler} placeholder='test@email.com' style={{ marginLeft: "55px" }} value={inputValue.email} ref={emailRef} name='email' />
-          </div>
-          <div style={{ marginTop: "20px", marginBottom: "20px" }}>
-            <span>Password : </span>
-            <InputBox onChange={onChangeHandler} type="password" placeholder='******' value={inputValue.password} name="password" />
-          </div>
-          <div>
-            <span>Nickname : </span>
-            <InputBox onChange={onChangeHandler} type="text" placeholder='홍길동' value={inputValue.nickname} name="nickname" />
-          </div>
-          <div style={{ fontSize: "18px", margin: "auto", marginBottom: "1cm", marginTop: "1cm"}}>
-          <div>
-              <Link to="/incorrect">아이디와 비밀번호를 잊으셨나요 ?</Link>
-          </div>
-          <div>
-              <Link to="/signip">회원 이신가요 ?</Link>
-          </div>
-          </div>
-          <div style={{marginLeft: "auto"}}>
-              <button style={{ width: "100px", height: "25px" }}>회원가입</button>
-          </div>
-        </form>
-      </div>
+    <div style={ CommonStyle }>
+      <h3 style={{ fontSize: "80px"}}>Signup</h3>
+      <form onSubmit={sunmitHandler} style={{ fontSize: "30px", display: "flex", flexDirection: "column", width: "15cm" }}>
+        <div style={{ display: "flex" }}>
+          <span>Email:</span>
+          <InputBox 
+            onChange={onChangeHandler} 
+            placeholder='test@email.com' 
+            value={inputValue.email} 
+            ref={emailRef} 
+            name='email'
+            autoComplete='current-email'  
+            style={{ marginLeft:"auto", textAlign: "center", }} 
+          />
+        </div>
+        <div style={{ display: "flex", marginTop: "30px", marginBottom: "30px" }}>
+          <span>Password:</span>
+          <InputBox 
+            onChange={onChangeHandler} 
+            type="password" 
+            placeholder='******' 
+            value={inputValue.password} 
+            name="password" 
+            autoComplete='current-password' 
+            style={{ marginLeft:"auto", textAlign: "center", }} 
+          />
+        </div>
+        <div style={{ display: "flex" }}>
+          <span>Nickname:</span>
+          <InputBox 
+            onChange={onChangeHandler} 
+            type="text" 
+            placeholder='홍길동' 
+            value={inputValue.nickname} 
+            name="nickname" 
+            style={{ marginLeft:"auto", textAlign: "center", marginBottom: "30px" }}
+          />
+        </div>
+        <div style={ {marginLeft: "auto", marginBottom: "30px" }}>
+            <button style={{ width: "7.2cm", height: "25px" }}>회원가입</button>
+        </div>
+        <div style={{ display:"flex", flexDirection:"column", fontSize: "18px", marginRight: "auto", marginTop: "1cm"}}>
+          <Link to="/incorrect">아이디와 비밀번호를 잊으셨나요 ?</Link>
+          <Link to="/signip" style={{ marginTop:"15px" }}>회원 이신가요 ?</Link>
+        </div>
+      </form>
     </div>
   )
 }
