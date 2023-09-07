@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import lombok.Getter;
 
 @Getter
-public class IsNullAccessTokenException extends RuntimeException {
+public class IsNullRefreshTokenException extends RuntimeException {
 	private final HttpStatus httpStatus = HttpStatus.NOT_FOUND;
-	private final String msg = "AccessToken 이 존재하지 않습니다";
+	private final String msg = "RefreshToken 이 존재하지 않습니다";
 }

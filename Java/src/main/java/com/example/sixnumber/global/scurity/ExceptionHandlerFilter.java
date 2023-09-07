@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.sixnumber.global.dto.ExceptionDto;
+import com.example.sixnumber.global.exception.IsNullRefreshTokenException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -31,6 +32,9 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 		} catch (ExpiredJwtException e) {
 			exceptionDto = new ExceptionDto(401, "RE_ISSUANCE", "");
 			setExceptionDto(response, exceptionDto);
+		} catch (IsNullRefreshTokenException e) {
+			exceptionDto = new ExceptionDto(400, "REFRESH_ISNULL", "Redis 에 refreshToken 이 없습니다 ");
+			setExceptionDto(response, exceptionDto);
 		}
 	}
 
@@ -40,27 +44,4 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 		response.setStatus(exceptionDto.getCode());
 		objectMapper.writeValue(response.getWriter(), exceptionDto);
 	}
-
-	// private boolean validateRefreshInCookie(String refreshTokenInCookie, String refreshPointer,
-	// 	HttpServletResponse response) {
-	//
-	// 	if (isDifferent(refreshTokenInCookie, refreshPointer)) return true;
-	//
-	// 	String newAccessToken = jwtProvider.accessToken(refreshPointer);
-	// 	updateAccessTokenCookie(response, newAccessToken);
-	// 	createAuthentication(jwtProvider.getTokenInUserId(refreshTokenInCookie));
-	// 	return false;
-	// }
-	//
-	// private boolean isDifferent(String refreshTokenInCookie, String refreshPointer) {
-	// 	String inRedisValue = redisDao.getValue(refreshPointer);
-	// 	if (inRedisValue == null) return true; // refreshToken 의 TTL 이 만료되어 자동 삭제됬을 경우 생각해봐야함
-	//
-	// 	return !refreshTokenInCookie.equals(inRedisValue);
-	// }
-	//
-	// private void updateAccessTokenCookie(HttpServletResponse response, String newAccessToken) {
-	// 	Cookie cookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, newAccessToken, 300);
-	// 	response.addCookie(cookie);
-	// }
 }
