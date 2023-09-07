@@ -11,12 +11,13 @@ function GetUserIfMutation() {
 
     const getIfMutation = useMutation<UnifiedResponse<UserDetailInfo>>(getInformation, {
         onSuccess: (res)=>{
-            if (res.code === 200 && res.data)
-            dispatch(setUserIf(res.data));
+            if (res.code === 200 && res.data) {
+                dispatch(setUserIf(res.data));
+            }
         }
     })
 
-  return getIfMutation;
+    return getIfMutation;
 }
 
 export default GetUserIfMutation

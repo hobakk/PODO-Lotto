@@ -13,6 +13,7 @@ function MyPage() {
     const userIf = useSelector((state: RootState)=>state.userIf);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const logoutMutation = LogoutMutation();
     const [role, setRole] = useState<string>("일반");
     const [withdrawMsg, setWithdrawMsg] = useState<string>("");
 
@@ -27,8 +28,6 @@ function MyPage() {
             }
         }
     }, [userIf])
-
-    const logoutMutation = LogoutMutation();
 
     const withdrawMutation = useMutation<UnifiedResponse<undefined>, void, string>(withdraw, {
         onSuccess: (res)=>{

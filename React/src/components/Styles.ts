@@ -6,7 +6,6 @@ const mainColor = `#9957F0`;
 export const CommonStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  // justifyContent: 'center',
   alignItems: 'center',
   minHeight: '90vh',
 }
@@ -28,7 +27,7 @@ type UlBoxProps = {
 }
 
 export const InputBox =styled.input`
-  width: 5cm;
+  width: 7cm;
   height: 25px;
 `
 
