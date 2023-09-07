@@ -1,5 +1,5 @@
 import axios from "axios";
-import { signApi } from "./config";
+import { api } from "./config";
 import { UnifiedResponse, Err, UserIfState, WinNumber } from "../shared/TypeMenu";
 
 export type SigninRequest = {
@@ -15,7 +15,7 @@ export type SignupRequest = {
 
 const signin = async (emailPassword: SigninRequest): Promise<UnifiedResponse<undefined>> => {
     try {
-        const response = await signApi.post(`/signin`, emailPassword);    
+        const response = await api.post(`/users/signin`, emailPassword);    
         return response.data;
     } catch (error: any) {
         throw error.response.data;
