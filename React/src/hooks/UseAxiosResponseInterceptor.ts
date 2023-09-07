@@ -34,7 +34,6 @@ const UesAxiosResponseInterceptor = () => {
             const { exceptionType, msg } = error.response.data;
             if (exceptionType === "RE_ISSUANCE") {
                 const newConfig = error.response.config;
-                console.log(refreshToken);
                 newConfig.headers.set('Authorization', `Bearer ${refreshToken}`);
                 return await axios.request(newConfig)
             } else if (exceptionType === "DONT_LOGIN") {

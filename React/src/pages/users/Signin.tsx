@@ -1,5 +1,5 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react'
-import { CommonStyle, SignBorder } from '../../components/Styles'
+import React, { useEffect, useRef, useState } from 'react'
+import { CommonStyle } from '../../components/Styles'
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { signin, SigninRequest } from '../../api/noneUserApi';

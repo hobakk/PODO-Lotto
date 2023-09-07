@@ -120,7 +120,7 @@ function InformationUpdate() {
                             type="text" 
                             onChange={onChangeHandler} 
                             placeholder='test@email.com' 
-                            style={{ marginLeft:"auto", alignItems: "center"}}
+                            style={{ marginLeft:"auto", textAlign: "center"}}
                         />
                     </div>
                     <div style={{ display: "flex", marginTop:"30px", marginBottom:"30px"}}>
@@ -132,7 +132,7 @@ function InformationUpdate() {
                             onChange={onChangeHandler} 
                             placeholder='********' 
                             autoComplete='current-password'
-                            style={{ marginLeft:"auto", alignItems: "center"}}
+                            style={{ marginLeft:"auto", textAlign: "center"}}
                         />
                     </div>
                     <div style={{ display: "flex" }}>
@@ -143,7 +143,7 @@ function InformationUpdate() {
                             type="text" 
                             onChange={onChangeHandler} 
                             placeholder='test' 
-                            style={{ marginLeft:"auto", alignItems: "center"}}
+                            style={{ marginLeft:"auto", textAlign: "center"}}
                         />
                     </div>
                     <div style={{ marginLeft: "auto", width: "7.2cm", marginTop:"30px" }}>
