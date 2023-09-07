@@ -21,7 +21,8 @@ const UesAxiosResponseInterceptor = () => {
         const header = response.headers;
         if (header instanceof AxiosHeaders) {
             if (header.has('Authorization')) {
-                dispatch(setRefreshToken(header.get('Authorization')?.toString().split(" ")[1] ?? ""));
+                const encodedRefresh: string = header.get('Authorization')?.toString().split(" ")[1] ?? "";
+                if (encodedRefresh !== "") dispatch(setRefreshToken(encodedRefresh));
             } 
         }
 
@@ -33,6 +34,7 @@ const UesAxiosResponseInterceptor = () => {
             const { exceptionType, msg } = error.response.data;
             if (exceptionType === "RE_ISSUANCE") {
                 const newConfig = error.response.config;
+                console.log(refreshToken);
                 newConfig.headers.set('Authorization', `Bearer ${refreshToken}`);
                 return await axios.request(newConfig)
             } else if (exceptionType === "DONT_LOGIN") {
@@ -54,6 +56,7 @@ const UesAxiosResponseInterceptor = () => {
     }
 
     const requestInterceptor = api.interceptors.request.use((request)=> requestHandler(request));
+
     const responseInterceptor = api.interceptors.response.use(
         (response) => responseHandler(response),
         (error) => errorHandler(error)
