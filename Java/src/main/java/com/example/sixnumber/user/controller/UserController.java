@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sixnumber.global.dto.UnifiedResponse;
+import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
@@ -44,10 +45,11 @@ public class UserController {
 	}
 
 	@PostMapping("/signin")
-	public ResponseEntity<UnifiedResponse<String>> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
+	public ResponseEntity<UnifiedResponse<?>> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
 		CookieAndTokenResponse result = userService.signIn(request);
 		response.addCookie(result.getAccessCookie());
-		return ResponseEntity.ok(UnifiedResponse.ok("로그인 성공", result.getEnCodedRefreshToken()));
+		response.addHeader(JwtProvider.AUTHORIZATION_HEADER, result.getEnCodedRefreshToken());
+		return ResponseEntity.ok(UnifiedResponse.ok("로그인 성공"));
 	}
 
 	@PostMapping("/logout")

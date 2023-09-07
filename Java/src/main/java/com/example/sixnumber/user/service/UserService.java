@@ -111,7 +111,7 @@ public class UserService {
 
 			Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken, "oneWeek");
 			String enCodedRefreshToken = passwordEncoder.encode(refreshToken);
-			response = new CookieAndTokenResponse(accessCookie, enCodedRefreshToken);
+			response = new CookieAndTokenResponse(accessCookie, "Bearer " + enCodedRefreshToken);
 		} else {
 			redisDao.deleteValues(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
 			throw new OverlapException("중복 로그인 입니다");
