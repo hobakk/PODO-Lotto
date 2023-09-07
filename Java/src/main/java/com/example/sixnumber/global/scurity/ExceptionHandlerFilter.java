@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.sixnumber.global.dto.ExceptionDto;
-import com.example.sixnumber.global.exception.IsNullRefreshTokenException;
+import com.example.sixnumber.global.exception.AccessTokenIsExpiredException;
+import com.example.sixnumber.global.exception.RefreshTokenIsNullException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -29,10 +29,10 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 
 		try {
 			filterChain.doFilter(request, response);
-		} catch (ExpiredJwtException e) {
+		} catch (AccessTokenIsExpiredException e) {
 			exceptionDto = new ExceptionDto(401, "RE_ISSUANCE", "");
 			setExceptionDto(response, exceptionDto);
-		} catch (IsNullRefreshTokenException e) {
+		} catch (RefreshTokenIsNullException e) {
 			exceptionDto = new ExceptionDto(400, "REFRESH_ISNULL", "Redis 에 refreshToken 이 없습니다 ");
 			setExceptionDto(response, exceptionDto);
 		}
