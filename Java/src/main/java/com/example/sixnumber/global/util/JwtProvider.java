@@ -33,8 +33,8 @@ public class JwtProvider {
 		this.secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
 	}
 
-	// public static final String AUTHORIZATION_HEADER = "Authorization";
-	// public static final String BEARER_PREFIX = "Bearer";
+	public static final String AUTHORIZATION_HEADER = "Authorization";
+	public static final String BEARER_PREFIX = "Bearer";
 	public static final String REFRESH_TOKEN = "refreshToken";
 	public static final String ACCESS_TOKEN = "accessToken";
 	private static final Duration expire = Duration.ofMinutes(5);
@@ -71,6 +71,14 @@ public class JwtProvider {
 			.setExpiration(Date.from(expiration))
 			.signWith(secretKey)
 			.compact();
+	}
+
+	public String resolveToken(HttpServletRequest request) {
+		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+		if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
+			return bearerToken.substring(7);
+		}
+		return null;
 	}
 
 	public Long getTokenInUserId(String token) {
@@ -178,13 +186,5 @@ public class JwtProvider {
 	// 		.getSubject();
 	//
 	// 	return userId + "," + email;
-	// }
-
-	// public String resolveToken(HttpServletRequest request) {
-	// 	String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-	// 	if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
-	// 		return bearerToken.substring(7);
-	// 	}
-	// 	return null;
 	// }
 }
