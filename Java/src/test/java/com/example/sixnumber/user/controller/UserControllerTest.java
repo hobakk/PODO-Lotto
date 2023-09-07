@@ -93,8 +93,8 @@ class UserControllerTest {
 			.content(objectMapper.writeValueAsString(TestDataFactory.signinRequest())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("로그인 성공"))
-			.andExpect(jsonPath("$.data").isNotEmpty())
-			.andExpect(cookie().value("accessToken", "accessTokenValue"));
+			.andExpect(cookie().value("accessToken", "accessTokenValue"))
+			.andExpect(header().stringValues("Authorization", "EnCodedRefreshTokenValue"));
 
 		verify(userService).signIn(any(SigninRequest.class));
 	}
