@@ -1,64 +1,66 @@
 import { useEffect } from "react"
-import { api } from "../api/config"
-import { useSelector } from "react-redux";
+import axios, { AxiosHeaders, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
+import { api, signApi } from "../api/config"
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../config/configStore";
 import { useNavigate } from "react-router-dom";
-import { UserDetailInfo } from "../shared/TypeMenu";
+import { setRefreshToken } from "../modules/refreshTokenSlice";
 
 const UesAxiosResponseInterceptor = () => {
-    const DONT_LOGIN = "DONT_LOGIN";
-    const ACCESS_DENIED = "ACCESS_DENIED";
-    const ONLY_ADMIN_ACCESS_API = "ONLY_ADMIN_ACCESS_API";
-    const reduxState = useSelector((state: RootState)=>state);
+    const refreshToken = useSelector((state: RootState)=>state.refreshToken.refreshToken);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    useEffect(()=>{
-        const interceptor = api.interceptors.response.use(
-            response => response,
-            async error => {
-                const { config, response } = error;
-                const result = response.data;
-                const exceptionType = result.exceptionType;
-                const userIf: UserDetailInfo = reduxState.userIf;
-                const refreshToken: string = reduxState.refreshToken.refreshToken;
-                
-                if (exceptionType === DONT_LOGIN) {
-                    alert(result.msg);
-                    navigate("/signin");
-                    return Promise.resolve();
-                } else if (exceptionType === ACCESS_DENIED) {
-                    alert(result.msg);
-                    navigate("/premium");
-                    return Promise.resolve();
-                } else if (exceptionType === ONLY_ADMIN_ACCESS_API) {
-                    alert(result.msg);
-                    navigate("/");
-                    return Promise.resolve();
-                } else if (exceptionType === "RE_ISSUANCE") {
-                    try {
-                        const res = await api.post(`/jwt/re-issuance`, {
-                            userId: userIf.userId,
-                            email: userIf.email,
-                            refreshToken: refreshToken,
-                        });
+    const requestHandler = (request: InternalAxiosRequestConfig<any>) => {
+        request.headers['Content-Type'] = 'application/json';
+        return request;
+    };
 
-                        if (res.data.code === 200) {
-                            console.log(config);
-                            // return api(config);
-                        }
-                    } catch (err) {
-                        console.log("userIf", userIf);
-                        console.error("재발급 실패", err);
-                        return Promise.reject(result);
-                    }
-                }
-        
-                return Promise.reject(result);
+    const responseHandler = (response: AxiosResponse<any, any>) => {
+        const header = response.headers;
+        if (header instanceof AxiosHeaders) {
+            if (header.has('Authorization')) {
+                dispatch(setRefreshToken(header.get('Authorization')?.toString().split(" ")[1] ?? ""));
+            } 
+        }
+
+        return response;
+    }
+
+    const errorHandler = async (error: any) => {
+        if (error.response) {
+            const { exceptionType, msg } = error.response.data;
+            if (exceptionType === "RE_ISSUANCE") {
+                const newConfig = error.response.config;
+                newConfig.headers.set('Authorization', `Bearer ${refreshToken}`);
+                return await axios.request(newConfig)
+            } else if (exceptionType === "DONT_LOGIN") {
+                alert(msg);
+                navigate("/signin");
+            } else if (exceptionType === "ACCESS_DENIED") {
+                alert(msg);
+                navigate("/premium");
+            } else if (exceptionType === "ONLY_ADMIN_ACCESS_API") {
+                alert(msg);
+                navigate("/");
             }
-        );
+        }
+            
+        return error;
+    }
 
-        return () => { api.interceptors.response.eject(interceptor); }
-    }, [reduxState.userIf, reduxState.refreshToken]);
+    const requestInterceptor = api.interceptors.request.use((request)=> requestHandler(request));
+    const responseInterceptor = api.interceptors.response.use(
+        (response) => responseHandler(response),
+        (error) => errorHandler(error)
+    );
+
+    useEffect(() => {
+        return () => {
+            api.interceptors.request.eject(requestInterceptor)
+            api.interceptors.response.eject(responseInterceptor)
+        }
+    }, [requestInterceptor, responseInterceptor])
 
     return null;
 };

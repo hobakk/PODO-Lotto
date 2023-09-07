@@ -18,15 +18,4 @@ const api = axios.create({
     withCredentials: true,
 })
 
-api.interceptors.request.use(
-    (config) => {
-        config.headers['Content-Type'] = 'application/json';
-        return config;
-    },
-    (error) => {
-        console.log(error);
-        return Promise.reject(error);
-    }
-)
-
 export { signApi, api };
