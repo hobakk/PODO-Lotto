@@ -152,10 +152,11 @@ public class UserServiceTest {
 		when(jwtProvider.refreshToken(eq(saveUser.getEmail()), eq(saveUser.getId()), anyString()))
 			.thenReturn(cookieAndTokenResponse.getEnCodedRefreshToken());
 		when(jwtProvider.accessToken(anyString())).thenReturn(cookieAndTokenResponse.getAccessCookie().getValue());
-		when(jwtProvider.createCookie(anyString(), anyString(), anyInt()))
+		when(jwtProvider.createCookie(anyString(), anyString(), anyString()))
 			.thenReturn(cookieAndTokenResponse.getAccessCookie());
 
-		when(passwordEncoder.encode(anyString())).thenReturn("EnCodedRefreshTokenValue");
+		String encodedRefreshToken = "EnCodedRefreshTokenValue";
+		when(passwordEncoder.encode(anyString())).thenReturn(encodedRefreshToken);
 
 		CookieAndTokenResponse response = userService.signIn(signinRequest);
 
@@ -165,10 +166,10 @@ public class UserServiceTest {
 		verify(jwtProvider).refreshToken(eq(saveUser.getEmail()), eq(saveUser.getId()), anyString());
 		verify(jwtProvider).accessToken(anyString());
 		verify(redisDao).setRefreshToken(anyString(), anyString(), anyLong(), any(TimeUnit.class));
-		verify(jwtProvider).createCookie(anyString(), anyString(), anyInt());
+		verify(jwtProvider).createCookie(anyString(), anyString(), anyString());
 		verify(passwordEncoder).encode(anyString());
 		assertNotNull(response.getAccessCookie());
-		assertEquals(response.getEnCodedRefreshToken(), "EnCodedRefreshTokenValue");
+		assertEquals(response.getEnCodedRefreshToken(), "Bearer " + encodedRefreshToken);
 	}
 
 	@Test
