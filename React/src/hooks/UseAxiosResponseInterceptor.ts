@@ -1,10 +1,11 @@
 import { useEffect } from "react"
 import axios, { AxiosHeaders, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
-import { api, signApi } from "../api/config"
+import { api } from "../api/config"
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../config/configStore";
 import { useNavigate } from "react-router-dom";
 import { setRefreshToken } from "../modules/refreshTokenSlice";
+import { persistor } from "../config/configStore";
 
 const UesAxiosResponseInterceptor = () => {
     const refreshToken = useSelector((state: RootState)=>state.refreshToken.refreshToken);
@@ -43,6 +44,9 @@ const UesAxiosResponseInterceptor = () => {
             } else if (exceptionType === "ONLY_ADMIN_ACCESS_API") {
                 alert(msg);
                 navigate("/");
+            } else if (exceptionType === "REFRESH_ISNULL") {
+                alert("토큰이 만료되어 로그아웃 됩니다");
+                await persistor.purge();
             }
         }
             
