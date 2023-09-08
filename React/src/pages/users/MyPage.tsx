@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { CommonStyle, CommonP, CommonLink } from '../../components/Styles'
+import { CommonStyle, CommonP, CommonLink, MsgAndInput, InputBoxStyle, InputBox } from '../../components/Styles'
 import { withdraw } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { setStatus } from '../../modules/userIfSlice';
 import LogoutMutation from '../../components/LogoutMutation';
 import { RootState } from '../../config/configStore';
 import { UnifiedResponse } from '../../shared/TypeMenu';
+import { Link } from 'react-router-dom';
 
 function MyPage() {
     const userIf = useSelector((state: RootState)=>state.userIf);
@@ -19,12 +20,10 @@ function MyPage() {
 
     useEffect(()=>{
         if (userIf.role !== "") {
-            if (userIf.role == "ROLE_USER") {
-                setRole("일반");
-            } else if (userIf.role == "ROLE_PAID") {
-                setRole("프리미엄");
-            } else if (userIf.role == "ROLE_ADMIN") {
-                setRole("관리자");
+            switch (userIf.role) {
+                case "ROLE_USER": setRole("일반"); break;
+                case "ROLE_PAID": setRole("프리미엄"); break;
+                case "ROLE_ADMIN": setRole("관리자"); break;
             }
         }
     }, [userIf])
@@ -49,10 +48,11 @@ function MyPage() {
     }
 
     const LinkStyle: React.CSSProperties = { 
-        color: "red",
-        fontSize: "20px",
+        textDecoration: "none",
         marginTop: "30px",
-        marginLeft: "4cm"
+        marginLeft: "auto",
+        fontSize:"20px",
+        color:"red"
     }
 
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,29 +60,44 @@ function MyPage() {
     }
 
   return (
-    <>
-        <div style={CommonStyle}>
-            <div id="common" style={{ marginTop: "20px" }}>
-                <h1 style={{ fontSize: "80px"}}>My Page</h1>
-                <div style={{ marginTop: "50px"}}>
-                    <CommonP>Email:&nbsp;{userIf.email}</CommonP>
-                    <CommonP>Nickname:&nbsp;{userIf.nickname}</CommonP>
-                    <CommonP>Cash:&nbsp;{userIf.cash}</CommonP>
-                    <CommonP>Role:&nbsp;{role}</CommonP>
+    <div style={CommonStyle}>
+        <div>
+            <h1 style={{ fontSize: "80px", textAlign:"center"}}>My Page</h1>
+            <div style={{ marginTop: "50px", width:"12cm" }}>
+                <div style={{ ...MsgAndInput, width:"12cm"}}>
+                    <span>Email:</span>
+                    <span style={InputBoxStyle}>{userIf.email}</span>
+                </div>
+                <div style={{ ...MsgAndInput, width:"12cm"}}>
+                    <span>Nickname:</span>
+                    <span style={InputBoxStyle}>{userIf.nickname}</span>
+                </div>
+                <div style={{ ...MsgAndInput, width:"12cm"}}>
+                    <span>Cash:</span>
+                    <span style={InputBoxStyle}>{userIf.cash}</span>
+                </div>
+                <div style={{ ...MsgAndInput, width:"12cm"}}>
+                    <span>Role:</span>
+                    <span style={InputBoxStyle}>{role}</span>
                 </div>
             </div>
-            
-            <CommonLink to="/my-page/update" color="black" style={LinkStyle}>회원정보 수정하기</CommonLink>
-            {role !== "관리자" && (
-                <div style={{ marginTop: '5cm', }}>
-                    <form id='form' onSubmit={sunmitHandler}>
-                        <input onChange={onChangeHandler} type='text' placeholder='회원탈퇴 입력'/>
-                        <button>회원탈퇴</button>
-                    </form>
-                </div>
-            )}
         </div>
-    </>
+        <Link to="/my-page/update" style={LinkStyle}>회원정보 수정하기</Link>
+        
+        {role !== "관리자" && (
+            <div style={{ marginTop: '5cm', }}>
+                <form id='form' onSubmit={sunmitHandler} style={{ ...MsgAndInput, width:"12cm"}}>
+                    <InputBox 
+                        onChange={onChangeHandler} 
+                        type='text' 
+                        placeholder='회원탈퇴 입력'
+                        style={InputBoxStyle}
+                    />
+                    <button style={{ width:"3cm", height:"31px" }}>회원탈퇴</button>
+                </form>
+            </div>
+        )}
+    </div>
   )
 }
 
