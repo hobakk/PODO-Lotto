@@ -8,7 +8,7 @@ import { setRefreshToken } from "../modules/refreshTokenSlice";
 import { persistor } from "../config/configStore";
 
 const UesAxiosResponseInterceptor = () => {
-    const refreshToken = useSelector((state: RootState)=>state.refreshToken.refreshToken);
+    const refreshTokenSlice = useSelector((state: RootState)=>state.refreshToken);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -22,7 +22,16 @@ const UesAxiosResponseInterceptor = () => {
         if (header instanceof AxiosHeaders) {
             if (header.has('Authorization')) {
                 const encodedRefresh: string = header.get('Authorization')?.toString().split(" ")[1] ?? "";
-                if (encodedRefresh !== "") dispatch(setRefreshToken(encodedRefresh));
+                if (encodedRefresh !== "") {
+                    const currentDate = new Date();
+                    const oneWeekLater = new Date(currentDate);
+                    oneWeekLater.setDate(currentDate.getDate() + 7);
+
+                    dispatch(setRefreshToken({
+                        value: encodedRefresh,
+                        expirationTime: oneWeekLater.getTime().toString()
+                    }));
+                }
             } 
         }
 
@@ -34,7 +43,18 @@ const UesAxiosResponseInterceptor = () => {
             const { exceptionType, msg } = error.response.data;
             if (exceptionType === "RE_ISSUANCE") {
                 const newConfig = error.response.config;
-                newConfig.headers.set('Authorization', `Bearer ${refreshToken}`);
+                
+                if (refreshTokenSlice.expirationTime !== "") {
+                    const now = new Date();
+                    const expirationDate = new Date(refreshTokenSlice.expirationTime);
+                    if (now < expirationDate) {
+                        const refreshToken = refreshTokenSlice.value;
+                        if (refreshToken !== null) {
+                            newConfig.headers.set('Authorization', `Bearer ${refreshToken}`);
+                        } else console.log("encodedRefresh 값이 존재하지 않음");
+                    } else await persistor.purge();
+                }
+            
                 return await axios.request(newConfig)
             } else if (exceptionType === "DONT_LOGIN") {
                 alert(msg);

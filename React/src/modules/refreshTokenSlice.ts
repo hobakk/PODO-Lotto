@@ -1,16 +1,23 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { PURGE } from "redux-persist";
 
-const initialState: {refreshToken: string} = {
-    refreshToken: "",
+export type RefershSlice = {
+    value: string,
+    expirationTime: string,
+}
+
+const initialState: RefershSlice = {
+    value: "",
+    expirationTime: "",
 }
 
 const refreshTokenSlice = createSlice({
     name: "refreshToken",
     initialState,
     reducers: {
-        setRefreshToken: (state, action: PayloadAction<string>) => {
-            state.refreshToken = action.payload;
+        setRefreshToken: (state, action: PayloadAction<RefershSlice>) => {
+            state.value = action.payload.value;
+            state.expirationTime = action.payload.expirationTime;
         },
     },
 
