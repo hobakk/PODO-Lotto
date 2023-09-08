@@ -29,7 +29,7 @@ const UesAxiosResponseInterceptor = () => {
 
                     dispatch(setRefreshToken({
                         value: encodedRefresh,
-                        expirationTime: oneWeekLater.getTime().toString()
+                        expirationTime: oneWeekLater.toISOString(),
                     }));
                 }
             } 
@@ -43,14 +43,14 @@ const UesAxiosResponseInterceptor = () => {
             const { exceptionType, msg } = error.response.data;
             if (exceptionType === "RE_ISSUANCE") {
                 const newConfig = error.response.config;
+                const { value, expirationTime } = refreshTokenSlice;
                 
-                if (refreshTokenSlice.expirationTime !== "") {
+                if (expirationTime !== "") {
                     const now = new Date();
-                    const expirationDate = new Date(refreshTokenSlice.expirationTime);
-                    if (now < expirationDate) {
-                        const refreshToken = refreshTokenSlice.value;
-                        if (refreshToken !== null) {
-                            newConfig.headers.set('Authorization', `Bearer ${refreshToken}`);
+                    const expirationDate = new Date(parseInt(expirationTime));
+                    if (now > expirationDate) {
+                        if (value !== null) {
+                            newConfig.headers.set('Authorization', `Bearer ${value}`);
                         } else console.log("encodedRefresh 값이 존재하지 않음");
                     } else await persistor.purge();
                 }
