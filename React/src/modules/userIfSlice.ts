@@ -10,7 +10,6 @@ const initialState: UserDetailInfo = {
     cash: 0,
     role: "",
     status: "",
-    statement: {},
 }
 
 const userIfSlice = createSlice({
@@ -18,14 +17,13 @@ const userIfSlice = createSlice({
     initialState,
     reducers: {
         setUserIf: (state, action: PayloadAction<UserDetailInfo>) => {
-            const { userId, email, nickname, cash, role, status, statement } = action.payload;
+            const { userId, email, nickname, cash, role, status } = action.payload;
             state.userId = userId;
             state.email = email;
             state.nickname = nickname;
             state.cash = cash;
             state.role = role;
             state.status = status;
-            state.statement = statement;
         },
         setStatus: (state, action: PayloadAction<string>) => {
             state.status = action.payload;
