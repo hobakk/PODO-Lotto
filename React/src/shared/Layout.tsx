@@ -56,11 +56,14 @@ function Header() {
   const [isHover, setIsHover] = useState<boolean>(false);
 
   const logoutHandler = () => {
-    setIsLogin(false);
+    // setIsLogin(false);
     logoutMutation.mutate();
   }
 
-  useEffect(()=>{ if (nickname !== "" && role !== "") setIsLogin(true); }, [userIf]);
+  useEffect(()=>{ 
+    if (nickname !== "" && role !== "") setIsLogin(true);
+    else setIsLogin(false);
+  }, [userIf]);
 
   return (
     <div style={ HeaderStyles }>
