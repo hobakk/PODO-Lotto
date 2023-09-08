@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
 import { useMutation } from 'react-query';
 import { getSearch } from '../../api/adminApi';
-import { UnifiedResponse, Err, AdminGetCharges } from '../../shared/TypeMenu';
+import { UnifiedResponse, Err, upDownCashRequest } from '../../shared/TypeMenu';
 import { ChargingDto } from '../../api/userApi';
 
 function SearchCharges() {
@@ -10,13 +10,13 @@ function SearchCharges() {
         msg: "",
         cash: 0,
     });
-    const [value, setValue] = useState<AdminGetCharges>({
+    const [value, setValue] = useState<upDownCashRequest>({
         userId: 0,
         msg: "",
-        value: 0,
+        cash: 0,
     });
 
-    const getSearchMutation = useMutation<UnifiedResponse<AdminGetCharges>, Err, ChargingDto>(getSearch, {
+    const getSearchMutation = useMutation<UnifiedResponse<upDownCashRequest>, Err, ChargingDto>(getSearch, {
         onSuccess: (res)=>{
             if (res.code === 200 && res.data) {
                 setValue(res.data);
@@ -27,7 +27,7 @@ function SearchCharges() {
                 alert(err.msg);
             }
 
-            setValue({userId: 0, msg: "", value: 0});
+            setValue({userId: 0, msg: "", cash: 0});
         }
     })
 
@@ -91,7 +91,7 @@ function SearchCharges() {
                 <div style={MapBorderStyle}>
                     <div style={{ display:"flex", padding: "10px" }}>
                         <span>msg: {value.msg}</span>
-                        <span style={{ marginLeft:"auto"}}>cash: {value.value}</span>
+                        <span style={{ marginLeft:"auto"}}>cash: {value.cash}</span>
                     </div>
                 </div>
             </div>

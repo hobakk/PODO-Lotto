@@ -3,20 +3,21 @@ import { useMutation } from 'react-query'
 import { getAdminCharges, upCash } from '../../api/adminApi';
 import { CommonStyle } from '../../components/Styles';
 import { useNavigate } from 'react-router-dom';
-import { AdminGetCharges, UnifiedResponse, Err } from '../../shared/TypeMenu';
+import { upDownCashRequest, UnifiedResponse, Err } from '../../shared/TypeMenu';
 
 function GetAllCharges() {
     const navigate = useNavigate();
-    const [value, setValue] = useState<AdminGetCharges[]>([]);
+    const [value, setValue] = useState<upDownCashRequest[]>([]);
     const [render, setRender] = useState<boolean>(true);
     const [selectValue, setSelectValue] = useState<string>("selectCash");
     const [searchInputValue, setSearchInputValue] = useState<string>("");
-    const [result, setResult] = useState<AdminGetCharges[]>([]);
+    const [result, setResult] = useState<upDownCashRequest[]>([]);
 
-    const getAllChargingMutation = useMutation<UnifiedResponse<AdminGetCharges[]>, Err>(getAdminCharges, {
+    const getAllChargingMutation = useMutation<UnifiedResponse<upDownCashRequest[]>, Err>(getAdminCharges, {
         onSuccess: (res)=>{
-            if (res.code === 200 && res.data)
-            setValue(res.data);
+            if (res.code === 200) {
+                if (res.data) setValue(res.data);
+            }
         },
         onError: (err)=>{
             if (err.code === 500) {
@@ -26,7 +27,7 @@ function GetAllCharges() {
         }
     })
 
-    const upCashMutation = useMutation<UnifiedResponse<undefined>, void, AdminGetCharges>(upCash, {
+    const upCashMutation = useMutation<UnifiedResponse<undefined>, void, upDownCashRequest>(upCash, {
         onSuccess: (res)=>{
             if (res.code === 200) {
                 setRender(!render);
@@ -42,7 +43,7 @@ function GetAllCharges() {
         console.log(selectValue)
     }, [selectValue])
 
-    const onClickHandler = (charg: AdminGetCharges) => {
+    const onClickHandler = (charg: upDownCashRequest) => {
         upCashMutation.mutate(charg);
     }
 
@@ -51,10 +52,10 @@ function GetAllCharges() {
             setResult([]);
         }
         if (value.length !== 0) {
-            let filteredCharges: AdminGetCharges[] = [];
+            let filteredCharges: upDownCashRequest[] = [];
             if (selectValue === "selectCash") {
                 filteredCharges = value.filter(charg=>{
-                    return charg.value.toString().includes(searchInputValue.toString());
+                    return charg.cash.toString().includes(searchInputValue.toString());
                 });
             } else {
                 filteredCharges = value.filter(charg=>{
@@ -65,7 +66,7 @@ function GetAllCharges() {
         }
     }, [searchInputValue])
 
-    const ResultContainer = ({ chargProp }: { chargProp: AdminGetCharges }) => {
+    const ResultContainer = ({ chargProp }: { chargProp: upDownCashRequest }) => {
         return(
             <div style={{ border:"2px solid black", width:"12cm", marginBottom:"5px", padding:"10px"}}>
                 <div style={{ display:"flex", }}>
@@ -73,7 +74,7 @@ function GetAllCharges() {
                     <button onClick={()=>onClickHandler(chargProp)} style={{ marginLeft:"auto"}}>충전</button>
                 </div>
                 <div style={{ display:"flex"}}>
-                    <span>cash: {chargProp.value}</span>
+                    <span>cash: {chargProp.cash}</span>
                     <span style={{ marginLeft:"auto"}}>msg: {chargProp.msg}</span>
                 </div>
             </div>
@@ -92,7 +93,7 @@ function GetAllCharges() {
         </div>
         {searchInputValue === "" ? (
             value.length !== 0 ? (
-                value.map((charg: AdminGetCharges, index: number)=>{
+                value.map((charg: upDownCashRequest, index: number)=>{
                     return (
                         <div key={`charges${index}`} style={{ display:"flex", flexWrap:"wrap", width:"42cm", justifyContent:"center"}}>
                             <ResultContainer chargProp={charg}/>

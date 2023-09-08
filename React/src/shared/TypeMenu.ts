@@ -51,12 +51,6 @@ export type UserDetailInfo = {
     statement: Record<string, any>;
 };
 
-export type AdminGetCharges = {
-    userId: number,
-    msg: string,
-    value: number,
-};
-
 export type upDownCashRequest = {
     userId: number,
     msg: string,
