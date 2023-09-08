@@ -23,6 +23,7 @@ export const LogoutStyle: React.CSSProperties = {
 }
 
 export const MsgAndInput: React.CSSProperties = {
+  fontSize: "30px",
   marginBottom: "30px",
   width: "15cm",
   display: "flex",

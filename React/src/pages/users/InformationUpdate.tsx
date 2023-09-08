@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CommonStyle, CommonP, InputBox } from '../../components/Styles'
+import { CommonStyle, CommonP, InputBox, MsgAndInput, InputBoxStyle, ButtonDiv, ButtonStyle } from '../../components/Styles'
 import { checkPW, update } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import LogoutMutation from '../../components/LogoutMutation';
@@ -98,7 +98,7 @@ function InformationUpdate() {
         {!isPassword ? (
             <form id='form' onSubmit={submitHandler} style={{ fontSize: "30px" }}>
                 <h1 style={{ fontSize: "80px"}}>Identification</h1>
-                <div style={{ display:"flex", width:"15cm"}}>
+                <div style={MsgAndInput}>
                     <span>Password:</span>
                     <InputBox 
                         placeholder="********" 
@@ -106,54 +106,52 @@ function InformationUpdate() {
                         value={password} 
                         onChange={passwordOnChangeHandler} 
                         ref={pwRef}
-                        style={{ marginLeft:"auto", textAlign: "center", }}
+                        style={InputBoxStyle}
                     /> 
                 </div>
-                <div style={{ marginLeft: "auto", width: "7.2cm", marginTop:"30px" }}>
-                    <button style={{ width: "100%", height: "30px" }}>비밀번호 확인</button>
+                <div style={ButtonDiv}>
+                    <button style={ButtonStyle}>비밀번호 확인</button>
                 </div>
             </form>
         ):(
             <div id="update" >
                 <h1 style={{ fontSize: "80px", textAlign:"center"}}>Update</h1>
-                <div style={{ width:"15cm", fontSize:"30px"}}>
-                    <div style={{ display: "flex" }}>
-                        <span>Email:</span>
-                        <InputBox 
-                            value={inputValue.email} 
-                            name="email" 
-                            type="text" 
-                            onChange={onChangeHandler} 
-                            placeholder='test@email.com' 
-                            style={{ marginLeft:"auto", textAlign: "center"}}
-                        />
-                    </div>
-                    <div style={{ display: "flex", marginTop:"30px", marginBottom:"30px"}}>
-                        <span>Password:</span>
-                        <InputBox 
-                            value={inputValue.password} 
-                            name="password" 
-                            type="password" 
-                            onChange={onChangeHandler} 
-                            placeholder='********' 
-                            autoComplete='current-password'
-                            style={{ marginLeft:"auto", textAlign: "center"}}
-                        />
-                    </div>
-                    <div style={{ display: "flex" }}>
-                        <span>Nickname:</span>
-                        <InputBox 
-                            value={inputValue.nickname} 
-                            name="nickname" 
-                            type="text" 
-                            onChange={onChangeHandler} 
-                            placeholder='test' 
-                            style={{ marginLeft:"auto", textAlign: "center"}}
-                        />
-                    </div>
-                    <div style={{ marginLeft: "auto", width: "7.2cm", marginTop:"30px" }}>
-                        <button onClick={onClickHandler} style={{ width: "100%", height: "30px" }}>수정하기</button>
-                    </div>
+                <div style={MsgAndInput}>
+                    <span>Email:</span>
+                    <InputBox 
+                        value={inputValue.email} 
+                        name="email" 
+                        type="text" 
+                        onChange={onChangeHandler} 
+                        placeholder='test@email.com' 
+                        style={InputBoxStyle}
+                    />
+                </div>
+                <div style={MsgAndInput}>
+                    <span>Password:</span>
+                    <InputBox 
+                        value={inputValue.password} 
+                        name="password" 
+                        type="password" 
+                        onChange={onChangeHandler} 
+                        placeholder='********' 
+                        autoComplete='current-password'
+                        style={InputBoxStyle}
+                    />
+                </div>
+                <div style={MsgAndInput}>
+                    <span>Nickname:</span>
+                    <InputBox 
+                        value={inputValue.nickname} 
+                        name="nickname" 
+                        type="text" 
+                        onChange={onChangeHandler} 
+                        placeholder='test' 
+                        style={InputBoxStyle}
+                    />
+                </div>
+                <div style={ButtonDiv}>
+                    <button onClick={onClickHandler} style={ButtonStyle}>수정하기</button>
                 </div>
             </div>
         )}
