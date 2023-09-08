@@ -51,9 +51,9 @@ function GetCharging() {
         {chargValue.length !== 0 || chargValue !== null ? (
           chargValue.map(item=>{
             return (
-              <div style={BoxStyle}>
-                <div key={item.msg} style={BorderStyle}><span>{item.msg}</span></div>
-                <div key={item.msg} style={{ ...BorderStyle, width:"14cm" }}><span>{item.cash}</span></div>
+              <div key={`${item.msg}-${item.cash}`} style={BoxStyle}>
+                <div style={BorderStyle}><span>{item.msg}</span></div>
+                <div style={{ ...BorderStyle, width:"14cm" }}><span>{item.cash}</span></div>
                 <div style={{ borderLeft:"3px solid black", height:"1.08cm" }} />
               </div>
             )
