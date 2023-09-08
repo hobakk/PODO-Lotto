@@ -13,10 +13,6 @@ function BuyNumber() {
     const numRef = useRef<HTMLInputElement>(null);
     const getUserIfMutation = GetUserIfMutation();
 
-    const InputStyle: React.CSSProperties = {
-        width: "5cm",
-        height: "25px",
-    }
     const buttonStyle: React.CSSProperties = {
         width: "30px",
         height: "30px",
@@ -54,13 +50,14 @@ function BuyNumber() {
     }
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value }: any = e.target;
-        let count;
-        if (typeof value === "string") {
-            alert("발급 횟수를 입력해주세요");
+        let count: number | string;
+        if (typeof value === "number") count = value;
+        else {
+            alert("숫자만 입력 가능합니다");
             count = 0;
-        } else count = value;
-
-        setNum(parseInt(count));
+        }
+        
+        setNum(count);
     }
     const onClickHandler = () => {
         setData(true);
