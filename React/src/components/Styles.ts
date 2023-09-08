@@ -1,5 +1,6 @@
 import { styled } from "styled-components";
 import { Link } from "react-router-dom";
+import React from "react";
 
 const mainColor = `#9957F0`;
 
@@ -19,6 +20,24 @@ export const SignBorder: React.CSSProperties = {
 export const LogoutStyle: React.CSSProperties = {
   cursor: "pointer",
   marginLeft: "10px",
+}
+
+export const MsgAndInput: React.CSSProperties = {
+  marginBottom: "30px",
+  width: "15cm",
+  display: "flex",
+}
+export const InputBoxStyle: React.CSSProperties = {
+  marginLeft:"auto",
+  textAlign: "center",
+}
+export const ButtonDiv: React.CSSProperties = {
+  marginLeft: "auto",
+  width: "7.2cm",
+}
+export const ButtonStyle: React.CSSProperties = {
+  width: "100%",
+  height: "30px",
 }
 
 type UlBoxProps = { 

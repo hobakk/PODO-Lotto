@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CommonStyle } from '../../components/Styles'
+import { ButtonDiv, ButtonStyle, CommonStyle, InputBoxStyle, MsgAndInput } from '../../components/Styles'
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { signin, SigninRequest } from '../../api/noneUserApi';
@@ -51,7 +51,7 @@ function Signin() {
     <div style={ CommonStyle }>
         <h3 style={{ fontSize: "80px"}}>Login</h3>
         <form onSubmit={submitHandler} style={{ fontSize: "30px" }}>
-            <div style={{ marginBottom: "30px", width: "15cm", display: "flex",}}>
+            <div style={MsgAndInput}>
                 <span>Email:</span>
                 <InputBox 
                     type='text' 
@@ -60,10 +60,10 @@ function Signin() {
                     placeholder='test@email.com'
                     autoComplete='current-email' 
                     onChange={onChangeHandler} 
-                    style={{ marginLeft:"auto", textAlign: "center", }}
+                    style={InputBoxStyle}
                 />
             </div>
-            <div style={{ marginBottom: "30px", width: "15cm", display: "flex",}}>
+            <div style={MsgAndInput}>
                 <span>Password:</span>
                 <InputBox 
                     type='password' 
@@ -71,11 +71,11 @@ function Signin() {
                     placeholder='**************' 
                     autoComplete='current-password' 
                     onChange={onChangeHandler} 
-                    style={{ marginLeft:"auto", textAlign: "center", }}
+                    style={InputBoxStyle}
                 />
             </div>
-            <div style={{ marginLeft: "auto", width: "7.2cm" }}>
-                <button style={{ width: "100%", height: "30px" }}>로그인</button>
+            <div style={ButtonDiv}>
+                <button style={ButtonStyle}>로그인</button>
             </div>
         </form>
         <div style={{ display:"flex", flexDirection:"column", fontSize: "18px", marginRight:"auto", marginTop:"30px" }}>

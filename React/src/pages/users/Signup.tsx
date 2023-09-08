@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { SignBorder, CommonStyle, InputBox } from '../../components/Styles'
+import { SignBorder, CommonStyle, InputBox, MsgAndInput, InputBoxStyle, ButtonDiv, ButtonStyle } from '../../components/Styles'
 import { Link, useNavigate } from 'react-router-dom';
 import { signup, SignupRequest } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';
@@ -43,7 +43,7 @@ function Signiup() {
     <div style={ CommonStyle }>
       <h3 style={{ fontSize: "80px"}}>Signup</h3>
       <form onSubmit={sunmitHandler} style={{ fontSize: "30px", display: "flex", flexDirection: "column", width: "15cm" }}>
-        <div style={{ display: "flex" }}>
+        <div style={MsgAndInput}>
           <span>Email:</span>
           <InputBox 
             onChange={onChangeHandler} 
@@ -52,10 +52,10 @@ function Signiup() {
             ref={emailRef} 
             name='email'
             autoComplete='current-email'  
-            style={{ marginLeft:"auto", textAlign: "center", }} 
+            style={InputBoxStyle} 
           />
         </div>
-        <div style={{ display: "flex", marginTop: "30px", marginBottom: "30px" }}>
+        <div style={MsgAndInput}>
           <span>Password:</span>
           <InputBox 
             onChange={onChangeHandler} 
@@ -64,10 +64,10 @@ function Signiup() {
             value={inputValue.password} 
             name="password" 
             autoComplete='current-password' 
-            style={{ marginLeft:"auto", textAlign: "center", }} 
+            style={InputBoxStyle} 
           />
         </div>
-        <div style={{ display: "flex" }}>
+        <div style={MsgAndInput}>
           <span>Nickname:</span>
           <InputBox 
             onChange={onChangeHandler} 
@@ -75,11 +75,11 @@ function Signiup() {
             placeholder='홍길동' 
             value={inputValue.nickname} 
             name="nickname" 
-            style={{ marginLeft:"auto", textAlign: "center", marginBottom: "30px" }}
+            style={InputBoxStyle}
           />
         </div>
-        <div style={ {marginLeft: "auto", marginBottom: "30px" }}>
-            <button style={{ width: "7.2cm", height: "25px" }}>회원가입</button>
+        <div style={ButtonDiv}>
+            <button style={ButtonStyle}>회원가입</button>
         </div>
         <div style={{ display:"flex", flexDirection:"column", fontSize: "18px", marginRight: "auto", marginTop: "1cm"}}>
           <Link to="/incorrect">아이디와 비밀번호를 잊으셨나요 ?</Link>
