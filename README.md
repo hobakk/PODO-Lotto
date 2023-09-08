@@ -69,11 +69,17 @@ Redis Cache 사용해서 속도 개선
 ### 2. 당첨번호 등록
 - @CachePut 을 적용하여 저장되어 있는 RedisCache 를 갱신
 
-<br/><br/><h2>JwtSecurityFilter [Code](https://github.com/hobakk/Lotto/blob/6daf87ae8f743fd3f639894d6304bb6795b45ca2/Java/src/main/java/com/example/sixnumber/global/scurity/JwtSecurityFilter.java#L31)</h2>
+<br/><br/><h2>JwtSecurityFilter [Code](https://github.com/hobakk/Lotto/blob/a875aa52277d7994c4c0ac2fd401833752155cc6/Java/src/main/java/com/example/sixnumber/global/scurity/JwtSecurityFilter.java#L31)</h2>
 
-- refreshToken 가 유효하다면 accessToken 을 갱신
+### 1. accessToken 재발급
+- AccessTokenIsExpiredException 을 ExceptionHandlerFilter catch
+- ExceptionHandlerFilter 에서 HttpServletResponse 안에 error 를 실어서 전송
+- [UesAxiosResponseInterceptor](https://github.com/hobakk/Lotto/blob/a875aa52277d7994c4c0ac2fd401833752155cc6/React/src/hooks/UseAxiosResponseInterceptor.ts#L10C7-L10C35) errorHandler 에서 encodedRefreshToken 의 만료 여부를 확인
+- HttpServletRequest headers 에 실어서 이전 Api 로 재요청
+- encodedRefreshToken 유효한지 확인하고 accessToken 을 재발급
 
-### 1. BlackList
+### 2. BlackList
+accessToken 의 유효시간이 5분이라 로그아웃 이후 만료 전 탈취 당했을 상황에 대처할 목적
 - accessToken 을 Redis 에서 BlackList 로 관리
 
 <br/><br/><h2>Scheduler [Code](https://github.com/hobakk/Lotto/blob/331722f5f4e2f3da9b55a35fa9b411b69fda7c57/Java/src/main/java/com/example/sixnumber/global/scheduler/GlobalScheduler.java#L29)</h2>
