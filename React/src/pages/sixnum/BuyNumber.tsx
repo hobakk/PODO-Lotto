@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CommonStyle } from '../../components/Styles'
+import { CommonStyle, InputBox, InputBoxStyle, MsgAndInput } from '../../components/Styles'
 import { buyNumber } from '../../api/sixNumberApi';
 import { useMutation } from 'react-query';
 import GetUserIfMutation from '../../components/GetUserIfMutation';
@@ -53,7 +53,14 @@ function BuyNumber() {
         }
     }
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setNum(parseInt(e.target.value));
+        const { value }: any = e.target;
+        let count;
+        if (typeof value === "string") {
+            alert("발급 횟수를 입력해주세요");
+            count = 0;
+        } else count = value;
+
+        setNum(parseInt(count));
     }
     const onClickHandler = () => {
         setData(true);
@@ -61,14 +68,21 @@ function BuyNumber() {
 
   return (
     <div style={ CommonStyle }>
-        <h1 style={{  fontSize: "80px" }}>Buy Number</h1>
+        <h1 style={{  fontSize: "80px", textAlign:"center" }}>Buy Number</h1>
+        <p style={{ marginBottom:"60px" }}>1회 발급당 200원이 차감됩니다</p>
         {isEmpty ? (
-            <div id='buycontent'>
-                <p>1회 발급당 200원이 차감됩니다</p>
-                <input value={num} ref={numRef} onChange={onChangeHandler} style={InputStyle} placeholder='0'/> 
+            <div style={{ display:"flex", fontSize:"25px", width:"17cm", placeItems:"center"}}>
+                <span>발급 횟수:</span>
+                <InputBox 
+                    value={num} 
+                    ref={numRef} 
+                    onChange={onChangeHandler} 
+                    placeholder='0'
+                    style={InputBoxStyle} 
+                /> 
                 <button style={buttonStyle} onClick={()=>updownHandler(true)}>+</button>
                 <button style={buttonStyle} onClick={()=>updownHandler(false)}>-</button>    
-                <button onClick={buyHandler} style={{ width: "50px", height: "30px", marginLeft: "20px",  }}>구매</button>
+                <button onClick={buyHandler} style={{ width: "80px", height: "30px", marginLeft: "20px",  }}>구매</button>
             </div> 
         ):( 
             <div>
