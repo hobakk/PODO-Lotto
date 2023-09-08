@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { getWinNumber } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';
-import { CommonStyle, CommonLink, } from '../../components/Styles';
+import { CommonStyle } from '../../components/Styles';
 import { ChangingNumStyle } from '../../components/Manufacturing';
 import { WinNumber, Err, UnifiedResponse } from '../../shared/TypeMenu';
+import { Link } from 'react-router-dom';
 
 function Home() {
   const [value, setValue] = useState<WinNumber[]>([]);
@@ -51,15 +52,13 @@ function Home() {
 
   return (
     <div style={CommonStyle}>
-      <div style={{ marginTop: "1.0cm", marginLeft: "auto", marginBottom: "5px"}}>
-        <CommonLink to={"/buynum"} color='blue' style={{ fontWeight: "bold", }}>추천 번호 구매하기</CommonLink>
+      <div style={{ marginLeft: "auto", marginBottom: "10px"}}>
+        <Link to={"/buynum"} style={{ fontWeight: "bold", textDecoration: "none" }}>추천 번호 구매하기</Link>
         <button style={ButtonStyle} onClick={()=>{setBoolean(true)}}>새로고침</button>
       </div>
       <div style={{ fontSize: "20px" }}>
         {isEmpty ? (
-          <div>
-            당첨번호 데이터가 존재하지 않습니다
-          </div>
+          <div> 당첨번호 데이터가 존재하지 않습니다 </div>
         ):(
           value.map((result)=>{
             return (
