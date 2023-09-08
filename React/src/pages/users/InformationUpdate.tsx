@@ -10,9 +10,11 @@ import { SignupRequest } from '../../api/noneUserApi';
 
 function InformationUpdate() {
     const userIf = useSelector((state: RootState)=>state.userIf);
+    const logoutMutation = LogoutMutation();
     const [password, setPassword] = useState<string>("");
     const pwRef = useRef<HTMLInputElement>(null);
     const [isPassword, setIsPassword] = useState<boolean>(false);
+    const [failCount, setFailCount] = useState<number>(0);
     const [inputValue, setInputValue] = useState<SignupRequest>({
         email: "",
         password: "",
@@ -27,28 +29,31 @@ function InformationUpdate() {
     const checkPWMutation = useMutation<UnifiedResponse<undefined>, Err, string>(checkPW, {
         onSuccess: (res)=>{
             if (res.code === 200) {
+                setFailCount(0);
                 setIsPassword(true);
             }
         },  
         onError: (err)=>{
-            if (err.code === 500) {
-                alert(err.msg);
-            }
+            alert("비밀번호가 일치하지 않습니다");
+            setFailCount(failCount + 1);
         }
     })
 
     useEffect(()=>{
-        if (pwRef.current) {
-            pwRef.current.focus();
-        }
+        if (pwRef.current) pwRef.current.focus();
     }, [])
+
+    useEffect(()=>{
+        if (failCount === 5) {
+            alert("비밀번호 불일치 누적으로 로그아웃 처리됩니다")
+            logoutMutation.mutate();
+        }
+    }, [failCount])
 
     const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         checkPWMutation.mutate(password);
     }
-
-    const logoutMutation = LogoutMutation();
 
     const updateMutation = useMutation<UnifiedResponse<undefined>, Err, SignupRequest>(update, {
         onSuccess: (res)=>{
