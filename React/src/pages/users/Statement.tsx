@@ -37,6 +37,12 @@ function Statement() {
     <div style={ CommonStyle }>
         <h1 style={{  fontSize: "80px" }}>Statement</h1>
         <div>
+            <div style={{ display: "flex", fontSize:"22px", backgroundColor:"#D4F0F0"}}>
+                <span style={{...PStyle, textAlign: "center", borderRight: "0px", }}>DATE</span>
+                <span style={{...PStyle, width: "20cm"}}>
+                    <p style={{ marginLeft: "15px", textAlign:"center" }}>MSG</p>
+                </span>
+            </div>
             {value.length !== 0 && (
                 value.map((item, index)=>{
                     return (
