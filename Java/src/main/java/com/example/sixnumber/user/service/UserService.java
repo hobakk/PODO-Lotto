@@ -33,11 +33,11 @@ import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.CookieAndTokenResponse;
-import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
+import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -242,9 +242,9 @@ public class UserService {
 		return UnifiedResponse.ok("거래내역 조회 완료", response);
 	}
 
-	public UnifiedResponse<MyInformationResponse> getMyInformation(Long userId) {
+	public UnifiedResponse<UserResponse> getMyInformation(Long userId) {
 		User userIf = manager.findUser(userId);
-		MyInformationResponse response = new MyInformationResponse(userIf);
+		UserResponse response = new UserResponse(userIf);
 		return UnifiedResponse.ok("조회 성공", response);
 	}
 

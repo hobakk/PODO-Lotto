@@ -42,11 +42,11 @@ import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.CookieAndTokenResponse;
-import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
+import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -446,10 +446,10 @@ public class UserServiceTest {
 	void getMyInformation() {
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		UnifiedResponse<MyInformationResponse> response = userService.getMyInformation(saveUser.getId());
+		UnifiedResponse<UserResponse> response = userService.getMyInformation(saveUser.getId());
 
 		verify(manager).findUser(anyLong());
-		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공", MyInformationResponse.class);
+		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공", UserResponse.class);
 	}
 
 	@Test

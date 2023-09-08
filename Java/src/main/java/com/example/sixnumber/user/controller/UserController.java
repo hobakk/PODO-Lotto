@@ -22,11 +22,11 @@ import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.CookieAndTokenResponse;
-import com.example.sixnumber.user.dto.MyInformationResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
+import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
 
@@ -102,7 +102,7 @@ public class UserController {
 	}
 
 	@GetMapping("/my-information")
-	public ResponseEntity<UnifiedResponse<MyInformationResponse>> getMyInformation(@AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<UserResponse>> getMyInformation(@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.getMyInformation(user.getId()));
 	}
 

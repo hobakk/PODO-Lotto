@@ -29,7 +29,7 @@ import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
-import com.example.sixnumber.user.dto.UsersResponse;
+import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -86,7 +86,7 @@ public class AdminServiceTest {
 	void getUsers() {
 		when(userRepository.findAll()).thenReturn(List.of(saveUser));
 
-		UnifiedResponse<List<UsersResponse>> response = adminService.getUsers();
+		UnifiedResponse<List<UserResponse>> response = adminService.getUsers();
 
 		verify(userRepository).findAll();
 		TestUtil.UnifiedResponseListEquals(response, 200, "조회 성공");

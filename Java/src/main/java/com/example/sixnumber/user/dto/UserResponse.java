@@ -7,16 +7,16 @@ import com.example.sixnumber.user.type.UserRole;
 import lombok.Getter;
 
 @Getter
-public class UsersResponse {
-	private final Long id;
+public class UserResponse {
+	private final Long userId;
 	private final String email;
 	private final String nickname;
 	private final int cash;
 	private final UserRole role;
 	private final Status status;
 
-	public UsersResponse(User user) {
-		this.id = user.getId();
+	public UserResponse(User user) {
+		this.userId = user.getId();
 		this.email = user.getEmail();
 		this.nickname = user.getNickname();
 		this.cash = user.getCash();

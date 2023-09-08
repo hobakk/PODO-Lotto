@@ -22,7 +22,7 @@ import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
-import com.example.sixnumber.user.dto.UsersResponse;
+import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -52,9 +52,9 @@ public class AdminService {
 	}
 
 	// page 처리 필요함
-	public UnifiedResponse<List<UsersResponse>> getUsers() {
-		List<UsersResponse> userAllList = userRepository.findAll().stream()
-			.map(UsersResponse::new)
+	public UnifiedResponse<List<UserResponse>> getUsers() {
+		List<UserResponse> userAllList = userRepository.findAll().stream()
+			.map(UserResponse::new)
 			.collect(Collectors.toList());
 		return UnifiedResponse.ok("조회 성공", userAllList);
 	}
