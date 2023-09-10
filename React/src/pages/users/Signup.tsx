@@ -60,7 +60,7 @@ function Signiup() {
           <InputBox 
             onChange={onChangeHandler} 
             type="password" 
-            placeholder='******' 
+            placeholder='8 자리 이상 입력해주세요' 
             value={inputValue.password} 
             name="password" 
             autoComplete='current-password' 
@@ -72,7 +72,7 @@ function Signiup() {
           <InputBox 
             onChange={onChangeHandler} 
             type="text" 
-            placeholder='홍길동' 
+            placeholder='2 ~ 10 자리를 입력해주세요' 
             value={inputValue.nickname} 
             name="nickname" 
             style={InputBoxStyle}
