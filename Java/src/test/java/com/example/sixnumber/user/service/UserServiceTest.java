@@ -149,6 +149,15 @@ public class UserServiceTest {
 	}
 
 	@Test
+	void signup_fail_ErrorsIsNotNull() {
+		SignupRequest signupRequest = TestDataFactory.signupRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(true);
+
+		Assertions.assertThrows(CustomException.class, () -> userService.signUp(signupRequest, errors));
+	}
+
+	@Test
 	void signin_success() {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 		CookieAndTokenResponse cookieAndTokenResponse = TestDataFactory.cookiesResponse();
