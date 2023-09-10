@@ -21,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.validation.Errors;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.WithCustomMockUser;
@@ -56,7 +57,7 @@ class UserControllerTest {
 	@Test
 	@WithMockUser
 	public void Signup() throws Exception {
-		when(userService.signUp(any(SignupRequest.class))).thenReturn(UnifiedResponse.create("회원가입 완료"));
+		when(userService.signUp(any(SignupRequest.class), any(Errors.class))).thenReturn(UnifiedResponse.create("회원가입 완료"));
 
 		mockMvc.perform(post("/api/users/signup").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -64,13 +65,13 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.code").value(201))
 			.andExpect(jsonPath("$.msg").value("회원가입 완료"));
 
-		verify(userService).signUp(any(SignupRequest.class));
+		verify(userService).signUp(any(SignupRequest.class), any(Errors.class));
 	}
 
 	@Test
 	@WithCustomMockUser(status = Status.DORMANT)
 	public void Signup_ReJoin() throws Exception {
-		when(userService.signUp(any(SignupRequest.class))).thenReturn(UnifiedResponse.ok("재가입 완료"));
+		when(userService.signUp(any(SignupRequest.class), any(Errors.class))).thenReturn(UnifiedResponse.ok("재가입 완료"));
 
 		mockMvc.perform(post("/api/users/signup").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -78,7 +79,7 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.code").value(200))
 			.andExpect(jsonPath("$.msg").value("재가입 완료"));
 
-		verify(userService).signUp(any(SignupRequest.class));
+		verify(userService).signUp(any(SignupRequest.class), any(Errors.class));
 	}
 
 	@Test
