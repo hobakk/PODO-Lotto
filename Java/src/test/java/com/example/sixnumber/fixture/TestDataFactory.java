@@ -58,7 +58,7 @@ public class TestDataFactory {
 
 	public static SignupRequest signupRequest() {
 		return new SignupRequest(
-			"test@email.com",
+			"test@gmail.com",
 			"password1!",
 			"nickname"
 		);

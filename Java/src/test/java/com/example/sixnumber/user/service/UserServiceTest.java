@@ -27,6 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.Errors;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.TestUtil;
@@ -79,6 +80,8 @@ public class UserServiceTest {
 	@Test
 	void signup_success() {
 		SignupRequest signupRequest = TestDataFactory.signupRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 
 		when(userRepository.existsUserByEmail(anyString())).thenReturn(false);
 		when(userRepository.existsUserByNickname(anyString())).thenReturn(false);
@@ -86,7 +89,7 @@ public class UserServiceTest {
 		String encodedPassword = "ePassword";
 		when(passwordEncoder.encode(signupRequest.getPassword())).thenReturn(encodedPassword);
 
-		UnifiedResponse<?> response = userService.signUp(signupRequest);
+		UnifiedResponse<?> response = userService.signUp(signupRequest, errors);
 
 		verify(userRepository).existsUserByEmail(anyString());
 		verify(userRepository).existsUserByNickname(anyString());
@@ -97,6 +100,7 @@ public class UserServiceTest {
 	@Test
 	void signup_success_setActive() {
 		SignupRequest request = TestDataFactory.signupRequest();
+		Errors errors = mock(Errors.class);
 
 		saveUser.setStatus(Status.DORMANT);
 
@@ -104,7 +108,7 @@ public class UserServiceTest {
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
-		UnifiedResponse<?> response = userService.signUp(request);
+		UnifiedResponse<?> response = userService.signUp(request, errors);
 
 		verify(userRepository).findByStatusAndEmail(eq(Status.DORMANT), anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
@@ -117,11 +121,13 @@ public class UserServiceTest {
 	@Test
 	void signup_EmailOverlapException() {
 		SignupRequest signupRequest = TestDataFactory.signupRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 
 		when(userRepository.existsUserByEmail(anyString())).thenReturn(true);
 
 		Exception exception = assertThrows(OverlapException.class,
-			() -> userService.signUp(signupRequest));
+			() -> userService.signUp(signupRequest, errors));
 
 		verify(userRepository).existsUserByEmail(anyString());
 		assertEquals(exception.getMessage(), "중복된 이메일입니다");
@@ -130,11 +136,13 @@ public class UserServiceTest {
 	@Test
 	void signup_NicknameOverlapException() {
 		SignupRequest signupRequest = TestDataFactory.signupRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 
 		when(userRepository.existsUserByNickname(anyString())).thenReturn(true);
 
 		Exception exception = assertThrows(OverlapException.class,
-			() -> userService.signUp(signupRequest));
+			() -> userService.signUp(signupRequest, errors));
 
 		verify(userRepository).existsUserByNickname(anyString());
 		assertEquals(exception.getMessage(), "중복된 닉네임입니다");
