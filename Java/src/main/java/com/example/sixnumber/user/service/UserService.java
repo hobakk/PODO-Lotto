@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
 
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
@@ -58,7 +59,7 @@ public class UserService {
 	private final RedisDao redisDao;
 	private final Manager manager;
 
-	public UnifiedResponse<?> signUp(SignupRequest request) {
+	public UnifiedResponse<?> signUp(SignupRequest request, Errors errors) {
 		Optional<User> dormantUser = userRepository.findByStatusAndEmail(Status.DORMANT, request.getEmail());
 		if (dormantUser.isPresent()) {
 			User user = dormantUser.get();
@@ -69,6 +70,10 @@ public class UserService {
 				return UnifiedResponse.ok("재가입 완료");
 			}
 		}
+
+		List<String> mailList = Arrays.asList("gmail.com", "naver.com", "daum.net");
+		boolean validateMails = mailList.contains(request.getEmail().split("@")[1]);
+		if (!validateMails || errors.hasErrors()) throw new CustomException(INVALID_INPUT);
 
 		if (userRepository.existsUserByEmail(request.getEmail())) {
 			throw new OverlapException("중복된 이메일입니다");
