@@ -14,10 +14,12 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.sixnumber.global.scurity.CustomAccessDeniedHandler;
+import com.example.sixnumber.global.scurity.CustomAuthenticationSuccessHandler;
 import com.example.sixnumber.global.scurity.ExceptionHandlerFilter;
 import com.example.sixnumber.global.scurity.JwtEntryPoint;
 import com.example.sixnumber.global.scurity.JwtSecurityFilter;
 import com.example.sixnumber.global.scurity.UserDetailsServiceImpl;
+import com.example.sixnumber.global.util.CustomOAuth2UserService;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.RedisDao;
 
@@ -32,8 +34,9 @@ public class WebSecurityConfig {
 	private final RedisDao redisDao;
 	private final JwtEntryPoint jwtEntryPoint;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
+	private final CustomOAuth2UserService customOAuth2UserService;
 	private static final String[] URL_PERMIT_ALL = {
-		"/api/users/signin", "/api/users/signup", "/api/winnumber", "/api/jwt/re-issuance"
+		"/api/users/signin", "/api/users/signup", "/api/winnumber", "/api/jwt/re-issuance", "/login/oauth2/code/google"
 	};
 
 	@Bean
@@ -44,6 +47,11 @@ public class WebSecurityConfig {
 	@Bean
 	public JwtSecurityFilter jwtSecurityFilter() {
 		return new JwtSecurityFilter(userDetailsService, jwtProvider, redisDao, passwordEncoder());
+	}
+
+	@Bean
+	public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
+		return new CustomAuthenticationSuccessHandler(passwordEncoder(), jwtProvider, redisDao);
 	}
 
 	@Bean
@@ -68,7 +76,13 @@ public class WebSecurityConfig {
 
 			.and()
 			.addFilterBefore(jwtSecurityFilter(), UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(new ExceptionHandlerFilter(), JwtSecurityFilter.class);
+			.addFilterBefore(new ExceptionHandlerFilter(), JwtSecurityFilter.class)
+
+			.oauth2Login()
+				.userInfoEndpoint()
+				.userService(customOAuth2UserService)
+			.and()
+			.successHandler(customAuthenticationSuccessHandler());
 
 		return http.build();
 	}
