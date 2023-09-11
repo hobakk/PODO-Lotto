@@ -5,6 +5,15 @@ spring:
     url: ${DB_URL}
     driver-class-name: oracle.jdbc.OracleDriver
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: profile,email
+
   jpa:
     database: oracle
     database-platform: org.hibernate.dialect.Oracle12cDialect
@@ -24,15 +33,6 @@ spring:
 
   admin:
     set-admin-key: ${ADMIN_KEY}
-
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          google:
-#            client-id: ${GOOGLE_CLIENT_ID}
-#            client-secret: ${GOOGLE_CLIENT_SECRET}
-#            scope: profile,email
 
 server:
   error:
