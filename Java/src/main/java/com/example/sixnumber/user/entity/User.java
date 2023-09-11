@@ -90,6 +90,17 @@ public class User implements UserDetails {
 		this.sixNumberList = new ArrayList<>();
 	}
 
+	// OAuth2
+	public User(String email, String nickname, UserRole role) {
+		this.email = email;
+		this.nickname = nickname;
+		this.role = role;
+		this.statement = new ArrayList<>();
+		this.timeOutCount = 0;
+		this.refreshPointer = null;
+		this.sixNumberList = new ArrayList<>();
+	}
+
 	// Controller Test
 	public User(String email, String password, UserRole role, Status status) {
 		this.email = email;
@@ -108,6 +119,7 @@ public class User implements UserDetails {
 		this.nickname = list.get(2);
 	}
 
+	public void setNickname(String nickname) { this.nickname = nickname; }
 	public void setPaymentDate(LocalDate localDate) {
 		this.paymentDate = localDate;
 	}
