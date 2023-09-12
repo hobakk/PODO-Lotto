@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -14,6 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.example.sixnumber.global.dto.TokenDto;
+import com.example.sixnumber.user.entity.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -130,11 +134,6 @@ public class JwtProvider {
 		return Math.max(remainingMillis, 0);
 	}
 
-	public boolean isTokenExpired(String token) {
-		Date expirationDate = getClaims(token).getExpiration();
-		return expirationDate == null || expirationDate.before(new Date());
-	}
-
 	public Cookie createCookie(String key, String tokenValue, Object maxAge) {
 		Cookie cookie = new Cookie(key, tokenValue);
 		cookie.setPath("/");
@@ -159,32 +158,11 @@ public class JwtProvider {
 		}
 	}
 
-	// public void setExpire(String token) {
-	// 	getClaims(token).setExpiration(new Date());
-	// }
-
-	// public String[] validateRefreshToken(String refreshToken) {
-	// 	String[] idEmail = getIdEmail(refreshToken).split(",");
-	// 	String refreshTokenInRedis = redisTemplate.opsForValue().get("RT: " + idEmail[0]);
-	//
-	// 	if (Objects.isNull(refreshTokenInRedis)
-	// 		|| !refreshToken.equals(refreshTokenInRedis) || isTokenExpired(refreshTokenInRedis)) {
-	// 		redisTemplate.delete("RT: " + idEmail[0]);
-	// 		return null;
-	// 	}
-	//
-	// 	return idEmail;
-	// }
-
-	// public String getIdEmail(String token) {
-	// 	Long userId = getClaims(token).get("id", Long.class);
-	// 	String email = Jwts.parserBuilder()
-	// 		.setSigningKey(secretKey)
-	// 		.build()
-	// 		.parseClaimsJws(token)
-	// 		.getBody()
-	// 		.getSubject();
-	//
-	// 	return userId + "," + email;
-	// }
+	public TokenDto generateTokens(User user) {
+		String refreshPointer = UUID.randomUUID().toString();
+		user.setRefreshPointer(refreshPointer);
+		String accessToken = accessToken(refreshPointer);
+		String refreshToken = refreshToken(user.getEmail(), user.getId(), refreshPointer);
+		return new TokenDto(accessToken, refreshToken, refreshPointer);
+	}
 }
