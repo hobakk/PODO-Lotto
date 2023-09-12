@@ -93,8 +93,11 @@ public class User implements UserDetails {
 	// OAuth2
 	public User(String email, String nickname, UserRole role) {
 		this.email = email;
+		this.password = "Oauth2Login";
 		this.nickname = nickname;
 		this.role = role;
+		this.status = Status.ACTIVE;
+		this.cash = 1000;
 		this.statement = new ArrayList<>();
 		this.timeOutCount = 0;
 		this.refreshPointer = null;
