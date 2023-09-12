@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -21,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
 
+import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.OverlapException;
@@ -108,14 +108,11 @@ public class UserService {
 		CookieAndTokenResponse response;
 		String refreshInRedis = redisDao.getValue(user.getRefreshPointer());
 		if (refreshInRedis == null) {
-			String refreshPointer = UUID.randomUUID().toString();
-			user.setRefreshPointer(refreshPointer);
-			String accessToken = jwtProvider.accessToken(refreshPointer);
-			String refreshToken = jwtProvider.refreshToken(user.getEmail(), user.getId(), refreshPointer);
-			redisDao.setRefreshToken(refreshPointer, refreshToken, (long) 7, TimeUnit.DAYS);
+			TokenDto tokenDto = jwtProvider.generateTokens(user);
+			redisDao.setRefreshToken(tokenDto.getRefreshPointer(), tokenDto.getRefreshToken(), (long) 7, TimeUnit.DAYS);
 
-			Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken, "oneWeek");
-			String enCodedRefreshToken = passwordEncoder.encode(refreshToken);
+			Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), "oneWeek");
+			String enCodedRefreshToken = passwordEncoder.encode(tokenDto.getRefreshToken());
 			response = new CookieAndTokenResponse(accessCookie, "Bearer " + enCodedRefreshToken);
 		} else {
 			redisDao.deleteValues(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
