@@ -47,6 +47,8 @@ function Signin() {
         }
     }, [])
 
+    const handleGoogleLogin = () => { window.location.href = 'http://localhost:8080/oauth2/authorization/google'; };
+
   return (
     <div style={ CommonStyle }>
         <h3 style={{ fontSize: "80px"}}>Login</h3>
@@ -74,14 +76,28 @@ function Signin() {
                     style={InputBoxStyle}
                 />
             </div>
-            <div style={ButtonDiv}>
-                <button style={ButtonStyle}>로그인</button>
+            <div style={{ display:"flex", marginLeft: "auto", width: "100%",}}>
+                <button style={{ width: "7.2cm", height: "30px", marginLeft:"auto", }}>로그인</button>
             </div>
         </form>
         <div style={{ display:"flex", flexDirection:"column", fontSize: "18px", marginRight:"auto", marginTop:"30px" }}>
             <Link to="/incorrect" style={{ marginBottom:"20px" }}>비밀번호를 잊으셨나요 ?</Link>
             <Link to="/signup">비회원 이신가요 ?</Link>
         </div>
+        <div style={{ width:"80%", marginTop:"2cm" }}>
+            <p style={{ margin:"auto", textAlign:"center", marginBottom:"10px"}}>간편로그인</p>
+            <div style={{ margin:"auto", borderTop:"2px solid gray", width:"80%" }}/>
+        </div>
+        <img 
+            src={process.env.PUBLIC_URL + `/googleLogo.png`}
+            style={{
+                width:"1.5cm", height:"1.5cm", 
+                margin:"auto", marginTop:"30px", 
+                padding:"10px", cursor:"pointer",
+                border:"1px solid black", borderRadius: "50px",
+            }} 
+            onClick={handleGoogleLogin}
+        />
     </div>
   )
 }
