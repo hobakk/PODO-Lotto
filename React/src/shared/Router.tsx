@@ -22,6 +22,7 @@ import SearchCharges from '../pages/admin/SearchCharges'
 import CreateMainLotto from '../pages/admin/CreateMainLotto'
 import SetWinNumber from '../pages/admin/SetWinNumber'
 import GetBuySixNumberList from '../pages/users/GetBuySixNumberList'
+import Oauth2Redirect from '../pages/users/Oauth2Redirect'
 
 const Router = () => {
   return (
@@ -49,6 +50,7 @@ const Router = () => {
                 <Route path='/admin/lotto' element={<CreateMainLotto />} />
                 <Route path='/admin/winnumber' element={<SetWinNumber />} />
                 <Route path='/sixnumber-list' element={<GetBuySixNumberList />} />
+                <Route path='/oauth2/user' element={<Oauth2Redirect />} />
             </Routes>
         </Layout>
     </BrowserRouter>
