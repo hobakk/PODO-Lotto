@@ -35,5 +35,8 @@ spring:
     set-admin-key: ${ADMIN_KEY}
 
 server:
+  servlet:
+    session:
+      tracking-modes: cookie
   error:
     include-message: always
