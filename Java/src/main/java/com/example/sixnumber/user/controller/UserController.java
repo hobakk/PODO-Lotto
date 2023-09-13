@@ -28,6 +28,7 @@ import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
+import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
 import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
@@ -116,5 +117,14 @@ public class UserController {
 	@GetMapping("/sixnumber-list")
 	public ResponseEntity<UnifiedResponse<List<SixNumberResponse>>> getBuySixNumberList(@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.getBuySixNumberList(user.getId()));
+	}
+
+	@GetMapping("/oauth2/my-information")
+	public ResponseEntity<UnifiedResponse<UserResponse>> oauth2LoginAfterGetUserIfAndRefreshToken(
+		@AuthenticationPrincipal User user, HttpServletResponse response)
+	{
+		UserResponseAndEncodedRefreshDto dto = userService.oauth2LoginAfterGetUserIfAndRefreshToken(user.getId());
+		response.addHeader(JwtProvider.AUTHORIZATION_HEADER, "Bearer " + dto.getEncodedRefreshToken());
+		return ResponseEntity.ok(UnifiedResponse.ok("조회 성공", dto.getUserResponse()));
 	}
 }
