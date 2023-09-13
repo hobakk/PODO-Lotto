@@ -190,6 +190,19 @@ public class UserServiceTest {
 	}
 
 	@Test
+	void signin_fail_oauth2Login() {
+		SigninRequest signinRequest = TestDataFactory.signinRequest();
+		User user = mock(User.class);
+		when(user.getPassword()).thenReturn("Oauth2Login");
+
+		when(manager.findUser(anyString())).thenReturn(user);
+
+		Assertions.assertThrows(CustomException.class, () -> userService.signIn(signinRequest));
+
+		verify(manager).findUser(anyString());
+	}
+
+	@Test
 	void signin_UserNotFoundException() {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 
