@@ -24,9 +24,9 @@ public class RedisDao {
 	private final String RTK = "RT: ";
 	private final String STMT = "STMT: ";
 
-	public String getValue(String refreshToken) {
+	public String getValue(String refreshTokenPointer) {
 		ValueOperations<String, String> values = redisTemplate.opsForValue();
-		return values.get(RTK + refreshToken);
+		return values.get(RTK + refreshTokenPointer);
 	}
 
 	public Set<String> getKeysList(Object object) {
