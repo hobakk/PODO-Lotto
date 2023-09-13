@@ -49,6 +49,7 @@ import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.dto.UserResponse;
+import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -527,5 +528,21 @@ public class UserServiceTest {
 		Assertions.assertThrows(CustomException.class, () -> userService.getBuySixNumberList(anyLong()));
 
 		verify(manager).findUser(anyLong());
+	}
+
+	@Test
+	void oauth2LoginAfterGetUserIfAndRefreshToken_success() {
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
+
+		when(redisDao.getValue(anyString())).thenReturn("refreshT");
+
+		when(passwordEncoder.encode(anyString())).thenReturn("encodedRefreshT");
+
+		UserResponseAndEncodedRefreshDto dto = userService.oauth2LoginAfterGetUserIfAndRefreshToken(saveUser.getId());
+
+		verify(manager).findUser(anyLong());
+		verify(redisDao).getValue(anyString());
+		verify(passwordEncoder).encode(anyString());
+		assertNotNull(dto);
 	}
 }
