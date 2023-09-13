@@ -545,4 +545,17 @@ public class UserServiceTest {
 		verify(passwordEncoder).encode(anyString());
 		assertNotNull(dto);
 	}
+
+	@Test
+	void oauth2LoginAfterGetUserIfAndRefreshToken_fail() {
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
+
+		when(redisDao.getValue(anyString())).thenReturn(isNull());
+
+		Assertions.assertThrows(CustomException.class,
+			() -> userService.oauth2LoginAfterGetUserIfAndRefreshToken(saveUser.getId()));
+
+		verify(manager).findUser(anyLong());
+		verify(redisDao).getValue(anyString());
+	}
 }
