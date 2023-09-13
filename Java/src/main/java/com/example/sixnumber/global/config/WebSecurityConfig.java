@@ -21,8 +21,8 @@ import com.example.sixnumber.global.scurity.JwtSecurityFilter;
 import com.example.sixnumber.global.scurity.UserDetailsServiceImpl;
 import com.example.sixnumber.global.util.CustomOAuth2UserService;
 import com.example.sixnumber.global.util.JwtProvider;
-import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
+import com.example.sixnumber.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,12 +33,13 @@ public class WebSecurityConfig {
 	private final UserDetailsServiceImpl userDetailsService;
 	private final JwtProvider jwtProvider;
 	private final RedisDao redisDao;
-	private final Manager manager;
+	private final UserRepository userRepository;
 	private final JwtEntryPoint jwtEntryPoint;
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private static final String[] URL_PERMIT_ALL = {
-		"/api/users/signin", "/api/users/signup", "/api/winnumber", "/api/jwt/re-issuance","/api/users/my-information"
+		"/api/users/signin", "/api/users/signup", "/api/winnumber", "/api/jwt/re-issuance","/api/users/my-information",
+		"/api/users/oauth2/my-information"
 	};
 
 	@Bean
@@ -53,7 +54,7 @@ public class WebSecurityConfig {
 
 	@Bean
 	public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
-		return new CustomAuthenticationSuccessHandler(passwordEncoder(), jwtProvider, redisDao, manager);
+		return new CustomAuthenticationSuccessHandler(jwtProvider, redisDao, userRepository);
 	}
 
 	@Bean
