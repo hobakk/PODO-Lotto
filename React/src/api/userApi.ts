@@ -91,10 +91,20 @@ export type SixNumberResponse = {
     numberList: string[],
 }
 
-export const getBuySixNumberList= async (): Promise<UnifiedResponse<SixNumberResponse[]>> => {
+export const getBuySixNumberList = async (): Promise<UnifiedResponse<SixNumberResponse[]>> => {
     try {
-        const { data } = await api.get("/users/sixnumber-list")
+        const { data } = await api.get("/users/sixnumber-list");
         return data;
+    } catch (error: any) {
+        throw error;
+    }
+}
+
+export const getUserIfAndRefreshToken = async (): Promise<UnifiedResponse<UserDetailInfo>> => {
+    try {
+        const res = await api.get("/users/oauth2/my-information");
+        console.log(res)
+        return res.data;
     } catch (error: any) {
         throw error;
     }
