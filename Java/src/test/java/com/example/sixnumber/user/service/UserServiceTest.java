@@ -31,6 +31,7 @@ import org.springframework.validation.Errors;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.TestUtil;
+import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.OverlapException;
@@ -160,15 +161,14 @@ public class UserServiceTest {
 	@Test
 	void signin_success() {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
+		TokenDto tokenDto = TestDataFactory.tokenRequest();
 		CookieAndTokenResponse cookieAndTokenResponse = TestDataFactory.cookiesResponse();
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
-		when(jwtProvider.refreshToken(eq(saveUser.getEmail()), eq(saveUser.getId()), anyString()))
-			.thenReturn(cookieAndTokenResponse.getEnCodedRefreshToken());
-		when(jwtProvider.accessToken(anyString())).thenReturn(cookieAndTokenResponse.getAccessCookie().getValue());
+		when(jwtProvider.generateTokens(any(User.class))).thenReturn(tokenDto);
 		when(jwtProvider.createCookie(anyString(), anyString(), anyString()))
 			.thenReturn(cookieAndTokenResponse.getAccessCookie());
 
@@ -180,8 +180,7 @@ public class UserServiceTest {
 		verify(manager).findUser(anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
 		verify(redisDao).getValue(anyString());
-		verify(jwtProvider).refreshToken(eq(saveUser.getEmail()), eq(saveUser.getId()), anyString());
-		verify(jwtProvider).accessToken(anyString());
+		verify(jwtProvider).generateTokens(any(User.class));
 		verify(redisDao).setRefreshToken(anyString(), anyString(), anyLong(), any(TimeUnit.class));
 		verify(jwtProvider).createCookie(anyString(), anyString(), anyString());
 		verify(passwordEncoder).encode(anyString());

@@ -138,7 +138,7 @@ public class TestDataFactory {
 	}
 
 	public static TokenDto tokenRequest() {
-		return new TokenDto("accessT", "refreshT");
+		return new TokenDto("accessT", "refreshT", "refreshTPointer");
 	}
 
 	public static Stream<Arguments> statusTestData() {
