@@ -93,6 +93,8 @@ public class UserService {
 	public CookieAndTokenResponse signIn(SigninRequest request) {
 		User user = manager.findUser(request.getEmail());
 
+		if (user.getPassword().equals("Oauth2Login")) throw new CustomException(NOT_OAUTH2_LOGIN);
+
 		if (!user.getStatus().equals(Status.ACTIVE)) {
 			String msg;
 			switch (user.getStatus()) {
