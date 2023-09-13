@@ -160,7 +160,6 @@ public class JwtProvider {
 
 	public TokenDto generateTokens(User user) {
 		String refreshPointer = UUID.randomUUID().toString();
-		user.setRefreshPointer(refreshPointer);
 		String accessToken = accessToken(refreshPointer);
 		String refreshToken = refreshToken(user.getEmail(), user.getId(), refreshPointer);
 		return new TokenDto(accessToken, refreshToken, refreshPointer);
