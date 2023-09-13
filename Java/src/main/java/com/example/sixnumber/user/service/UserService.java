@@ -38,6 +38,7 @@ import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
+import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
 import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
@@ -270,5 +271,14 @@ public class UserService {
 		}
 
 		return UnifiedResponse.ok("본인확인 성공");
+	}
+
+	public UserResponseAndEncodedRefreshDto oauth2LoginAfterGetUserIfAndRefreshToken(Long userIf) {
+		User user = manager.findUser(userIf);
+		String refreshToken = redisDao.getValue(user.getRefreshPointer());
+		if (refreshToken == null) throw new CustomException(INVALID_TOKEN);
+
+		String encodedRefreshToken = passwordEncoder.encode(refreshToken);
+		return new UserResponseAndEncodedRefreshDto(new UserResponse(user), encodedRefreshToken);
 	}
 }
