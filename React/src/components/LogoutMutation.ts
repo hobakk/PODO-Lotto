@@ -15,11 +15,6 @@ function LogoutMutation() {
                 purge();
                 navigate("/");
             }
-        },
-        onError: ()=>{ 
-            console.log("로그아웃 에러");
-            purge();
-            navigate("/");
         }
     })
 

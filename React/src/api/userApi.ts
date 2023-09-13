@@ -103,7 +103,6 @@ export const getBuySixNumberList = async (): Promise<UnifiedResponse<SixNumberRe
 export const getUserIfAndRefreshToken = async (): Promise<UnifiedResponse<UserDetailInfo>> => {
     try {
         const res = await api.get("/users/oauth2/my-information");
-        console.log(res)
         return res.data;
     } catch (error: any) {
         throw error;
