@@ -220,6 +220,7 @@ public class UserServiceTest {
 
 		User user = mock(User.class);
 		when(user.getStatus()).thenReturn(status);
+		when(user.getPassword()).thenReturn("password");
 
 		when(manager.findUser(anyString())).thenReturn(user);
 
@@ -465,7 +466,7 @@ public class UserServiceTest {
 	@Test
 	void update_fail_incorrectValue() {
 		SignupRequest request = mock(SignupRequest.class);
-		when(request.getEmail()).thenReturn("test@email.com");
+		when(request.getEmail()).thenReturn("test@gmail.com");
 		when(request.getPassword()).thenReturn("ePassword");
 		when(request.getNickname()).thenReturn("nickname");
 
