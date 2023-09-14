@@ -29,7 +29,7 @@ public class OAuthAttributes {
 	public static OAuthAttributes of(String registrationId, String nameAttributeKey,  Map<String, Object> attributes){
 		switch (registrationId) {
 			case "google": return ofGoogle(nameAttributeKey, attributes);
-			case "kakao": return ofKakao("nickname", attributes);
+			case "kakao": return ofKakao("id", attributes);
 			case "naver": return ofNaver("id", attributes);
 			default: throw new RuntimeException();
 		}
