@@ -122,7 +122,11 @@ public class User implements UserDetails {
 		this.nickname = list.get(2);
 	}
 
-	public void setNickname(String nickname) { this.nickname = nickname; }
+	public User setNickname(String nickname) {
+		this.nickname = nickname;
+		return this;
+	}
+
 	public void setPaymentDate(LocalDate localDate) {
 		this.paymentDate = localDate;
 	}
