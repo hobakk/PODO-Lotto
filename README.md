@@ -15,13 +15,14 @@
   <img src="https://img.shields.io/badge/StyledComponents-DB7093?style=for-the-badge&logo=StyledComponents&logoColor=black">
 </div><br/>
 
-<br/><h2>User [Code](https://github.com/hobakk/Lotto/blob/6daf87ae8f743fd3f639894d6304bb6795b45ca2/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L53)</h2>
+<br/><h2>User [Code](https://github.com/hobakk/Lotto/blob/1841ea197768b539da1c2328ed48501d8ebf6ff9/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L55)
 
 ### 1. 회원가입, 회원탈퇴
 - 회원탈퇴 당일로 부터 1달간 데이터유지
 - 기간 만료 이전에 재가입 시 계정 활성화
 - 기간이 만료되면 스케줄러를 이용하여 자동 삭제처리
 ### 2. 로그인, 로그아웃
+참고: Google, Naver, Kakao OAuth2 로그인 구현
 - JWT Token(access, refresh)을 이용한 로그인, 로그아웃 구현
 - Spring Security 를 통한 인증/인가
 ### 3. 충전요청
