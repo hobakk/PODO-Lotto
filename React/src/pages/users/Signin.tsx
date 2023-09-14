@@ -47,7 +47,11 @@ function Signin() {
         }
     }, [])
 
-    const handleGoogleLogin = () => { window.location.href = 'http://localhost:8080/oauth2/authorization/google'; };
+    const BE_SERVER = "http://localhost:8080";
+    const REDIRECT_URL = "?redirect_uri=http://localhost:3000/oauth2/user";
+    const siteLoginHandler = (site: string) => {
+         window.location.href = `${BE_SERVER}/oauth2/authorization/${site}${REDIRECT_URL}`; 
+    };
 
   return (
     <div style={ CommonStyle }>
@@ -88,16 +92,34 @@ function Signin() {
             <p style={{ margin:"auto", textAlign:"center", marginBottom:"10px"}}>간편로그인</p>
             <div style={{ margin:"auto", borderTop:"2px solid gray", width:"80%" }}/>
         </div>
-        <img 
-            src={process.env.PUBLIC_URL + `/googleLogo.png`}
-            style={{
-                width:"1.5cm", height:"1.5cm", 
-                margin:"auto", marginTop:"30px", 
-                padding:"10px", cursor:"pointer",
-                border:"1px solid black", borderRadius: "50px",
-            }} 
-            onClick={handleGoogleLogin}
-        />
+        <div style={{display:"flex", justifyContent:"center", alignItems:"center", marginTop:"30px", width:"6cm" }}>
+            <img 
+                src={process.env.PUBLIC_URL + `/googleLogo.png`}
+                style={{
+                    width:"1.2cm", height:"1.2cm", margin:"auto",
+                    padding:"7px", cursor:"pointer",
+                    border:"1px solid black", borderRadius: "10px",
+                }} 
+                onClick={()=>siteLoginHandler("google")}
+            />
+            <img 
+                src={process.env.PUBLIC_URL + `/naverLogo.png`}
+                style={{
+                    width:"2cm", height:"2cm", margin:"auto",
+                    cursor:"pointer", borderRadius: "30px",
+                }} 
+                onClick={()=>siteLoginHandler("naver")}
+            />
+            <img 
+                src={process.env.PUBLIC_URL + `/kakaoLogo.png`}
+                style={{
+                    width:"1.5cm", height:"1.5cm", margin:"auto",
+                    cursor:"pointer", 
+                }} 
+                onClick={()=>siteLoginHandler("kakao")}
+            />
+        </div>
+        
     </div>
   )
 }
