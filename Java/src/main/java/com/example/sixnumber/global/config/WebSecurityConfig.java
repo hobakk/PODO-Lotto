@@ -39,7 +39,7 @@ public class WebSecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private static final String[] URL_PERMIT_ALL = {
 		"/api/users/signin", "/api/users/signup", "/api/winnumber", "/api/jwt/re-issuance","/api/users/my-information",
-		"/api/users/oauth2/my-information"
+		"/api/users/oauth2/my-information", "/login/oauth2/code/**"
 	};
 
 	@Bean
