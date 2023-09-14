@@ -1,6 +1,7 @@
 package com.example.sixnumber.global.util;
 
 import java.util.Collections;
+import java.util.Map;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -28,28 +29,21 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 		// OAuth2 서비스 id (구글, 카카오, 네이버)
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
-		// OAuth2 로그인 진행 시 키가 되는 필드 값(PK)
-		String userNameAttributeName = userRequest.getClientRegistration()
-												  .getProviderDetails()
-												  .getUserInfoEndpoint()
-												  .getUserNameAttributeName();
+		String nameAttributeName = userRequest.getClientRegistration()
+			.getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName();
 
-		// OAuth2UserService
-		OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName, oAuth2User.getAttributes());
+		OAuthAttributes attributes = OAuthAttributes.of(registrationId, nameAttributeName, oAuth2User.getAttributes());
+		Map<String, Object> userAttribute = attributes.convertToMap();
+
 		User user = saveOrUpdate(attributes);
-
 		return new DefaultOAuth2User(Collections.singleton(new SimpleGrantedAuthority(user.getRole().getAuthority())),
-			attributes.getAttributes(),
+			userAttribute,
 			attributes.getNameAttributeKey());
 	}
 
-	// 유저 생성 및 수정 서비스 로직
 	private User saveOrUpdate(OAuthAttributes attributes){
 		User user = userRepository.findByEmail(attributes.getEmail())
-			.map(entity -> {
-				entity.setNickname(attributes.getName());
-				return entity;
-			})
+			.map(entity -> entity.setNickname(attributes.getName()))
 			.orElse(attributes.toEntity());
 		return userRepository.save(user);
 	}
