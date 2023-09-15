@@ -6,11 +6,10 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     url: ${DB_URL}
-    driver-class-name: oracle.jdbc.OracleDriver
+    driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
-    database: oracle
-    database-platform: org.hibernate.dialect.Oracle12cDialect
+    database-platform: org.hibernate.dialect.MariaDBDialect
     show-sql: true
     hibernate:
       ddl-auto: update
