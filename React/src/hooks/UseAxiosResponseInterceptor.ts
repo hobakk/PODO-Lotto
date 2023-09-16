@@ -69,9 +69,11 @@ const UesAxiosResponseInterceptor = () => {
                 alert("토큰이 만료되어 로그아웃 됩니다");
                 await persistor.purge();
             }
+
+            return Promise.reject(error.response);
         }
             
-        return error;
+        return Promise.reject(error);
     }
 
     const requestInterceptor = api.interceptors.request.use((request)=> requestHandler(request));
