@@ -7,15 +7,13 @@ import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 
 function CreateMainLotto() {
     const navigate = useNavigate();
-    const setMainLottoMutation = useMutation<UnifiedResponse<undefined>, Err>(createLotto, {
+    const setMainLottoMutation = useMutation<UnifiedResponse<undefined>>(createLotto, {
         onSuccess: (res) => {
             alert(res.msg);
             navigate("/");
         },
-        onError: (err)=>{
-            if (err.code === 500) {
-                alert(err.msg);
-            }
+        onError: (err: any)=>{
+            alert(err.data.message);
         }
     })
 
