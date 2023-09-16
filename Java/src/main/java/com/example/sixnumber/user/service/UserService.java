@@ -89,7 +89,7 @@ public class UserService {
 		}
 
 		List<String> mailList = Arrays.asList("gmail.com", "naver.com", "daum.net");
-		if (mailList.contains(request.getEmail().split("@")[1])) {
+		if (!mailList.contains(request.getEmail().split("@")[1])) {
 			throw new CustomException(INVALID_INPUT);
 		}
 		if (userRepository.existsUserByEmail(request.getEmail())) {

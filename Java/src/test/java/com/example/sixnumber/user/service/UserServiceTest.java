@@ -85,6 +85,7 @@ public class UserServiceTest {
 		Errors errors = mock(Errors.class);
 		when(errors.hasErrors()).thenReturn(false);
 
+		when(userRepository.findByStatusAndEmail(any(Status.class), anyString())).thenReturn(Optional.empty());
 		when(userRepository.existsUserByEmail(anyString())).thenReturn(false);
 		when(userRepository.existsUserByNickname(anyString())).thenReturn(false);
 
@@ -93,6 +94,7 @@ public class UserServiceTest {
 
 		UnifiedResponse<?> response = userService.signUp(signupRequest, errors);
 
+		verify(userRepository).findByStatusAndEmail(any(Status.class), anyString());
 		verify(userRepository).existsUserByEmail(anyString());
 		verify(userRepository).existsUserByNickname(anyString());
 		verify(userRepository).save(any(User.class));
@@ -100,7 +102,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void signup_success_setActive() {
+	void signup_success_ReJoin() {
 		SignupRequest request = TestDataFactory.signupRequest();
 		Errors errors = mock(Errors.class);
 
