@@ -12,17 +12,16 @@ function Signin() {
     const navigate = useNavigate();
     const getUserIfMutation = GetUserIfMutation();
 
-    const signinMutation = useMutation<UnifiedResponse<undefined>, Err, SigninRequest>(signin,{
+    const signinMutation = useMutation<UnifiedResponse<undefined>, any, SigninRequest>(signin,{
         onSuccess: (res)=>{
             if  (res.code === 200) {
                 getUserIfMutation.mutate();
                 navigate("/");
             }
         },
-        onError: (err)=>{
-            if  (err.exceptionType === "OverlapException") {
-                alert(err.msg);
-            }
+        onError: (err: any | Err)=>{
+            if (err.code) alert(err.msg);
+            else if (err.status) alert(err.message);
         }
     });
 
