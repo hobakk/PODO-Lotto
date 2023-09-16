@@ -4,6 +4,7 @@ import static com.example.sixnumber.global.exception.ErrorCode.*;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 
 import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.dto.UnifiedResponse;
@@ -72,9 +75,22 @@ public class UserService {
 			}
 		}
 
+		if (errors.hasErrors()) {
+			List<FieldError> fieldErrors = errors.getFieldErrors();
+			List<String> errorMsgList = new ArrayList<>();
+			for (FieldError fieldError : fieldErrors) {
+				errorMsgList.add(fieldError.getDefaultMessage());
+			}
+
+			String errorMsg = IntStream.range(0, errorMsgList.size())
+				.mapToObj(index -> (index + 1) + ". " + errorMsgList.get(index))
+				.collect(Collectors.joining(".\n"));
+			throw new OverlapException(errorMsg);
+		}
+
 		List<String> mailList = Arrays.asList("gmail.com", "naver.com", "daum.net");
 		String email = request.getEmail();
-		if (email.split("@").length != 2 || errors.hasErrors() || mailList.contains(email.split("@")[1])) {
+		if (email.split("@").length != 2 || mailList.contains(email.split("@")[1])) {
 			throw new CustomException(INVALID_INPUT);
 		}
 
