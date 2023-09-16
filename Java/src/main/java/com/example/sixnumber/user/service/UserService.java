@@ -89,11 +89,9 @@ public class UserService {
 		}
 
 		List<String> mailList = Arrays.asList("gmail.com", "naver.com", "daum.net");
-		String email = request.getEmail();
-		if (email.split("@").length != 2 || mailList.contains(email.split("@")[1])) {
+		if (mailList.contains(request.getEmail().split("@")[1])) {
 			throw new CustomException(INVALID_INPUT);
 		}
-
 		if (userRepository.existsUserByEmail(request.getEmail())) {
 			throw new OverlapException("중복된 이메일입니다");
 		}
