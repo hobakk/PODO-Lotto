@@ -66,7 +66,7 @@ public class TestDataFactory {
 
 	public static SigninRequest signinRequest() {
 		return new SigninRequest(
-			"test@email.com",
+			"test@gmail.com",
 			"password1!"
 		);
 	}

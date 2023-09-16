@@ -158,7 +158,7 @@ public class UserServiceTest {
 		Errors errors = mock(Errors.class);
 		when(errors.hasErrors()).thenReturn(true);
 
-		Assertions.assertThrows(CustomException.class, () -> userService.signUp(signupRequest, errors));
+		Assertions.assertThrows(OverlapException.class, () -> userService.signUp(signupRequest, errors));
 	}
 
 	@Test
