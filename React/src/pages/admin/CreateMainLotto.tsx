@@ -13,7 +13,10 @@ function CreateMainLotto() {
             navigate("/");
         },
         onError: (err: any)=>{
-            alert(err.data.message);
+            if (err.status) {
+                alert(err.message);
+                navigate("/");
+            }
         }
     })
 

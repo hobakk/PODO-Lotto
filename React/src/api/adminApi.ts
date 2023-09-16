@@ -38,8 +38,8 @@ export const createLotto = async (): Promise<UnifiedResponse<undefined>> => {
     try {
         const { data } = await api.post("/admin/lotto");
         return data;    
-    } catch (error) {
-        throw error;
+    } catch (error: any) {
+        throw error.data;
     }
 }
 
