@@ -8,16 +8,24 @@ export const getUsers = async (): Promise<UnifiedResponse<UserDetailInfo[]>> => 
 }
 
 export const getAdminCharges = async (): Promise<UnifiedResponse<upDownCashRequest[]>> => {
-    const { data } = await api.get("/admin/charges");
-    return data;
+    try {
+        const { data } = await api.get("/admin/charges");
+        return data;
+    } catch (error: any) {
+        throw error.data;
+    }
 }
 
 export const getSearch = async ( msgCash: ChargingDto ): Promise<UnifiedResponse<upDownCashRequest>> => {
-    const { data } = await api.get("/admin/search", { params: {
-        msg: msgCash.msg,
-        cash: msgCash.cash,
-    }});
-    return data;
+    try {
+       const { data } = await api.get("/admin/search", { params: {
+            msg: msgCash.msg,
+            cash: msgCash.cash,
+        }});
+        return data; 
+    } catch (error: any) {
+        throw error.data;
+    }
 }
 
 export const upCash = async (inputValue: upDownCashRequest): Promise<UnifiedResponse<undefined>> => {
@@ -29,8 +37,8 @@ export const downCash = async (inputValue: upDownCashRequest): Promise<UnifiedRe
     try {
         const { data } = await api.patch("/admin/users/down-cash", inputValue);
         return data;
-    } catch (error) {
-        throw error;
+    } catch (error: any) {
+        throw error.data;
     }
 }
 
@@ -52,8 +60,8 @@ export const setAdmin = async ({ userId, msg }: UserIdMsgProps): Promise<Unified
     try {
         const { data } = await api.patch(`/admin/users/${userId}`, msg);
         return data;
-    } catch (error) {
-        throw error;
+    } catch (error: any) {
+        throw error.data;
     }
 }
 
@@ -61,8 +69,8 @@ export const setStatusFromAdmin = async ({ userId, msg }: UserIdMsgProps): Promi
     try {
         const { data } = await api.patch(`/admin/status/${userId}`, msg);
         return data;
-    } catch (error) {
-        throw error;
+    } catch (error: any) {
+        throw error.data;
     }
 }
 
@@ -70,8 +78,8 @@ export const setRoleFromAdmin = async ({ userId, msg }: UserIdMsgProps): Promise
     try {
         const { data } = await api.patch(`/admin/role/${userId}`, msg);
         return data;
-    } catch (error) {
-        throw error;
+    } catch (error: any) {
+        throw error.data;
     }
 }
 
@@ -87,7 +95,7 @@ export const setWinNumber = async (inputValue: WinNumberRequest): Promise<Unifie
     try {
         const { data } = await api.post("/winnumber/set", inputValue);
         return data;
-    } catch (error) {
-        throw error;
+    } catch (error: any) {
+        throw error.data;
     }
 }
