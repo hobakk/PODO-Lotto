@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CommonStyle } from '../../components/Styles'
+import { CommonStyle } from '../../shared/Styles'
 import { useMutation } from 'react-query';
 import { AllMonthProps, LottoResponse, getAllMonthStats, getTopNumberForMonth } from '../../api/lottoApi';
 import { NumSentenceResult } from '../../components/Manufacturing';

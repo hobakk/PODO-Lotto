@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { InputBox, CommonStyle, MsgAndInput, ButtonDiv, ButtonStyle } from '../../components/Styles'
+import { InputBox, CommonStyle, MsgAndInput, ButtonDiv, ButtonStyle } from '../../shared/Styles'
 import { ChargingDto, setCharges } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';

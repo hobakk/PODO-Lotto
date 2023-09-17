@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CommonStyle } from '../../components/Styles'
+import { CommonStyle } from '../../shared/Styles'
 import { statisticalNumber, repetitionAndNum } from '../../api/sixNumberApi';
 import { useMutation } from 'react-query';
 import { ResultContainer } from '../../components/Manufacturing';

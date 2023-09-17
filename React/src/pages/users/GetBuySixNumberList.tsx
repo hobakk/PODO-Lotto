@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
 import { SixNumberResponse, getBuySixNumberList } from '../../api/userApi'
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
-import { CommonStyle } from '../../components/Styles';
+import { CommonStyle } from '../../shared/Styles';
 import { ResultContainer } from '../../components/Manufacturing';
 
 function GetBuySixNumberList() {

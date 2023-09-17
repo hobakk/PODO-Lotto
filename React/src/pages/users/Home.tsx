@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getWinNumber } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';
-import { CommonStyle } from '../../components/Styles';
+import { CommonStyle } from '../../shared/Styles';
 import { ChangingNumStyle } from '../../components/Manufacturing';
 import { WinNumber, Err, UnifiedResponse } from '../../shared/TypeMenu';
 import { Link } from 'react-router-dom';

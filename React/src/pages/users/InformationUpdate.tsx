@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CommonStyle, CommonP, InputBox, MsgAndInput, ButtonDiv, ButtonStyle } from '../../components/Styles'
+import { CommonStyle, CommonP, InputBox, MsgAndInput, ButtonDiv, ButtonStyle } from '../../shared/Styles'
 import { checkPW, update } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import LogoutMutation from '../../hooks/useLogoutMutation';

@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { CommonLink, LogoutStyle} from '../components/Styles';
+import { CommonLink, LogoutStyle} from './Styles';
 import LogoutMutation from '../hooks/useLogoutMutation';
 import MenuContainer from '../components/MenuContainer';
 import { AdminMenuValue, LottoMenuValue, StatsMenuValue, UserMenuValue } from './MenuValue';

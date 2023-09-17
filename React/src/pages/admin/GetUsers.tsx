@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
 import { downCash, getUsers, setRoleFromAdmin, setStatusFromAdmin, setAdmin, UserIdMsgProps } from '../../api/adminApi';
-import { CommonStyle } from '../../components/Styles';
+import { CommonStyle } from '../../shared/Styles';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedResponse, UserDetailInfo, Err, upDownCashRequest } from '../../shared/TypeMenu';
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ResultContainer } from '../../components/Manufacturing'
 import { useMutation } from 'react-query'
-import { CommonStyle } from '../../components/Styles';
+import { CommonStyle } from '../../shared/Styles';
 import { getRecentNumber } from '../../api/sixNumberApi';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { SignBorder, CommonStyle, InputBox, MsgAndInput, ButtonDiv, ButtonStyle } from '../../components/Styles'
+import { SignBorder, CommonStyle, InputBox, MsgAndInput, ButtonDiv, ButtonStyle } from '../../shared/Styles'
 import { Link, useNavigate } from 'react-router-dom';
 import { signup, SignupRequest } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';

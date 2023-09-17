@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ButtonDiv, ButtonStyle, CommonStyle, InputBox, MsgAndInput } from '../../components/Styles'
+import { ButtonDiv, ButtonStyle, CommonStyle, InputBox, MsgAndInput } from '../../shared/Styles'
 import { useMutation } from 'react-query';
 import { getSearch } from '../../api/adminApi';
 import { UnifiedResponse, Err, upDownCashRequest } from '../../shared/TypeMenu';

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CommonStyle } from '../../components/Styles'
+import { CommonStyle } from '../../shared/Styles'
 import { ChargingDto, getCharges } from '../../api/userApi'
 import { useMutation } from 'react-query'
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';

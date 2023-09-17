@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ButtonDiv, ButtonStyle, CommonStyle, MsgAndInput } from '../../components/Styles'
+import { ButtonDiv, ButtonStyle, CommonStyle, MsgAndInput } from '../../shared/Styles'
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { signin, SigninRequest } from '../../api/noneUserApi';
-import { InputBox } from '../../components/Styles';
+import { InputBox } from '../../shared/Styles';
 import useUserInfo from '../../hooks/useUserInfo';
 import { Err, UnifiedResponse } from '../../shared/TypeMenu';
 

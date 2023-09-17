@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { MenuDiv, MenuSpan, Dropdown, UlBox, LiBox, CustomLink } from './Styles';
+import { MenuDiv, MenuSpan, Dropdown, UlBox, LiBox, CustomLink } from '../shared/Styles';
 import { MenuType } from '../shared/MenuValue';
 
 function MenuContainer({ MenuValue }: {MenuValue: MenuType}) {

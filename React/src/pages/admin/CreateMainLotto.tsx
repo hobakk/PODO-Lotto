@@ -1,7 +1,7 @@
 import React from 'react'
 import { useMutation } from 'react-query';
 import { createLotto } from '../../api/adminApi';
-import { CommonStyle } from '../../components/Styles';
+import { CommonStyle } from '../../shared/Styles';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 

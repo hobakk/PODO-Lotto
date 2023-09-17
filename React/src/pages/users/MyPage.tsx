@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { CommonStyle, MsgAndInput, InputBox } from '../../components/Styles'
+import { CommonStyle, MsgAndInput, InputBox } from '../../shared/Styles'
 import { withdraw } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';

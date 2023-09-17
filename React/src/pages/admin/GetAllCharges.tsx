@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
 import { getAdminCharges, upCash } from '../../api/adminApi';
-import { CommonStyle } from '../../components/Styles';
+import { CommonStyle } from '../../shared/Styles';
 import { upDownCashRequest, UnifiedResponse, Err } from '../../shared/TypeMenu';
 
 function GetAllCharges() {

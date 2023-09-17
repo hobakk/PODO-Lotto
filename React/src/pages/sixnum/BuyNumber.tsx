@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CommonStyle, InputBox, MsgAndInput } from '../../components/Styles'
+import { CommonStyle, InputBox, MsgAndInput } from '../../shared/Styles'
 import { buyNumber } from '../../api/sixNumberApi';
 import { useMutation } from 'react-query';
 import useUserInfo from '../../hooks/useUserInfo';

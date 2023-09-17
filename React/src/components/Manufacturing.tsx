@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { WinNumberStyle } from "./Styles";
+import { WinNumberStyle } from "../shared/Styles";
 
 export const ChangingNumStyle = ({ num, index }: {num: number, index: number}) => {
     let color = "";
