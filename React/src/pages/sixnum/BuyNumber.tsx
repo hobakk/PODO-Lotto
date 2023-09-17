@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CommonStyle, InputBox, InputBoxStyle, MsgAndInput } from '../../components/Styles'
+import { CommonStyle, InputBox, MsgAndInput } from '../../components/Styles'
 import { buyNumber } from '../../api/sixNumberApi';
 import { useMutation } from 'react-query';
 import GetUserIfMutation from '../../components/GetUserIfMutation';
@@ -75,7 +75,6 @@ function BuyNumber() {
                     ref={numRef} 
                     onChange={onChangeHandler} 
                     placeholder='0'
-                    style={InputBoxStyle} 
                 /> 
                 <button style={buttonStyle} onClick={()=>updownHandler(true)}>+</button>
                 <button style={buttonStyle} onClick={()=>updownHandler(false)}>-</button>    
