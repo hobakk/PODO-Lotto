@@ -6,16 +6,14 @@ import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 
 function GetCharging() {
   const [chargValue, setChargValue] = useState<ChargingDto[]>([]);
-  const getChargesMutation = useMutation<UnifiedResponse<ChargingDto[]>, Err>(getCharges, {
+  const getChargesMutation = useMutation<UnifiedResponse<ChargingDto[]>>(getCharges, {
     onSuccess: (res)=>{
       if (res.code === 200 && res.data) {
         setChargValue(res.data);
       }
     },
-    onError: (err)=>{
-      if  (err.code === 500) {
-        alert(err.msg);
-      }
+    onError: (err: any)=>{
+      if  (err.status) console.log(err.message);
     }
   })
 
@@ -60,6 +58,11 @@ function GetCharging() {
           })
         ):null}
         <div style={{ border:"3px solid black", borderBottom:"0px", width:"23cm", }}/>
+        {chargValue.length === 0 && (
+          <div style={{ textAlign:"center", fontSize:"22px", marginTop:"2cm" }}>
+              <span>충전요청이 존재하지 않습니다</span>
+          </div>
+        )}
     </div>
   )
 }
