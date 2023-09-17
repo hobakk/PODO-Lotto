@@ -2,28 +2,24 @@ import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
 import { getAdminCharges, upCash } from '../../api/adminApi';
 import { CommonStyle } from '../../components/Styles';
-import { useNavigate } from 'react-router-dom';
 import { upDownCashRequest, UnifiedResponse, Err } from '../../shared/TypeMenu';
 
 function GetAllCharges() {
-    const navigate = useNavigate();
     const [value, setValue] = useState<upDownCashRequest[]>([]);
     const [render, setRender] = useState<boolean>(true);
     const [selectValue, setSelectValue] = useState<string>("selectCash");
     const [searchInputValue, setSearchInputValue] = useState<string>("");
     const [result, setResult] = useState<upDownCashRequest[]>([]);
 
-    const getAllChargingMutation = useMutation<UnifiedResponse<upDownCashRequest[]>, Err>(getAdminCharges, {
+    const getAllChargingMutation = useMutation<UnifiedResponse<upDownCashRequest[]>>(getAdminCharges, {
         onSuccess: (res)=>{
             if (res.code === 200) {
                 if (res.data) setValue(res.data);
             }
         },
-        onError: (err)=>{
-            if (err.code === 500) {
-                alert(err.msg);
-                navigate("/");
-            }
+        onError: (err: any | Err)=>{
+            if (err.status) alert(err.message);
+            else alert(err.msg);
         }
     })
 
