@@ -1,15 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
-import { buyNumber } from '../../api/sixNumberApi';
+import { statisticalNumber, repetitionAndNum } from '../../api/sixNumberApi';
 import { useMutation } from 'react-query';
 import { ResultContainer } from '../../components/Manufacturing';
-import { UnifiedResponse } from '../../shared/TypeMenu';
+import { Err, UnifiedResponse } from '../../shared/TypeMenu';
+import GetUserIfMutation from '../../components/GetUserIfMutation';
 
 function StatisticalNumber() {
-    const [num, setNum] = useState<number>(0);
-    const [repetition, setRepetition] = useState<number>(0);
+    const [inputNum, setInputNum] = useState<repetitionAndNum>({
+        value: 0,
+        repetition: 0,
+    });
     const [value, setValue] = useState<string[]>([]);
+    const [isEmpty, setData] = useState<boolean>(true);
     const numRef = useRef<HTMLInputElement>(null);
+    const getUserIfMutation = GetUserIfMutation();
 
     useEffect(()=>{
         if (numRef.current) 
@@ -25,49 +30,91 @@ function StatisticalNumber() {
         height: "30px",
     }
     
-    const buyNumberMutation = useMutation<UnifiedResponse<string[]>, void, number>(buyNumber, {
+    const buyNumberMutation = useMutation<UnifiedResponse<string[]>, unknown, repetitionAndNum>(statisticalNumber, {
         onSuccess: (res)=>{
-            if (res.code === 200 && res.data)
-            setValue(res.data);
+            if (res.code === 200 && res.data) {
+                setValue(res.data);
+                setData(false);
+                getUserIfMutation.mutate();
+            }
+        },
+        onError: (err: any | Err)=>{
+            if (err.status) alert(err.message);
+            else if (err.msg) alert(err.msg);
         }
     });
 
-    const onClickHandler = (v: boolean) => {
-        v ? (setNum(num+1)):(setNum(num-1));
+    const onClickHandler = (v: string) => {
+        if (v === "+") {
+            setInputNum({
+                ...inputNum,
+                ["value"]: inputNum["value"] + 1,
+            })
+        } else {
+            setInputNum({
+                ...inputNum,
+                ["repetition"]: inputNum["repetition"] + 1,
+            })
+        }
     }
-    const buyHandler = () => {
-        if (num > 0 && repetition > 0) {
-            buyNumberMutation.mutate(num); 
+
+    const finalBuyHandler = () => {
+        if (inputNum["value"] > 0 && inputNum["repetition"] > 0) {
+            buyNumberMutation.mutate(inputNum); 
         } else {
             alert("반복횟수 및 발급횟수를 입력해주세요");
         }
     }
+
+    const validateValue = (value: any) => {
+        const count: number = parseInt(value);
+
+        if (!isNaN(count)) return count;
+        else alert("숫자만 입력 가능합니다");
+    }
+
     const setNumOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target;
-        setNum(parseInt(value));
+        const { name, value } = e.target;
+        const count = validateValue(value);
+
+        if (count && count !== 0) setInputNum({
+            ...inputNum,
+            [name]: count,
+        });
     }
-    const serRepetitionOnChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target;
-        setRepetition(parseInt(value));
-    }
+
+    const isEmptyHandler = () => setData(true);
 
   return (
     <div style={ CommonStyle }>
         <h1 style={{  fontSize: "80px" }}>Statistical Number</h1>
-        {value.length === 0 ? (
+        {isEmpty ? (
             <div id='buycontent'>
                 <p>반복횟수 입력란 </p>
-                <input value={repetition} onChange={serRepetitionOnChangeHandler} ref={numRef} style={InputStyle} placeholder='10만 이하 수를 입력해주세요'/>
+                <input 
+                    name="repetition"
+                    value={inputNum["repetition"]} 
+                    onChange={setNumOnChangeHandler} 
+                    ref={numRef} 
+                    style={InputStyle} 
+                    placeholder='10만 이하 수를 입력해주세요'
+                />
                 <p style={{ marginTop: "40px" }}>1회 발급당 300원이 차감됩니다</p>
-                <input value={num} onChange={setNumOnChangeHandler} style={InputStyle} placeholder='0' /> 
-                <button style={buttonStyle} onClick={()=>onClickHandler(true)}>+</button>
-                <button style={buttonStyle} onClick={()=>onClickHandler(false)}>-</button>    
-                <button onClick={buyHandler} style={{ width: "50px", height: "30px", marginLeft: "20px",  }}>구매</button>
+                <input 
+                    name="value"
+                    value={inputNum["value"]} 
+                    onChange={setNumOnChangeHandler} 
+                    style={InputStyle} 
+                    placeholder='0' 
+                /> 
+                <button style={buttonStyle} onClick={()=>onClickHandler("+")}>+</button>
+                <button style={buttonStyle} onClick={()=>onClickHandler("-")}>-</button>    
+                <button onClick={finalBuyHandler} style={{ width: "50px", height: "30px", marginLeft: "20px",  }}>구매</button>
             </div> 
         ):(
             <div>
                 <ResultContainer numSentenceList={value}></ResultContainer>
-                <button onClick={()=>{setValue([])}} style={{ marginTop: "1cm", marginRight: "auto"}}>계속 구매하기</button>
+                <button onClick={isEmptyHandler} style={{ marginTop: "1cm", marginRight: "auto"}}>계속 구매하기</button>
             </div>                
         )}
     </div>
