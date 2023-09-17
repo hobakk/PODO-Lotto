@@ -14,13 +14,14 @@ function SetWinNumber() {
         numbers: "",
     });
 
-    const setWinNumberMutation = useMutation<UnifiedResponse<undefined>, Err, WinNumberRequest>(setWinNumber, {
+    const setWinNumberMutation = useMutation<UnifiedResponse<undefined>, unknown, WinNumberRequest>(setWinNumber, {
         onSuccess: (res)=>{
             if (res.code === 200)
             alert(res.msg);
         },
-        onError: (err)=>{
-            alert(err.msg);
+        onError: (err: any | Err)=>{
+            if (err.status === 400) alert("잘못된 입력값입니다");
+            else if (err.code) alert(err.msg);
         }
     })
 
