@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { CommonStyle } from '../../components/Styles'
 import { useMutation } from 'react-query';
 import { getSearch } from '../../api/adminApi';
@@ -16,16 +16,14 @@ function SearchCharges() {
         cash: 0,
     });
 
-    const getSearchMutation = useMutation<UnifiedResponse<upDownCashRequest>, Err, ChargingDto>(getSearch, {
+    const getSearchMutation = useMutation<UnifiedResponse<upDownCashRequest>, any, ChargingDto>(getSearch, {
         onSuccess: (res)=>{
             if (res.code === 200 && res.data) {
                 setValue(res.data);
             }
         },
         onError: (err) => {
-            if (err.code === 500) {
-                alert(err.msg);
-            }
+            if (err.status === 500) alert(err.message);
 
             setValue({userId: 0, msg: "", cash: 0});
         }
