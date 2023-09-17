@@ -1,11 +1,11 @@
-<h1 align=center> Podo Lotto </h1><br/>
+<h1 align=center><img src=React/public/logo.png width=33 height=33 /> PODO Lotto </h1><br/>
 
 <h2>사용기술</h2>
 <div display=flex>
   <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=SpringBoot&logoColor=white">
   <img src="https://img.shields.io/badge/SpringSecurity-6DB33F?style=for-the-badge&logo=SpringSecurity&logoColor=white">
   <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white">
-  <img src="https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=Oracle&logoColor=white"><br/>
+  <img src="https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=MariaDB&logoColor=white"><br/>
   <img width="83cm" src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"/>
   <img width="119cm" src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"/>
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white">
@@ -15,7 +15,7 @@
   <img src="https://img.shields.io/badge/StyledComponents-DB7093?style=for-the-badge&logo=StyledComponents&logoColor=white">
 </div><br/>
 
-<br/><h2>User [Code](https://github.com/hobakk/Lotto/blob/1841ea197768b539da1c2328ed48501d8ebf6ff9/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L55)
+<br/><h2>User [Code](https://github.com/hobakk/Lotto/blob/d0d71e9ffcb786747a55b09ea7b7c986dceee058/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L58C1-L58C8)
 
 ### 1. 회원가입, 회원탈퇴
 - 회원탈퇴 당일로 부터 1달간 데이터유지
@@ -37,7 +37,7 @@
 - 조회: 닉네임,캐쉬, 충전요청, 거래내역, 회원정보, 비밀번호 재확인, 최근 구매한 번호 리스트
 - 수정: 회원정보
 
-<br/><br/><h2>Admin [Code](https://github.com/hobakk/Lotto/blob/331722f5f4e2f3da9b55a35fa9b411b69fda7c57/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L35)</h2>
+<br/><br/><h2>Admin [Code](https://github.com/hobakk/Lotto/blob/d0d71e9ffcb786747a55b09ea7b7c986dceee058/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L36)</h2>
 
 ### 1. 모든 유저 조회, 모든 충전요청 조회
 - FE: 조회된 정보들을 Nickname, cash 값으로 필터링
