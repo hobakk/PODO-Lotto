@@ -2,11 +2,11 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { CommonLink, LogoutStyle} from '../components/Styles';
-import LogoutMutation from '../components/LogoutMutation';
+import LogoutMutation from '../hooks/useLogoutMutation';
 import MenuContainer from '../components/MenuContainer';
 import { AdminMenuValue, LottoMenuValue, StatsMenuValue, UserMenuValue } from './MenuValue';
 import { RootState } from '../config/configStore';
-import UesAxiosResponseInterceptor from '../hooks/UseAxiosResponseInterceptor';
+import uesAxiosResponseInterceptor from '../hooks/useAxiosResponseInterceptor';
 
 const mainColor = `#9957F0`;
 
@@ -47,7 +47,7 @@ type UserIf = {
 }
 
 function Header() {
-  UesAxiosResponseInterceptor();
+  uesAxiosResponseInterceptor();
   const navigate = useNavigate();
   const logoutMutation = LogoutMutation();
   const userIf = useSelector((state: RootState)=>state.userIf) as UserIf;

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { setRefreshToken } from "../modules/refreshTokenSlice";
 import { persistor } from "../config/configStore";
 
-const UesAxiosResponseInterceptor = () => {
+const useAxiosResponseInterceptor = () => {
     const refreshTokenSlice = useSelector((state: RootState)=>state.refreshToken);
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -93,4 +93,4 @@ const UesAxiosResponseInterceptor = () => {
     return null;
 };
 
-export default UesAxiosResponseInterceptor;
+export default useAxiosResponseInterceptor;
