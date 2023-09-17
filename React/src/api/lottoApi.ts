@@ -15,7 +15,7 @@ export const getMainTopNumber = async (): Promise<UnifiedResponse<LottoResponse>
         const { data } = await api.get("/lotto/main");
         return data;
     } catch (error: any) {
-        throw error;
+        throw error.data;
     }
 }
 
@@ -28,7 +28,7 @@ export const getTopNumberForMonth = async (yearMonth: string): Promise<UnifiedRe
         });
         return data;
     } catch (error: any) {
-        throw error;
+        throw error.data;
     }
 }
 
@@ -37,6 +37,6 @@ export const getAllMonthStats = async (): Promise<UnifiedResponse<AllMonthProps>
         const { data } = await api.get("/lotto/yearMonth/all");
         return data;   
     } catch (error: any) {
-        throw error;
+        throw error.data;
     }
 }
