@@ -1,4 +1,4 @@
-<h1 align=center> Podo Lotto </h1><br/>
+<h1 align=center> PODO Lotto </h1><br/>
 
 <h2>사용기술</h2>
 <div display=flex>
