@@ -7,14 +7,14 @@ import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 function Statement() {
     const [value, setValue] = useState<{localDate: string, msg: string}[]>([]);
 
-    const StateMnetMutation = useMutation<UnifiedResponse<{localDate: string, msg: string}[]>, Err>(getStatement, {
+    const StateMnetMutation = useMutation<UnifiedResponse<{localDate: string, msg: string}[]>, any>(getStatement, {
         onSuccess: (res)=>{
             if (res.code === 200 && res.data) {
                 setValue(res.data);
             }
         },
-        onError: (err)=>{
-            console.log(err);
+        onError: (err: any)=>{
+            if  (err.status) console.log(err.message);
         }
     });
 
@@ -48,7 +48,9 @@ function Statement() {
                     return (
                         <div key={item.localDate + index} style={{ fontSize: "20px"}}>
                             <div style={{ display: "flex"}}>
-                                <span style={{...PStyle, textAlign: "center", borderRight: "0px", }}>{item.localDate}</span>
+                                <span style={{...PStyle, textAlign: "center", borderRight: "0px", }}>
+                                    {item.localDate}
+                                </span>
                                 <span style={{...PStyle, width: "20cm"}}>
                                     <p style={{ marginLeft: "15px" }}>{item.msg}</p>
                                 </span>
@@ -57,7 +59,12 @@ function Statement() {
                     )
                 })
             )}
-            <div style={{ borderTop: "2px solid black", width: "24cm"}} />
+            <div style={{ borderTop: "2px solid black", width: "24.1cm"}} />
+            {value.length === 0 && (
+                <div style={{ textAlign:"center", fontSize:"22px", marginTop:"2cm" }}>
+                    <span>거래내역이 존재하지 않습니다</span>
+                </div>
+            )}
         </div>
     </div>
   )
