@@ -4,18 +4,18 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { signin, SigninRequest } from '../../api/noneUserApi';
 import { InputBox } from '../../components/Styles';
-import GetUserIfMutation from '../../components/GetUserIfMutation';
+import useUserInfo from '../../hooks/useUserInfo';
 import { Err, UnifiedResponse } from '../../shared/TypeMenu';
 
 function Signin() {
     const emailRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
-    const getUserIfMutation = GetUserIfMutation();
+    const { getIfMutation } = useUserInfo();
 
     const signinMutation = useMutation<UnifiedResponse<undefined>, any, SigninRequest>(signin,{
         onSuccess: (res)=>{
             if  (res.code === 200) {
-                getUserIfMutation.mutate();
+                getIfMutation.mutate();
                 navigate("/");
             }
         },
