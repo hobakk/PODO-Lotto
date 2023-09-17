@@ -8,16 +8,15 @@ import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 function RecentNumber() {
     const [value, setValue] = useState<string[]>([]);
 
-    const getRecentNumMutation = useMutation<UnifiedResponse<string[]>, Err>(getRecentNumber, {
+    const getRecentNumMutation = useMutation<UnifiedResponse<string[]>, unknown>(getRecentNumber, {
         onSuccess: (res)=>{
             if (res.code === 200 && res.data)
             setValue(res.data);
         },
-        onError: (err)=>{
-            if (err.code === 500) {
-                alert(err.msg);
-            }
-        } 
+        onError: (err: any | Err)=>{
+            if (err.status) console.log(err.message);
+            else if (err.msg) console.log(err.msg);
+        }
     })
     
     useEffect(()=>{ getRecentNumMutation.mutate(); }, [])
