@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { CommonStyle, InputBox, MsgAndInput } from '../../components/Styles'
 import { buyNumber } from '../../api/sixNumberApi';
 import { useMutation } from 'react-query';
-import GetUserIfMutation from '../../components/GetUserIfMutation';
+import useUserInfo from '../../hooks/useUserInfo';
 import { ResultContainer } from '../../components/Manufacturing';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 
@@ -11,7 +11,7 @@ function BuyNumber() {
     const [value, setValue] = useState<string[]>([]);
     const [isEmpty, setData] = useState<boolean>(true);
     const numRef = useRef<HTMLInputElement>(null);
-    const getUserIfMutation = GetUserIfMutation();
+    const { getCashAndNickname } = useUserInfo();
 
     const buttonStyle: React.CSSProperties = {
         width: "30px",
@@ -28,7 +28,7 @@ function BuyNumber() {
             if  (res.code === 200 && res.data) {
                 setValue(res.data);
                 setData(false);
-                getUserIfMutation.mutate();
+                getCashAndNickname.mutate();
             }
         },
         onError: (err: any | Err)=>{
