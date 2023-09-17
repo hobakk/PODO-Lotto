@@ -5,18 +5,22 @@ export const buyNumber = async (value: number): Promise<UnifiedResponse<string[]
     try {
         const { data } = await api.post("/sixnum", value);
         return data;
-    } catch (error) {
-        throw error;
+    } catch (error: any) {
+        throw error.data;
     }
 }
 
-export const statisticalNumber = async (values: {value: number, repetition: number})
-: Promise<UnifiedResponse<string[]>> => {
+export type repetitionAndNum = {
+    value: number,
+    repetition: number,
+}
+
+export const statisticalNumber = async (values: repetitionAndNum): Promise<UnifiedResponse<string[]>> => {
     try {
         const { data } = await api.post("/sixnum/repetition", values);
-        return data.data;
-    } catch (error) {
-        throw error;
+        return data;
+    } catch (error: any) {
+        throw error.data;
     }
 }
 
@@ -24,7 +28,7 @@ export const getRecentNumber = async (): Promise<UnifiedResponse<string[]>> => {
     try {
         const res = await api.get("/sixnum/recent")
         return res.data;
-    } catch (error) {
-        throw error;
+    } catch (error: any) {
+        throw error.data;
     }
 }
