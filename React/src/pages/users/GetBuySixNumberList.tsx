@@ -19,9 +19,7 @@ function GetBuySixNumberList() {
       }
     },
     onError: (err)=>{
-      if (err.code === 400) {
-        alert(err.msg);
-      }
+      if (err.code) console.log(err.msg);
     }
   });
 
