@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { CommonStyle, CommonP, CommonLink, MsgAndInput, InputBoxStyle, InputBox } from '../../components/Styles'
+import { CommonStyle, MsgAndInput, InputBox } from '../../components/Styles'
 import { withdraw } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -54,6 +54,11 @@ function MyPage() {
         fontSize:"20px",
         color:"red"
     }
+    const InputBoxStyle: React.CSSProperties = { 
+        marginLeft:"auto",
+        textAlign: "center",
+        width:"60%",
+    }
 
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setWithdrawMsg(e.target.value);
@@ -63,22 +68,22 @@ function MyPage() {
     <div style={CommonStyle}>
         <div>
             <h1 style={{ fontSize: "80px", textAlign:"center"}}>My Page</h1>
-            <div style={{ marginTop: "50px", width:"12cm" }}>
-                <div style={{ ...MsgAndInput, width:"12cm"}}>
-                    <span>Email:</span>
-                    <span style={InputBoxStyle}>{userIf.email}</span>
+            <div style={{ marginTop: "50px" }}>
+                <div style={ MsgAndInput }>
+                    <span style={{ width:"40%" }}>Email:</span>
+                    <span style={ InputBoxStyle }>{userIf.email}</span>
                 </div>
-                <div style={{ ...MsgAndInput, width:"12cm"}}>
-                    <span>Nickname:</span>
-                    <span style={InputBoxStyle}>{userIf.nickname}</span>
+                <div style={ MsgAndInput }>
+                    <span style={{ width:"40%" }}>Nickname:</span>
+                    <span style={ InputBoxStyle }>{userIf.nickname}</span>
                 </div>
-                <div style={{ ...MsgAndInput, width:"12cm"}}>
-                    <span>Cash:</span>
-                    <span style={InputBoxStyle}>{userIf.cash}</span>
+                <div style={ MsgAndInput }>
+                    <span style={{ width:"40%" }}>Cash:</span>
+                    <span style={ InputBoxStyle }>{userIf.cash}</span>
                 </div>
-                <div style={{ ...MsgAndInput, width:"12cm"}}>
-                    <span>Role:</span>
-                    <span style={InputBoxStyle}>{role}</span>
+                <div style={ MsgAndInput }>
+                    <span style={{ width:"40%" }}>Role:</span>
+                    <span style={ InputBoxStyle }>{role}</span>
                 </div>
             </div>
         </div>
@@ -91,7 +96,6 @@ function MyPage() {
                         onChange={onChangeHandler} 
                         type='text' 
                         placeholder='회원탈퇴 입력'
-                        style={InputBoxStyle}
                     />
                     <button style={{ width:"3cm", height:"31px" }}>회원탈퇴</button>
                 </form>
