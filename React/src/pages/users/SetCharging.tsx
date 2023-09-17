@@ -19,26 +19,23 @@ function SetCharging() {
         })
     }
 
-    const chargingMutation = useMutation<UnifiedResponse<ChargingDto[]>, Err, ChargingDto>(setCharges, {
+    const chargingMutation = useMutation<UnifiedResponse<ChargingDto[]>, unknown, ChargingDto>(setCharges, {
         onSuccess: (res)=>{
             if (res.code == 200) {
                 navigate("/get-charging");
             }
         },
-        onError: (err)=>{
-            if  (err.msg) {
-                alert(err.msg);
-            }
+        onError: (err: any | Err)=>{
+            if (err.status) alert(err.message);
+            else if (err.code) alert(err.msg);
         }
     })
 
     const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (inputValue.cash === 0 || inputValue.msg === "") {
-            alert("값을 입력해주세요");
-        } else {
-            chargingMutation.mutate(inputValue);
-        }
+        if (inputValue.cash === 0 || inputValue.msg === "") alert("값을 입력해주세요");
+        else if (inputValue.cash % 100 !== 0) alert("100원 단위로 입력해주세요");
+        else chargingMutation.mutate(inputValue);
     }
 
   return (
