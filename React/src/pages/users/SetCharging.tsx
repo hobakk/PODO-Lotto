@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { InputBox, CommonStyle, MsgAndInput, InputBoxStyle, ButtonDiv, ButtonStyle } from '../../components/Styles'
+import { InputBox, CommonStyle, MsgAndInput, ButtonDiv, ButtonStyle } from '../../components/Styles'
 import { ChargingDto, setCharges } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -50,7 +50,6 @@ function SetCharging() {
                 placeholder='금액을 입력해주세요' 
                 onChange={onChangeHandler} 
                 name="cash"
-                style={InputBoxStyle}
             />
         </div>
         <div style={MsgAndInput}>
@@ -61,7 +60,6 @@ function SetCharging() {
                 placeholder='입금 메세지를 입력해주세요' 
                 onChange={onChangeHandler} 
                 name="msg"
-                style={InputBoxStyle}
             />
         </div>
         <div style={ButtonDiv}>

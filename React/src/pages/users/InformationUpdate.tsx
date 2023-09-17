@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CommonStyle, CommonP, InputBox, MsgAndInput, InputBoxStyle, ButtonDiv, ButtonStyle } from '../../components/Styles'
+import { CommonStyle, CommonP, InputBox, MsgAndInput, ButtonDiv, ButtonStyle } from '../../components/Styles'
 import { checkPW, update } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import LogoutMutation from '../../components/LogoutMutation';
@@ -106,7 +106,6 @@ function InformationUpdate() {
                         value={password} 
                         onChange={passwordOnChangeHandler} 
                         ref={pwRef}
-                        style={InputBoxStyle}
                     /> 
                 </div>
                 <div style={ButtonDiv}>
@@ -124,7 +123,6 @@ function InformationUpdate() {
                         type="text" 
                         onChange={onChangeHandler} 
                         placeholder='test@email.com' 
-                        style={InputBoxStyle}
                     />
                 </div>
                 <div style={MsgAndInput}>
@@ -136,7 +134,6 @@ function InformationUpdate() {
                         onChange={onChangeHandler} 
                         placeholder='********' 
                         autoComplete='current-password'
-                        style={InputBoxStyle}
                     />
                 </div>
                 <div style={MsgAndInput}>
@@ -147,7 +144,6 @@ function InformationUpdate() {
                         type="text" 
                         onChange={onChangeHandler} 
                         placeholder='test' 
-                        style={InputBoxStyle}
                     />
                 </div>
                 <div style={ButtonDiv}>

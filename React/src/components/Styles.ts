@@ -28,10 +28,6 @@ export const MsgAndInput: React.CSSProperties = {
   width: "15cm",
   display: "flex",
 }
-export const InputBoxStyle: React.CSSProperties = {
-  marginLeft:"auto",
-  textAlign: "center",
-}
 export const ButtonDiv: React.CSSProperties = {
   marginLeft: "auto",
   width: "7.2cm",
@@ -49,6 +45,8 @@ type UlBoxProps = {
 export const InputBox =styled.input`
   width: 7cm;
   height: 25px;
+  margin-left: auto;
+  text-align: center;
 `
 
 export const UlBox =styled.ul<UlBoxProps>`

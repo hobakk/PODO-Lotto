@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { SignBorder, CommonStyle, InputBox, MsgAndInput, InputBoxStyle, ButtonDiv, ButtonStyle } from '../../components/Styles'
+import { SignBorder, CommonStyle, InputBox, MsgAndInput, ButtonDiv, ButtonStyle } from '../../components/Styles'
 import { Link, useNavigate } from 'react-router-dom';
 import { signup, SignupRequest } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';
@@ -52,7 +52,6 @@ function Signiup() {
             ref={emailRef} 
             name='email'
             autoComplete='current-email'  
-            style={InputBoxStyle} 
           />
         </div>
         <div style={MsgAndInput}>
@@ -64,7 +63,6 @@ function Signiup() {
             value={inputValue.password} 
             name="password" 
             autoComplete='current-password' 
-            style={InputBoxStyle} 
           />
         </div>
         <div style={MsgAndInput}>
@@ -75,7 +73,6 @@ function Signiup() {
             placeholder='2 ~ 10 자리를 입력해주세요' 
             value={inputValue.nickname} 
             name="nickname" 
-            style={InputBoxStyle}
           />
         </div>
         <div style={ButtonDiv}>

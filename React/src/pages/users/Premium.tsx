@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SignBorder, CommonStyle, InputBoxStyle } from '../../components/Styles'
+import { CommonStyle } from '../../components/Styles'
 import { getCashNickname, setPaid, CashNicknameDto } from '../../api/userApi'
 import { useMutation } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'

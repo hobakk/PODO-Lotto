@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { CommonStyle } from '../../components/Styles'
+import { ButtonDiv, ButtonStyle, CommonStyle, InputBox, MsgAndInput } from '../../components/Styles'
 import { useMutation } from 'react-query';
 import { getSearch } from '../../api/adminApi';
 import { UnifiedResponse, Err, upDownCashRequest } from '../../shared/TypeMenu';
@@ -56,33 +56,22 @@ function SearchCharges() {
         marginBottom: "5px"
       }
 
-    const InputStyle: React.CSSProperties = {
-        width: "7cm",
-        height: "0.8cm",
-    }
-
   return (
-    <div id='recent' style={{ ...CommonStyle, fontSize:"20px"}}>
+    <div id='recent' style={{ ...CommonStyle, fontSize:"22px"}}>
         <h1 style={{  fontSize: "80px" }}>Search Charges</h1>
         {value.userId === 0 ? (
             <form onSubmit={onSubmitHandler}>
-                <div>
-                    <input 
-                        style={InputStyle} 
-                        name='msg'
-                        placeholder='msg 를 입력하세요'
-                        onChange={onChangeHandler}
-                    />
+                <div style={MsgAndInput}>
+                    <span>Msg:</span>
+                    <InputBox name='msg' placeholder='msg 를 입력하세요' onChange={onChangeHandler} />
                 </div>
-                <div style={{ marginTop:"0.5cm", marginBottom:"1cm" }}>
-                    <input 
-                        style={InputStyle} 
-                        name='cash' 
-                        placeholder='cash 를 입력하세요'
-                        onChange={onChangeHandler}
-                    />
+                <div style={MsgAndInput}>
+                    <span>Cash:</span>
+                    <InputBox name='cash' placeholder='cash 를 입력하세요' onChange={onChangeHandler} />
                 </div>
-                <button style={InputStyle}>조회하기</button>
+                <div style={ButtonDiv}>
+                    <button style={ButtonStyle}>조회하기</button>
+                </div>
             </form>
         ):(
             <div>

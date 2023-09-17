@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ButtonDiv, ButtonStyle, CommonStyle, InputBoxStyle, MsgAndInput } from '../../components/Styles'
+import { ButtonDiv, ButtonStyle, CommonStyle, MsgAndInput } from '../../components/Styles'
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { signin, SigninRequest } from '../../api/noneUserApi';
@@ -65,7 +65,6 @@ function Signin() {
                     placeholder='test@email.com'
                     autoComplete='current-email' 
                     onChange={onChangeHandler} 
-                    style={InputBoxStyle}
                 />
             </div>
             <div style={MsgAndInput}>
@@ -76,7 +75,6 @@ function Signin() {
                     placeholder='**************' 
                     autoComplete='current-password' 
                     onChange={onChangeHandler} 
-                    style={InputBoxStyle}
                 />
             </div>
             <div style={{ display:"flex", marginLeft: "auto", width: "100%",}}>
