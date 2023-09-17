@@ -37,7 +37,7 @@ export const checkPW = async (msg: string): Promise<UnifiedResponse<undefined>> 
         const { data } = await api.post("/users/check-pw", msg);
         return data;
     } catch (error: any) {
-        throw error;
+        throw error.data;
     }
 }
 
@@ -46,7 +46,7 @@ export const update = async (inputValue: SignupRequest): Promise<UnifiedResponse
         const { data } = await api.patch("/users/update", inputValue);
         return data;
     } catch (error: any) {
-        throw error;
+        throw error.data;
     }
 }
 
@@ -55,7 +55,7 @@ export const setCharges = async (inputValue: ChargingDto): Promise<UnifiedRespon
         const { data } = await api.post("/users/charging", inputValue);
         return data;
     } catch (error: any) {
-        throw error;
+        throw error.data;
     }
 }
 
@@ -64,7 +64,7 @@ export const getCharges = async (): Promise<UnifiedResponse<ChargingDto[]>> => {
         const { data } = await api.get("/users/charging");
         return data;    
     } catch (error: any) {
-        throw error;
+        throw error.data;
     }
 }
 
@@ -73,7 +73,7 @@ export const setPaid = async (msg: string): Promise<UnifiedResponse<undefined>> 
         const { data } = await api.patch("/users/paid", msg);
         return data;
     } catch (error: any) {
-        throw error; 
+        throw error.data;
     }
 }
     
@@ -82,7 +82,7 @@ export const getStatement = async (): Promise<UnifiedResponse<{localDate: string
         const { data } = await api.get("/users/statement");
         return data;
     } catch (error: any) {
-        throw error;
+        throw error.data;
     }
 }
 
@@ -96,7 +96,7 @@ export const getBuySixNumberList = async (): Promise<UnifiedResponse<SixNumberRe
         const { data } = await api.get("/users/sixnumber-list");
         return data;
     } catch (error: any) {
-        throw error;
+        throw error.data;
     }
 }
 
@@ -105,6 +105,6 @@ export const getUserIfAndRefreshToken = async (): Promise<UnifiedResponse<UserDe
         const res = await api.get("/users/oauth2/my-information");
         return res.data;
     } catch (error: any) {
-        throw error;
+        throw error.data;
     }
 }
