@@ -5,7 +5,7 @@ import { withdraw } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { setStatus } from '../../modules/userIfSlice';
-import LogoutMutation from '../../components/LogoutMutation';
+import LogoutMutation from '../../hooks/useLogoutMutation';
 import { RootState } from '../../config/configStore';
 import { UnifiedResponse } from '../../shared/TypeMenu';
 import { Link } from 'react-router-dom';

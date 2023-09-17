@@ -1,11 +1,10 @@
-import React from 'react'
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../api/userApi';
 import { UnifiedResponse } from '../shared/TypeMenu';
 import { persistor } from '../config/configStore';
 
-function LogoutMutation() {
+function useLogoutMutation() {
     const navigate = useNavigate();
     const purge = async () => { await persistor.purge(); }
 
@@ -21,4 +20,4 @@ function LogoutMutation() {
   return logoutMutation;
 }
 
-export default LogoutMutation
+export default useLogoutMutation;

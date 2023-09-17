@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { CommonStyle, CommonP, InputBox, MsgAndInput, ButtonDiv, ButtonStyle } from '../../components/Styles'
 import { checkPW, update } from '../../api/userApi';
 import { useMutation } from 'react-query';
-import LogoutMutation from '../../components/LogoutMutation';
+import LogoutMutation from '../../hooks/useLogoutMutation';
 import { RootState } from '../../config/configStore';
 import { useSelector } from 'react-redux';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
