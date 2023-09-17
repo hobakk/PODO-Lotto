@@ -23,7 +23,7 @@ function BuyNumber() {
             numRef.current.focus();
     }, [])
 
-    const buyNumberMutation = useMutation<UnifiedResponse<string[]>, Err, number>(buyNumber, {
+    const buyNumberMutation = useMutation<UnifiedResponse<string[]>, unknown, number>(buyNumber, {
         onSuccess: (res)=>{
             if  (res.code === 200 && res.data) {
                 setValue(res.data);
@@ -31,16 +31,16 @@ function BuyNumber() {
                 getUserIfMutation.mutate();
             }
         },
-        onError: (err)=>{
-            if (err.msg) {
-                alert(err.msg);
-            }
+        onError: (err: any | Err)=>{
+            if (err.status) alert(err.message);
+            else if (err.msg) alert(err.msg);
         }
     });
 
     const updownHandler = (v: boolean) => {
         v ? (setNum(num+1)):(setNum(num-1));
     }
+
     const buyHandler = () => {
         if (num > 0) {
             buyNumberMutation.mutate(num); 
@@ -48,20 +48,19 @@ function BuyNumber() {
             alert("수량을 입력해주세요");
         }
     }
+
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value }: any = e.target;
-        let count: number | string;
-        if (typeof value === "number") count = value;
+        const count: number = parseInt(value);
+
+        if (!isNaN(count)) setNum(count);
         else {
             alert("숫자만 입력 가능합니다");
-            count = 0;
+            setNum(0);
         }
-        
-        setNum(count);
     }
-    const onClickHandler = () => {
-        setData(true);
-    }
+    
+    const onClickHandler = () => setData(true);
 
   return (
     <div style={ CommonStyle }>
@@ -71,6 +70,7 @@ function BuyNumber() {
             <div style={{ display:"flex", fontSize:"25px", width:"17cm", placeItems:"center"}}>
                 <span>발급 횟수:</span>
                 <InputBox 
+                    type="number"
                     value={num} 
                     ref={numRef} 
                     onChange={onChangeHandler} 
