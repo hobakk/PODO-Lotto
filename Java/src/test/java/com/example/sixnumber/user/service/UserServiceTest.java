@@ -259,7 +259,7 @@ public class UserServiceTest {
 
 		verify(manager).findUser(anyString());
 		verify(redisDao).getValue(anyString());
-		verify(redisDao).deleteValues(anyString(), anyString());
+		verify(redisDao).delete(anyString(), anyString());
 	}
 
 	@Test
@@ -274,7 +274,7 @@ public class UserServiceTest {
 
 		Cookie cookie = userService.logout(request, saveUser);
 
-		verify(redisDao).deleteValues(anyString(), eq(JwtProvider.REFRESH_TOKEN));
+		verify(redisDao).delete(anyString(), eq(JwtProvider.REFRESH_TOKEN));
 		verify(redisDao).setBlackList(cookies.getAccessCookie().getValue());
 		verify(jwtProvider).createCookie(anyString(), eq(null), anyInt());
 		assertNotNull(cookie);

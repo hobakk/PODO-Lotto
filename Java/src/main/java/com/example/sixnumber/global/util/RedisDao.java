@@ -35,6 +35,10 @@ public class RedisDao {
 		else throw new CustomException(ErrorCode.INVALID_INPUT);
 	}
 
+	public Set<String> getChargeList(Long userId) {
+		return redisTemplate.keys("*" + STMT + "*");
+	}
+
 	public List<String> multiGet(Object object) {
 		Set<String> keys;
 		if (object instanceof Long) {
@@ -60,15 +64,7 @@ public class RedisDao {
 		values.set(STMT + key, data, time, timeUnit);
 	}
 
-	// public List<String> getValuesList(String key) {
-	// 	ListOperations<String, String> listOperations = redisTemplate.opsForList();
-	// 	if (listOperations.range(key, 0, -1).isEmpty())
-	// 		throw new IllegalArgumentException("당첨 번호 정보가 존재하지 않습니다");
-	//
-	// 	return listOperations.range(key, 0, -1);
-	// }
-
-	public void deleteValues(String value, String subject) {
+	public void delete(String value, String subject) {
 		if (subject.equals(JwtProvider.REFRESH_TOKEN)) redisTemplate.delete(RTK + value);
 		else redisTemplate.delete(STMT + value);
 	}

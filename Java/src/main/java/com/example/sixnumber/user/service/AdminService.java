@@ -80,7 +80,7 @@ public class AdminService {
 		User user = manager.findUser(cashRequest.getUserId());
 		String key = cashRequest.getUserId() + "-" + cashRequest.getMsg() + "-" + cashRequest.getCash();
 		// searchCharging 에서 검증되어 넘어온 Request 이기에 값이 있는지에 대한 체크는 건너뛰어도 된다 생각함
-		redisDao.deleteValues(key, "normal");
+		redisDao.delete(key, "normal");
 
 		user.setStatement(LocalDate.now() + "," + cashRequest.getCash() +"원 충전");
 		user.setCash("+", cashRequest.getCash());
