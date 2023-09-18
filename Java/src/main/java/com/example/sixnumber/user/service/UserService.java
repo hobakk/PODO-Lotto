@@ -133,12 +133,12 @@ public class UserService {
 			Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), "oneWeek");
 			String enCodedRefreshToken = passwordEncoder.encode(tokenDto.getRefreshToken());
 			response.addCookie(accessCookie);
-			response.addHeader(JwtProvider.AUTHORIZATION_HEADER, enCodedRefreshToken);
+			response.addHeader(JwtProvider.AUTHORIZATION_HEADER, "Bearer " + enCodedRefreshToken);
 			unifiedResponse = UnifiedResponse.ok("로그인 성공");
 		} else {
 			redisDao.delete(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
 			user.setRefreshPointer(null);
-			unifiedResponse = new UnifiedResponse<>(400, "중복 로그인입니다");
+			unifiedResponse = UnifiedResponse.badRequest("중복 로그인입니다");
 		}
 
 		return unifiedResponse;

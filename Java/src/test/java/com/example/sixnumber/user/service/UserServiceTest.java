@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -166,6 +167,8 @@ public class UserServiceTest {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 		TokenDto tokenDto = TestDataFactory.tokenRequest();
 		CookieAndTokenResponse cookieAndTokenResponse = TestDataFactory.cookiesResponse();
+		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
+		saveUser.setRefreshPointer(null);
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
@@ -178,39 +181,58 @@ public class UserServiceTest {
 		String encodedRefreshToken = "EnCodedRefreshTokenValue";
 		when(passwordEncoder.encode(anyString())).thenReturn(encodedRefreshToken);
 
-		CookieAndTokenResponse response = userService.signIn(signinRequest);
+		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest);
 
 		verify(manager).findUser(anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
-		verify(redisDao).getValue(anyString());
 		verify(jwtProvider).generateTokens(any(User.class));
 		verify(redisDao).setRefreshToken(anyString(), anyString(), anyLong(), any(TimeUnit.class));
 		verify(jwtProvider).createCookie(anyString(), anyString(), anyString());
 		verify(passwordEncoder).encode(anyString());
-		assertNotNull(response.getAccessCookie());
-		assertEquals(response.getEnCodedRefreshToken(), "Bearer " + encodedRefreshToken);
+		verify(httpServletResponse).addCookie(any(Cookie.class));
+		verify(httpServletResponse).addHeader(anyString(), anyString());
+		TestUtil.UnifiedResponseEquals(response, 200, "로그인 성공");
+	}
+
+	@Test
+	void signin_fail_refreshPointerInNotNull() {
+		SigninRequest signinRequest = TestDataFactory.signinRequest();
+		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
+
+		when(manager.findUser(anyString())).thenReturn(saveUser);
+
+		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+
+		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest);
+
+		verify(manager).findUser(anyString());
+		verify(passwordEncoder).matches(anyString(), anyString());
+		verify(redisDao).delete(anyString(), anyString());
+		TestUtil.UnifiedResponseEquals(response, 400, "중복 로그인입니다");
 	}
 
 	@Test
 	void signin_fail_oauth2Login() {
+		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 		User user = mock(User.class);
 		when(user.getPassword()).thenReturn("Oauth2Login");
 
 		when(manager.findUser(anyString())).thenReturn(user);
 
-		Assertions.assertThrows(CustomException.class, () -> userService.signIn(signinRequest));
+		Assertions.assertThrows(CustomException.class, () -> userService.signIn(httpServletResponse, signinRequest));
 
 		verify(manager).findUser(anyString());
 	}
 
 	@Test
 	void signin_UserNotFoundException() {
+		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 
 		when(manager.findUser(anyString())).thenThrow(new CustomException(USER_NOT_FOUND));
 
-		Assertions.assertThrows(CustomException.class, () -> userService.signIn(signinRequest));
+		Assertions.assertThrows(CustomException.class, () -> userService.signIn(httpServletResponse, signinRequest));
 
 		verify(manager).findUser(anyString());
 	}
@@ -218,6 +240,7 @@ public class UserServiceTest {
 	@ParameterizedTest
 	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#statusTestData")
 	void signin_fail_Status(Status status) {
+		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 
 		User user = mock(User.class);
@@ -227,13 +250,14 @@ public class UserServiceTest {
 		when(manager.findUser(anyString())).thenReturn(user);
 
 		Assertions.assertThrows(StatusNotActiveException.class,
-			() -> userService.signIn(signinRequest));
+			() -> userService.signIn(httpServletResponse, signinRequest));
 
 		verify(manager).findUser(anyString());
 	}
 
 	@Test
 	void signin_fail_incorrectPW() {
+		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
@@ -241,25 +265,10 @@ public class UserServiceTest {
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
 		Assertions.assertThrows(IllegalArgumentException.class,
-			() -> userService.signIn(signinRequest));
+			() -> userService.signIn(httpServletResponse, signinRequest));
 
 		verify(manager).findUser(anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
-	}
-
-	@Test
-	void signin_fail_OverlapException() {
-		SigninRequest signinRequest = TestDataFactory.signinRequest();
-
-		when(manager.findUser(anyString())).thenReturn(saveUser);
-		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-		when(redisDao.getValue(anyString())).thenReturn("notNull");
-
-		Assertions.assertThrows(OverlapException.class, () -> userService.signIn(signinRequest));
-
-		verify(manager).findUser(anyString());
-		verify(redisDao).getValue(anyString());
-		verify(redisDao).delete(anyString(), anyString());
 	}
 
 	@Test
