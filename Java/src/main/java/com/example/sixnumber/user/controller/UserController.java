@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
@@ -23,13 +24,12 @@ import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
-import com.example.sixnumber.user.dto.CookieAndTokenResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
-import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
 import com.example.sixnumber.user.dto.UserResponse;
+import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
 
@@ -49,10 +49,9 @@ public class UserController {
 
 	@PostMapping("/signin")
 	public ResponseEntity<UnifiedResponse<?>> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
-		CookieAndTokenResponse result = userService.signIn(request);
-		response.addCookie(result.getAccessCookie());
-		response.addHeader(JwtProvider.AUTHORIZATION_HEADER, result.getEnCodedRefreshToken());
-		return ResponseEntity.ok(UnifiedResponse.ok("로그인 성공"));
+		UnifiedResponse<?> unifiedResponse = userService.signIn(response, request);
+		if (unifiedResponse.getCode() == HttpStatus.OK.value()) return ResponseEntity.ok(unifiedResponse);
+		else return ResponseEntity.badRequest().body(unifiedResponse);
 	}
 
 	@PostMapping("/logout")
