@@ -15,6 +15,7 @@ public class UnifiedResponse<T> {
 
 	private static final int OK = HttpStatus.OK.value();
 	private static final int CREATED = HttpStatus.CREATED.value();
+	private static final int BAD_REQUEST = HttpStatus.BAD_REQUEST.value();
 
 	public UnifiedResponse(int code, String msg) {
 		this.code = code;
@@ -44,4 +45,6 @@ public class UnifiedResponse<T> {
 	public static <T> UnifiedResponse<T> create(String msg, T data) {
 		return new UnifiedResponse<>(CREATED, msg, data);
 	}
+
+	public static <T> UnifiedResponse<T> badRequest(String msg) { return new UnifiedResponse<>(BAD_REQUEST, msg); }
 }
