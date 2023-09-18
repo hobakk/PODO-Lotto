@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,6 @@ import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
-import com.example.sixnumber.user.dto.CookieAndTokenResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -84,20 +84,32 @@ class UserControllerTest {
 
 	@Test
 	@WithMockUser
-	public void Signin() throws Exception {
-		CookieAndTokenResponse response = TestDataFactory.cookiesResponse();
-
-		when(userService.signIn(any(SigninRequest.class))).thenReturn(response);
+	public void Signin_success() throws Exception {
+		when(userService.signIn(any(HttpServletResponse.class), any(SigninRequest.class)))
+			.thenReturn(UnifiedResponse.ok("로그인 성공"));
 
 		mockMvc.perform(post("/api/users/signin").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(TestDataFactory.signinRequest())))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.msg").value("로그인 성공"))
-			.andExpect(cookie().value("accessToken", "accessTokenValue"))
-			.andExpect(header().stringValues("Authorization", "EnCodedRefreshTokenValue"));
+			.andExpect(jsonPath("$.msg").value("로그인 성공"));
 
-		verify(userService).signIn(any(SigninRequest.class));
+		verify(userService).signIn(any(HttpServletResponse.class), any(SigninRequest.class));
+	}
+
+	@Test
+	@WithMockUser
+	public void Signin_fail() throws Exception {
+		when(userService.signIn(any(HttpServletResponse.class), any(SigninRequest.class)))
+			.thenReturn(UnifiedResponse.badRequest("중복 로그인입니다"));
+
+		mockMvc.perform(post("/api/users/signin").with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(TestDataFactory.signinRequest())))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.msg").value("중복 로그인입니다"));
+
+		verify(userService).signIn(any(HttpServletResponse.class), any(SigninRequest.class));
 	}
 
 	@Test
