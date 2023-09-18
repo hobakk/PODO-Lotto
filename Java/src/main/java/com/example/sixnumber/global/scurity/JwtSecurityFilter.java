@@ -46,7 +46,9 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 			} catch (ExpiredJwtException e) {
 				String refreshPointer = e.getClaims().getSubject();
 				String refreshToken = redisDao.getValue(refreshPointer);
-				if (!encoder.matches(refreshToken, encodedRefreshToken)) deleteCookieAndThrowException(response);
+				if (refreshToken == null || !encoder.matches(refreshToken, encodedRefreshToken)) {
+					deleteCookieAndThrowException(response);
+				}
 
 				Claims claims = jwtProvider.getClaims(refreshToken);
 				String newAccessToken = jwtProvider.accessToken(claims.get("key", String.class));
