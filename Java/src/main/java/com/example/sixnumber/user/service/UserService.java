@@ -16,6 +16,7 @@ import java.util.stream.IntStream;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,13 +37,12 @@ import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
-import com.example.sixnumber.user.dto.CookieAndTokenResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
-import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
 import com.example.sixnumber.user.dto.UserResponse;
+import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -106,7 +106,7 @@ public class UserService {
 		return UnifiedResponse.create("회원가입 완료");
 	}
 
-	public CookieAndTokenResponse signIn(SigninRequest request) {
+	public UnifiedResponse<?> signIn(HttpServletResponse response, SigninRequest request) {
 		User user = manager.findUser(request.getEmail());
 
 		if (user.getPassword().equals("Oauth2Login")) throw new CustomException(NOT_OAUTH2_LOGIN);
@@ -124,27 +124,31 @@ public class UserService {
 			throw new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다");
 		}
 
-		CookieAndTokenResponse response;
-		String refreshInRedis = redisDao.getValue(user.getRefreshPointer());
-		if (refreshInRedis == null) {
+		UnifiedResponse<?> unifiedResponse;
+		if (user.getRefreshPointer() == null) {
 			TokenDto tokenDto = jwtProvider.generateTokens(user);
+			user.setRefreshPointer(tokenDto.getRefreshPointer());
 			redisDao.setRefreshToken(tokenDto.getRefreshPointer(), tokenDto.getRefreshToken(), (long) 7, TimeUnit.DAYS);
 
 			Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), "oneWeek");
 			String enCodedRefreshToken = passwordEncoder.encode(tokenDto.getRefreshToken());
-			response = new CookieAndTokenResponse(accessCookie, "Bearer " + enCodedRefreshToken);
+			response.addCookie(accessCookie);
+			response.addHeader(JwtProvider.AUTHORIZATION_HEADER, enCodedRefreshToken);
+			unifiedResponse = UnifiedResponse.ok("로그인 성공");
 		} else {
-			redisDao.deleteValues(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
-			throw new OverlapException("중복 로그인 입니다");
+			redisDao.delete(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
+			user.setRefreshPointer(null);
+			unifiedResponse = new UnifiedResponse<>(400, "중복 로그인입니다");
 		}
 
-		return response;
+		return unifiedResponse;
 	}
 
 	public Cookie logout(HttpServletRequest request, User user) {
 		String accessToken = jwtProvider.getAccessTokenInCookie(request);
-		redisDao.deleteValues(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
+		redisDao.delete(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
 		user.setRefreshPointer(null);
+		userRepository.save(user);
 		if (accessToken != null) redisDao.setBlackList(accessToken);
 
 		return jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null, 0);
@@ -192,7 +196,7 @@ public class UserService {
 
 	// 요청을 최대 3번까지 할 수 있고 12시간 기준으로 삭제되기에 충전 요청 취소를 만들지 않아도 된다 판단함
 	public UnifiedResponse<?> charging(ChargingRequest chargingRequest, User user) {
-		Set<String> keys = redisDao.getKeysList(user.getId());
+		Set<String> keys = redisDao.getChargeList(user.getId());
 
 		if (keys.size() >= 3) throw new IllegalArgumentException("처리되지 않은 요청사항이 많습니다");
 
