@@ -42,6 +42,11 @@ public class UserController {
 
 	private final UserService userService;
 
+	@PostMapping("/emails")
+	public ResponseEntity<UnifiedResponse<?>> sendAuthCodeToEmail(@RequestBody String toEmail) {
+		return ResponseEntity.ok(userService.sendAuthCodeToEmail(toEmail));
+	}
+
 	@PostMapping("/signup")
 	public ResponseEntity<UnifiedResponse<?>> signup(@Valid @RequestBody SignupRequest request, Errors errors) {
 		return ResponseEntity.ok(userService.signUp(request, errors));
