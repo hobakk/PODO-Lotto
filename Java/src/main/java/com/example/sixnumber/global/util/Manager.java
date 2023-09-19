@@ -5,8 +5,12 @@ import static com.example.sixnumber.global.exception.ErrorCode.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 import com.example.sixnumber.global.exception.CustomException;
@@ -20,6 +24,7 @@ import lombok.AllArgsConstructor;
 public class Manager {
 
 	private final UserRepository userRepository;
+	private final JavaMailSender mailSender;
 
 	public User findUser(Object object) {
 		if (object instanceof Long) {
@@ -41,5 +46,16 @@ public class Manager {
 		return integers.stream()
 			.map(Object::toString)
 			.collect(Collectors.joining(" "));
+	}
+
+	public void sendEmail(String email, int authCode) {
+		boolean isNotNull = Stream.of(email, authCode).allMatch(Objects::nonNull);
+		if (!isNotNull) throw new CustomException(INVALID_INPUT);
+
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setTo(email);
+		message.setSubject("[포도로또] 이메일 인증번호를 알려드립니다");
+		message.setText("인증번호 " + authCode);
+		mailSender.send(message);
 	}
 }
