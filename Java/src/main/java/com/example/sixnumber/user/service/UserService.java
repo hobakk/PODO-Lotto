@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -48,13 +49,11 @@ import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
-@Slf4j
 @Service
 @Transactional
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
 
 	private final UserRepository userRepository;
@@ -62,6 +61,15 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final RedisDao redisDao;
 	private final Manager manager;
+
+	public UnifiedResponse<?> sendAuthCodeToEmail(String toEmail) {
+		if (userRepository.existsUserByEmail(toEmail)) throw new OverlapException("중복된 이메일입니다");
+
+		Random random = new Random();
+		int authCode = random.nextInt(888888) + 111111;
+		manager.sendEmail(toEmail, authCode);
+		return UnifiedResponse.ok("인증번호 발급 성공");
+	}
 
 	public UnifiedResponse<?> signUp(SignupRequest request, Errors errors) {
 		Optional<User> dormantUser = userRepository.findByStatusAndEmail(Status.DORMANT, request.getEmail());
