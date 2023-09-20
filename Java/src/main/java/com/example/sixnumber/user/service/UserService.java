@@ -251,15 +251,14 @@ public class UserService {
 		List<String> inputData = Arrays.asList(request.getEmail(), password, request.getNickname());
 		if (userIf.equals(inputData)) throw new IllegalArgumentException("변경된 부분이 없습니다");
 
-		// 변경할 수 있는 값이 적고, 확실하여 하드 코딩해도 된다 판단함
 		for (int i = 0; i < userIf.size(); i++) {
 			switch (i) {
 				case 0: if (userRepository.existsUserByEmail(inputData.get(i)))
-					throw new OverlapException("중복된 이메일입니다");
-				case 1: if (!passwordEncoder.matches(inputData.get(i), userIf.get(i)))
-					inputData.set(i, passwordEncoder.encode(inputData.get(i))); continue;
+					throw new OverlapException("중복된 이메일입니다"); break;
+				case 1: if (passwordEncoder.matches(inputData.get(i), userIf.get(i))) break;
+						else inputData.set(i, passwordEncoder.encode(inputData.get(i))); continue;
 				case 2: if (userRepository.existsUserByNickname(inputData.get(i)))
-					throw new OverlapException("중복된 닉네임입니다");
+					throw new OverlapException("중복된 닉네임입니다"); break;
 			}
 			userIf.set(i, inputData.get(i));
 		}
