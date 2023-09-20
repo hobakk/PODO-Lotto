@@ -6,10 +6,14 @@ import lombok.Getter;
 public class ChargingResponse {
 	private final String msg;
 	private final int cash;
+	private final String date;
 
-	// str = id-msg-cash
-	public ChargingResponse(String str) {
-		this.msg = str.split("-")[1];
-		this.cash = Integer.parseInt(str.split("-")[2]);
+	// value = msg-cash-date
+	public ChargingResponse(String value) {
+		String date = value.split("-")[2];
+
+		this.msg = value.split("-")[0];
+		this.cash = Integer.parseInt(value.split("-")[1]);
+		this.date = date.substring(0, date.lastIndexOf(" "));
 	}
 }
