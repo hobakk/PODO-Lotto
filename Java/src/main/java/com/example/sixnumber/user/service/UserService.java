@@ -66,7 +66,8 @@ public class UserService {
 		if (userRepository.existsUserByEmail(toEmail)) throw new OverlapException("중복된 이메일입니다");
 
 		Random random = new Random();
-		int authCode = random.nextInt(888888) + 111111;
+		String authCode = String.valueOf(random.nextInt(888888) + 111111);
+		redisDao.setValues(RedisDao.AUTH_KEY + toEmail, authCode, 30L, TimeUnit.MINUTES);
 		manager.sendEmail(toEmail, authCode);
 		return UnifiedResponse.ok("인증번호 발급 성공");
 	}

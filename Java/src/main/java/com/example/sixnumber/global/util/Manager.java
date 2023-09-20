@@ -48,7 +48,7 @@ public class Manager {
 			.collect(Collectors.joining(" "));
 	}
 
-	public void sendEmail(String email, int authCode) {
+	public void sendEmail(String email, String authCode) {
 		boolean isNotNull = Stream.of(email, authCode).allMatch(Objects::nonNull);
 		if (!isNotNull) throw new CustomException(INVALID_INPUT);
 
