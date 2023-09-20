@@ -1,12 +1,19 @@
 package com.example.sixnumber.global.util;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
+
+import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.global.exception.ErrorCode;
 
 @Component
 public class RedisDao {
@@ -27,12 +34,21 @@ public class RedisDao {
 	}
 
 	public Set<String> getKeysList(String key) {
-		return redisTemplate.keys("*" + key + "*");
+		ScanOptions options = ScanOptions.scanOptions().match("*" + key + "*").build();
+		return redisTemplate.execute((RedisCallback<? extends Set<String>>) connection -> {
+			Set<String> keys = new HashSet<>();
+			Cursor<byte[]> cursor = connection.scan(options);
+			while (cursor.hasNext()) {
+				keys.add(new String(cursor.next()));
+			}
+			cursor.close();
+			return keys;
+		});
 	}
 
 	public List<String> multiGet(String key) {
 		Set<String> keys = getKeysList(key);
-		if (keys.size() == 0) throw new IllegalArgumentException("충전 요청이 존재하지 않습니다");
+		if (keys.size() == 0) throw new CustomException(ErrorCode.NOT_FOUND);
 
 		return values.multiGet(keys);
 	}
