@@ -38,6 +38,7 @@ import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
+import com.example.sixnumber.user.dto.EmailAuthCodeRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -69,6 +70,13 @@ public class UserService {
 		int authCode = random.nextInt(888888) + 111111;
 		manager.sendEmail(toEmail, authCode);
 		return UnifiedResponse.ok("인증번호 발급 성공");
+	}
+
+	public UnifiedResponse<?> compareAuthCode(EmailAuthCodeRequest request) {
+		int authCode = Integer.parseInt(redisDao.getValue(RedisDao.AUTH_KEY, request.getEmail())) ;
+		if (request.getAuthCode() != authCode) throw new IllegalArgumentException("인증번호가 일치하지 않습니다");
+
+		return UnifiedResponse.ok("인증번호 일치");
 	}
 
 	public UnifiedResponse<?> signUp(SignupRequest request, Errors errors) {

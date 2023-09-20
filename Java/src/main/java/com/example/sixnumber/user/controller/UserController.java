@@ -50,7 +50,7 @@ public class UserController {
 
 	@PostMapping("/emails/auth-code")
 	public ResponseEntity<UnifiedResponse<?>> compareAuthCode(@RequestBody EmailAuthCodeRequest request) {
-		return ResponseEntity.ok(userService.sendAuthCodeToEmail(request));
+		return ResponseEntity.ok(userService.compareAuthCode(request));
 	}
 
 	@PostMapping("/signup")
