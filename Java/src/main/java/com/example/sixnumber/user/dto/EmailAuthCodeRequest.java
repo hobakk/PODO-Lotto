@@ -7,5 +7,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class EmailAuthCodeRequest {
 	private String email;
-	private int authCode;
+	private String authCode;
 }

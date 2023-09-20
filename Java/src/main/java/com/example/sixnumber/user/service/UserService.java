@@ -10,13 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -77,8 +75,8 @@ public class UserService {
 	}
 
 	public UnifiedResponse<?> compareAuthCode(EmailAuthCodeRequest request) {
-		int authCode = Integer.parseInt(redisDao.getValue(RedisDao.AUTH_KEY + request.getEmail())) ;
-		if (request.getAuthCode() != authCode) throw new IllegalArgumentException("인증번호가 일치하지 않습니다");
+		String authCode = redisDao.getValue(RedisDao.AUTH_KEY + request.getEmail());
+		if (!request.getAuthCode().equals(authCode)) throw new IllegalArgumentException("인증번호가 일치하지 않습니다");
 
 		return UnifiedResponse.ok("인증번호 일치");
 	}
@@ -226,11 +224,11 @@ public class UserService {
 		String charge = redisDao.getValue(RedisDao.CHARGE_KEY + user.getId());
 		if (charge != null) throw new CustomException(INVALID_INPUT);
 
-		LocalDateTime dateTime = LocalDateTime.now().plusHours(1);
-		String value = Stream.of(user.getId(), chargingRequest.getMsg(), chargingRequest.getCash(),
-				dateFormatter(dateTime)).map(Objects::toString).collect(Collectors.joining("-"));
+		String chargeInfo = String.format("%d-%s-%d-%s",
+			user.getId(), chargingRequest.getMsg(), chargingRequest.getCash(),
+			dateFormatter(LocalDateTime.now().plusHours(1)));
 
-		redisDao.setValues(RedisDao.CHARGE_KEY + user.getId(), value, (long) 1, TimeUnit.HOURS);
+		redisDao.setValues(RedisDao.CHARGE_KEY + user.getId(), chargeInfo, (long) 1, TimeUnit.HOURS);
 		user.setTimeOutCount(1);
 		userRepository.save(user);
 		return UnifiedResponse.ok("요청 성공");
