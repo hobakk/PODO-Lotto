@@ -24,6 +24,7 @@ import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
+import com.example.sixnumber.user.dto.EmailAuthCodeRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -45,6 +46,11 @@ public class UserController {
 	@PostMapping("/emails")
 	public ResponseEntity<UnifiedResponse<?>> sendAuthCodeToEmail(@RequestBody String toEmail) {
 		return ResponseEntity.ok(userService.sendAuthCodeToEmail(toEmail));
+	}
+
+	@PostMapping("/emails/auth-code")
+	public ResponseEntity<UnifiedResponse<?>> compareAuthCode(@RequestBody EmailAuthCodeRequest request) {
+		return ResponseEntity.ok(userService.sendAuthCodeToEmail(request));
 	}
 
 	@PostMapping("/signup")
