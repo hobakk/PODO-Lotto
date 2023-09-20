@@ -1,6 +1,6 @@
 import { UnifiedResponse, UserDetailInfo, upDownCashRequest } from "../shared/TypeMenu";
 import { api } from "./config";
-import { ChargingDto } from "./userApi";
+import { ChargingRequest } from "./userApi";
 
 export const getUsers = async (): Promise<UnifiedResponse<UserDetailInfo[]>> => {
     const { data } = await api.get("/admin/users");
@@ -16,7 +16,7 @@ export const getAdminCharges = async (): Promise<UnifiedResponse<upDownCashReque
     }
 }
 
-export const getSearch = async ( msgCash: ChargingDto ): Promise<UnifiedResponse<upDownCashRequest>> => {
+export const getSearch = async ( msgCash: ChargingRequest ): Promise<UnifiedResponse<upDownCashRequest>> => {
     try {
        const { data } = await api.get("/admin/search", { params: {
             msg: msgCash.msg,

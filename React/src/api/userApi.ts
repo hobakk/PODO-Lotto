@@ -2,9 +2,15 @@ import { UnifiedResponse, UserDetailInfo } from "../shared/TypeMenu";
 import { SignupRequest } from "./noneUserApi";
 import { api } from "./config";
 
-export type ChargingDto = {
+export type ChargingRequest = {
     msg: string,
     cash: number,
+}
+
+export type ChargeResponse = {
+    msg: string,
+    cash: number,
+    date: string,
 }
 
 export type CashNicknameDto = {
@@ -50,18 +56,18 @@ export const update = async (inputValue: SignupRequest): Promise<UnifiedResponse
     }
 }
 
-export const setCharges = async (inputValue: ChargingDto): Promise<UnifiedResponse<ChargingDto[]>> => {
+export const setCharges = async (inputValue: ChargingRequest): Promise<UnifiedResponse<undefined>> => {
     try {
-        const { data } = await api.post("/users/charging", inputValue);
+        const { data } = await api.post("/users/charge", inputValue);
         return data;
     } catch (error: any) {
         throw error.data;
     }
 }
 
-export const getCharges = async (): Promise<UnifiedResponse<ChargingDto[]>> => {
+export const getCharges = async (): Promise<UnifiedResponse<ChargeResponse>> => {
     try {
-        const { data } = await api.get("/users/charging");
+        const { data } = await api.get("/users/charge");
         return data;    
     } catch (error: any) {
         throw error.data;
