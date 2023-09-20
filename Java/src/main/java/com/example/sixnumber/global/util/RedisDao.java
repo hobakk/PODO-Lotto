@@ -72,9 +72,13 @@ public class RedisDao {
 		values.set(CHARGE_KEY + key, data, time, timeUnit);
 	}
 
-	public void delete(String value, String subject) {
-		if (subject.equals(JwtProvider.REFRESH_TOKEN)) redisTemplate.delete(RT_KEY + value);
-		else redisTemplate.delete(CHARGE_KEY + value);
+	public void delete(String key, String value) {
+		switch (key) {
+			case RT_KEY: redisTemplate.delete(RT_KEY + value); break;
+			case CHARGE_KEY: redisTemplate.delete(CHARGE_KEY + value); break;
+			case AUTH_KEY: redisTemplate.delete(AUTH_KEY + value); break;
+			default: throw new CustomException(ErrorCode.INVALID_INPUT);
+		}
 	}
 
 	public boolean isEqualsBlackList(String key) {

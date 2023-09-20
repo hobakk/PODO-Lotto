@@ -152,7 +152,7 @@ public class UserService {
 			response.addHeader(JwtProvider.AUTHORIZATION_HEADER, "Bearer " + enCodedRefreshToken);
 			unifiedResponse = UnifiedResponse.ok("로그인 성공");
 		} else {
-			redisDao.delete(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
+			redisDao.delete(RedisDao.RT_KEY, user.getRefreshPointer());
 			user.setRefreshPointer(null);
 			unifiedResponse = UnifiedResponse.badRequest("중복 로그인입니다");
 		}
@@ -162,7 +162,7 @@ public class UserService {
 
 	public Cookie logout(HttpServletRequest request, User user) {
 		String accessToken = jwtProvider.getAccessTokenInCookie(request);
-		redisDao.delete(user.getRefreshPointer(), JwtProvider.REFRESH_TOKEN);
+		redisDao.delete(RedisDao.RT_KEY, user.getRefreshPointer());
 		user.setRefreshPointer(null);
 		userRepository.save(user);
 		if (accessToken != null) redisDao.setBlackList(accessToken);
