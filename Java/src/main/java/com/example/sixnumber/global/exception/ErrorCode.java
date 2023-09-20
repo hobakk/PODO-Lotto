@@ -18,7 +18,8 @@ public enum ErrorCode {
 	DONT_LOGIN(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요"),
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 리소스에 대한 권한이 없습니다"),
 	ONLY_ADMIN_ACCESS_API(HttpStatus.FORBIDDEN, "관리자만 접근 가는한 API 입니다"),
-	NOT_OAUTH2_LOGIN(HttpStatus.BAD_REQUEST, "해당 이메일은 간편 로그인을 이용해 주세요");
+	NOT_OAUTH2_LOGIN(HttpStatus.BAD_REQUEST, "해당 이메일은 간편 로그인을 이용해 주세요"),
+	NOT_FOUND(HttpStatus.NOT_FOUND, "해당 정보가 존재하지 않습니다");
 
 	private final HttpStatus httpStatus;
 	private final String message;
