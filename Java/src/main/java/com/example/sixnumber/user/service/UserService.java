@@ -85,12 +85,11 @@ public class UserService {
 		Optional<User> dormantUser = userRepository.findByStatusAndEmail(Status.DORMANT, request.getEmail());
 		if (dormantUser.isPresent()) {
 			User user = dormantUser.get();
-			if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-				user.setStatus(Status.ACTIVE);
-				user.setWithdrawExpiration(null);
-				userRepository.save(user);
-				return UnifiedResponse.ok("재가입 완료");
-			}
+			validatePasswordMatching(request.getPassword(), user.getPassword());
+			user.setStatus(Status.ACTIVE);
+			user.setWithdrawExpiration(null);
+			userRepository.save(user);
+			return UnifiedResponse.ok("재가입 완료");
 		}
 
 		if (errors.hasErrors()) {
@@ -138,9 +137,7 @@ public class UserService {
 			} throw new StatusNotActiveException(msg);
 		}
 
-		if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-			throw new IllegalArgumentException("아이디 또는 비밀번호를 잘못 입력하셨습니다");
-		}
+		validatePasswordMatching(request.getPassword(), user.getPassword());
 
 		UnifiedResponse<?> unifiedResponse;
 		if (user.getRefreshPointer() == null) {
@@ -303,10 +300,7 @@ public class UserService {
 	}
 
 	public UnifiedResponse<?> checkPW(OnlyMsgRequest request, String encodedPassword) {
-		if (!passwordEncoder.matches(request.getMsg(), encodedPassword)) {
-			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
-		}
-
+		validatePasswordMatching(request.getMsg(), encodedPassword);
 		return UnifiedResponse.ok("본인확인 성공");
 	}
 
@@ -322,5 +316,9 @@ public class UserService {
 	private String dateFormatter(LocalDateTime localDateTime) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초");
 		return localDateTime.format(formatter);
+	}
+	private void validatePasswordMatching(String password, String encodedPassword) {
+		if (!passwordEncoder.matches(password, encodedPassword))
+			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
 	}
 }
