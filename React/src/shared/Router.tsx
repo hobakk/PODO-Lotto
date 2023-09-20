@@ -8,7 +8,7 @@ import Signup from '../pages/users/Signup'
 import MyPage from '../pages/users/MyPage'
 import InformationUpdate from '../pages/users/InformationUpdate'
 import SetCharging from '../pages/users/SetCharging'
-import GetCharging from '../pages/users/GetCharging'
+import GetCharge from '../pages/users/GetCharge'
 import Premium from '../pages/users/Premium'
 import Statement from '../pages/users/Statement'
 import BuyNumber from '../pages/sixnum/BuyNumber'
@@ -36,7 +36,7 @@ const Router = () => {
                 <Route path='/my-page' element={<MyPage />} />
                 <Route path='/my-page/update' element={<InformationUpdate />} />
                 <Route path='/set-charging' element={<SetCharging />} />
-                <Route path='/get-charging' element={<GetCharging />} />
+                <Route path='/get-charging' element={<GetCharge />} />
                 <Route path='/premium' element={<Premium />} />
                 <Route path='/statement' element={<Statement />} />
                 <Route path='/buynum' element={<BuyNumber />} />
