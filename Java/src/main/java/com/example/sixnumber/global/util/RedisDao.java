@@ -34,7 +34,7 @@ public class RedisDao {
 	}
 
 	public Set<String> getKeysList(String key) {
-		ScanOptions options = ScanOptions.scanOptions().match("*" + key + "*").build();
+		ScanOptions options = ScanOptions.scanOptions().match("*" + key + "*").count(100).build();
 		return redisTemplate.execute((RedisCallback<? extends Set<String>>) connection -> {
 			Set<String> keys = new HashSet<>();
 			Cursor<byte[]> cursor = connection.scan(options);

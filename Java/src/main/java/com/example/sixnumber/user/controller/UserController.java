@@ -87,15 +87,15 @@ public class UserController {
 		return ResponseEntity.ok(userService.getCashNickname(user));
 	}
 
-	@GetMapping("/charging")
-	public ResponseEntity<UnifiedResponse<ChargingResponse>> getCharge(@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.getCharges(user.getId()));
-	}
-
 	@PostMapping("/charging")
 	public ResponseEntity<UnifiedResponse<?>> charging(@RequestBody ChargingRequest chargingRequest,
 		@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.charging(chargingRequest, user));
+	}
+
+	@GetMapping("/charging")
+	public ResponseEntity<UnifiedResponse<ChargingResponse>> getCharge(@AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(userService.getCharges(user.getId()));
 	}
 
 	@PatchMapping("/paid")
