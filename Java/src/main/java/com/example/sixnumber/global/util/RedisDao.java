@@ -14,10 +14,8 @@ import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.ErrorCode;
 
 import io.jsonwebtoken.ExpiredJwtException;
-import lombok.RequiredArgsConstructor;
 
 @Component
-@RequiredArgsConstructor
 public class RedisDao {
 	private final JwtProvider jwtProvider;
 	private final RedisTemplate<String, String> redisTemplate;
@@ -26,6 +24,12 @@ public class RedisDao {
 	public static final String RT_KEY = "RT: ";
 	public static final String CHARGE_KEY = "CHARGE: ";
 	public static final String AUTH_KEY = "AUTH: ";
+
+	public RedisDao(JwtProvider jwtProvider, RedisTemplate<String, String> redisTemplate) {
+		this.jwtProvider = jwtProvider;
+		this.redisTemplate = redisTemplate;
+		this.values = redisTemplate.opsForValue();
+	}
 
 	public String getValue(String key, String refreshTokenPointer) {
 		switch (key) {
@@ -57,17 +61,14 @@ public class RedisDao {
 
 		if (keys.size() == 0) throw new IllegalArgumentException("충전 요청이 존재하지 않습니다");
 
-		ValueOperations<String, String> values = redisTemplate.opsForValue();
 		return values.multiGet(keys);
 	}
 
 	public void setRefreshToken(String refreshPointer, String data, Long time, TimeUnit timeUnit) {
-		ValueOperations<String, String> values = redisTemplate.opsForValue();
 		values.set(RT_KEY + refreshPointer, data, time, timeUnit);
 	}
 
 	public void setValues(String key, String data, Long time, TimeUnit timeUnit) {
-		ValueOperations<String, String> values = redisTemplate.opsForValue();
 		values.set(CHARGE_KEY + key, data, time, timeUnit);
 	}
 
@@ -76,13 +77,12 @@ public class RedisDao {
 		else redisTemplate.delete(CHARGE_KEY + value);
 	}
 
-	public void deleteInRedisValueIsNotNull(String key, String refreshPointer) {
-		String refreshToken = getValue(key, refreshPointer);
+	public void deleteInRedisValueIsNotNull(String refreshPointer) {
+		String refreshToken = getValue(RT_KEY, refreshPointer);
 		if (refreshToken != null) redisTemplate.delete(refreshToken);
 	}
 
 	public boolean isEqualsBlackList(String key) {
-		ValueOperations<String, String> values = redisTemplate.opsForValue();
 		return values.get(key) != null;
 	}
 
