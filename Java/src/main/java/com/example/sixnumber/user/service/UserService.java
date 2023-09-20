@@ -144,15 +144,18 @@ public class UserService {
 		if (user.getRefreshPointer() == null) {
 			TokenDto tokenDto = jwtProvider.generateTokens(user);
 			user.setRefreshPointer(tokenDto.getRefreshPointer());
-			redisDao.setRefreshToken(tokenDto.getRefreshPointer(), tokenDto.getRefreshToken(), (long) 7, TimeUnit.DAYS);
+			redisDao.setValues(RedisDao.RT_KEY + tokenDto.getRefreshPointer(),
+				tokenDto.getRefreshToken(), (long) 7, TimeUnit.DAYS);
 
-			Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), "oneWeek");
+			Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN,
+				tokenDto.getAccessToken(), "oneWeek");
+
 			String enCodedRefreshToken = passwordEncoder.encode(tokenDto.getRefreshToken());
 			response.addCookie(accessCookie);
 			response.addHeader(JwtProvider.AUTHORIZATION_HEADER, "Bearer " + enCodedRefreshToken);
 			unifiedResponse = UnifiedResponse.ok("로그인 성공");
 		} else {
-			redisDao.delete(RedisDao.RT_KEY, user.getRefreshPointer());
+			redisDao.delete(RedisDao.RT_KEY + user.getRefreshPointer());
 			user.setRefreshPointer(null);
 			unifiedResponse = UnifiedResponse.badRequest("중복 로그인입니다");
 		}
@@ -162,7 +165,7 @@ public class UserService {
 
 	public Cookie logout(HttpServletRequest request, User user) {
 		String accessToken = jwtProvider.getAccessTokenInCookie(request);
-		redisDao.delete(RedisDao.RT_KEY, user.getRefreshPointer());
+		redisDao.delete(RedisDao.RT_KEY + user.getRefreshPointer());
 		user.setRefreshPointer(null);
 		userRepository.save(user);
 		if (accessToken != null) redisDao.setBlackList(accessToken);
@@ -223,7 +226,7 @@ public class UserService {
 		if (user.getTimeOutCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
 
 		String value = user.getId() + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getCash();
-		redisDao.setValues(value, value, (long) 12, TimeUnit.HOURS);
+		redisDao.setValues(RedisDao.CHARGE_KEY + value, value, (long) 1, TimeUnit.HOURS);
 		user.setTimeOutCount(1);
 		userRepository.save(user);
 		return UnifiedResponse.ok("요청 성공");

@@ -78,9 +78,9 @@ public class AdminService {
 	// 결제에 대해서 고민해봐야함 현재 로직은 특정 계좌에 msg 와 value 가 확인되면 수동으로 넣어주는 방식
 	public UnifiedResponse<?> upCash(CashRequest cashRequest) {
 		User user = manager.findUser(cashRequest.getUserId());
-		String value = cashRequest.getUserId() + "-" + cashRequest.getMsg() + "-" + cashRequest.getCash();
+		String key = cashRequest.getUserId() + "-" + cashRequest.getMsg() + "-" + cashRequest.getCash();
 		// searchCharging 에서 검증되어 넘어온 Request 이기에 값이 있는지에 대한 체크는 건너뛰어도 된다 생각함
-		redisDao.delete(RedisDao.CHARGE_KEY, value);
+		redisDao.delete(RedisDao.CHARGE_KEY + key);
 
 		user.setStatement(LocalDate.now() + "," + cashRequest.getCash() +"원 충전");
 		user.setCash("+", cashRequest.getCash());
@@ -133,7 +133,7 @@ public class AdminService {
 		target.setStatus(status);
 
 		if (target.getStatus().equals(Status.SUSPENDED) || target.getStatus().equals(Status.DORMANT)) {
-			redisDao.delete(RedisDao.RT_KEY, target.getRefreshPointer());
+			redisDao.delete(RedisDao.RT_KEY + target.getRefreshPointer());
 		}
 		return UnifiedResponse.ok("상태 변경 완료");
 	}

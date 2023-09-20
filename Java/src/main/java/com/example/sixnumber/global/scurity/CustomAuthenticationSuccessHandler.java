@@ -43,7 +43,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		} else {
 			TokenDto tokenDto = jwtProvider.generateTokens(user);
 			user.setRefreshPointer(tokenDto.getRefreshPointer());
-			redisDao.setRefreshToken(tokenDto.getRefreshPointer(), tokenDto.getRefreshToken(), (long) 7, TimeUnit.DAYS);
+			redisDao.setValues(RedisDao.RT_KEY + tokenDto.getRefreshPointer(), tokenDto.getRefreshToken(), (long) 7, TimeUnit.DAYS);
 			accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), "oneWeek");
 		}
 

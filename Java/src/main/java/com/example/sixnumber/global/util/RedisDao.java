@@ -64,21 +64,12 @@ public class RedisDao {
 		return values.multiGet(keys);
 	}
 
-	public void setRefreshToken(String refreshPointer, String data, Long time, TimeUnit timeUnit) {
-		values.set(RT_KEY + refreshPointer, data, time, timeUnit);
+	public void setValues(String key, String value, Long time, TimeUnit timeUnit) {
+		values.set(key, value, time, timeUnit);
 	}
 
-	public void setValues(String key, String data, Long time, TimeUnit timeUnit) {
-		values.set(CHARGE_KEY + key, data, time, timeUnit);
-	}
-
-	public void delete(String key, String value) {
-		switch (key) {
-			case RT_KEY: redisTemplate.delete(RT_KEY + value); break;
-			case CHARGE_KEY: redisTemplate.delete(CHARGE_KEY + value); break;
-			case AUTH_KEY: redisTemplate.delete(AUTH_KEY + value); break;
-			default: throw new CustomException(ErrorCode.INVALID_INPUT);
-		}
+	public void delete(String key) {
+		redisTemplate.delete(key);
 	}
 
 	public boolean isEqualsBlackList(String key) {
@@ -88,7 +79,6 @@ public class RedisDao {
 	public void setBlackList(String token) {
 		try {
 			if (jwtProvider.validateToken(token)) {
-				ValueOperations<String, String> values = redisTemplate.opsForValue();
 				Long remainingTime = jwtProvider.getRemainingTime(token);
 				if (remainingTime != 0) {
 					values.set(token, "Black", jwtProvider.getRemainingTime(token), TimeUnit.MILLISECONDS);
