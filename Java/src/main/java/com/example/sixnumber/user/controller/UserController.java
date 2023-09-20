@@ -88,7 +88,7 @@ public class UserController {
 	}
 
 	@GetMapping("/charging")
-	public ResponseEntity<UnifiedResponse<List<ChargingResponse>>> getCharges(@AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<ChargingResponse>> getCharge(@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.getCharges(user.getId()));
 	}
 

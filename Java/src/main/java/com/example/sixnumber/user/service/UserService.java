@@ -228,12 +228,11 @@ public class UserService {
 		return UnifiedResponse.ok("요청 성공");
 	}
 
-	public UnifiedResponse<List<ChargingResponse>> getCharges(Long userId) {
-		List<String> values = redisDao.multiGet(userId);
+	public UnifiedResponse<ChargingResponse> getCharges(Long userId) {
+		String charge = redisDao.getValue(RedisDao.CHARGE_KEY + userId);
+		if (charge == null) throw new CustomException(NOT_FOUND);
 
-		List<ChargingResponse> responses = values.stream()
-			.map(ChargingResponse::new)
-			.collect(Collectors.toList());
+		ChargingResponse responses = new ChargingResponse(charge);
 		return UnifiedResponse.ok("신청 리스트 조회 성공", responses);
 	}
 
