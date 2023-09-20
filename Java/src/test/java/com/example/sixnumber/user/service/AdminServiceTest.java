@@ -210,7 +210,7 @@ public class AdminServiceTest {
 		UnifiedResponse<?> response = adminService.setStatus(admin, saveUser.getId(), request);
 
 		verify(manager).findUser(anyLong());
-		verify(redisDao).deleteInRedisValueIsNotNull(saveUser.getRefreshPointer());
+		verify(redisDao).delete(anyString(), anyString());
 		TestUtil.UnifiedResponseEquals(response, 200, "상태 변경 완료");
 	}
 
