@@ -30,7 +30,7 @@ public class RedisDao {
 	}
 
 	public Set<String> getKeysList(Object object) {
-		if (object instanceof Long) return redisTemplate.keys("*" + RT_KEY + object + "*");
+		if (object instanceof Long) return redisTemplate.keys(RT_KEY + object + "*");
 		else if (object instanceof String) return redisTemplate.keys("*" + object + "*");
 		else throw new CustomException(ErrorCode.INVALID_INPUT);
 	}

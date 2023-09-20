@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -216,20 +215,14 @@ public class UserService {
 		return UnifiedResponse.ok("조회 성공", new CashNicknameResponse(user)) ;
 	}
 
-	// 요청을 최대 3번까지 할 수 있고 12시간 기준으로 삭제되기에 충전 요청 취소를 만들지 않아도 된다 판단함
 	public UnifiedResponse<?> charging(ChargingRequest chargingRequest, User user) {
-		Set<String> keys = redisDao.getChargeList(user.getId());
-
-		if (keys.size() >= 3) throw new IllegalArgumentException("처리되지 않은 요청사항이 많습니다");
-
-		String msgCash = chargingRequest.getMsg() + "-" + chargingRequest.getCash();
-		Set<String> checkIncorrect = redisDao.getKeysList(msgCash);
-		if (!checkIncorrect.isEmpty()) throw new OverlapException("다른 문자로 다시 시도해주세요");
-
 		if (user.getTimeOutCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
 
-		String value = user.getId() + "-" + chargingRequest.getMsg() + "-" + chargingRequest.getCash();
-		redisDao.setValues(RedisDao.CHARGE_KEY + value, value, (long) 1, TimeUnit.HOURS);
+		String charge = redisDao.getValue(RedisDao.CHARGE_KEY + user.getId());
+		if (charge != null) throw new CustomException(INVALID_INPUT);
+
+		String msgCash = chargingRequest.getMsg() + "-" + chargingRequest.getCash();
+		redisDao.setValues(RedisDao.CHARGE_KEY + user.getId(), msgCash, (long) 1, TimeUnit.HOURS);
 		user.setTimeOutCount(1);
 		userRepository.save(user);
 		return UnifiedResponse.ok("요청 성공");
