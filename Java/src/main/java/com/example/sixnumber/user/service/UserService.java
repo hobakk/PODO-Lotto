@@ -168,7 +168,10 @@ public class UserService {
 		redisDao.delete(RedisDao.RT_KEY + user.getRefreshPointer());
 		user.setRefreshPointer(null);
 		userRepository.save(user);
-		if (accessToken != null) redisDao.setBlackList(accessToken);
+		if (accessToken != null) {
+			Long remainingTime = jwtProvider.getRemainingTime(accessToken);
+			redisDao.setBlackList(accessToken, remainingTime);
+		}
 
 		return jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null, 0);
 	}

@@ -66,7 +66,8 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 					String refreshPointer = jwtProvider.getClaims(verifiedAccessToken).getSubject();
 					String refreshToken = redisDao.getValue(RedisDao.RT_KEY + refreshPointer);
 					if (refreshToken == null) {
-						redisDao.setBlackList(verifiedAccessToken);
+						Long remainingTime = jwtProvider.getRemainingTime(accessToken);
+						redisDao.setBlackList(verifiedAccessToken, remainingTime);
 						deleteCookieAndThrowException(response);
 					}
 

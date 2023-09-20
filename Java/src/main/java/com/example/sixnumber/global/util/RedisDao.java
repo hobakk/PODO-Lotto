@@ -6,18 +6,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.ErrorCode;
 
-import io.jsonwebtoken.ExpiredJwtException;
-
 @Component
 public class RedisDao {
-	private final JwtProvider jwtProvider;
 	private final RedisTemplate<String, String> redisTemplate;
 	private final ValueOperations<String, String> values;
 
@@ -25,8 +20,7 @@ public class RedisDao {
 	public static final String CHARGE_KEY = "CHARGE: ";
 	public static final String AUTH_KEY = "AUTH: ";
 
-	public RedisDao(JwtProvider jwtProvider, RedisTemplate<String, String> redisTemplate) {
-		this.jwtProvider = jwtProvider;
+	public RedisDao(RedisTemplate<String, String> redisTemplate) {
 		this.redisTemplate = redisTemplate;
 		this.values = redisTemplate.opsForValue();
 	}
@@ -71,16 +65,7 @@ public class RedisDao {
 		return values.get(key) != null;
 	}
 
-	public void setBlackList(String token) {
-		try {
-			if (jwtProvider.validateToken(token)) {
-				Long remainingTime = jwtProvider.getRemainingTime(token);
-				if (remainingTime != 0) {
-					values.set(token, "Black", jwtProvider.getRemainingTime(token), TimeUnit.MILLISECONDS);
-				}
-			} else throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "만료된 accessToken 입니다");
-		} catch (ExpiredJwtException e) {
-			return;
-		}
+	public void setBlackList(String token, Long remainingTime) {
+		if (remainingTime != 0) values.set(token, "Black", remainingTime, TimeUnit.MILLISECONDS);
 	}
 }
