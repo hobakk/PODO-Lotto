@@ -3,7 +3,9 @@ package com.example.sixnumber.user.service;
 import static com.example.sixnumber.global.exception.ErrorCode.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -222,8 +224,9 @@ public class UserService {
 		String charge = redisDao.getValue(RedisDao.CHARGE_KEY + user.getId());
 		if (charge != null) throw new CustomException(INVALID_INPUT);
 
-		String msgCash = chargingRequest.getMsg() + "-" + chargingRequest.getCash();
-		redisDao.setValues(RedisDao.CHARGE_KEY + user.getId(), msgCash, (long) 1, TimeUnit.HOURS);
+		LocalDateTime dateTime = LocalDateTime.now().plusHours(1);
+		String value = chargingRequest.getMsg() + "-" + chargingRequest.getCash() + "-" + dateFormatter(dateTime);
+		redisDao.setValues(RedisDao.CHARGE_KEY + user.getId(), value, (long) 1, TimeUnit.HOURS);
 		user.setTimeOutCount(1);
 		userRepository.save(user);
 		return UnifiedResponse.ok("요청 성공");
@@ -297,7 +300,7 @@ public class UserService {
 		if (sixNumberList.size() >= 10) sixNumberList = sixNumberList.subList(0, 10);
 
 		List<SixNumberResponse> response = sixNumberList.stream()
-			.map(SixNumberResponse::new)
+			.map(res -> new SixNumberResponse(dateFormatter(res.getBuyDate()), res.getNumberList()))
 			.collect(Collectors.toList());
 		return UnifiedResponse.ok("조회 성공", response);
 	}
@@ -317,5 +320,10 @@ public class UserService {
 
 		String encodedRefreshToken = passwordEncoder.encode(refreshToken);
 		return new UserResponseAndEncodedRefreshDto(new UserResponse(user), encodedRefreshToken);
+	}
+
+	private String dateFormatter(LocalDateTime localDateTime) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초");
+		return localDateTime.format(formatter);
 	}
 }
