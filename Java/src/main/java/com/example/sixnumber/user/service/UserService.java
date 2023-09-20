@@ -305,7 +305,7 @@ public class UserService {
 
 	public UserResponseAndEncodedRefreshDto oauth2LoginAfterGetUserIfAndRefreshToken(Long userIf) {
 		User user = manager.findUser(userIf);
-		String refreshToken = redisDao.getValue(user.getRefreshPointer());
+		String refreshToken = redisDao.getValue(RedisDao.RT_KEY, user.getRefreshPointer());
 		if (refreshToken == null) throw new CustomException(INVALID_TOKEN);
 
 		String encodedRefreshToken = passwordEncoder.encode(refreshToken);

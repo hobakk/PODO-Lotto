@@ -21,30 +21,37 @@ import lombok.RequiredArgsConstructor;
 public class RedisDao {
 	private final JwtProvider jwtProvider;
 	private final RedisTemplate<String, String> redisTemplate;
-	private final String RTK = "RT: ";
-	private final String STMT = "STMT: ";
+	private final ValueOperations<String, String> values;
 
-	public String getValue(String refreshTokenPointer) {
-		ValueOperations<String, String> values = redisTemplate.opsForValue();
-		return values.get(RTK + refreshTokenPointer);
+	public static final String RT_KEY = "RT: ";
+	public static final String CHARGE_KEY = "CHARGE: ";
+	public static final String AUTH_KEY = "AUTH: ";
+
+	public String getValue(String key, String refreshTokenPointer) {
+		switch (key) {
+			case RT_KEY: return values.get(RT_KEY + refreshTokenPointer);
+			case CHARGE_KEY: return values.get(CHARGE_KEY + refreshTokenPointer);
+			case AUTH_KEY: return values.get(AUTH_KEY + refreshTokenPointer);
+			default: throw new CustomException(ErrorCode.INVALID_INPUT);
+		}
 	}
 
 	public Set<String> getKeysList(Object object) {
-		if (object instanceof Long) return redisTemplate.keys("*" + RTK + object + "*");
+		if (object instanceof Long) return redisTemplate.keys("*" + RT_KEY + object + "*");
 		else if (object instanceof String) return redisTemplate.keys("*" + object + "*");
 		else throw new CustomException(ErrorCode.INVALID_INPUT);
 	}
 
 	public Set<String> getChargeList(Long userId) {
-		return redisTemplate.keys("*" + STMT + "*");
+		return redisTemplate.keys("*" + CHARGE_KEY + userId + "*");
 	}
 
 	public List<String> multiGet(Object object) {
 		Set<String> keys;
 		if (object instanceof Long) {
-			keys = getKeysList(STMT + object);
+			keys = getKeysList(CHARGE_KEY + object);
 		} else if (object instanceof String) {
-			if (object.equals("All")) keys = getKeysList(STMT);
+			if (object.equals("All")) keys = getKeysList(CHARGE_KEY);
 			else keys = getKeysList(object);
 		} else throw new CustomException(ErrorCode.INVALID_INPUT);
 
@@ -56,21 +63,21 @@ public class RedisDao {
 
 	public void setRefreshToken(String refreshPointer, String data, Long time, TimeUnit timeUnit) {
 		ValueOperations<String, String> values = redisTemplate.opsForValue();
-		values.set(RTK + refreshPointer, data, time, timeUnit);
+		values.set(RT_KEY + refreshPointer, data, time, timeUnit);
 	}
 
 	public void setValues(String key, String data, Long time, TimeUnit timeUnit) {
 		ValueOperations<String, String> values = redisTemplate.opsForValue();
-		values.set(STMT + key, data, time, timeUnit);
+		values.set(CHARGE_KEY + key, data, time, timeUnit);
 	}
 
 	public void delete(String value, String subject) {
-		if (subject.equals(JwtProvider.REFRESH_TOKEN)) redisTemplate.delete(RTK + value);
-		else redisTemplate.delete(STMT + value);
+		if (subject.equals(JwtProvider.REFRESH_TOKEN)) redisTemplate.delete(RT_KEY + value);
+		else redisTemplate.delete(CHARGE_KEY + value);
 	}
 
-	public void deleteInRedisValueIsNotNull(String refreshPointer) {
-		String refreshToken = getValue(refreshPointer);
+	public void deleteInRedisValueIsNotNull(String key, String refreshPointer) {
+		String refreshToken = getValue(key, refreshPointer);
 		if (refreshToken != null) redisTemplate.delete(refreshToken);
 	}
 
