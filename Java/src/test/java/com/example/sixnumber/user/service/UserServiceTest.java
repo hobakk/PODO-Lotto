@@ -186,7 +186,7 @@ public class UserServiceTest {
 		verify(manager).findUser(anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
 		verify(jwtProvider).generateTokens(any(User.class));
-		verify(redisDao).setRefreshToken(anyString(), anyString(), anyLong(), any(TimeUnit.class));
+		verify(redisDao).setValues(anyString(), anyString(), anyLong(), any(TimeUnit.class));
 		verify(jwtProvider).createCookie(anyString(), anyString(), anyString());
 		verify(passwordEncoder).encode(anyString());
 		verify(httpServletResponse).addCookie(any(Cookie.class));
@@ -207,7 +207,7 @@ public class UserServiceTest {
 
 		verify(manager).findUser(anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
-		verify(redisDao).delete(anyString(), anyString());
+		verify(redisDao).delete(anyString());
 		TestUtil.UnifiedResponseEquals(response, 400, "중복 로그인입니다");
 	}
 
@@ -283,7 +283,7 @@ public class UserServiceTest {
 
 		Cookie cookie = userService.logout(request, saveUser);
 
-		verify(redisDao).delete(anyString(), eq(JwtProvider.REFRESH_TOKEN));
+		verify(redisDao).delete(anyString());
 		verify(redisDao).setBlackList(cookies.getAccessCookie().getValue());
 		verify(jwtProvider).createCookie(anyString(), eq(null), anyInt());
 		assertNotNull(cookie);
@@ -546,14 +546,14 @@ public class UserServiceTest {
 	void oauth2LoginAfterGetUserIfAndRefreshToken_success() {
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		when(redisDao.getValue(anyString(), anyString())).thenReturn("refreshT");
+		when(redisDao.getValue(anyString())).thenReturn("refreshT");
 
 		when(passwordEncoder.encode(anyString())).thenReturn("encodedRefreshT");
 
 		UserResponseAndEncodedRefreshDto dto = userService.oauth2LoginAfterGetUserIfAndRefreshToken(saveUser.getId());
 
 		verify(manager).findUser(anyLong());
-		verify(redisDao).getValue(anyString(), anyString());
+		verify(redisDao).getValue(anyString());
 		verify(passwordEncoder).encode(anyString());
 		assertNotNull(dto);
 	}
@@ -562,12 +562,12 @@ public class UserServiceTest {
 	void oauth2LoginAfterGetUserIfAndRefreshToken_fail() {
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		when(redisDao.getValue(anyString(), anyString())).thenReturn(isNull());
+		when(redisDao.getValue(anyString())).thenReturn(isNull());
 
 		Assertions.assertThrows(CustomException.class,
 			() -> userService.oauth2LoginAfterGetUserIfAndRefreshToken(saveUser.getId()));
 
 		verify(manager).findUser(anyLong());
-		verify(redisDao).getValue(anyString(), anyString());
+		verify(redisDao).getValue(anyString());
 	}
 }

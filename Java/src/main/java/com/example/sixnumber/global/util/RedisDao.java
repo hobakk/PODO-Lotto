@@ -31,13 +31,8 @@ public class RedisDao {
 		this.values = redisTemplate.opsForValue();
 	}
 
-	public String getValue(String key, String refreshTokenPointer) {
-		switch (key) {
-			case RT_KEY: return values.get(RT_KEY + refreshTokenPointer);
-			case CHARGE_KEY: return values.get(CHARGE_KEY + refreshTokenPointer);
-			case AUTH_KEY: return values.get(AUTH_KEY + refreshTokenPointer);
-			default: throw new CustomException(ErrorCode.INVALID_INPUT);
-		}
+	public String getValue(String key) {
+		return values.get(key);
 	}
 
 	public Set<String> getKeysList(Object object) {

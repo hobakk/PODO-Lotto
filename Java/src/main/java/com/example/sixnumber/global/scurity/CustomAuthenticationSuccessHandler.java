@@ -34,7 +34,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		String email = oAuth2User.getAttribute("email");
 
 		User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원"));
-		String refreshTokenInRedis = redisDao.getValue(RedisDao.RT_KEY, user.getRefreshPointer());
+		String refreshTokenInRedis = redisDao.getValue(RedisDao.RT_KEY + user.getRefreshPointer());
 		Cookie accessCookie;
 		if (refreshTokenInRedis != null) {
 			long remainingSeconds = Math.max(jwtProvider.getRemainingTime(refreshTokenInRedis) /1000, 0);

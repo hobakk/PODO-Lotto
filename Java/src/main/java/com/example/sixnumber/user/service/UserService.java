@@ -73,7 +73,7 @@ public class UserService {
 	}
 
 	public UnifiedResponse<?> compareAuthCode(EmailAuthCodeRequest request) {
-		int authCode = Integer.parseInt(redisDao.getValue(RedisDao.AUTH_KEY, request.getEmail())) ;
+		int authCode = Integer.parseInt(redisDao.getValue(RedisDao.AUTH_KEY + request.getEmail())) ;
 		if (request.getAuthCode() != authCode) throw new IllegalArgumentException("인증번호가 일치하지 않습니다");
 
 		return UnifiedResponse.ok("인증번호 일치");
@@ -316,7 +316,7 @@ public class UserService {
 
 	public UserResponseAndEncodedRefreshDto oauth2LoginAfterGetUserIfAndRefreshToken(Long userIf) {
 		User user = manager.findUser(userIf);
-		String refreshToken = redisDao.getValue(RedisDao.RT_KEY, user.getRefreshPointer());
+		String refreshToken = redisDao.getValue(RedisDao.RT_KEY + user.getRefreshPointer());
 		if (refreshToken == null) throw new CustomException(INVALID_TOKEN);
 
 		String encodedRefreshToken = passwordEncoder.encode(refreshToken);
