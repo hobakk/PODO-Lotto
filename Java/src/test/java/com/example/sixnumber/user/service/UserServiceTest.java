@@ -546,14 +546,14 @@ public class UserServiceTest {
 	void oauth2LoginAfterGetUserIfAndRefreshToken_success() {
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		when(redisDao.getValue(anyString())).thenReturn("refreshT");
+		when(redisDao.getValue(anyString(), anyString())).thenReturn("refreshT");
 
 		when(passwordEncoder.encode(anyString())).thenReturn("encodedRefreshT");
 
 		UserResponseAndEncodedRefreshDto dto = userService.oauth2LoginAfterGetUserIfAndRefreshToken(saveUser.getId());
 
 		verify(manager).findUser(anyLong());
-		verify(redisDao).getValue(anyString());
+		verify(redisDao).getValue(anyString(), anyString());
 		verify(passwordEncoder).encode(anyString());
 		assertNotNull(dto);
 	}
@@ -562,12 +562,12 @@ public class UserServiceTest {
 	void oauth2LoginAfterGetUserIfAndRefreshToken_fail() {
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		when(redisDao.getValue(anyString())).thenReturn(isNull());
+		when(redisDao.getValue(anyString(), anyString())).thenReturn(isNull());
 
 		Assertions.assertThrows(CustomException.class,
 			() -> userService.oauth2LoginAfterGetUserIfAndRefreshToken(saveUser.getId()));
 
 		verify(manager).findUser(anyLong());
-		verify(redisDao).getValue(anyString());
+		verify(redisDao).getValue(anyString(), anyString());
 	}
 }
