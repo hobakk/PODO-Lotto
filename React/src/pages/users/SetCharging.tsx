@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { InputBox, CommonStyle, MsgAndInput, ButtonDiv, ButtonStyle } from '../../shared/Styles'
-import { ChargingDto, setCharges } from '../../api/userApi';
+import { ChargingRequest, setCharges } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 
 function SetCharging() {
     const navigate = useNavigate();
-    const [inputValue, setInputValue] = useState<ChargingDto>({
+    const [inputValue, setInputValue] = useState<ChargingRequest>({
         cash: 0,
         msg: "",
     });
@@ -19,7 +19,7 @@ function SetCharging() {
         })
     }
 
-    const chargingMutation = useMutation<UnifiedResponse<ChargingDto[]>, unknown, ChargingDto>(setCharges, {
+    const chargingMutation = useMutation<UnifiedResponse<undefined>, unknown, ChargingRequest>(setCharges, {
         onSuccess: (res)=>{
             if (res.code == 200) {
                 navigate("/get-charging");

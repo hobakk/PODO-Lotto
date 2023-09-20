@@ -3,7 +3,7 @@ import { ButtonDiv, ButtonStyle, CommonStyle, InputBox, MsgAndInput } from '../.
 import { useMutation } from 'react-query';
 import { getSearch } from '../../api/adminApi';
 import { UnifiedResponse, Err, upDownCashRequest } from '../../shared/TypeMenu';
-import { ChargingDto } from '../../api/userApi';
+import { ChargingRequest } from '../../api/userApi';
 
 function SearchCharges() {
     const [inputValue, setInputValue] = useState<{msg: string, cash: number}>({
@@ -16,7 +16,7 @@ function SearchCharges() {
         cash: 0,
     });
 
-    const getSearchMutation = useMutation<UnifiedResponse<upDownCashRequest>, any, ChargingDto>(getSearch, {
+    const getSearchMutation = useMutation<UnifiedResponse<upDownCashRequest>, any, ChargingRequest>(getSearch, {
         onSuccess: (res)=>{
             if (res.code === 200 && res.data) {
                 setValue(res.data);
