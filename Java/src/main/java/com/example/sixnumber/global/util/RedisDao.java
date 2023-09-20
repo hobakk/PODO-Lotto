@@ -77,11 +77,6 @@ public class RedisDao {
 		else redisTemplate.delete(CHARGE_KEY + value);
 	}
 
-	public void deleteInRedisValueIsNotNull(String refreshPointer) {
-		String refreshToken = getValue(RT_KEY, refreshPointer);
-		if (refreshToken != null) redisTemplate.delete(refreshToken);
-	}
-
 	public boolean isEqualsBlackList(String key) {
 		return values.get(key) != null;
 	}
