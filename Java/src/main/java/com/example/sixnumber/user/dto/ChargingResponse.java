@@ -8,12 +8,11 @@ public class ChargingResponse {
 	private final int cash;
 	private final String date;
 
-	// value = msg-cash-date
-	public ChargingResponse(String value) {
-		String date = value.split("-")[2];
-
-		this.msg = value.split("-")[0];
-		this.cash = Integer.parseInt(value.split("-")[1]);
-		this.date = date.substring(0, date.lastIndexOf(" "));
+	// value = id-msg-cash-date
+	public ChargingResponse(String sentence) {
+		String[] value = sentence.split("-");
+		this.msg = value[1];
+		this.cash = Integer.parseInt(value[2]);
+		this.date = value[3].substring(0, value[3].lastIndexOf(" "));
 	}
 }

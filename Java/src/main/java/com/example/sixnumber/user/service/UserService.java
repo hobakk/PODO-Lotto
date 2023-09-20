@@ -10,11 +10,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -225,7 +227,9 @@ public class UserService {
 		if (charge != null) throw new CustomException(INVALID_INPUT);
 
 		LocalDateTime dateTime = LocalDateTime.now().plusHours(1);
-		String value = chargingRequest.getMsg() + "-" + chargingRequest.getCash() + "-" + dateFormatter(dateTime);
+		String value = Stream.of(user.getId(), chargingRequest.getMsg(), chargingRequest.getCash(),
+				dateFormatter(dateTime)).map(Objects::toString).collect(Collectors.joining("-"));
+
 		redisDao.setValues(RedisDao.CHARGE_KEY + user.getId(), value, (long) 1, TimeUnit.HOURS);
 		user.setTimeOutCount(1);
 		userRepository.save(user);
