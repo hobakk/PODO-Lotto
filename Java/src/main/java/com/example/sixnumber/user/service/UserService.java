@@ -269,12 +269,8 @@ public class UserService {
 		User user = manager.findUser(email);
 		if (user.getStatement().size() == 0) throw new IllegalArgumentException("거래내역이 존재하지 않습니다");
 
-		List<StatementResponse> response = user.getStatement()
-			.stream()
-			.map(str -> {
-				String[] localDateMsg = str.split(",");
-				return new StatementResponse(localDateMsg);
-			})
+		List<StatementResponse> response = user.getStatement().stream()
+			.map(StatementResponse::new)
 			.collect(Collectors.toList());
 		return UnifiedResponse.ok("거래내역 조회 완료", response);
 	}
