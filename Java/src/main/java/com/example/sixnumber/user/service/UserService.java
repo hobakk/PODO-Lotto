@@ -188,23 +188,22 @@ public class UserService {
 		return UnifiedResponse.ok("회원 탈퇴 완료");
 	}
 
-	public UnifiedResponse<?> setPaid(OnlyMsgRequest request, String email) {
+	public UnifiedResponse<?> changeToUser(User user) {
+		if (user.getRole().equals(UserRole.ROLE_USER)) throw new IllegalArgumentException("월정액 사용자가 아닙니다");
+		if (Boolean.TRUE.equals(user.getCancelPaid())) throw new OverlapException("프리미엄 해제 신청을 이미 하셨습니다");
+
+		user.setCancelPaid(true);
+		userRepository.save(user);
+		return UnifiedResponse.ok("해지 신청 성공");
+	}
+
+	public UnifiedResponse<?> changeToPaid(String email) {
 		User user = manager.findUser(email);
-
-		if (request.getMsg().equals("월정액 해지")) {
-			if (!user.getRole().equals(UserRole.ROLE_PAID)) throw new IllegalArgumentException("월정액 사용자가 아닙니다");
-
-			if (Boolean.TRUE.equals(user.getCancelPaid())) throw new OverlapException("프리미엄 해제 신청을 이미 하셨습니다");
-
-			user.setCancelPaid(true);
-			return UnifiedResponse.ok("해지 신청 성공");
-		}
-
 		if (user.getCash() < 5000 || user.getRole().equals(UserRole.ROLE_PAID)) {
 			throw new IllegalArgumentException("금액이 부족하거나 이미 월정액 이용자입니다");
 		}
 
-		user.setCash("-", 5000);
+		user.minusCash(5000);
 		user.setRole(UserRole.ROLE_PAID);
 		user.setPaymentDate(LocalDate.now().plusDays(31));
 		user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
