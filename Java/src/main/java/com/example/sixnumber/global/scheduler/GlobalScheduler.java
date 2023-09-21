@@ -74,7 +74,7 @@ public class GlobalScheduler {
 			Boolean cancelPaid = user.getCancelPaid();
 			int cash = user.getCash();
 			if (cash >= 5000 && !cancelPaid || cancelPaid == null) {
-				user.setCash("-", 5000);
+				user.minusCash(5000);
 				user.setPaymentDate(now.plusDays(31));
 				user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
 			} else {

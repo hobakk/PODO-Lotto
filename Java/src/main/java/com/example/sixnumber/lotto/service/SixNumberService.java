@@ -154,7 +154,7 @@ public class SixNumberService {
 
 		if (user.getCash() < requiredCash) throw new IllegalArgumentException("금액이 부족합니다");
 
-		user.setCash("-", requiredCash);
+		user.minusCash(requiredCash);
 		user.setStatement(LocalDate.now() + "," + msg);
 	}
 

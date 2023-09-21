@@ -24,8 +24,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.example.sixnumber.global.exception.CustomException;
-import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.type.Status;
@@ -130,14 +128,13 @@ public class User implements UserDetails {
 	public void setPaymentDate(LocalDate localDate) {
 		this.paymentDate = localDate;
 	}
+
 	public void setCancelPaid(Boolean type) { this.cancelPaid = type; }
-	public void setCash(String sign, int cash) {
-		switch (sign) {
-			case "+": this.cash += cash; break;
-			case "-": this.cash -= cash; break;
-			default: throw new CustomException(ErrorCode.INVALID_INPUT);
-		}
-	}
+
+	public void plusCash(int cash) { this.cash += cash; }
+
+	public void minusCash(int cash) { this.cash -= cash; }
+
 	public void setRole(UserRole role) {
 		this.role = role;
 	}

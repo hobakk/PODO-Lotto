@@ -83,7 +83,7 @@ public class AdminService {
 		redisDao.delete(RedisDao.CHARGE_KEY + key);
 
 		user.setStatement(LocalDate.now() + "," + cashRequest.getCash() +"원 충전");
-		user.setCash("+", cashRequest.getCash());
+		user.plusCash(cashRequest.getCash());
 		user.setTimeOutCount(0);
 		return UnifiedResponse.ok("충전 완료");
 	}
@@ -94,7 +94,7 @@ public class AdminService {
 			throw new IllegalArgumentException("해당 유저가 보유한 금액보다 많습니다");
 		}
 
-		user.setCash("-", cashRequest.getCash());
+		user.minusCash(cashRequest.getCash());
 		user.setStatement(LocalDate.now() + "," + cashRequest.getMsg() + ": " + cashRequest.getCash() + "원 차감");
 		return UnifiedResponse.ok("차감 완료");
 	}
