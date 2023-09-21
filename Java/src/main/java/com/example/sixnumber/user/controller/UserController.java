@@ -98,10 +98,11 @@ public class UserController {
 		return ResponseEntity.ok(userService.getCharges(user.getId()));
 	}
 
-	@PatchMapping("/paid")
-	public ResponseEntity<UnifiedResponse<?>> setPaid(@RequestBody OnlyMsgRequest request,
+	@PatchMapping("/premium")
+	public ResponseEntity<UnifiedResponse<?>> setPremium(@RequestBody OnlyMsgRequest request,
 		@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.setPaid(request, user.getEmail()));
+		if (request.getMsg().equals("월정액 해지")) return ResponseEntity.ok(userService.changeToUser(user));
+		else return ResponseEntity.ok(userService.changeToPaid(user.getEmail()));
 	}
 
 	@GetMapping("/statement")
