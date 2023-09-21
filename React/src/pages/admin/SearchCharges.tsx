@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { ButtonDiv, ButtonStyle, CommonStyle, InputBox, MsgAndInput } from '../../shared/Styles'
 import { useMutation } from 'react-query';
-import { getSearch } from '../../api/adminApi';
-import { UnifiedResponse, Err, upDownCashRequest } from '../../shared/TypeMenu';
+import { getSearch, AdminGetCharges } from '../../api/adminApi';
+import { UnifiedResponse } from '../../shared/TypeMenu';
 import { ChargingRequest } from '../../api/userApi';
 
 function SearchCharges() {
@@ -10,13 +10,14 @@ function SearchCharges() {
         msg: "",
         cash: 0,
     });
-    const [value, setValue] = useState<upDownCashRequest>({
+    const [value, setValue] = useState<AdminGetCharges>({
         userId: 0,
         msg: "",
         cash: 0,
+        date: "",
     });
 
-    const getSearchMutation = useMutation<UnifiedResponse<upDownCashRequest>, any, ChargingRequest>(getSearch, {
+    const getSearchMutation = useMutation<UnifiedResponse<AdminGetCharges>, any, ChargingRequest>(getSearch, {
         onSuccess: (res)=>{
             if (res.code === 200 && res.data) {
                 setValue(res.data);
@@ -25,7 +26,7 @@ function SearchCharges() {
         onError: (err) => {
             if (err.status === 500) alert(err.message);
 
-            setValue({userId: 0, msg: "", cash: 0});
+            setValue({userId: 0, msg: "", cash: 0, date: ""});
         }
     })
 

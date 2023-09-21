@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
-import { getAdminCharges, upCash } from '../../api/adminApi';
+import { getAdminCharges, AdminGetCharges, upCash } from '../../api/adminApi';
 import { CommonStyle } from '../../shared/Styles';
 import { upDownCashRequest, UnifiedResponse, Err } from '../../shared/TypeMenu';
 
 function GetAllCharges() {
-    const [value, setValue] = useState<upDownCashRequest[]>([]);
+    const [value, setValue] = useState<AdminGetCharges[]>([]);
     const [render, setRender] = useState<boolean>(true);
     const [selectValue, setSelectValue] = useState<string>("selectCash");
     const [searchInputValue, setSearchInputValue] = useState<string>("");
     const [result, setResult] = useState<upDownCashRequest[]>([]);
 
-    const getAllChargingMutation = useMutation<UnifiedResponse<upDownCashRequest[]>>(getAdminCharges, {
+    const getAllChargingMutation = useMutation<UnifiedResponse<AdminGetCharges[]>>(getAdminCharges, {
         onSuccess: (res)=>{
             if (res.code === 200) {
                 if (res.data) setValue(res.data);

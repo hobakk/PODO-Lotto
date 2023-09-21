@@ -1,13 +1,20 @@
 import { UnifiedResponse, UserDetailInfo, upDownCashRequest } from "../shared/TypeMenu";
 import { api } from "./config";
-import { ChargingRequest } from "./userApi";
+import { ChargingRequest, ChargeResponse } from "./userApi";
 
 export const getUsers = async (): Promise<UnifiedResponse<UserDetailInfo[]>> => {
     const { data } = await api.get("/admin/users");
     return data;
 }
 
-export const getAdminCharges = async (): Promise<UnifiedResponse<upDownCashRequest[]>> => {
+export type AdminGetCharges = {
+    userId: number,
+    msg: string,
+    cash: number,
+    date: string,
+}
+
+export const getAdminCharges = async (): Promise<UnifiedResponse<AdminGetCharges[]>> => {
     try {
         const { data } = await api.get("/admin/charges");
         return data;
@@ -16,7 +23,7 @@ export const getAdminCharges = async (): Promise<UnifiedResponse<upDownCashReque
     }
 }
 
-export const getSearch = async ( msgCash: ChargingRequest ): Promise<UnifiedResponse<upDownCashRequest>> => {
+export const getSearch = async ( msgCash: ChargingRequest ): Promise<UnifiedResponse<AdminGetCharges>> => {
     try {
        const { data } = await api.get("/admin/search", { params: {
             msg: msgCash.msg,
