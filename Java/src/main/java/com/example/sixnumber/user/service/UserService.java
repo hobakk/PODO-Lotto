@@ -147,7 +147,7 @@ public class UserService {
 				tokenDto.getRefreshToken(), (long) 7, TimeUnit.DAYS);
 
 			Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN,
-				tokenDto.getAccessToken(), "oneWeek");
+				tokenDto.getAccessToken(), JwtProvider.ONE_WEEK);
 
 			String enCodedRefreshToken = passwordEncoder.encode(tokenDto.getRefreshToken());
 			response.addCookie(accessCookie);
@@ -239,8 +239,8 @@ public class UserService {
 		return UnifiedResponse.ok("신청 리스트 조회 성공", responses);
 	}
 
+	// 무슨 경우에서도 프론트로 password 를 보내지 않음
 	public UnifiedResponse<?> update(SignupRequest request, User user) {
-		// password 를 프론트로 보내지 않기로 결정함 (보안 문제)
 		String password = request.getPassword();
 		if (password.equals("")) password = user.getPassword();
 
@@ -251,11 +251,11 @@ public class UserService {
 		for (int i = 0; i < userIf.size(); i++) {
 			switch (i) {
 				case 0: if (userRepository.existsUserByEmail(inputData.get(i)))
-					throw new OverlapException("중복된 이메일입니다"); break;
+							throw new OverlapException("중복된 이메일입니다"); break;
 				case 1: if (passwordEncoder.matches(inputData.get(i), userIf.get(i))) break;
 						else inputData.set(i, passwordEncoder.encode(inputData.get(i))); continue;
 				case 2: if (userRepository.existsUserByNickname(inputData.get(i)))
-					throw new OverlapException("중복된 닉네임입니다"); break;
+							throw new OverlapException("중복된 닉네임입니다"); break;
 			}
 			userIf.set(i, inputData.get(i));
 		}

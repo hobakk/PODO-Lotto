@@ -41,8 +41,10 @@ public class JwtProvider {
 	public static final String BEARER_PREFIX = "Bearer";
 	public static final String REFRESH_TOKEN = "refreshToken";
 	public static final String ACCESS_TOKEN = "accessToken";
-	private static final Duration expire = Duration.ofMinutes(5);
-	private static final Duration refreshExpire = Duration.ofDays(7);
+	public static final String ONE_WEEK = "oneWeek";
+
+	private final Duration expire = Duration.ofMinutes(5);
+	private final Duration refreshExpire = Duration.ofDays(7);
 
 	// String refreshPointer = UUID.toString();
 	public String accessToken(String refreshPointer) {
@@ -139,7 +141,7 @@ public class JwtProvider {
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);
 		if (maxAge instanceof Integer) cookie.setMaxAge((int) maxAge);
-		else if (maxAge.equals("oneWeek")) cookie.setMaxAge(603000);
+		else if (maxAge.equals(ONE_WEEK)) cookie.setMaxAge(603000);
 
 		return cookie;
 	}
