@@ -125,7 +125,6 @@ public class UserService {
 
 	public UnifiedResponse<?> signIn(HttpServletResponse response, SigninRequest request) {
 		User user = manager.findUser(request.getEmail());
-
 		if (user.getPassword().equals("Oauth2Login")) throw new CustomException(NOT_OAUTH2_LOGIN);
 
 		if (!user.getStatus().equals(Status.ACTIVE)) {
@@ -274,12 +273,6 @@ public class UserService {
 		return UnifiedResponse.ok("거래내역 조회 완료", response);
 	}
 
-	public UnifiedResponse<UserResponse> getMyInformation(Long userId) {
-		User userIf = manager.findUser(userId);
-		UserResponse response = new UserResponse(userIf);
-		return UnifiedResponse.ok("조회 성공", response);
-	}
-
 	public UnifiedResponse<List<SixNumberResponse>> getBuySixNumberList(Long userId) {
 		User userIf = manager.findUser(userId);
 		List<SixNumber> sixNumberList = userIf.getSixNumberList();
@@ -299,6 +292,12 @@ public class UserService {
 		return UnifiedResponse.ok("본인확인 성공");
 	}
 
+	public UnifiedResponse<UserResponse> getMyInformation(Long userId) {
+		User userIf = manager.findUser(userId);
+		UserResponse response = new UserResponse(userIf);
+		return UnifiedResponse.ok("조회 성공", response);
+	}
+
 	public UserResponseAndEncodedRefreshDto oauth2LoginAfterGetUserIfAndRefreshToken(Long userIf) {
 		User user = manager.findUser(userIf);
 		String refreshToken = redisDao.getValue(RedisDao.RT_KEY + user.getRefreshPointer());
@@ -312,8 +311,22 @@ public class UserService {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분 ss초");
 		return localDateTime.format(formatter);
 	}
+
 	private void validatePasswordMatching(String password, String encodedPassword) {
 		if (!passwordEncoder.matches(password, encodedPassword))
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+	}
+
+	private void errorsHandler(Errors errors) {
+		List<FieldError> fieldErrors = errors.getFieldErrors();
+		List<String> errorMsgList = new ArrayList<>();
+		for (FieldError fieldError : fieldErrors) {
+			errorMsgList.add(fieldError.getDefaultMessage());
+		}
+
+		String errorMsg = IntStream.range(0, errorMsgList.size())
+			.mapToObj(index -> (index + 1) + ". " + errorMsgList.get(index))
+			.collect(Collectors.joining(".\n"));
+		throw new OverlapException(errorMsg);
 	}
 }
