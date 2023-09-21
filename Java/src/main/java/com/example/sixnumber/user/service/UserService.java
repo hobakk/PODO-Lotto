@@ -116,14 +116,8 @@ public class UserService {
 		User user = manager.findUser(request.getEmail());
 		if (user.getPassword().equals("Oauth2Login")) throw new CustomException(NOT_OAUTH2_LOGIN);
 
-		if (!user.getStatus().equals(Status.ACTIVE)) {
-			String msg;
-			switch (user.getStatus()) {
-				case SUSPENDED: msg = "정지된 계정입니다"; break;
-				case DORMANT: msg = "탈퇴한 계정입니다"; break;
-				default: msg = "잘못된 상태정보입니다"; break;
-			} throw new StatusNotActiveException(msg);
-		}
+		List<Status> notActive = Arrays.asList(Status.SUSPENDED, Status.DORMANT);
+		if (notActive.contains(user.getStatus())) throw new StatusNotActiveException();
 
 		validatePasswordMatching(request.getPassword(), user.getPassword());
 
@@ -165,7 +159,6 @@ public class UserService {
 
 	public UnifiedResponse<?> withdraw(OnlyMsgRequest request, String email) {
 		String withdrawMsg = "회원탈퇴";
-
 		if (!request.getMsg().equals(withdrawMsg)) {
 			throw new IllegalArgumentException("잘못된 문자열 입력");
 		}
@@ -263,12 +256,12 @@ public class UserService {
 	}
 
 	public UnifiedResponse<List<SixNumberResponse>> getBuySixNumberList(Long userId) {
-		User userIf = manager.findUser(userId);
-		List<SixNumber> sixNumberList = userIf.getSixNumberList();
+		User user = manager.findUser(userId);
+		List<SixNumber> sixNumberList = user.getSixNumberList();
 		if (sixNumberList.size() == 0) throw new CustomException(NO_MATCHING_INFO_FOUND);
 
 		Collections.reverse(sixNumberList);
-		if (sixNumberList.size() >= 10) sixNumberList = sixNumberList.subList(0, 10);
+		if (sixNumberList.size() >= 12) sixNumberList = sixNumberList.subList(0, 12);
 
 		List<SixNumberResponse> response = sixNumberList.stream()
 			.map(res -> new SixNumberResponse(dateFormatter(res.getBuyDate()), res.getNumberList()))
