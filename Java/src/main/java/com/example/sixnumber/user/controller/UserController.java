@@ -25,6 +25,7 @@ import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.EmailAuthCodeRequest;
+import com.example.sixnumber.user.dto.EmailRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -44,8 +45,11 @@ public class UserController {
 	private final UserService userService;
 
 	@PostMapping("/emails")
-	public ResponseEntity<UnifiedResponse<?>> sendAuthCodeToEmail(@RequestBody String toEmail) {
-		return ResponseEntity.ok(userService.sendAuthCodeToEmail(toEmail));
+	public ResponseEntity<UnifiedResponse<?>> sendAuthCodeToEmail(
+		@Valid @RequestBody EmailRequest request,
+		Errors errors)
+	{
+		return ResponseEntity.ok(userService.sendAuthCodeToEmail(request, errors));
 	}
 
 	@PostMapping("/emails/auth-code")

@@ -40,6 +40,7 @@ import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.EmailAuthCodeRequest;
+import com.example.sixnumber.user.dto.EmailRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -64,7 +65,13 @@ public class UserService {
 	private final RedisDao redisDao;
 	private final Manager manager;
 
-	public UnifiedResponse<?> sendAuthCodeToEmail(String toEmail) {
+	public UnifiedResponse<?> sendAuthCodeToEmail(EmailRequest request, Errors errors) {
+		if (errors.hasErrors()) errorsHandler(errors);
+
+		List<String> mailList = Arrays.asList("gmail.com", "naver.com", "daum.net");
+		if (!mailList.contains(request.getEmail().split("@")[1])) throw new CustomException(INVALID_INPUT);
+
+		String toEmail = request.getEmail();
 		if (userRepository.existsUserByEmail(toEmail)) throw new OverlapException("중복된 이메일입니다");
 
 		Random random = new Random();
@@ -92,26 +99,8 @@ public class UserService {
 			return UnifiedResponse.ok("재가입 완료");
 		}
 
-		if (errors.hasErrors()) {
-			List<FieldError> fieldErrors = errors.getFieldErrors();
-			List<String> errorMsgList = new ArrayList<>();
-			for (FieldError fieldError : fieldErrors) {
-				errorMsgList.add(fieldError.getDefaultMessage());
-			}
+		if (errors.hasErrors()) errorsHandler(errors);
 
-			String errorMsg = IntStream.range(0, errorMsgList.size())
-				.mapToObj(index -> (index + 1) + ". " + errorMsgList.get(index))
-				.collect(Collectors.joining(".\n"));
-			throw new OverlapException(errorMsg);
-		}
-
-		List<String> mailList = Arrays.asList("gmail.com", "naver.com", "daum.net");
-		if (!mailList.contains(request.getEmail().split("@")[1])) {
-			throw new CustomException(INVALID_INPUT);
-		}
-		if (userRepository.existsUserByEmail(request.getEmail())) {
-			throw new OverlapException("중복된 이메일입니다");
-		}
 		if (userRepository.existsUserByNickname(request.getNickname())) {
 			throw new OverlapException("중복된 닉네임입니다");
 		}
