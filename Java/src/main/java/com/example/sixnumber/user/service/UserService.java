@@ -211,7 +211,7 @@ public class UserService {
 		return UnifiedResponse.ok("요청 성공");
 	}
 
-	public UnifiedResponse<ChargingResponse> getCharges(Long userId) {
+	public UnifiedResponse<ChargingResponse> getCharge(Long userId) {
 		String charge = redisDao.getValue(RedisDao.CHARGE_KEY + userId);
 		if (charge == null) throw new CustomException(NOT_FOUND);
 

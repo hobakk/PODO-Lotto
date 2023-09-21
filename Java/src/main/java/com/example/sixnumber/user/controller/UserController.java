@@ -99,7 +99,7 @@ public class UserController {
 
 	@GetMapping("/charge")
 	public ResponseEntity<UnifiedResponse<ChargingResponse>> getCharge(@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.getCharges(user.getId()));
+		return ResponseEntity.ok(userService.getCharge(user.getId()));
 	}
 
 	@PatchMapping("/premium")

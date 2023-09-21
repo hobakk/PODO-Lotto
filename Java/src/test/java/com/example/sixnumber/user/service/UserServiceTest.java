@@ -432,7 +432,7 @@ public class UserServiceTest {
 
 	@Test
 	void getCharges_success() {
-		UnifiedResponse<List<ChargingResponse>> response = userService.getCharges(saveUser.getId());
+		UnifiedResponse<List<ChargingResponse>> response = userService.getCharge(saveUser.getId());
 
 		verify(redisDao).multiGet(anyLong());
 		TestUtil.UnifiedResponseListEquals(response, 200, "신청 리스트 조회 성공");
