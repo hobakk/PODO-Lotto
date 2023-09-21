@@ -144,8 +144,7 @@ public class User implements UserDetails {
 	}
 
 	public void setStatus(Status status) {
-		List<Status> statusList = Arrays.asList(Status.ACTIVE, Status.DORMANT, Status.SUSPENDED);
-		if (statusList.contains(status)) this.status = status;
+		if (Arrays.asList(Status.values()).contains(status)) this.status = status;
 	}
 
 	public void setWithdrawExpiration(LocalDate localDate) {

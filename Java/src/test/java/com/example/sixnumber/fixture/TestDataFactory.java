@@ -36,7 +36,7 @@ public class TestDataFactory {
 	public static User user() {
 		User user = new User(signupRequest(), "ePassword");
 		user.setId(7L);
-		user.setCash("+", 5000);
+		user.plusCash(5000);
 		user.setRole(UserRole.ROLE_USER);
 		user.setStatus(Status.ACTIVE);
 		user.setRefreshPointer("refreshTokenPointer");
@@ -144,8 +144,7 @@ public class TestDataFactory {
 	public static Stream<Arguments> statusTestData() {
 		return Stream.of(
 			Arguments.of(Status.SUSPENDED),
-			Arguments.of(Status.DORMANT),
-			Arguments.of(Status.TEST)
+			Arguments.of(Status.DORMANT)
 		);
 	}
 
