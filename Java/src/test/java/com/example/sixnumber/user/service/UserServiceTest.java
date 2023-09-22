@@ -45,6 +45,7 @@ import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.CookieAndTokenResponse;
+import com.example.sixnumber.user.dto.EmailAuthCodeRequest;
 import com.example.sixnumber.user.dto.EmailRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
@@ -131,6 +132,20 @@ public class UserServiceTest {
 
 		verify(userRepository).existsUserByEmail(anyString());
 		assertEquals(exception.getMessage(), "중복된 이메일입니다");
+	}
+
+	@Test
+	void compareAuthCode_success() {
+		EmailAuthCodeRequest emailAuthCodeRequest = mock(EmailAuthCodeRequest.class);
+		when(emailAuthCodeRequest.getAuthCode()).thenReturn("123456");
+		when(emailAuthCodeRequest.getEmail()).thenReturn("email");
+
+		when(redisDao.getValue(anyString())).thenReturn("123456");
+
+		UnifiedResponse<?> response = userService.compareAuthCode(emailAuthCodeRequest);
+
+		verify(redisDao).getValue(anyString());
+		TestUtil.UnifiedResponseEquals(response, 200, "인증번호 일치");
 	}
 
 	@Test
