@@ -201,7 +201,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void signup_NicknameOverlapException() {
+	void signup_fail_NicknameOverlap() {
 		SignupRequest signupRequest = TestDataFactory.signupRequest();
 		Errors errors = mock(Errors.class);
 		when(errors.hasErrors()).thenReturn(false);
@@ -219,7 +219,6 @@ public class UserServiceTest {
 	void signin_success() {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 		TokenDto tokenDto = TestDataFactory.tokenRequest();
-		CookieAndTokenResponse cookieAndTokenResponse = TestDataFactory.cookiesResponse();
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 		saveUser.setRefreshPointer(null);
 
@@ -229,10 +228,9 @@ public class UserServiceTest {
 
 		when(jwtProvider.generateTokens(any(User.class))).thenReturn(tokenDto);
 		when(jwtProvider.createCookie(anyString(), anyString(), anyString()))
-			.thenReturn(cookieAndTokenResponse.getAccessCookie());
+			.thenReturn(new Cookie("accessToken", "value"));
 
-		String encodedRefreshToken = "EnCodedRefreshTokenValue";
-		when(passwordEncoder.encode(anyString())).thenReturn(encodedRefreshToken);
+		when(passwordEncoder.encode(anyString())).thenReturn("encodedRefreshToken");
 
 		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest);
 
@@ -327,7 +325,6 @@ public class UserServiceTest {
 	@Test
 	void logout() {
 		HttpServletRequest request = mock(HttpServletRequest.class);
-		CookieAndTokenResponse cookies = TestDataFactory.cookiesResponse();
 		String accessToken = "accessTokenValue";
 		Cookie access = new Cookie("accessToken", null);
 
