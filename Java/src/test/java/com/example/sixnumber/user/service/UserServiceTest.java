@@ -375,12 +375,15 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void setUser_fail_USER() {
-		when(manager.findUser(anyString())).thenReturn(saveUser);
+	void changeToUser_fail_notPaid() {
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.changeToUser(saveUser));
+	}
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.setPaid(request, saveUser.getEmail()));
+	@Test
+	void changeToUser_fail_premiumOff() {
+		saveUser.setRole(UserRole.ROLE_PAID);
 
-		verify(manager).findUser(anyString());
+		Assertions.assertThrows(OverlapException.class, () -> userService.changeToUser(saveUser));
 	}
 
 	@Test
