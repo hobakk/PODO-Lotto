@@ -363,26 +363,19 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void setUser_success() {
-		OnlyMsgRequest request = new OnlyMsgRequest("월정액 해지");
-
+	void changeToUser_success() {
 		saveUser.setRole(UserRole.ROLE_PAID);
 		saveUser.setCancelPaid(false);
 
-		when(manager.findUser(anyString())).thenReturn(saveUser);
+		UnifiedResponse<?> response = userService.changeToUser(saveUser);
 
-		UnifiedResponse<?> response = userService.setPaid(request, saveUser.getEmail());
-
-		verify(manager).findUser(anyString());
+		verify(userRepository).save(any(User.class));
 		assertEquals(saveUser.getCancelPaid(), true);
 		TestUtil.UnifiedResponseEquals(response, 200, "해지 신청 성공");
 	}
 
 	@Test
 	void setUser_fail_USER() {
-		OnlyMsgRequest request = new OnlyMsgRequest("월정액 해지");
-
-		// saveUser.getRole() = UserRole.USER
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.setPaid(request, saveUser.getEmail()));
