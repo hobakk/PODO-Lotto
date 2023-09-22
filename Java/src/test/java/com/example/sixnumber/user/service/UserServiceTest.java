@@ -149,6 +149,17 @@ public class UserServiceTest {
 	}
 
 	@Test
+	void compareAuthCode_fail_inCorrectAuthCode() {
+		EmailAuthCodeRequest emailAuthCodeRequest = mock(EmailAuthCodeRequest.class);
+		when(emailAuthCodeRequest.getAuthCode()).thenReturn("123456");
+		when(emailAuthCodeRequest.getEmail()).thenReturn("email");
+
+		when(redisDao.getValue(anyString())).thenReturn("654321");
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.compareAuthCode(emailAuthCodeRequest));
+	}
+
+	@Test
 	void signup_success() {
 		SignupRequest signupRequest = TestDataFactory.signupRequest();
 		Errors errors = mock(Errors.class);
