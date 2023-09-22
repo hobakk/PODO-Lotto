@@ -156,7 +156,8 @@ public class UserServiceTest {
 
 		when(redisDao.getValue(anyString())).thenReturn("654321");
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.compareAuthCode(emailAuthCodeRequest));
+		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> userService.compareAuthCode(emailAuthCodeRequest));
 	}
 
 	@Test
@@ -166,16 +167,13 @@ public class UserServiceTest {
 		when(errors.hasErrors()).thenReturn(false);
 
 		when(userRepository.findByStatusAndEmail(any(Status.class), anyString())).thenReturn(Optional.empty());
-		when(userRepository.existsUserByEmail(anyString())).thenReturn(false);
 		when(userRepository.existsUserByNickname(anyString())).thenReturn(false);
 
-		String encodedPassword = "ePassword";
-		when(passwordEncoder.encode(signupRequest.getPassword())).thenReturn(encodedPassword);
+		when(passwordEncoder.encode(signupRequest.getPassword())).thenReturn("ePassword");
 
 		UnifiedResponse<?> response = userService.signUp(signupRequest, errors);
 
 		verify(userRepository).findByStatusAndEmail(any(Status.class), anyString());
-		verify(userRepository).existsUserByEmail(anyString());
 		verify(userRepository).existsUserByNickname(anyString());
 		verify(userRepository).save(any(User.class));
 		TestUtil.UnifiedResponseEquals(response, 201, "회원가입 완료");
@@ -185,7 +183,7 @@ public class UserServiceTest {
 	void signup_success_ReJoin() {
 		SignupRequest request = TestDataFactory.signupRequest();
 		Errors errors = mock(Errors.class);
-
+		when(errors.hasErrors()).thenReturn(false);
 		saveUser.setStatus(Status.DORMANT);
 
 		when(userRepository.findByStatusAndEmail(eq(Status.DORMANT), anyString())).thenReturn(Optional.of(saveUser));

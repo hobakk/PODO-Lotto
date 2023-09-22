@@ -89,6 +89,8 @@ public class UserService {
 	}
 
 	public UnifiedResponse<?> signUp(SignupRequest request, Errors errors) {
+		if (errors.hasErrors()) errorsHandler(errors);
+
 		Optional<User> dormantUser = userRepository.findByStatusAndEmail(Status.DORMANT, request.getEmail());
 		if (dormantUser.isPresent()) {
 			User user = dormantUser.get();
@@ -98,8 +100,6 @@ public class UserService {
 			userRepository.save(user);
 			return UnifiedResponse.ok("재가입 완료");
 		}
-
-		if (errors.hasErrors()) errorsHandler(errors);
 
 		if (userRepository.existsUserByNickname(request.getNickname())) {
 			throw new OverlapException("중복된 닉네임입니다");
