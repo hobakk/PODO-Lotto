@@ -191,7 +191,7 @@ public class UserService {
 		return UnifiedResponse.ok("권한 변경 성공");
 	}
 
-	public UnifiedResponse<CashNicknameResponse> getCashNickname(User user) {
+	public UnifiedResponse<CashNicknameResponse> getCashAndNickname(User user) {
 		return UnifiedResponse.ok("조회 성공", new CashNicknameResponse(user)) ;
 	}
 
@@ -231,11 +231,11 @@ public class UserService {
 		for (int i = 0; i < userIf.size(); i++) {
 			switch (i) {
 				case 0: if (userRepository.existsUserByEmail(inputData.get(i)))
-							throw new OverlapException("중복된 이메일입니다"); break;
+					throw new OverlapException("중복된 이메일입니다"); break;
 				case 1: if (passwordEncoder.matches(inputData.get(i), userIf.get(i))) break;
-						else inputData.set(i, passwordEncoder.encode(inputData.get(i))); continue;
+				else inputData.set(i, passwordEncoder.encode(inputData.get(i))); continue;
 				case 2: if (userRepository.existsUserByNickname(inputData.get(i)))
-							throw new OverlapException("중복된 닉네임입니다"); break;
+					throw new OverlapException("중복된 닉네임입니다"); break;
 			}
 			userIf.set(i, inputData.get(i));
 		}
@@ -269,7 +269,7 @@ public class UserService {
 		return UnifiedResponse.ok("조회 성공", response);
 	}
 
-	public UnifiedResponse<?> checkPW(OnlyMsgRequest request, String encodedPassword) {
+	public UnifiedResponse<?> comparePassword(OnlyMsgRequest request, String encodedPassword) {
 		validatePasswordMatching(request.getMsg(), encodedPassword);
 		return UnifiedResponse.ok("본인확인 성공");
 	}

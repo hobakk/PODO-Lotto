@@ -376,7 +376,7 @@ public class UserServiceTest {
 
 	@Test
 	void getCashNickname() {
-		UnifiedResponse<CashNicknameResponse> response = userService.getCashNickname(saveUser);
+		UnifiedResponse<CashNicknameResponse> response = userService.getCashAndNickname(saveUser);
 
 		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공", CashNicknameResponse.class);
 	}
@@ -500,7 +500,7 @@ public class UserServiceTest {
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
-		UnifiedResponse<?> response = userService.checkPW(request, saveUser.getPassword());
+		UnifiedResponse<?> response = userService.comparePassword(request, saveUser.getPassword());
 
 		verify(passwordEncoder).matches(anyString(), anyString());
 		TestUtil.UnifiedResponseEquals(response, 200, "본인확인 성공");
@@ -512,7 +512,7 @@ public class UserServiceTest {
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
-		Assertions.assertThrows(IllegalArgumentException.class, ()->userService.checkPW(request, saveUser.getPassword()));
+		Assertions.assertThrows(IllegalArgumentException.class, ()->userService.comparePassword(request, saveUser.getPassword()));
 
 		verify(passwordEncoder).matches(anyString(), anyString());
 	}

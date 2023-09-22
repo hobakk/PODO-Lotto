@@ -58,12 +58,12 @@ public class UserController {
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<UnifiedResponse<?>> signup(@Valid @RequestBody SignupRequest request, Errors errors) {
+	public ResponseEntity<UnifiedResponse<?>> signUp(@Valid @RequestBody SignupRequest request, Errors errors) {
 		return ResponseEntity.ok(userService.signUp(request, errors));
 	}
 
 	@PostMapping("/signin")
-	public ResponseEntity<UnifiedResponse<?>> signin(@RequestBody SigninRequest request, HttpServletResponse response) {
+	public ResponseEntity<UnifiedResponse<?>> signIn(@RequestBody SigninRequest request, HttpServletResponse response) {
 		UnifiedResponse<?> unifiedResponse = userService.signIn(response, request);
 		if (unifiedResponse.getCode() == HttpStatus.OK.value()) return ResponseEntity.ok(unifiedResponse);
 		else return ResponseEntity.badRequest().body(unifiedResponse);
@@ -87,8 +87,8 @@ public class UserController {
 
 	// 로그인 후 화면에 바로 띄울지에 대한 고민
 	@GetMapping("/cash")
-	public ResponseEntity<UnifiedResponse<CashNicknameResponse>> getCashNickname(@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.getCashNickname(user));
+	public ResponseEntity<UnifiedResponse<CashNicknameResponse>> getCashAndNickname(@AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(userService.getCashAndNickname(user));
 	}
 
 	@PostMapping("/charge")
@@ -115,7 +115,7 @@ public class UserController {
 	}
 
 	@PatchMapping("/update")
-	public ResponseEntity<UnifiedResponse<?>> updata(@RequestBody SignupRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<?>> update(@RequestBody SignupRequest request, @AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.update(request, user));
 	}
 
@@ -125,8 +125,8 @@ public class UserController {
 	}
 
 	@PostMapping("/check-pw")
-	public ResponseEntity<UnifiedResponse<?>> checkPW(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.checkPW(request, user.getPassword()));
+	public ResponseEntity<UnifiedResponse<?>> comparePassword(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(userService.comparePassword(request, user.getPassword()));
 	}
 
 	@GetMapping("/sixnumber-list")

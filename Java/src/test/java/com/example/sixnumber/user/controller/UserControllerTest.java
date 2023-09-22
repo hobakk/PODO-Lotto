@@ -148,7 +148,7 @@ class UserControllerTest {
 	public void GetCashNickname() throws Exception {
 		User user = TestDataFactory.user();
 
-		when(userService.getCashNickname(any(User.class))).thenReturn(
+		when(userService.getCashAndNickname(any(User.class))).thenReturn(
 			UnifiedResponse.ok("조회 성공", new CashNicknameResponse(user)));
 
 		mockMvc.perform(get("/api/users/cash").with(csrf())
@@ -157,7 +157,7 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.msg").value("조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
-		verify(userService).getCashNickname(any(User.class));
+		verify(userService).getCashAndNickname(any(User.class));
 	}
 
 	@Test
@@ -269,7 +269,7 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void CheckPW() throws Exception {
-		when(userService.checkPW(any(OnlyMsgRequest.class), anyString())).thenReturn(UnifiedResponse.ok("본인확인 성공"));
+		when(userService.comparePassword(any(OnlyMsgRequest.class), anyString())).thenReturn(UnifiedResponse.ok("본인확인 성공"));
 
 		mockMvc.perform(post("/api/users/check-pw").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -277,7 +277,7 @@ class UserControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("본인확인 성공"));
 
-		verify(userService).checkPW(any(OnlyMsgRequest.class), anyString());
+		verify(userService).comparePassword(any(OnlyMsgRequest.class), anyString());
 	}
 
 	@Test
