@@ -97,6 +97,43 @@ public class UserServiceTest {
 	}
 
 	@Test
+	void sendAuthCodeToEmail_fail_ErrorsIsNotNull() {
+		EmailRequest emailRequest = TestDataFactory.emailRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(true);
+
+		Assertions.assertThrows(OverlapException.class,
+			() -> userService.sendAuthCodeToEmail(emailRequest, errors));
+	}
+
+	@Test
+	void sendAuthCodeToEmail_fail_inCorrectEmailType() {
+		EmailRequest emailRequest = new EmailRequest("test@false.com");
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
+
+		Exception exception = assertThrows(CustomException.class,
+			() -> userService.sendAuthCodeToEmail(emailRequest, errors));
+
+		assertEquals(exception.getMessage(), "잘못된 입력값입니다");
+	}
+
+	@Test
+	void sendAuthCodeToEmail_EmailOverlap() {
+		EmailRequest emailRequest = TestDataFactory.emailRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
+
+		when(userRepository.existsUserByEmail(anyString())).thenReturn(true);
+
+		Exception exception = assertThrows(OverlapException.class,
+			() -> userService.sendAuthCodeToEmail(emailRequest, errors));
+
+		verify(userRepository).existsUserByEmail(anyString());
+		assertEquals(exception.getMessage(), "중복된 이메일입니다");
+	}
+
+	@Test
 	void signup_success() {
 		SignupRequest signupRequest = TestDataFactory.signupRequest();
 		Errors errors = mock(Errors.class);
@@ -140,21 +177,6 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void signup_EmailOverlapException() {
-		SignupRequest signupRequest = TestDataFactory.signupRequest();
-		Errors errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(false);
-
-		when(userRepository.existsUserByEmail(anyString())).thenReturn(true);
-
-		Exception exception = assertThrows(OverlapException.class,
-			() -> userService.signUp(signupRequest, errors));
-
-		verify(userRepository).existsUserByEmail(anyString());
-		assertEquals(exception.getMessage(), "중복된 이메일입니다");
-	}
-
-	@Test
 	void signup_NicknameOverlapException() {
 		SignupRequest signupRequest = TestDataFactory.signupRequest();
 		Errors errors = mock(Errors.class);
@@ -167,15 +189,6 @@ public class UserServiceTest {
 
 		verify(userRepository).existsUserByNickname(anyString());
 		assertEquals(exception.getMessage(), "중복된 닉네임입니다");
-	}
-
-	@Test
-	void signup_fail_ErrorsIsNotNull() {
-		SignupRequest signupRequest = TestDataFactory.signupRequest();
-		Errors errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(true);
-
-		Assertions.assertThrows(OverlapException.class, () -> userService.signUp(signupRequest, errors));
 	}
 
 	@Test
