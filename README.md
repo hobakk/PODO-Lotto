@@ -7,7 +7,6 @@
   <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white">
   <img src="https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=MariaDB&logoColor=white"><br/>
   <img width="83cm" src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"/>
-  <img width="119cm" src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"/>
   <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white">
   <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=HTML5&logoColor=white">
   <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=CSS3&logoColor=white">
@@ -15,26 +14,29 @@
   <img src="https://img.shields.io/badge/StyledComponents-DB7093?style=for-the-badge&logo=StyledComponents&logoColor=white">
 </div><br/>
 
-<br/><h2>User [Code](https://github.com/hobakk/Lotto/blob/d0d71e9ffcb786747a55b09ea7b7c986dceee058/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L58C1-L58C8)
+<br/><h2>User [Code](https://github.com/hobakk/PODO-Lotto/blob/e81bdcfc2cd2ced8bc5cd955cac84bfd04c3ba4c/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L60)</h2>
 
-### 1. 회원가입, 회원탈퇴
-- 회원탈퇴 당일로 부터 1달간 데이터유지
-- 기간 만료 이전에 재가입 시 계정 활성화
-- 기간이 만료되면 스케줄러를 이용하여 자동 삭제처리
+### 1. 회원가입
+sendAuthCodeToEmail, compareAuthCode, signUp
+- email 양식 및 중복 확인 후 인증 메일 발송
+- 발송된 인증번호 일치 확인
+- 탈퇴 여부 확인 후 수정 또는 회원가입 수행
 ### 2. 로그인, 로그아웃
 참고: Google, Naver, Kakao OAuth2 로그인 구현
 - JWT Token(access, refresh)을 이용한 로그인, 로그아웃 구현
 - Spring Security 를 통한 인증/인가
-### 3. 충전요청
-- 입금메세지와 금액을 입력받아 Redis에 저장
-- 삭제가 빈번하여 Redis로 timeout을 넣어 자동 삭제되게 구현
-- 유저가 고의로 많은 충전요청을 할 수 있기에 3개의 제한을 둠
-- 요청들이 Admin에게 처리되지 않고 timeout 된다면 count를 증가, 4이상일 때 충전요청을 할 수 없게됌
-- 매일 6, 18시 스케줄러가 실행되고 count가 4인 유저 계정을 정지
-### 4. 프리미엄
-- 스케줄러를 이용한 프리미엄 해제 및 결제 자동화
-### 5. 기타
-- 조회: 닉네임,캐쉬, 충전요청, 거래내역, 회원정보, 비밀번호 재확인, 최근 구매한 번호 리스트
+### 3. 회원 탈퇴
+- 회원 탈퇴 당일로부터 1달간 데이터 유지
+- 기간 만료 이전에 회원가입으로 email, password 가 일치하면 계정 활성화
+- 기간 만료 시 스케줄러가 자동 삭제
+### 4. 충전요청
+- 입금 메시지와 금액을 입력받아 timeOut 30분 설정 및 Redis에 저장
+- 요청들이 Admin에게 처리되지 않고 timeout 된다면 count를 증가
+- count 가 4 이상일 경우 충전요청을 할 수 없으며, 스케줄러에 의해 계정을 정지
+### 5. 프리미엄
+- Req 값에 따라 권한을 수정
+### 6. 기타
+- 조회: 닉네임과 캐쉬, 충전요청, 거래명세, 회원 정보, 비밀번호 재확인, 최근 구매한 번호 리스트
 - 수정: 회원정보
 
 <br/><br/><h2>Admin [Code](https://github.com/hobakk/Lotto/blob/d0d71e9ffcb786747a55b09ea7b7c986dceee058/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L36)</h2>
@@ -75,7 +77,7 @@ Redis Cache 사용해서 속도 개선
 ### 1. accessToken 재발급
 - AccessTokenIsExpiredException 을 ExceptionHandlerFilter catch
 - ExceptionHandlerFilter 에서 HttpServletResponse 안에 error 를 실어서 전송
-- [UesAxiosResponseInterceptor](https://github.com/hobakk/Lotto/blob/a875aa52277d7994c4c0ac2fd401833752155cc6/React/src/hooks/UseAxiosResponseInterceptor.ts#L10C7-L10C35) errorHandler 에서 encodedRefreshToken 의 만료 여부를 확인
+- [UesAxiosInterceptor](https://github.com/hobakk/Lotto/blob/a875aa52277d7994c4c0ac2fd401833752155cc6/React/src/hooks/UseAxiosResponseInterceptor.ts#L10C7-L10C35) errorHandler 에서 encodedRefreshToken 의 만료 여부를 확인
 - HttpServletRequest headers 에 실어서 이전 Api 로 재요청
 - encodedRefreshToken 유효한지 확인하고 accessToken 을 재발급
 
