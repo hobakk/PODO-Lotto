@@ -44,7 +44,7 @@ public class UserController {
 
 	private final UserService userService;
 
-	@PostMapping("/emails")
+	@PostMapping("/email")
 	public ResponseEntity<UnifiedResponse<?>> sendAuthCodeToEmail(
 		@Valid @RequestBody EmailRequest request,
 		Errors errors)
@@ -52,7 +52,7 @@ public class UserController {
 		return ResponseEntity.ok(userService.sendAuthCodeToEmail(request, errors));
 	}
 
-	@PostMapping("/emails/auth-code")
+	@PostMapping("/email/auth-code")
 	public ResponseEntity<UnifiedResponse<?>> compareAuthCode(@RequestBody EmailAuthCodeRequest request) {
 		return ResponseEntity.ok(userService.compareAuthCode(request));
 	}

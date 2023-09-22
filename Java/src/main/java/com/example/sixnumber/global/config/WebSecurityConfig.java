@@ -38,7 +38,8 @@ public class WebSecurityConfig {
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private static final String[] URL_PERMIT_ALL = {
-		"/api/users/signin", "/api/users/signup", "/api/winnumber", "/api/jwt/re-issuance", "/api/users/emails/*",
+		"/api/users/signin", "/api/users/signup", "/api/winnumber", "/api/jwt/re-issuance",
+		"/api/users/email", "/api/users/email/auth-code"
 	};
 
 	@Bean
