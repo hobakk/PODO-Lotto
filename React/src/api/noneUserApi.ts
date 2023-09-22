@@ -1,5 +1,5 @@
 import axios from "axios";
-import { api } from "./config";
+import { dontLogin, api } from "./config";
 import { UnifiedResponse, WinNumber } from "../shared/TypeMenu";
 
 export type SigninRequest = {
@@ -24,7 +24,7 @@ const signin = async (emailPassword: SigninRequest): Promise<UnifiedResponse<und
 
 const signup = async (inputValue: SignupRequest): Promise<UnifiedResponse<undefined>> => {
     try {
-        const response = await axios.post(`${process.env.REACT_APP_SPRING_URL}/users/signup`, inputValue);
+        const response = await dontLogin.post("/users/signup", inputValue);
         return response.data;
     } catch (error: any) {
         throw error.response.data;
@@ -33,11 +33,34 @@ const signup = async (inputValue: SignupRequest): Promise<UnifiedResponse<undefi
 
 const getWinNumber = async (): Promise<UnifiedResponse<{winNumberList: WinNumber[]}>> => {
     try {
-        const res = await axios.get(`${process.env.REACT_APP_SPRING_URL}/winnumber`);
+        const res = await dontLogin.get(`/winnumber`);
         return res.data;  
     } catch (error: any) {
         throw error.response.data;
     }
 }
 
-export { signin, signup, getWinNumber, }
+const sendAuthCodeToEmail = async (email: string): Promise<UnifiedResponse<undefined>> => {
+    try {
+        const res = await dontLogin.post(`/users/email`, email);
+        return res.data;  
+    } catch (error: any) {
+        throw error.response.data;
+    }
+}
+
+export type EmailAuthCodeRequest = {
+    email: string, 
+    authCode: string,
+}
+
+const compareAuthCode = async (req: EmailAuthCodeRequest): Promise<UnifiedResponse<undefined>> => {
+    try {
+        const res = await dontLogin.post(`/users/email/auth-code`, req);
+        return res.data;  
+    } catch (error: any) {
+        throw error.response.data;
+    }
+}
+
+export { signin, signup, getWinNumber, sendAuthCodeToEmail, compareAuthCode }
