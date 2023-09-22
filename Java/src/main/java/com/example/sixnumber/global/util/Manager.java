@@ -5,9 +5,7 @@ import static com.example.sixnumber.global.exception.ErrorCode.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -49,9 +47,6 @@ public class Manager {
 	}
 
 	public void sendEmail(String email, String authCode) {
-		boolean isNotNull = Stream.of(email, authCode).allMatch(Objects::nonNull);
-		if (!isNotNull) throw new CustomException(INVALID_INPUT);
-
 		SimpleMailMessage message = new SimpleMailMessage();
 		message.setTo(email);
 		message.setSubject("[포도로또] 이메일 인증번호를 알려드립니다");
