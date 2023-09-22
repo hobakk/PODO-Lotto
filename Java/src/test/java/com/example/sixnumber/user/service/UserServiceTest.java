@@ -438,39 +438,28 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void charging_fail_manyCharges() {
+	void charging_fail_manyTimeOut() {
 		ChargingRequest request = TestDataFactory.chargingRequest();
-
-		Set<String> keys = TestDataFactory.keys();
-		when(redisDao.getKeysList(anyLong())).thenReturn(keys);
-
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.charging(request, saveUser));
-
-		verify(redisDao).getKeysList(anyLong());
-	}
-
-	@Test
-	void charging_fail_KeyOverlapException() {
-		ChargingRequest request = TestDataFactory.chargingRequest();
-		Set<String> set = new HashSet<>(List.of("Msg-5000"));
-
-		when(redisDao.getKeysList(anyLong())).thenReturn(Collections.emptySet());
-		when(redisDao.getKeysList(anyString())).thenReturn(set);
-
-		Assertions.assertThrows(OverlapException.class, () -> userService.charging(request, saveUser));
-
-		verify(redisDao, times(1)).getKeysList(anyString());
-	}
-
-	@Test
-	void charging_BreakTheRulesException() {
-		ChargingRequest request = TestDataFactory.chargingRequest();
-
 		saveUser.setTimeOutCount(4);
 
-		Assertions.assertThrows(CustomException.class, () -> userService.charging(request, saveUser));
+		Exception exception = assertThrows(CustomException.class,
+			() -> userService.charging(request, saveUser));
+
+		assertEquals(exception.getMessage(), "규정 위반으로 홈페이지를 이용할 수 없습니다");
 	}
 
+	@Test
+	void charging_fail_isNullInRedis() {
+		ChargingRequest request = TestDataFactory.chargingRequest();
+
+		when(redisDao.getValue(anyString())).thenReturn(isNull());
+
+		Exception exception = assertThrows(CustomException.class,
+			() -> userService.charging(request, saveUser));
+
+		verify(redisDao).getValue(anyString());
+		assertEquals(exception.getMessage(), "잘못된 입력값입니다");
+	}
 
 	@Test
 	void getCharges_success() {
