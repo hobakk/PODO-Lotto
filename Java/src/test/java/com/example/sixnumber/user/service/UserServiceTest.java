@@ -387,12 +387,10 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void setPaid_success() {
-		OnlyMsgRequest request = new OnlyMsgRequest("false");
-
+	void changeToPaid_success() {
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
-		UnifiedResponse<?> response = userService.setPaid(request, saveUser.getEmail());
+		UnifiedResponse<?> response = userService.changeToPaid(saveUser.getEmail());
 
 		verify(manager).findUser(anyString());
 		assertEquals(saveUser.getCash(), 1000);
@@ -404,18 +402,15 @@ public class UserServiceTest {
 
 	@ParameterizedTest
 	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#setPaidTestData")
-	void setPaid_fail_lowCash_Or_Role(int cash, UserRole role) {
-		OnlyMsgRequest request = new OnlyMsgRequest("false");
-
+	void changeToPaid_fail_lowCash_Or_Role(int cash, UserRole role) {
 		User user = mock(User.class);
 		when(user.getEmail()).thenReturn("test@email.com");
 		when(user.getCash()).thenReturn(cash);
-		// 분명하게 필요한 정보인데 스터빙 오류가 계속 떠서 lenient() 적용함
-		lenient().when(user.getRole()).thenReturn(role);
+		when(user.getRole()).thenReturn(role);
 
 		when(manager.findUser(anyString())).thenReturn(user);
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.setPaid(request, user.getEmail()));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.changeToPaid(user.getEmail()));
 
 		verify(manager).findUser(anyString());
 	}
