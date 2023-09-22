@@ -85,9 +85,12 @@ function Signin() {
             <Link to="/incorrect" style={{ marginBottom:"20px" }}>비밀번호를 잊으셨나요 ?</Link>
             <Link to="/signup">비회원 이신가요 ?</Link>
         </div>
-        <div style={{ width:"80%", marginTop:"2cm" }}>
-            <p style={{ margin:"auto", textAlign:"center", marginBottom:"10px"}}>간편로그인</p>
-            <div style={{ margin:"auto", borderTop:"2px solid gray", width:"80%" }}/>
+        <div style={{ marginTop:"2cm", display:"flex", alignItems:"center", justifyItems:"center" }}>
+            <div style={{ borderTop:"1px solid gray", width:"2.5cm" }}/>
+            <span style={{ margin:"10px", fontSize:"18px"}}>
+                소셜 계정으로 간편 로그인
+            </span>
+            <div style={{ borderTop:"1px solid gray", width:"2.5cm" }}/>
         </div>
         <div style={{display:"flex", justifyContent:"center", alignItems:"center", marginTop:"30px", width:"6cm" }}>
             <img 
