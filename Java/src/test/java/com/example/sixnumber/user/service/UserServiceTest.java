@@ -246,20 +246,15 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void signin_fail_refreshPointerInNotNull() {
-		SigninRequest signinRequest = TestDataFactory.signinRequest();
+	void signin_userNotFound() {
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
+		SigninRequest signinRequest = TestDataFactory.signinRequest();
 
-		when(manager.findUser(anyString())).thenReturn(saveUser);
+		when(manager.findUser(anyString())).thenThrow(new CustomException(USER_NOT_FOUND));
 
-		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
-
-		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest);
+		Assertions.assertThrows(CustomException.class, () -> userService.signIn(httpServletResponse, signinRequest));
 
 		verify(manager).findUser(anyString());
-		verify(passwordEncoder).matches(anyString(), anyString());
-		verify(redisDao).delete(anyString());
-		TestUtil.UnifiedResponseEquals(response, 400, "중복 로그인입니다");
 	}
 
 	@Test
@@ -276,29 +271,14 @@ public class UserServiceTest {
 		verify(manager).findUser(anyString());
 	}
 
-	@Test
-	void signin_UserNotFoundException() {
-		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
-		SigninRequest signinRequest = TestDataFactory.signinRequest();
-
-		when(manager.findUser(anyString())).thenThrow(new CustomException(USER_NOT_FOUND));
-
-		Assertions.assertThrows(CustomException.class, () -> userService.signIn(httpServletResponse, signinRequest));
-
-		verify(manager).findUser(anyString());
-	}
-
 	@ParameterizedTest
 	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#statusTestData")
-	void signin_fail_Status(Status status) {
+	void signin_fail_notActive(Status status) {
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
+		saveUser.setStatus(status);
 
-		User user = mock(User.class);
-		when(user.getStatus()).thenReturn(status);
-		when(user.getPassword()).thenReturn("password");
-
-		when(manager.findUser(anyString())).thenReturn(user);
+		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		Assertions.assertThrows(StatusNotActiveException.class,
 			() -> userService.signIn(httpServletResponse, signinRequest));
@@ -307,7 +287,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void signin_fail_incorrectPW() {
+	void signin_fail_inCorrectPassword() {
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 
@@ -320,6 +300,23 @@ public class UserServiceTest {
 
 		verify(manager).findUser(anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
+	}
+
+	@Test
+	void signin_fail_refreshPointerIsNotNull() {
+		SigninRequest signinRequest = TestDataFactory.signinRequest();
+		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
+
+		when(manager.findUser(anyString())).thenReturn(saveUser);
+
+		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+
+		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest);
+
+		verify(manager).findUser(anyString());
+		verify(passwordEncoder).matches(anyString(), anyString());
+		verify(redisDao).delete(anyString());
+		TestUtil.UnifiedResponseEquals(response, 400, "중복 로그인입니다");
 	}
 
 	@Test
