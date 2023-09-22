@@ -416,7 +416,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void getCashNickname() {
+	void getCashAndNickname() {
 		UnifiedResponse<CashNicknameResponse> response = userService.getCashAndNickname(saveUser);
 
 		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공", CashNicknameResponse.class);
@@ -426,10 +426,11 @@ public class UserServiceTest {
 	void charging_success() {
 		ChargingRequest request = TestDataFactory.chargingRequest();
 
+		when(redisDao.getValue(anyString())).thenReturn("accessTokenInRedis");
+
 		UnifiedResponse<?> response = userService.charging(request, saveUser);
 
-		verify(redisDao, times(1)).getKeysList(anyLong());
-		verify(redisDao, times(1)).getKeysList(anyString());
+		verify(redisDao).getValue(anyString());
 		verify(redisDao).setValues(anyString(), anyString(), anyLong(), any());
 		verify(userRepository).save(saveUser);
 		assertEquals(saveUser.getTimeOutCount(), 1);
