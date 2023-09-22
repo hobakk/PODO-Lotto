@@ -24,6 +24,7 @@ import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.CookieAndTokenResponse;
+import com.example.sixnumber.user.dto.EmailRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -95,6 +96,8 @@ public class TestDataFactory {
 			"1 2 3 4 5 6 7"
 		);
 	}
+
+	public static EmailRequest emailRequest() { return new EmailRequest("test@gmail.com"); }
 
 	public static OnlyMsgRequest onlyMsgRequest(String msg) {
 		return new OnlyMsgRequest(msg);

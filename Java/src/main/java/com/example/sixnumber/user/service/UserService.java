@@ -233,7 +233,7 @@ public class UserService {
 				case 0: if (userRepository.existsUserByEmail(inputData.get(i)))
 					throw new OverlapException("중복된 이메일입니다"); break;
 				case 1: if (passwordEncoder.matches(inputData.get(i), userIf.get(i))) break;
-				else inputData.set(i, passwordEncoder.encode(inputData.get(i))); continue;
+					else inputData.set(i, passwordEncoder.encode(inputData.get(i))); continue;
 				case 2: if (userRepository.existsUserByNickname(inputData.get(i)))
 					throw new OverlapException("중복된 닉네임입니다"); break;
 			}

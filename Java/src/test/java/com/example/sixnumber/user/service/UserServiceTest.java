@@ -45,6 +45,7 @@ import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.CookieAndTokenResponse;
+import com.example.sixnumber.user.dto.EmailRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -76,8 +77,23 @@ public class UserServiceTest {
 
 	@BeforeEach
 	public void setup() {
-		// MockitoAnnotations.openMocks(this);
 		saveUser = TestDataFactory.user();
+	}
+
+	@Test
+	void sendAuthCodeToEmail_success() {
+		EmailRequest emailRequest = TestDataFactory.emailRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
+
+		when(userRepository.existsUserByEmail(anyString())).thenReturn(false);
+
+		UnifiedResponse<?> response = userService.sendAuthCodeToEmail(emailRequest, errors);
+
+		verify(userRepository).existsUserByEmail(anyString());
+		verify(redisDao).setValues(anyString(), anyString(), anyLong(), any(TimeUnit.class));
+		verify(manager).sendEmail(anyString(), anyString());
+		TestUtil.UnifiedResponseEquals(response, 200, "인증번호 발급 성공");
 	}
 
 	@Test
