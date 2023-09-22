@@ -322,18 +322,21 @@ public class UserServiceTest {
 	@Test
 	void logout() {
 		HttpServletRequest request = mock(HttpServletRequest.class);
-		String accessToken = "accessTokenValue";
+		Cookie accessInCookie = new Cookie("accessToken", "value");
 		Cookie access = new Cookie("accessToken", null);
 
-		when(jwtProvider.getAccessTokenInCookie(request)).thenReturn(accessToken);
+		when(jwtProvider.getAccessTokenInCookie(request)).thenReturn(accessInCookie.getValue());
+		when(jwtProvider.getRemainingTime(anyString())).thenReturn((long) 3000);
 		when(jwtProvider.createCookie(anyString(), eq(null), anyInt())).thenReturn(access);
 
 		Cookie cookie = userService.logout(request, saveUser);
 
 		verify(redisDao).delete(anyString());
-		verify(redisDao).setBlackList(cookies.getAccessCookie().getValue());
+		verify(userRepository).save(saveUser);
+		verify(redisDao).setBlackList(anyString(), anyLong());
 		verify(jwtProvider).createCookie(anyString(), eq(null), anyInt());
-		assertNotNull(cookie);
+		assertNull(cookie.getValue());
+		assertEquals(cookie.getMaxAge(), 0);
 	}
 
 	@Test
