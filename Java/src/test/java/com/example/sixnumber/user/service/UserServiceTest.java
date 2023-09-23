@@ -479,6 +479,29 @@ public class UserServiceTest {
 	}
 
 	@Test
+	void update_success() {
+		SignupRequest request = new SignupRequest("testE", "testP", "testN");
+
+		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+		when(passwordEncoder.encode(anyString())).thenReturn("passwordE");
+
+		UnifiedResponse<?> response = userService.update(request, saveUser);
+
+		verify(userRepository, times(0)).existsUserByEmail(anyString());
+		verify(passwordEncoder).matches(anyString(), anyString());
+		verify(passwordEncoder).encode(anyString());
+		verify(userRepository, times(0)).existsUserByNickname(anyString());
+		TestUtil.UnifiedResponseEquals(response, 200, "수정 완료");
+	}
+
+	@Test
+	void update_fail_incorrectValue() {
+		SignupRequest request = TestDataFactory.signupRequest();
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.update(request, saveUser));
+	}
+
+	@Test
 	void getStatement_success() {
 		saveUser.setStatement(LocalDate.now() + ",5000" );
 
@@ -498,30 +521,6 @@ public class UserServiceTest {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getStatement(saveUser.getEmail()));
 
 		verify(manager).findUser(anyString());
-	}
-
-	@Test
-	void update_success() {
-		SignupRequest request = new SignupRequest("testE", "testP", "testN");
-
-		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
-		when(passwordEncoder.encode(anyString())).thenReturn("passwordE");
-
-		UnifiedResponse<?> response = userService.update(request, saveUser);
-
-		verify(passwordEncoder).matches(anyString(), anyString());
-		verify(passwordEncoder).encode(anyString());
-		TestUtil.UnifiedResponseEquals(response, 200, "수정 완료");
-	}
-
-	@Test
-	void update_fail_incorrectValue() {
-		SignupRequest request = mock(SignupRequest.class);
-		when(request.getEmail()).thenReturn("test@gmail.com");
-		when(request.getPassword()).thenReturn("ePassword");
-		when(request.getNickname()).thenReturn("nickname");
-
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.update(request, saveUser));
 	}
 
 	@Test
