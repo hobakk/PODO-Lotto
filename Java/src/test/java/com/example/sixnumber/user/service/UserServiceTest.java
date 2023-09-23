@@ -7,11 +7,8 @@ import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.Cookie;
@@ -44,7 +41,6 @@ import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
-import com.example.sixnumber.user.dto.CookieAndTokenResponse;
 import com.example.sixnumber.user.dto.EmailAuthCodeRequest;
 import com.example.sixnumber.user.dto.EmailRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
@@ -458,15 +454,17 @@ public class UserServiceTest {
 			() -> userService.charging(request, saveUser));
 
 		verify(redisDao).getValue(anyString());
-		assertEquals(exception.getMessage(), "잘못된 입력값입니다");
+		assertEquals(exception.getMessage(), "해당 정보가 존재하지 않습니다");
 	}
 
 	@Test
 	void getCharges_success() {
-		UnifiedResponse<List<ChargingResponse>> response = userService.getCharge(saveUser.getId());
+		when(redisDao.getValue(anyString())).thenReturn("chargeValue");
 
-		verify(redisDao).multiGet(anyLong());
-		TestUtil.UnifiedResponseListEquals(response, 200, "신청 리스트 조회 성공");
+		UnifiedResponse<ChargingResponse> response = userService.getCharge(saveUser.getId());
+
+		verify(redisDao).getValue(anyString());
+		TestUtil.UnifiedResponseEquals(response, 200, "신청 리스트 조회 성공");
 	}
 
 	@Test

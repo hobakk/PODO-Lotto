@@ -199,7 +199,7 @@ public class UserService {
 		if (user.getTimeOutCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
 
 		String charge = redisDao.getValue(RedisDao.CHARGE_KEY + user.getId());
-		if (charge != null) throw new CustomException(INVALID_INPUT);
+		if (charge != null) throw new CustomException(NOT_FOUND);
 
 		String chargeInfo = String.format("%d-%s-%d-%s",
 			user.getId(), chargingRequest.getMsg(), chargingRequest.getCash(),
