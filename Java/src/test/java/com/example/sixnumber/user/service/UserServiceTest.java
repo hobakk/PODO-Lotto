@@ -503,7 +503,7 @@ public class UserServiceTest {
 
 	@Test
 	void getStatement_success() {
-		saveUser.setStatement(LocalDate.now() + ",5000" );
+		saveUser.setStatement(LocalDate.now() + ",5000");
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
@@ -515,7 +515,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void getStatement_fail_lowSize() {
+	void getStatement_fail_notFound() {
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getStatement(saveUser.getEmail()));
