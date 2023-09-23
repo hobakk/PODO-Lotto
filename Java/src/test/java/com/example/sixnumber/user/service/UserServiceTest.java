@@ -468,6 +468,17 @@ public class UserServiceTest {
 	}
 
 	@Test
+	void getCharge_fail() {
+		when(redisDao.getValue(anyString())).thenReturn(isNull());
+
+		Exception exception = assertThrows(CustomException.class,
+			() -> userService.getCharge(anyLong()));
+
+		verify(redisDao).getValue(anyString());
+		assertEquals(exception.getMessage(), "해당 정보가 존재하지 않습니다");
+	}
+
+	@Test
 	void getStatement_success() {
 		saveUser.setStatement(LocalDate.now() + ",5000" );
 
