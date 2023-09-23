@@ -551,17 +551,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void getMyInformation() {
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
-
-		UnifiedResponse<UserResponse> response = userService.getMyInformation(saveUser.getId());
-
-		verify(manager).findUser(anyLong());
-		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공", UserResponse.class);
-	}
-
-	@Test
-	void checkPW_success() {
+	void comparePassword_success() {
 		OnlyMsgRequest request = new OnlyMsgRequest("ePassword");
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
@@ -573,14 +563,25 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void checkPW_fail_incorrectPW() {
+	void comparePassword_fail_incorrectPW() {
 		OnlyMsgRequest request = new OnlyMsgRequest("false");
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
-		Assertions.assertThrows(IllegalArgumentException.class, ()->userService.comparePassword(request, saveUser.getPassword()));
+		Assertions.assertThrows(IllegalArgumentException.class,
+			()->userService.comparePassword(request, saveUser.getPassword()));
 
 		verify(passwordEncoder).matches(anyString(), anyString());
+	}
+
+	@Test
+	void getMyInformation() {
+		when(manager.findUser(anyLong())).thenReturn(saveUser);
+
+		UnifiedResponse<UserResponse> response = userService.getMyInformation(saveUser.getId());
+
+		verify(manager).findUser(anyLong());
+		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공", UserResponse.class);
 	}
 
 	@Test
