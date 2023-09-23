@@ -258,7 +258,7 @@ public class UserService {
 	public UnifiedResponse<List<SixNumberResponse>> getBuySixNumberList(Long userId) {
 		User user = manager.findUser(userId);
 		List<SixNumber> sixNumberList = user.getSixNumberList();
-		if (sixNumberList.size() == 0) throw new CustomException(NO_MATCHING_INFO_FOUND);
+		if (sixNumberList.size() == 0) throw new CustomException(NOT_FOUND);
 
 		Collections.reverse(sixNumberList);
 		if (sixNumberList.size() >= 12) sixNumberList = sixNumberList.subList(0, 12);

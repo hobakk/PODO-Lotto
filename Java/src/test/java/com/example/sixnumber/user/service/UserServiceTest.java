@@ -524,6 +524,33 @@ public class UserServiceTest {
 	}
 
 	@Test
+	void getBuySixNumberList_success() {
+		User user = mock(User.class);
+		when(user.getSixNumberList()).thenReturn(List.of(TestDataFactory.sixNumber()));
+
+		when(manager.findUser(anyLong())).thenReturn(user);
+
+		UnifiedResponse<List<SixNumberResponse>> response = userService.getBuySixNumberList(anyLong());
+
+		verify(manager).findUser(anyLong());
+		TestUtil.UnifiedResponseListEquals(response, 200, "조회 성공");
+	}
+
+	@Test
+	void getBuySixNumberList_fail_isEmpty() {
+		User user = mock(User.class);
+		when(user.getSixNumberList()).thenReturn(new ArrayList<>());
+
+		when(manager.findUser(anyLong())).thenReturn(user);
+
+		Exception exception = assertThrows(CustomException.class,
+			() -> userService.getBuySixNumberList(anyLong()));
+
+		verify(manager).findUser(anyLong());
+		assertEquals(exception.getMessage(), "해당 정보가 존재하지 않습니다");
+	}
+
+	@Test
 	void getMyInformation() {
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
@@ -554,31 +581,6 @@ public class UserServiceTest {
 		Assertions.assertThrows(IllegalArgumentException.class, ()->userService.comparePassword(request, saveUser.getPassword()));
 
 		verify(passwordEncoder).matches(anyString(), anyString());
-	}
-
-	@Test
-	void getBuySixNumberList_success() {
-		User user = mock(User.class);
-		when(user.getSixNumberList()).thenReturn(List.of(TestDataFactory.sixNumber()));
-
-		when(manager.findUser(anyLong())).thenReturn(user);
-
-		UnifiedResponse<List<SixNumberResponse>> response = userService.getBuySixNumberList(anyLong());
-
-		verify(manager).findUser(anyLong());
-		TestUtil.UnifiedResponseListEquals(response, 200, "조회 성공");
-	}
-
-	@Test
-	void getBuySixNumberList_fail_isEmpty() {
-		User user = mock(User.class);
-		when(user.getSixNumberList()).thenReturn(new ArrayList<>());
-
-		when(manager.findUser(anyLong())).thenReturn(user);
-
-		Assertions.assertThrows(CustomException.class, () -> userService.getBuySixNumberList(anyLong()));
-
-		verify(manager).findUser(anyLong());
 	}
 
 	@Test
