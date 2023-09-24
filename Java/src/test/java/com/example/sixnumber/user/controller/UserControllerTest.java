@@ -36,6 +36,7 @@ import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.dto.UserResponse;
+import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
 import com.example.sixnumber.user.type.Status;
@@ -103,8 +104,8 @@ class UserControllerTest {
 			.thenReturn(UnifiedResponse.badRequest("중복 로그인입니다"));
 
 		mockMvc.perform(post("/api/users/signin").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(TestDataFactory.signinRequest())))
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.signinRequest())))
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.msg").value("중복 로그인입니다"));
 
@@ -293,5 +294,23 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
 		verify(userService).getBuySixNumberList(anyLong());
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void oauth2LoginAfterGetUserIfAndRefreshToken() throws Exception {
+		UserResponseAndEncodedRefreshDto dto = new UserResponseAndEncodedRefreshDto(
+			new UserResponse(TestDataFactory.user()), "encodedRefreshToken");
+
+		when(userService.oauth2LoginAfterGetUserIfAndRefreshToken(anyLong())).thenReturn(dto);
+
+		mockMvc.perform(get("/api/users//oauth2/my-information").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("조회 성공"))
+			.andExpect(jsonPath("$.data").isNotEmpty())
+			.andExpect(header().string("Authorization", "Bearer encodedRefreshToken"));
+
+		verify(userService).oauth2LoginAfterGetUserIfAndRefreshToken(anyLong());
 	}
 }
