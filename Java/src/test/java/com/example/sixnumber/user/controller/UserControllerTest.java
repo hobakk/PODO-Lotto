@@ -162,13 +162,13 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void GetCharge() throws Exception {
-		ChargingResponse response = new ChargingResponse("7-홍길동전-2000");
+		ChargingResponse response = new ChargingResponse("7-msg-2000-7월 14일");
 
 		when(userService.getCharge(anyLong())).thenReturn(UnifiedResponse.ok("신청 리스트 조회 성공", response));
 
-		mockMvc.perform(get("/api/users/charging").with(csrf())
+		mockMvc.perform(get("/api/users/charge").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.code").value(200))
+			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("신청 리스트 조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());;
 
@@ -181,7 +181,7 @@ class UserControllerTest {
 		when(userService.charging(any(ChargingRequest.class), any(User.class)))
 			.thenReturn(UnifiedResponse.ok("요청 성공"));
 
-		mockMvc.perform(post("/api/users/charging").with(csrf())
+		mockMvc.perform(post("/api/users/charge").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
 			.andExpect(status().isOk())
