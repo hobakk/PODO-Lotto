@@ -4,7 +4,6 @@ import static com.example.sixnumber.global.exception.ErrorCode.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -102,24 +101,20 @@ public class AdminService {
 	//초기 로또메인 만들기 위한 코드, 이후 사용할 일이 적어서 코드 중복사용을 안해서 생기는 불이익이 없을거라 생각
 	public UnifiedResponse<?> createLotto(String email) {
 		Optional<Lotto> findMain = lottoRepository.findByMain();
-
 		if (findMain.isPresent()) throw new IllegalArgumentException("메인 로또가 이미 생성되어 있습니다");
 
 		List<Integer> countList = new ArrayList<>();
 		for (int i = 0; i < 45; i++) {
 			countList.add(1);
 		}
+
 		Lotto lotto = new Lotto("main", email, null, countList,  "");
 		lottoRepository.save(lotto);
 		return UnifiedResponse.ok("생성 완료");
 	}
 
-	public UnifiedResponse<?> setStatus(User user, Long userId, OnlyMsgRequest request) {
-		User target = confirmationProcess(user, userId);
-		List<String> statusList = Arrays.asList("ACTIVE", "SUSPENDED", "DORMANT");
-
-		if (!statusList.contains(request.getMsg())) throw new CustomException(INVALID_INPUT);
-
+	public UnifiedResponse<?> setStatus(User user, Long targetId, OnlyMsgRequest request) {
+		User target = confirmationProcess(user, targetId);
 		Status status;
 		switch (request.getMsg()) {
 			case "ACTIVE": status = Status.ACTIVE; break;
@@ -131,10 +126,10 @@ public class AdminService {
 		if (target.getStatus().equals(status)) throw new IllegalArgumentException("이미 적용되어 있는 상태코드 입니다");
 
 		target.setStatus(status);
-
 		if (target.getStatus().equals(Status.SUSPENDED) || target.getStatus().equals(Status.DORMANT)) {
 			redisDao.delete(RedisDao.RT_KEY + target.getRefreshPointer());
 		}
+
 		return UnifiedResponse.ok("상태 변경 완료");
 	}
 
