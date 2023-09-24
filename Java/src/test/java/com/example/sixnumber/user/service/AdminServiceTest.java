@@ -55,7 +55,6 @@ public class AdminServiceTest {
 
 	@BeforeEach
 	public void setup() {
-		// MockitoAnnotations.openMocks(this);
 		saveUser = TestDataFactory.user();
 		admin = TestDataFactory.Admin();
 	}
@@ -80,7 +79,6 @@ public class AdminServiceTest {
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.setAdmin(request, admin, saveUser.getId()));
 	}
-	// setAdmin confirmationProcess 에 대한 실패 test code 는 setStatus 에서 검증해서 불필요
 
 	@Test
 	void getUsers() {
@@ -94,7 +92,7 @@ public class AdminServiceTest {
 
 	@Test
 	void getCharges() {
-		List<String> values = List.of("7-value-2000-12시 30분 33초");
+		List<String> values = List.of(TestDataFactory.chargeKey());
 
 		when(redisDao.multiGet(anyString())).thenReturn(values);
 

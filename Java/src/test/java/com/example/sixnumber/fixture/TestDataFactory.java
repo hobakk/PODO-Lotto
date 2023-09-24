@@ -16,6 +16,7 @@ import com.example.sixnumber.lotto.dto.WinNumberRequest;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.entity.WinNumber;
+import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.EmailRequest;
@@ -89,6 +90,12 @@ public class TestDataFactory {
 			1,
 			"1 2 3 4 5 6 7"
 		);
+	}
+
+	public static String chargeKey() { return "7-콩쥐팥쥐-2000-12시 30분 33초"; }
+
+	public static AdminGetChargingResponse adminGetChargingResponse() {
+		return new AdminGetChargingResponse(chargeKey());
 	}
 
 	public static EmailRequest emailRequest() { return new EmailRequest("test@gmail.com"); }
