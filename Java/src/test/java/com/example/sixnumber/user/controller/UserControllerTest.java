@@ -8,6 +8,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +33,7 @@ import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
+import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
 import com.example.sixnumber.user.type.Status;
@@ -215,22 +218,8 @@ class UserControllerTest {
 
 	@Test
 	@WithCustomMockUser
-	public void Update() throws Exception {
-		when(userService.update(any(SignupRequest.class), any(User.class))).thenReturn(UnifiedResponse.ok("수정 완료"));
-
-		mockMvc.perform(patch("/api/users/update").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.msg").value("수정 완료"));
-
-		verify(userService).update(any(SignupRequest.class), any(User.class));
-	}
-
-	@Test
-	@WithCustomMockUser
-	public void GetStatement() throws Exception {
-		StatementResponse response = new StatementResponse(("2023-07-14,테스트").split(","));
+	public void getStatement() throws Exception {
+		StatementResponse response = new StatementResponse("2023-07-14,테스트");
 
 		when(userService.getStatement(anyString())).thenReturn(UnifiedResponse.ok("거래내역 조회 완료", List.of(response)));
 
@@ -241,6 +230,20 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
 		verify(userService).getStatement(anyString());
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void Update() throws Exception {
+		when(userService.update(any(SignupRequest.class), any(User.class))).thenReturn(UnifiedResponse.ok("수정 완료"));
+
+		mockMvc.perform(patch("/api/users/update").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("수정 완료"));
+
+		verify(userService).update(any(SignupRequest.class), any(User.class));
 	}
 
 	@Test
