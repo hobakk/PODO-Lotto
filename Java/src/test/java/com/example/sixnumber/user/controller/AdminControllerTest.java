@@ -57,7 +57,7 @@ public class AdminControllerTest {
 
 	@Test
 	public void GetCharges() throws Exception {
-		AdminGetChargingResponse chargeList = new AdminGetChargingResponse("1-콩쥐팥쥐-2000");
+		AdminGetChargingResponse chargeList = TestDataFactory.adminGetChargingResponse();
 
 		when(adminService.getCharges()).thenReturn(UnifiedResponse.ok("조회 성공", List.of(chargeList)));
 
@@ -72,7 +72,7 @@ public class AdminControllerTest {
 
 	@Test
 	public void SearchCharging() throws Exception {
-		AdminGetChargingResponse response = new AdminGetChargingResponse("1-콩쥐팥쥐-2000");
+		AdminGetChargingResponse response = TestDataFactory.adminGetChargingResponse();
 
 		when(adminService.searchCharging(anyString(), anyInt())).thenReturn(UnifiedResponse.ok("조회 성공", response));
 
