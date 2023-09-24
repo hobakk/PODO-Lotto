@@ -130,7 +130,7 @@ public class AdminServiceTest {
 		UnifiedResponse<?> response = adminService.upCash(request);
 
 		verify(manager).findUser(anyLong());
-		verify(redisDao).delete(anyString(), anyString());
+		verify(redisDao).delete(anyString());
 		assertEquals(saveUser.getCash(), 11000);
 		assertNotNull(saveUser.getStatement().get(0));
 		assertEquals(saveUser.getTimeOutCount(), 0);
@@ -211,7 +211,7 @@ public class AdminServiceTest {
 		UnifiedResponse<?> response = adminService.setStatus(admin, saveUser.getId(), request);
 
 		verify(manager).findUser(anyLong());
-		verify(redisDao).delete(anyString(), anyString());
+		verify(redisDao).delete(anyString());
 		TestUtil.UnifiedResponseEquals(response, 200, "상태 변경 완료");
 	}
 
