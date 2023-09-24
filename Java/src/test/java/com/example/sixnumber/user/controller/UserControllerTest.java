@@ -34,6 +34,7 @@ import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
+import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
 import com.example.sixnumber.user.type.Status;
@@ -250,9 +251,8 @@ class UserControllerTest {
 
 	@Test
 	@WithCustomMockUser
-	public void GetMyInformation() throws Exception {
-		User user = TestDataFactory.user();
-		UserResponse response = new UserResponse(user);
+	public void getMyInformation() throws Exception {
+		UserResponse response = new UserResponse(TestDataFactory.user());
 
 		when(userService.getMyInformation(anyLong())).thenReturn(UnifiedResponse.ok("조회 성공", response));
 
