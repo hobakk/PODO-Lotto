@@ -55,7 +55,7 @@ class UserControllerTest {
 
 	@Test
 	@WithMockUser
-	public void Signup() throws Exception {
+	public void signup() throws Exception {
 		when(userService.signUp(any(SignupRequest.class), any(Errors.class))).thenReturn(UnifiedResponse.create("회원가입 완료"));
 
 		mockMvc.perform(post("/api/users/signup").with(csrf())
@@ -69,7 +69,7 @@ class UserControllerTest {
 
 	@Test
 	@WithCustomMockUser(status = Status.DORMANT)
-	public void Signup_ReJoin() throws Exception {
+	public void signup_reJoin() throws Exception {
 		when(userService.signUp(any(SignupRequest.class), any(Errors.class))).thenReturn(UnifiedResponse.ok("재가입 완료"));
 
 		mockMvc.perform(post("/api/users/signup").with(csrf())
@@ -83,7 +83,7 @@ class UserControllerTest {
 
 	@Test
 	@WithMockUser
-	public void Signin_success() throws Exception {
+	public void signin_success() throws Exception {
 		when(userService.signIn(any(HttpServletResponse.class), any(SigninRequest.class)))
 			.thenReturn(UnifiedResponse.ok("로그인 성공"));
 
@@ -98,7 +98,7 @@ class UserControllerTest {
 
 	@Test
 	@WithMockUser
-	public void Signin_fail() throws Exception {
+	public void signin_fail() throws Exception {
 		when(userService.signIn(any(HttpServletResponse.class), any(SigninRequest.class)))
 			.thenReturn(UnifiedResponse.badRequest("중복 로그인입니다"));
 
@@ -113,7 +113,7 @@ class UserControllerTest {
 
 	@Test
 	@WithCustomMockUser
-	public void Logout() throws Exception {
+	public void logout() throws Exception {
 		Cookie access = new Cookie("accessToken", null);
 
 		when(userService.logout(any(HttpServletRequest.class), any(User.class))).thenReturn(access);
@@ -130,7 +130,7 @@ class UserControllerTest {
 
 	@Test
 	@WithCustomMockUser
-	public void	Withdraw() throws Exception {
+	public void	withdraw() throws Exception {
 		when(userService.withdraw(any(OnlyMsgRequest.class), anyString()))
 			.thenReturn(UnifiedResponse.ok("회원 탈퇴 완료"));
 
@@ -144,7 +144,7 @@ class UserControllerTest {
 
 	@Test
 	@WithCustomMockUser
-	public void GetCashNickname() throws Exception {
+	public void getCashNickname() throws Exception {
 		User user = TestDataFactory.user();
 
 		when(userService.getCashAndNickname(any(User.class))).thenReturn(
