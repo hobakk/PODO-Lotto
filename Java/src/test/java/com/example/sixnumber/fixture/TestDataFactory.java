@@ -4,10 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.params.provider.Arguments;
@@ -113,14 +110,6 @@ public class TestDataFactory {
 			5,
 			1000
 		);
-	}
-
-	public static Set<String> keys() {
-		return new HashSet<>(List.of("Msg-5000", "Msg-50001", "Msg-50002"));
-	}
-
-	public static List<String> values() {
-		return Arrays.asList("7-Msg-5000", "7-Msg-50001", "7-Msg-50002");
 	}
 
 	public static List<Integer> countList() {

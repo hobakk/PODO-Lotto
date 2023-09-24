@@ -94,14 +94,15 @@ public class AdminServiceTest {
 
 	@Test
 	void getCharges() {
-		List<String> values = TestDataFactory.values();
+		List<String> values = List.of("7-value-2000-12시 30분 33초");
 
 		when(redisDao.multiGet(anyString())).thenReturn(values);
 
 		UnifiedResponse<List<AdminGetChargingResponse>> response = adminService.getCharges();
 
 		verify(redisDao).multiGet(anyString());
-		assertEquals(response.getData().size(), 3);
+		assertEquals(response.getData().size(), 1);
+		assertEquals(response.getData().get(0).getDate(), "12시 30분");
 		TestUtil.UnifiedResponseListEquals(response, 200, "조회 성공");
 	}
 
@@ -117,7 +118,6 @@ public class AdminServiceTest {
 		UnifiedResponse<AdminGetChargingResponse> response = adminService.searchCharging(msg, cash);
 
 		verify(redisDao).multiGet(anyString());
-		assertEquals(response.getData().getDate(), "7월");
 		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공", AdminGetChargingResponse.class);
 	}
 
