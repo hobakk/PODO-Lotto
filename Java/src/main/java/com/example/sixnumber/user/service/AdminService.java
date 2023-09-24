@@ -133,9 +133,8 @@ public class AdminService {
 		return UnifiedResponse.ok("상태 변경 완료");
 	}
 
-	public UnifiedResponse<?> setRole(User user, Long userId, OnlyMsgRequest request) {
-		User target = confirmationProcess(user, userId);
-
+	public UnifiedResponse<?> setRole(User user, Long targetId, OnlyMsgRequest request) {
+		User target = confirmationProcess(user, targetId);
 		UserRole changeRole;
 		switch (request.getMsg()) {
 			case "USER": changeRole = UserRole.ROLE_USER; break;
@@ -149,15 +148,12 @@ public class AdminService {
 		return UnifiedResponse.ok("권한 변경 완료");
 	}
 
-	private User confirmationProcess(User user, Long userId) {
-		if (user.getId().equals(userId)) {
-			throw new IllegalArgumentException("본인 입니다");
-		}
+	private User confirmationProcess(User user, Long targetId) {
+		if (user.getId().equals(targetId)) throw new IllegalArgumentException("본인 입니다");
 
-		User target = manager.findUser(userId);
-		if (target.getRole().equals(UserRole.ROLE_ADMIN)) {
-			throw new IllegalArgumentException("운영자 계정입니다");
-		}
+		User target = manager.findUser(targetId);
+		if (target.getRole().equals(UserRole.ROLE_ADMIN)) throw new IllegalArgumentException("운영자 계정입니다");
+
 		return target;
 	}
 }
