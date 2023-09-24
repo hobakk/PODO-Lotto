@@ -266,12 +266,13 @@ class UserControllerTest {
 
 	@Test
 	@WithCustomMockUser
-	public void CheckPW() throws Exception {
-		when(userService.comparePassword(any(OnlyMsgRequest.class), anyString())).thenReturn(UnifiedResponse.ok("본인확인 성공"));
+	public void comparePassword() throws Exception {
+		when(userService.comparePassword(any(OnlyMsgRequest.class), anyString()))
+			.thenReturn(UnifiedResponse.ok("본인확인 성공"));
 
 		mockMvc.perform(post("/api/users/check-pw").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString("password")))
+			.content(objectMapper.writeValueAsString(new OnlyMsgRequest("password"))))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("본인확인 성공"));
 
