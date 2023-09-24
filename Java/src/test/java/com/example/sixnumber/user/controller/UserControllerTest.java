@@ -27,6 +27,7 @@ import org.springframework.validation.Errors;
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.WithCustomMockUser;
 import com.example.sixnumber.global.dto.UnifiedResponse;
+import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
@@ -282,14 +283,13 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void getBuySixNumberList() throws Exception {
-		List<SixNumberResponse> response = List.of(new SixNumberResponse(TestDataFactory.sixNumber()));
+		List<SixNumberResponse> response = List.of(new SixNumberResponse("date", List.of("1 2 3 4 5")));
 
 		when(userService.getBuySixNumberList(anyLong())).thenReturn(UnifiedResponse.ok("조회 성공", response));
 
 		mockMvc.perform(get("/api/users/sixnumber-list").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(anyLong())))
-			.andExpect(jsonPath("$.code").value(200))
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
