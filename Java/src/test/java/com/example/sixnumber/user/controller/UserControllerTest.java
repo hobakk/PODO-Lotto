@@ -8,8 +8,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.List;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,19 +25,15 @@ import org.springframework.validation.Errors;
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.WithCustomMockUser;
 import com.example.sixnumber.global.dto.UnifiedResponse;
-import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
-import com.example.sixnumber.user.dto.StatementResponse;
-import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
 import com.example.sixnumber.user.type.Status;
-import com.example.sixnumber.user.type.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @AutoConfigureMockMvc
@@ -162,11 +156,10 @@ class UserControllerTest {
 
 	@Test
 	@WithCustomMockUser
-	public void GetCharges() throws Exception {
+	public void GetCharge() throws Exception {
 		ChargingResponse response = new ChargingResponse("7-홍길동전-2000");
-		List<ChargingResponse> responses = List.of(response);
 
-		when(userService.getCharge(anyLong())).thenReturn(UnifiedResponse.ok("신청 리스트 조회 성공", responses));
+		when(userService.getCharge(anyLong())).thenReturn(UnifiedResponse.ok("신청 리스트 조회 성공", response));
 
 		mockMvc.perform(get("/api/users/charging").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
@@ -194,30 +187,30 @@ class UserControllerTest {
 
 	@Test
 	@WithCustomMockUser
-	public void SetPaid() throws Exception {
-		when(userService.setPaid(any(OnlyMsgRequest.class), anyString())).thenReturn(UnifiedResponse.ok("권한 변경 성공"));
+	public void setPremium_changeToUser() throws Exception {
+		when(userService.changeToUser(any(User.class))).thenReturn(UnifiedResponse.ok("해지 신청 성공"));
 
-		mockMvc.perform(patch("/api/users/paid").with(csrf())
+		mockMvc.perform(patch("/api/users/premium").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.msg").value("권한 변경 성공"));
-
-		verify(userService).setPaid(any(OnlyMsgRequest.class), anyString());
-	}
-
-	@Test
-	@WithCustomMockUser(role = UserRole.ROLE_PAID)
-	public void SetPaid_Release() throws Exception {
-		when(userService.setPaid(any(OnlyMsgRequest.class), anyString())).thenReturn(UnifiedResponse.ok("해지 신청 성공"));
-
-		mockMvc.perform(patch("/api/users/paid").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.user().getEmail())))
+			.content(objectMapper.writeValueAsString(new OnlyMsgRequest("월정액 해지"))))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("해지 신청 성공"));
 
-		verify(userService).setPaid(any(OnlyMsgRequest.class), anyString());
+		verify(userService).changeToUser(any(User.class));
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void setPremium_changeToPaid() throws Exception {
+		when(userService.changeToPaid(anyString())).thenReturn(UnifiedResponse.ok("권한 변경 성공"));
+
+		mockMvc.perform(patch("/api/users/premium").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(new OnlyMsgRequest("normal"))))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("권한 변경 성공"));
+
+		verify(userService).changeToPaid(anyString());
 	}
 
 	@Test
