@@ -41,7 +41,7 @@ public class AdminControllerTest {
 	private AdminService adminService;
 
 	@Test
-	public void GetUsers() throws Exception {
+	public void getUsers() throws Exception {
 		UserResponse userResponse = new UserResponse(TestDataFactory.user());
 
 		when(adminService.getUsers()).thenReturn(UnifiedResponse.ok("조회 성공", List.of(userResponse)));
@@ -56,7 +56,7 @@ public class AdminControllerTest {
 	}
 
 	@Test
-	public void GetCharges() throws Exception {
+	public void getCharges() throws Exception {
 		AdminGetChargingResponse chargeList = TestDataFactory.adminGetChargingResponse();
 
 		when(adminService.getCharges()).thenReturn(UnifiedResponse.ok("조회 성공", List.of(chargeList)));
@@ -71,7 +71,7 @@ public class AdminControllerTest {
 	}
 
 	@Test
-	public void SearchCharging() throws Exception {
+	public void searchCharge() throws Exception {
 		AdminGetChargingResponse response = TestDataFactory.adminGetChargingResponse();
 
 		when(adminService.searchCharging(anyString(), anyInt())).thenReturn(UnifiedResponse.ok("조회 성공", response));
@@ -88,7 +88,7 @@ public class AdminControllerTest {
 	}
 
 	@Test
-	public void SetAdmin() throws Exception {
+	public void setAdmin() throws Exception {
 		when(adminService.setAdmin(any(OnlyMsgRequest.class), any(User.class), anyLong()))
 			.thenReturn(UnifiedResponse.ok("변경 완료"));
 
@@ -102,7 +102,7 @@ public class AdminControllerTest {
 	}
 
 	@Test
-	public void UpCash() throws Exception {
+	public void upCash() throws Exception {
 		when(adminService.upCash(any(CashRequest.class))).thenReturn(UnifiedResponse.ok("충전 완료"));
 
 		mockMvc.perform(patch("/api/admin/users/up-cash").with(csrf())
@@ -115,7 +115,7 @@ public class AdminControllerTest {
 	}
 
 	@Test
-	public void DownCash() throws Exception {
+	public void downCash() throws Exception {
 		when(adminService.downCash(any(CashRequest.class))).thenReturn(UnifiedResponse.ok("차감 완료"));
 
 		mockMvc.perform(patch("/api/admin/users/down-cash").with(csrf())
@@ -128,7 +128,7 @@ public class AdminControllerTest {
 	}
 
 	@Test
-	public void CreateLotto() throws Exception {
+	public void createLotto() throws Exception {
 		when(adminService.createLotto(anyString())).thenReturn(UnifiedResponse.ok("생성 완료"));
 
 		mockMvc.perform(post("/api/admin/lotto").with(csrf())
@@ -141,7 +141,7 @@ public class AdminControllerTest {
 	}
 
 	@Test
-	public void SetStatus() throws Exception {
+	public void setStatus() throws Exception {
 		when(adminService.setStatus(any(User.class), anyLong(), any(OnlyMsgRequest.class)))
 			.thenReturn(UnifiedResponse.ok("상태 변경 완료"));
 
@@ -155,7 +155,7 @@ public class AdminControllerTest {
 	}
 
 	@Test
-	public void SetRole() throws Exception {
+	public void setRole() throws Exception {
 		when(adminService.setRole(any(User.class), anyLong(), any(OnlyMsgRequest.class)))
 			.thenReturn(UnifiedResponse.ok("권한 변경 완료"));
 
