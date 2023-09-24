@@ -110,13 +110,14 @@ public class AdminServiceTest {
 		String msg = "Value1";
 		int cash = 5000;
 
-		List<String> values = Collections.singletonList("7-Value1-5000");
+		List<String> values = Collections.singletonList("7-Value1-5000-7월 14일");
 
 		when(redisDao.multiGet(anyString())).thenReturn(values);
 
 		UnifiedResponse<AdminGetChargingResponse> response = adminService.searchCharging(msg, cash);
 
 		verify(redisDao).multiGet(anyString());
+		assertEquals(response.getData().getDate(), "7월");
 		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공", AdminGetChargingResponse.class);
 	}
 
