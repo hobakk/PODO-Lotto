@@ -221,7 +221,8 @@ class UserControllerTest {
 	public void getStatement() throws Exception {
 		StatementResponse response = new StatementResponse("2023-07-14,테스트");
 
-		when(userService.getStatement(anyString())).thenReturn(UnifiedResponse.ok("거래내역 조회 완료", List.of(response)));
+		when(userService.getStatement(anyString()))
+			.thenReturn(UnifiedResponse.ok("거래내역 조회 완료", List.of(response)));
 
 		mockMvc.perform(get("/api/users/statement").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
@@ -234,12 +235,13 @@ class UserControllerTest {
 
 	@Test
 	@WithCustomMockUser
-	public void Update() throws Exception {
-		when(userService.update(any(SignupRequest.class), any(User.class))).thenReturn(UnifiedResponse.ok("수정 완료"));
+	public void update() throws Exception {
+		when(userService.update(any(SignupRequest.class), any(User.class)))
+			.thenReturn(UnifiedResponse.ok("수정 완료"));
 
 		mockMvc.perform(patch("/api/users/update").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.user())))
+			.content(objectMapper.writeValueAsString(TestDataFactory.signupRequest())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("수정 완료"));
 
