@@ -39,7 +39,7 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 - 조회: 닉네임과 캐쉬, 충전요청, 거래명세, 회원 정보, 비밀번호 재확인, 최근 구매한 번호 리스트
 - 수정: 회원정보
 
-<br/><br/><h2>Admin [Code](https://github.com/hobakk/Lotto/blob/d0d71e9ffcb786747a55b09ea7b7c986dceee058/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L36)</h2>
+<br/><br/><h2>Admin [Code](https://github.com/hobakk/PODO-Lotto/blob/41f7e51f7c1cc915477825cfc14fe3d3fee59617/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L35)</h2>
 
 ### 1. 모든 유저 조회, 모든 충전요청 조회
 - FE: 조회된 정보들을 Nickname, cash 값으로 필터링
