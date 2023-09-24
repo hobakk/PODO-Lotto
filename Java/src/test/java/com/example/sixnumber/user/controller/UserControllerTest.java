@@ -119,8 +119,7 @@ class UserControllerTest {
 		when(userService.logout(any(HttpServletRequest.class), any(User.class))).thenReturn(access);
 
 		mockMvc.perform(post("/api/users/logout").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(99L)))
+			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("로그아웃 성공"))
 			.andExpect(cookie().value("accessToken", (String) null));
@@ -136,7 +135,7 @@ class UserControllerTest {
 
 		mockMvc.perform(patch("/api/users/withdraw").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString("testUSer")))
+			.content(objectMapper.writeValueAsString(new OnlyMsgRequest("testUSer"))))
 			.andExpect(status().isOk());
 
 		verify(userService).withdraw(any(OnlyMsgRequest.class), anyString());
