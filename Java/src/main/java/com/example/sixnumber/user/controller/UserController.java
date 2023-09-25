@@ -104,7 +104,7 @@ public class UserController {
 		return ResponseEntity.ok(userService.getCharge(user.getId()));
 	}
 
-	@DeleteMapping("/delete-charge/{key}")
+	@DeleteMapping("/charge/{key}")
 	public ResponseEntity<UnifiedResponse<?>> deleteCharge(
 		@PathVariable() String key,
 		@AuthenticationPrincipal User user)
