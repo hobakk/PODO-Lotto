@@ -218,7 +218,7 @@ public class UserService {
 		if (charge == null) throw new CustomException(NOT_FOUND);
 
 		ChargingResponse responses = new ChargingResponse(charge);
-		return UnifiedResponse.ok("신청 리스트 조회 성공", responses);
+		return UnifiedResponse.ok("충전 요청 조회 성공", responses);
 	}
 
 	// 무슨 경우에서도 프론트로 password 를 보내지 않음
