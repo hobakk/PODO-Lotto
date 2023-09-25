@@ -481,6 +481,15 @@ public class UserServiceTest {
 	}
 
 	@Test
+	void deleteCharge() {
+		UnifiedResponse<?> response = userService.deleteCharge("str", saveUser);
+
+		verify(redisDao).delete(anyString());
+		verify(userRepository).save(any(User.class));
+		TestUtil.UnifiedResponseEquals(response, 200, "충전 요청 삭제 성공");
+	}
+
+	@Test
 	void update_success() {
 		SignupRequest request = new SignupRequest("testE", "testP", "testN");
 
