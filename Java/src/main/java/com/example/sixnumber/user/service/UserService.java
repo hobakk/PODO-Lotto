@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -198,14 +199,15 @@ public class UserService {
 	public UnifiedResponse<?> charging(ChargingRequest chargingRequest, User user) {
 		if (user.getTimeOutCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
 
-		String charge = redisDao.getValue(RedisDao.CHARGE_KEY + user.getId());
-		if (charge != null) throw new CustomException(NOT_FOUND);
+		String key = String.format("%s-%d", chargingRequest.getMsg(), chargingRequest.getCash());
+		Set<String> chargeList = redisDao.getKeysList(RedisDao.CHARGE_KEY + key);
+		if (chargeList.size() != 0) throw new OverlapException("다른 문자로 재시도 해주세요");
 
 		String chargeInfo = String.format("%d-%s-%d-%s",
 			user.getId(), chargingRequest.getMsg(), chargingRequest.getCash(),
 			dateFormatter(LocalDateTime.now().plusHours(1)));
 
-		redisDao.setValues(RedisDao.CHARGE_KEY + user.getId(), chargeInfo, (long) 1, TimeUnit.HOURS);
+		redisDao.setValues(RedisDao.CHARGE_KEY + key, chargeInfo, (long) 1, TimeUnit.HOURS);
 		user.setTimeOutCount(1);
 		userRepository.save(user);
 		return UnifiedResponse.ok("요청 성공");
