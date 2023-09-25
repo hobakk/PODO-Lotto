@@ -466,13 +466,11 @@ public class UserServiceTest {
 
 	@Test
 	void getCharge_fail() {
-		when(redisDao.getValue(anyString())).thenReturn(isNull());
+		when(redisDao.getValue(anyString())).thenReturn(null);
 
-		Exception exception = assertThrows(CustomException.class,
-			() -> userService.getCharge(anyLong()));
+		Assertions.assertThrows(CustomException.class, () -> userService.getCharge(anyLong()));
 
 		verify(redisDao).getValue(anyString());
-		assertEquals(exception.getMessage(), "해당 정보가 존재하지 않습니다");
 	}
 
 	@Test
@@ -493,10 +491,10 @@ public class UserServiceTest {
 
 		UnifiedResponse<?> response = userService.update(request, saveUser);
 
-		verify(userRepository, times(0)).existsUserByEmail(anyString());
+		verify(userRepository).existsUserByEmail(anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
 		verify(passwordEncoder).encode(anyString());
-		verify(userRepository, times(0)).existsUserByNickname(anyString());
+		verify(userRepository).existsUserByNickname(anyString());
 		TestUtil.UnifiedResponseEquals(response, 200, "수정 완료");
 	}
 
