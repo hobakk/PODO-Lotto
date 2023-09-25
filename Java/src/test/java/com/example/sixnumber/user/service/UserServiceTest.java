@@ -456,7 +456,7 @@ public class UserServiceTest {
 			() -> userService.charging(request, saveUser));
 
 		verify(redisDao).getKeysList(anyString());
-		assertEquals(exception.getMessage(), "해당 정보가 존재하지 않습니다");
+		assertEquals(exception.getMessage(), "다른 문자로 재시도 해주세요");
 	}
 
 	@Test
