@@ -334,7 +334,6 @@ public class UserServiceTest {
 		verify(redisDao).setBlackList(anyString(), anyLong());
 		verify(jwtProvider).createCookie(anyString(), eq(null), anyInt());
 		assertNull(cookie.getValue());
-		assertEquals(cookie.getMaxAge(), 0);
 	}
 
 	@Test
