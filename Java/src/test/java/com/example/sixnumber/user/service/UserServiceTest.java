@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.Cookie;
@@ -446,15 +447,15 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void charging_fail_isNullInRedis() {
+	void charging_fail_isNotNullInRedis() {
 		ChargingRequest request = TestDataFactory.chargingRequest();
 
-		when(redisDao.getValue(anyString())).thenReturn(isNull());
+		when(redisDao.getKeysList(anyString())).thenReturn(Set.of(TestDataFactory.chargeKey()));
 
-		Exception exception = assertThrows(CustomException.class,
+		Exception exception = assertThrows(OverlapException.class,
 			() -> userService.charging(request, saveUser));
 
-		verify(redisDao).getValue(anyString());
+		verify(redisDao).getKeysList(anyString());
 		assertEquals(exception.getMessage(), "해당 정보가 존재하지 않습니다");
 	}
 
