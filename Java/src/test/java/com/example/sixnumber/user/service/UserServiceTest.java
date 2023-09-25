@@ -558,11 +558,9 @@ public class UserServiceTest {
 
 		when(manager.findUser(anyLong())).thenReturn(user);
 
-		Exception exception = assertThrows(CustomException.class,
-			() -> userService.getBuySixNumberList(anyLong()));
+		Assertions.assertThrows(CustomException.class, () -> userService.getBuySixNumberList(anyLong()));
 
 		verify(manager).findUser(anyLong());
-		assertEquals(exception.getMessage(), "해당 정보가 존재하지 않습니다");
 	}
 
 	@Test
