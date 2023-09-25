@@ -402,11 +402,12 @@ public class UserServiceTest {
 		User user = mock(User.class);
 		when(user.getEmail()).thenReturn("test@email.com");
 		when(user.getCash()).thenReturn(cash);
-		when(user.getRole()).thenReturn(role);
+		lenient().when(user.getRole()).thenReturn(role);
 
 		when(manager.findUser(anyString())).thenReturn(user);
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.changeToPaid(user.getEmail()));
+		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> userService.changeToPaid(user.getEmail()));
 
 		verify(manager).findUser(anyString());
 	}
