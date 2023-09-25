@@ -160,6 +160,8 @@ public class User implements UserDetails {
 		else this.timeOutCount += num;
 	}
 
+	public void minusTimeOutCount() { if (this.getTimeOutCount() > 0) this.timeOutCount -= 1; }
+
 	public void setRefreshPointer(String refreshPointer) {
 		this.refreshPointer = refreshPointer;
 	}

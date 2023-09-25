@@ -221,6 +221,13 @@ public class UserService {
 		return UnifiedResponse.ok("충전 요청 조회 성공", responses);
 	}
 
+	public UnifiedResponse<?> deleteCharge(String key, User user) {
+		redisDao.delete(RedisDao.CHARGE_KEY + key);
+		user.minusTimeOutCount();
+		userRepository.save(user);
+		return UnifiedResponse.ok("충전 요청 삭제 성공");
+	}
+
 	// 무슨 경우에서도 프론트로 password 를 보내지 않음
 	public UnifiedResponse<?> update(SignupRequest request, User user) {
 		String password = request.getPassword();
