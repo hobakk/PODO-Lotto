@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -422,11 +423,11 @@ public class UserServiceTest {
 	void charging_success() {
 		ChargingRequest request = TestDataFactory.chargingRequest();
 
-		when(redisDao.getValue(anyString())).thenReturn("accessTokenInRedis");
+		when(redisDao.getKeysList(anyString())).thenReturn(new HashSet<>());
 
 		UnifiedResponse<?> response = userService.charging(request, saveUser);
 
-		verify(redisDao).getValue(anyString());
+		verify(redisDao).getKeysList(anyString());
 		verify(redisDao).setValues(anyString(), anyString(), anyLong(), any());
 		verify(userRepository).save(saveUser);
 		assertEquals(saveUser.getTimeOutCount(), 1);
