@@ -508,8 +508,12 @@ public class UserServiceTest {
 	@Test
 	void update_fail_incorrectValue() {
 		SignupRequest request = TestDataFactory.signupRequest();
+		User user = mock(User.class);
+		when(user.getEmail()).thenReturn("test@gmail.com");
+		when(user.getPassword()).thenReturn("password1!");
+		when(user.getNickname()).thenReturn("nickname");
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.update(request, saveUser));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.update(request, user));
 	}
 
 	@Test
