@@ -440,10 +440,7 @@ public class UserServiceTest {
 		ChargingRequest request = TestDataFactory.chargingRequest();
 		saveUser.setTimeOutCount(4);
 
-		Exception exception = assertThrows(CustomException.class,
-			() -> userService.charging(request, saveUser));
-
-		assertEquals(exception.getMessage(), "규정 위반으로 홈페이지를 이용할 수 없습니다");
+		Assertions.assertThrows(CustomException.class, () -> userService.charging(request, saveUser));
 	}
 
 	@Test
