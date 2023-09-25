@@ -161,6 +161,21 @@ class UserControllerTest {
 
 	@Test
 	@WithCustomMockUser
+	public void charging() throws Exception {
+		when(userService.charging(any(ChargingRequest.class), any(User.class)))
+			.thenReturn(UnifiedResponse.ok("요청 성공"));
+
+		mockMvc.perform(post("/api/users/charge").with(csrf())
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(TestDataFactory.chargingRequest())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("요청 성공"));
+
+		verify(userService).charging(any(ChargingRequest.class), any(User.class));
+	}
+
+	@Test
+	@WithCustomMockUser
 	public void getCharge() throws Exception {
 		ChargingResponse response = new ChargingResponse("7-msg-2000-7월 14일");
 
@@ -170,24 +185,24 @@ class UserControllerTest {
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("신청 리스트 조회 성공"))
-			.andExpect(jsonPath("$.data").isNotEmpty());;
+			.andExpect(jsonPath("$.data").isNotEmpty());
 
 		verify(userService).getCharge(anyLong());
 	}
 
 	@Test
 	@WithCustomMockUser
-	public void charging() throws Exception {
-		when(userService.charging(any(ChargingRequest.class), any(User.class)))
-			.thenReturn(UnifiedResponse.ok("요청 성공"));
+	public void deleteCharge() throws Exception {
+		when(userService.deleteCharge(anyString(), any(User.class)))
+			.thenReturn(UnifiedResponse.ok("충전 요청 삭제 성공"));
 
-		mockMvc.perform(post("/api/users/charge").with(csrf())
+		mockMvc.perform(delete("/api/users/charge/str").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(TestDataFactory.chargingRequest())))
+			.content(objectMapper.writeValueAsString("str")))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.msg").value("요청 성공"));
+			.andExpect(jsonPath("$.msg").value("충전 요청 삭제 성공"));
 
-		verify(userService).charging(any(ChargingRequest.class), any(User.class));
+		verify(userService).deleteCharge(anyString(), any(User.class));
 	}
 
 	@Test
