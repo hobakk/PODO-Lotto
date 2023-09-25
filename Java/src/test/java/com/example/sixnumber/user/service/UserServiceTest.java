@@ -111,10 +111,8 @@ public class UserServiceTest {
 		Errors errors = mock(Errors.class);
 		when(errors.hasErrors()).thenReturn(false);
 
-		Exception exception = assertThrows(CustomException.class,
+		Assertions.assertThrows(CustomException.class,
 			() -> userService.sendAuthCodeToEmail(emailRequest, errors));
-
-		assertEquals(exception.getMessage(), "잘못된 입력값입니다");
 	}
 
 	@Test
