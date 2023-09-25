@@ -11,8 +11,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -100,6 +102,14 @@ public class UserController {
 	@GetMapping("/charge")
 	public ResponseEntity<UnifiedResponse<ChargingResponse>> getCharge(@AuthenticationPrincipal User user) {
 		return ResponseEntity.ok(userService.getCharge(user.getId()));
+	}
+
+	@DeleteMapping("/delete-charge/{key}")
+	public ResponseEntity<UnifiedResponse<?>> deleteCharge(
+		@PathVariable() String key,
+		@AuthenticationPrincipal User user)
+	{
+		return ResponseEntity.ok(userService.deleteCharge(key, user));
 	}
 
 	@PatchMapping("/premium")
