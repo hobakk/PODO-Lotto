@@ -2,7 +2,6 @@ package com.example.sixnumber.lotto.service;
 
 import static com.example.sixnumber.global.exception.ErrorCode.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +30,7 @@ import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
+import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
 
 import lombok.AllArgsConstructor;
@@ -47,8 +47,11 @@ public class SixNumberService {
 	private final Manager manager;
 	private final Random rd = new Random();
 
+	private static final String RANDOM_NUMBER = "buyNumber";
+	private static final String PREMIUM_NUMBER = "statisticalNumber";
+
 	public UnifiedResponse<List<String>> buyNumber(BuyNumberRequest request, User user) {
-		confirmationProcess(request, null,  user);
+		handlerEventAndPayment(RANDOM_NUMBER, request.getValue(), 0,  user.getId());
 
 		List<String> topNumbers = new ArrayList<>();
 		for (int i = 0; i < request.getValue(); i++) {
@@ -69,15 +72,11 @@ public class SixNumberService {
 		SixNumber sixNumber = new SixNumber(user, LocalDateTime.now(), topNumbers);
 		sixNumberRepository.save(sixNumber);
 		saveMainLottoList(topNumbers);
-
 		return UnifiedResponse.ok("요청 성공", topNumbers);
 	}
 
 	public UnifiedResponse<List<String>> statisticalNumber(StatisticalNumberRequest request, User user) {
-		confirmationProcess(null, request, user);
-
-		// server 에 올렸을 때 비용문제가 발생할거라 이용에 제한을 줄 필요가 있음
-		// if (request.getRepetition() != 1000) throw new IllegalArgumentException("규격을 벗어난 반복횟수 입니다");
+		handlerEventAndPayment(PREMIUM_NUMBER, request.getValue(), request.getRepetition(), user.getId());
 
 		List<String> topNumbers = new ArrayList<>();
 		HashMap<Integer, Integer> countMap = new HashMap<>();
@@ -139,23 +138,24 @@ public class SixNumberService {
 		return UnifiedResponse.ok("최근 구매 번호 조회 성공", recentBuyNumberList.get(0).getNumberList());
 	}
 
-	private void confirmationProcess(BuyNumberRequest buyNumberRequest, StatisticalNumberRequest statisticalNumberRequest, User userIf) {
-		User user = manager.findUser(userIf.getId());
-		int requiredCash = 0;
-		String msg = "";
+	private void handlerEventAndPayment(String event, int generationCount, int repeatCount, Long userId) {
+		User user = manager.findUser(userId);
 
-		if (statisticalNumberRequest == null) {
-			requiredCash = buyNumberRequest.getValue() * 200;
-			msg = "추첨번호 " + buyNumberRequest.getValue() + "회 구매 : " + requiredCash + "원 차감";
-		} else if (buyNumberRequest == null) {
-			requiredCash = statisticalNumberRequest.getValue() * 300;
-			msg = statisticalNumberRequest.getRepetition() + "번 반복 TOP 6 " + statisticalNumberRequest.getValue() + "회 구매 : " + requiredCash + "원 차감";
-		} else throw new CustomException(INVALID_INPUT);
+		int payment;
+		Statement statement;
+		if (event.equals(RANDOM_NUMBER)) {
+			payment = generationCount * 100;
+			statement = new  Statement(user, "랜덤 번호 " + generationCount + "회 발급", payment);
+		} else {
+			payment = generationCount * 200;
+			statement = new Statement(user, "프리미엄 번호 " + generationCount + "회 발급",
+				payment, repeatCount + " 회 반복 처리");
+		}
 
-		if (user.getCash() < requiredCash) throw new IllegalArgumentException("금액이 부족합니다");
+		if (user.getCash() < payment) throw new IllegalArgumentException("금액이 부족합니다");
 
-		user.minusCash(requiredCash);
-		user.setStatement(LocalDate.now() + "," + msg);
+		user.minusCash(payment);
+		user.addStatement(statement);
 	}
 
 	private void saveMainLottoList(List<String> list) {
