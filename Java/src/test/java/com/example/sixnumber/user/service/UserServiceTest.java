@@ -457,11 +457,11 @@ public class UserServiceTest {
 
 	@Test
 	void getCharges_success() {
-		when(redisDao.getValue(anyString())).thenReturn(TestDataFactory.chargeKey());
+		when(redisDao.multiGet(anyString())).thenReturn(List.of(TestDataFactory.chargeKey()));
 
 		UnifiedResponse<ChargingResponse> response = userService.getCharge(saveUser.getId());
 
-		verify(redisDao).getValue(anyString());
+		verify(redisDao).multiGet(anyString());
 		TestUtil.UnifiedResponseEquals(response, 200, "충전 요청 조회 성공");
 	}
 
