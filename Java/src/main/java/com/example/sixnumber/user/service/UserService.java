@@ -220,7 +220,8 @@ public class UserService {
 	}
 
 	public UnifiedResponse<?> deleteCharge(String key, User user) {
-		redisDao.delete(RedisDao.CHARGE_KEY + key);
+		String finalKey = String.format("%d-%s", user.getId(), key);
+		redisDao.delete(RedisDao.CHARGE_KEY + finalKey);
 		user.minusTimeOutCount();
 		userRepository.save(user);
 		return UnifiedResponse.ok("충전 요청 삭제 성공");
