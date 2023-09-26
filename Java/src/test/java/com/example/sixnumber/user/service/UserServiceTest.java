@@ -467,11 +467,11 @@ public class UserServiceTest {
 
 	@Test
 	void getCharge_fail() {
-		when(redisDao.getValue(anyString())).thenReturn(null);
+		when(redisDao.multiGet(anyString())).thenReturn(new ArrayList<>());
 
 		Assertions.assertThrows(CustomException.class, () -> userService.getCharge(anyLong()));
 
-		verify(redisDao).getValue(anyString());
+		verify(redisDao).multiGet(anyString());
 	}
 
 	@Test
