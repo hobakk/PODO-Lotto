@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,7 +16,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -64,9 +62,9 @@ public class User implements UserDetails {
 	private Boolean cancelPaid;
 	@Column(name = "withdrawExpiration")
 	private LocalDate withdrawExpiration;
-	@ElementCollection
-	@OrderColumn(name = "statement_index", nullable = false)
-	private List<String> statement;
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Statement> statement;
 	@Column(name = "timeOutCount")
 	private int timeOutCount;
 	@Column(name = "refreshPointer")
@@ -150,10 +148,7 @@ public class User implements UserDetails {
 	public void setWithdrawExpiration(LocalDate localDate) {
 		this.withdrawExpiration = localDate;
 	}
-
-	public void setStatement(String str) {
-		this.statement.add(str);
-	}
+	public void addStatement(Statement statement) { this.getStatement().add(statement); }
 
 	public void setTimeOutCount(int num) {
 		if (num == 0) this.timeOutCount = 0;
