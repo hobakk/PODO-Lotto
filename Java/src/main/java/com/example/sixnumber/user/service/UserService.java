@@ -159,10 +159,7 @@ public class UserService {
 	}
 
 	public UnifiedResponse<?> withdraw(OnlyMsgRequest request, String email) {
-		String withdrawMsg = "회원탈퇴";
-		if (!request.getMsg().equals(withdrawMsg)) {
-			throw new IllegalArgumentException("잘못된 문자열 입력");
-		}
+		if (!request.getMsg().equals("회원탈퇴")) throw new IllegalArgumentException("잘못된 문자열 입력");
 
 		User user = manager.findUser(email);
 		user.setStatus(Status.DORMANT);
