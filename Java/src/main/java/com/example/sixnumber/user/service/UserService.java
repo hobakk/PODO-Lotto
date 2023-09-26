@@ -108,7 +108,7 @@ public class UserService {
 
 		String password = passwordEncoder.encode(request.getPassword());
 		User user = new User(request, password);
-		user.addStatement(new Statement(user, "회원가입", 1000, "증정"));
+		user.addStatement(new Statement(user, "회원가입", 1000));
 		userRepository.save(user);
 		return UnifiedResponse.create("회원가입 완료");
 	}
@@ -185,7 +185,7 @@ public class UserService {
 		user.minusCash(5000);
 		user.setRole(UserRole.ROLE_PAID);
 		user.setPaymentDate(LocalDate.now().plusDays(31));
-		user.addStatement(new Statement(user, "프리미엄 등록", 5000, "차감"));
+		user.addStatement(new Statement(user, "프리미엄 등록", 5000));
 		return UnifiedResponse.ok("권한 변경 성공");
 	}
 

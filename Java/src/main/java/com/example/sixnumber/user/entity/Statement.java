@@ -45,6 +45,15 @@ public class Statement {
 		this.modify = false;
 	}
 
+	public Statement(User user, String subject, int cash) {
+		this.user = user;
+		this.subject = subject;
+		this.localDate = LocalDate.now();
+		this.cash = cash;
+		this.msg = null;
+		this.modify = false;
+	}
+
 	private void modification() { this.modify = true; }
 
 	private void modifyMsg(String msg) {
