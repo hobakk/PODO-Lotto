@@ -16,6 +16,7 @@ import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
+import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -76,7 +77,7 @@ public class GlobalScheduler {
 			if (cash >= 5000 && !cancelPaid || cancelPaid == null) {
 				user.minusCash(5000);
 				user.setPaymentDate(now.plusDays(31));
-				user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
+				user.addStatement(new Statement(user, "프리미엄 정기결제", 5000));
 			} else {
 				user.setRole(UserRole.ROLE_USER);
 				user.setPaymentDate(null);
