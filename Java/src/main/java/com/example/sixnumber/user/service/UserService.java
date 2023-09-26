@@ -4,7 +4,6 @@ import static com.example.sixnumber.global.exception.ErrorCode.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +47,7 @@ import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
+import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -108,7 +108,7 @@ public class UserService {
 
 		String password = passwordEncoder.encode(request.getPassword());
 		User user = new User(request, password);
-		user.setStatement(LocalDate.now() + ",회원가입 기념 1000원 증정");
+		user.addStatement(new Statement(user, "회원가입", 1000, "증정"));
 		userRepository.save(user);
 		return UnifiedResponse.create("회원가입 완료");
 	}
@@ -188,7 +188,7 @@ public class UserService {
 		user.minusCash(5000);
 		user.setRole(UserRole.ROLE_PAID);
 		user.setPaymentDate(LocalDate.now().plusDays(31));
-		user.setStatement(LocalDate.now() + "," + YearMonth.now() + "월 정액 비용 5000원 차감");
+		user.addStatement(new Statement(user, "프리미엄 등록", 5000, "차감"));
 		return UnifiedResponse.ok("권한 변경 성공");
 	}
 
