@@ -74,6 +74,11 @@ export const getCharges = async (): Promise<UnifiedResponse<ChargeResponse>> => 
     }
 }
 
+export const deleteCharge = async (key: string): Promise<UnifiedResponse<undefined>> => {
+    const { data } = await api.delete(`/users/charge/${key}`);
+    return data;
+}
+
 export const setPaid = async (msg: string): Promise<UnifiedResponse<undefined>> => {
     try {
         const { data } = await api.patch("/users/paid", msg);
