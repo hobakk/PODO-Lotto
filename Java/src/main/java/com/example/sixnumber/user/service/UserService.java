@@ -199,14 +199,12 @@ public class UserService {
 	public UnifiedResponse<?> charging(ChargingRequest chargingRequest, User user) {
 		if (user.getTimeOutCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
 
-		String key = String.format("%s-%d", chargingRequest.getMsg(), chargingRequest.getCash());
+		String key = String.format("%d-%s-%d",
+			user.getId(), chargingRequest.getMsg(), chargingRequest.getCash());
 		Set<String> chargeList = redisDao.getKeysList(RedisDao.CHARGE_KEY + key);
 		if (chargeList.size() != 0) throw new OverlapException("다른 문자로 재시도 해주세요");
 
-		String chargeInfo = String.format("%d-%s-%d-%s",
-			user.getId(), chargingRequest.getMsg(), chargingRequest.getCash(),
-			dateFormatter(LocalDateTime.now().plusHours(1)));
-
+		String chargeInfo = key + "-" + dateFormatter(LocalDateTime.now().plusHours(1));
 		redisDao.setValues(RedisDao.CHARGE_KEY + key, chargeInfo, (long) 1, TimeUnit.HOURS);
 		user.setTimeOutCount(1);
 		userRepository.save(user);
@@ -214,10 +212,10 @@ public class UserService {
 	}
 
 	public UnifiedResponse<ChargingResponse> getCharge(Long userId) {
-		String charge = redisDao.getValue(RedisDao.CHARGE_KEY + userId);
-		if (charge == null) throw new CustomException(NOT_FOUND);
+		Optional<String> charge = redisDao.multiGet(RedisDao.CHARGE_KEY + userId).stream().findFirst();
+		if (charge.isEmpty()) throw new CustomException(NOT_FOUND);
 
-		ChargingResponse responses = new ChargingResponse(charge);
+		ChargingResponse responses = new ChargingResponse(charge.get());
 		return UnifiedResponse.ok("충전 요청 조회 성공", responses);
 	}
 
