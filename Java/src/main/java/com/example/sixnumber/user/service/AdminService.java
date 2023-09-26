@@ -2,7 +2,6 @@ package com.example.sixnumber.user.service;
 
 import static com.example.sixnumber.global.exception.ErrorCode.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +21,7 @@ import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UserResponse;
+import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -74,14 +74,13 @@ public class AdminService {
 		return UnifiedResponse.ok("조회 성공", response);
 	}
 
-	// 결제에 대해서 고민해봐야함 현재 로직은 특정 계좌에 msg 와 value 가 확인되면 수동으로 넣어주는 방식
 	public UnifiedResponse<?> upCash(CashRequest cashRequest) {
 		User user = manager.findUser(cashRequest.getUserId());
 		String key = String.format("%d-%s-%d",
 			cashRequest.getUserId(), cashRequest.getMsg(), cashRequest.getCash());
 		redisDao.delete(RedisDao.CHARGE_KEY + key);
 
-		user.setStatement(LocalDate.now() + "," + cashRequest.getCash() +"원 충전");
+		user.addStatement(new Statement(user, "충전", cashRequest.getCash()));
 		user.plusCash(cashRequest.getCash());
 		user.setTimeOutCount(0);
 		return UnifiedResponse.ok("충전 완료");
@@ -94,7 +93,7 @@ public class AdminService {
 		}
 
 		user.minusCash(cashRequest.getCash());
-		user.setStatement(LocalDate.now() + "," + cashRequest.getMsg() + ": " + cashRequest.getCash() + "원 차감");
+		user.addStatement(new Statement(user, "차감", cashRequest.getCash(), "관리자에게 문의하세요"));
 		return UnifiedResponse.ok("차감 완료");
 	}
 
