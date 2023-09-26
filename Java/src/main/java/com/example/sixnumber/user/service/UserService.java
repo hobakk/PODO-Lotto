@@ -251,11 +251,13 @@ public class UserService {
 		return UnifiedResponse.ok("수정 완료");
 	}
 
+	// Statement 정보 보유기간 및 반환값에 대해 더 고민해야함
 	public UnifiedResponse<List<StatementResponse>> getStatement(String email) {
 		User user = manager.findUser(email);
 		if (user.getStatement().size() == 0) throw new IllegalArgumentException("거래내역이 존재하지 않습니다");
 
 		List<StatementResponse> response = user.getStatement().stream()
+			.filter(res -> res.getLocalDate().isAfter(LocalDate.now().minusMonths(1)))
 			.map(StatementResponse::new)
 			.collect(Collectors.toList());
 		return UnifiedResponse.ok("거래내역 조회 완료", response);
