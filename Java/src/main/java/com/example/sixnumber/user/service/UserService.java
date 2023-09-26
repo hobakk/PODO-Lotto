@@ -212,10 +212,11 @@ public class UserService {
 	}
 
 	public UnifiedResponse<ChargingResponse> getCharge(Long userId) {
-		Optional<String> charge = redisDao.multiGet(RedisDao.CHARGE_KEY + userId).stream().findFirst();
-		if (charge.isEmpty()) throw new CustomException(NOT_FOUND);
+		String charge = redisDao.multiGet(RedisDao.CHARGE_KEY + userId).stream()
+			.findFirst()
+			.orElseThrow(() -> new CustomException(NOT_FOUND));
 
-		ChargingResponse responses = new ChargingResponse(charge.get());
+		ChargingResponse responses = new ChargingResponse(charge);
 		return UnifiedResponse.ok("충전 요청 조회 성공", responses);
 	}
 
