@@ -65,7 +65,7 @@ function BuyNumber() {
   return (
     <div style={ CommonStyle }>
         <h1 style={{  fontSize: "80px", textAlign:"center" }}>Buy Number</h1>
-        <p style={{ marginBottom:"60px" }}>1회 발급당 200원이 차감됩니다</p>
+        <p style={{ marginBottom:"60px" }}>1회 발급당 100원이 차감됩니다</p>
         {isEmpty ? (
             <div style={{ display:"flex", fontSize:"25px", width:"17cm", placeItems:"center"}}>
                 <span>발급 횟수:</span>

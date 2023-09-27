@@ -40,6 +40,7 @@ function Statement() {
   return (
     <div style={ CommonStyle }>
         <h1 style={{  fontSize: "80px" }}>Statement</h1>
+        <span style={{ marginBottom:"20px", fontSize:"18px" }} >최근 한달 동안 거래내역만 출력됩니다</span>
         <div>
             <div style={{ display: "flex", fontSize:"22px", backgroundColor:"#D4F0F0", width:"40cm"}}>
                 <div style={TableStyle}>Date</div>
