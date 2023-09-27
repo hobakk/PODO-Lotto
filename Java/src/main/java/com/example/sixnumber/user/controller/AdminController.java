@@ -73,12 +73,20 @@ public class AdminController {
 	}
 
 	@PatchMapping("/status/{userId}")
-	public ResponseEntity<UnifiedResponse<?>> setStatus(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<?>> setStatus(
+		@PathVariable Long userId,
+		@RequestBody OnlyMsgRequest request,
+		@AuthenticationPrincipal User user)
+	{
 		return ResponseEntity.ok(adminService.setStatus(user, userId, request));
 	}
 
 	@PatchMapping("/role/{userId}")
-	public ResponseEntity<UnifiedResponse<?>> setRole(@PathVariable Long userId, @RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<?>> setRole(
+		@PathVariable Long userId,
+		@RequestBody OnlyMsgRequest request,
+		@AuthenticationPrincipal User user)
+	{
 		return ResponseEntity.ok(adminService.setRole(user, userId, request));
 	}
 }
