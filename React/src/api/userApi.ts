@@ -88,7 +88,15 @@ export const setPaid = async (msg: string): Promise<UnifiedResponse<undefined>> 
     }
 }
     
-export const getStatement = async (): Promise<UnifiedResponse<{localDate: string, msg: string}[]>> => {
+export type StatementResponse = {
+    subject: string,
+    localDate: string,
+    cash: number,
+    msg: string,
+    modify: boolean,
+}
+
+export const getStatement = async (): Promise<UnifiedResponse<StatementResponse[]>> => {
     try {
         const { data } = await api.get("/users/statement");
         return data;
