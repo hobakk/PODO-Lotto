@@ -49,8 +49,8 @@ public class UserController {
 	@PostMapping("/email")
 	public ResponseEntity<UnifiedResponse<?>> sendAuthCodeToEmail(
 		@Valid @RequestBody EmailRequest request,
-		Errors errors)
-	{
+		Errors errors
+	) {
 		return ResponseEntity.ok(userService.sendAuthCodeToEmail(request, errors));
 	}
 
@@ -60,19 +60,26 @@ public class UserController {
 	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<UnifiedResponse<?>> signUp(@Valid @RequestBody SignupRequest request, Errors errors) {
+	public ResponseEntity<UnifiedResponse<?>> signUp(
+		@Valid @RequestBody SignupRequest request,
+		Errors errors
+	) {
 		return ResponseEntity.ok(userService.signUp(request, errors));
 	}
 
 	@PostMapping("/signin")
-	public ResponseEntity<UnifiedResponse<?>> signIn(@RequestBody SigninRequest request, HttpServletResponse response) {
+	public ResponseEntity<UnifiedResponse<?>> signIn(
+		@RequestBody SigninRequest request,
+		HttpServletResponse response
+	) {
 		UnifiedResponse<?> unifiedResponse = userService.signIn(response, request);
 		if (unifiedResponse.getCode() == HttpStatus.OK.value()) return ResponseEntity.ok(unifiedResponse);
 		else return ResponseEntity.badRequest().body(unifiedResponse);
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<UnifiedResponse<?>> logout(@AuthenticationPrincipal User user,
+	public ResponseEntity<UnifiedResponse<?>> logout(
+		@AuthenticationPrincipal User user,
 		HttpServletRequest request,
 		HttpServletResponse response
 	) {
@@ -82,72 +89,95 @@ public class UserController {
 	}
 
 	@PatchMapping("/withdraw")
-	public ResponseEntity<UnifiedResponse<?>> withdraw(@RequestBody OnlyMsgRequest request,
-		@AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<?>> withdraw(
+		@RequestBody OnlyMsgRequest request,
+		@AuthenticationPrincipal User user
+	) {
 		return ResponseEntity.ok(userService.withdraw(request, user.getEmail()));
 	}
 
 	// 로그인 후 화면에 바로 띄울지에 대한 고민
 	@GetMapping("/cash")
-	public ResponseEntity<UnifiedResponse<CashNicknameResponse>> getCashAndNickname(@AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<CashNicknameResponse>> getCashAndNickname(
+		@AuthenticationPrincipal User user
+	) {
 		return ResponseEntity.ok(userService.getCashAndNickname(user));
 	}
 
 	@PostMapping("/charge")
-	public ResponseEntity<UnifiedResponse<?>> charging(@RequestBody ChargingRequest chargingRequest,
-		@AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<?>> charging(
+		@RequestBody ChargingRequest chargingRequest,
+		@AuthenticationPrincipal User user
+	) {
 		return ResponseEntity.ok(userService.charging(chargingRequest, user));
 	}
 
 	@GetMapping("/charge")
-	public ResponseEntity<UnifiedResponse<ChargingResponse>> getCharge(@AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<ChargingResponse>> getCharge(
+		@AuthenticationPrincipal User user
+	) {
 		return ResponseEntity.ok(userService.getCharge(user.getId()));
 	}
 
 	@DeleteMapping("/charge/{key}")
 	public ResponseEntity<UnifiedResponse<?>> deleteCharge(
 		@PathVariable() String key,
-		@AuthenticationPrincipal User user)
-	{
+		@AuthenticationPrincipal User user
+	) {
 		return ResponseEntity.ok(userService.deleteCharge(key, user));
 	}
 
 	@PatchMapping("/premium")
-	public ResponseEntity<UnifiedResponse<?>> setPremium(@RequestBody OnlyMsgRequest request,
-		@AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<?>> setPremium(
+		@RequestBody OnlyMsgRequest request,
+		@AuthenticationPrincipal User user
+	) {
 		if (request.getMsg().equals("월정액 해지")) return ResponseEntity.ok(userService.changeToUser(user));
 		else return ResponseEntity.ok(userService.changeToPaid(user.getEmail()));
 	}
 
 	@GetMapping("/statement")
-	public ResponseEntity<UnifiedResponse<List<StatementResponse>>> getStatement(@AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<List<StatementResponse>>> getStatement(
+		@AuthenticationPrincipal User user
+	) {
 		return ResponseEntity.ok(userService.getStatement(user.getEmail()));
 	}
 
 	@PatchMapping("/update")
-	public ResponseEntity<UnifiedResponse<?>> update(@RequestBody SignupRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<?>> update(
+		@RequestBody SignupRequest request,
+		@AuthenticationPrincipal User user
+	) {
 		return ResponseEntity.ok(userService.update(request, user));
 	}
 
 	@GetMapping("/my-information")
-	public ResponseEntity<UnifiedResponse<UserResponse>> getMyInformation(@AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<UserResponse>> getMyInformation(
+		@AuthenticationPrincipal User user
+	) {
 		return ResponseEntity.ok(userService.getMyInformation(user.getId()));
 	}
 
 	@PostMapping("/check-pw")
-	public ResponseEntity<UnifiedResponse<?>> comparePassword(@RequestBody OnlyMsgRequest request, @AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<?>> comparePassword(
+		@RequestBody OnlyMsgRequest request,
+		@AuthenticationPrincipal User user
+	) {
 		return ResponseEntity.ok(userService.comparePassword(request, user.getPassword()));
 	}
 
 	@GetMapping("/sixnumber-list")
-	public ResponseEntity<UnifiedResponse<List<SixNumberResponse>>> getBuySixNumberList(@AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<List<SixNumberResponse>>> getBuySixNumberList(
+		@AuthenticationPrincipal User user
+	) {
 		return ResponseEntity.ok(userService.getBuySixNumberList(user.getId()));
 	}
 
 	@GetMapping("/oauth2/my-information")
 	public ResponseEntity<UnifiedResponse<UserResponse>> oauth2LoginAfterGetUserIfAndRefreshToken(
-		@AuthenticationPrincipal User user, HttpServletResponse response)
-	{
+		@AuthenticationPrincipal User user,
+		HttpServletResponse response
+	) {
 		UserResponseAndEncodedRefreshDto dto = userService.oauth2LoginAfterGetUserIfAndRefreshToken(user.getId());
 		response.addHeader(JwtProvider.AUTHORIZATION_HEADER, "Bearer " + dto.getEncodedRefreshToken());
 		return ResponseEntity.ok(UnifiedResponse.ok("조회 성공", dto.getUserResponse()));

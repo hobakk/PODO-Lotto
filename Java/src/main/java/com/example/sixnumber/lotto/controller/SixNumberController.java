@@ -42,7 +42,9 @@ public class SixNumberController {
 	}
 
 	@GetMapping("/recent")
-	public ResponseEntity<UnifiedResponse<List<String>>> getRecentBuyNumbers(@AuthenticationPrincipal User user) {
+	public ResponseEntity<UnifiedResponse<List<String>>> getRecentBuyNumbers(
+		@AuthenticationPrincipal User user
+	) {
 		return ResponseEntity.ok(sixNumberService.getRecentBuyNumbers(user));
 	}
 }

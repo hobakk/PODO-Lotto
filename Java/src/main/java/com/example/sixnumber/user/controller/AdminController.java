@@ -43,8 +43,8 @@ public class AdminController {
 	@GetMapping("/search")
 	public ResponseEntity<UnifiedResponse<AdminGetChargingResponse>> searchCharging(
 		@RequestParam("msg") String msg,
-		@RequestParam("cash") int cash)
-	{
+		@RequestParam("cash") int cash
+	) {
 		return ResponseEntity.ok(adminService.searchCharging(msg, cash));
 	}
 
@@ -52,8 +52,8 @@ public class AdminController {
 	public ResponseEntity<UnifiedResponse<?>> setAdmin(
 		@PathVariable Long userId,
 		@RequestBody OnlyMsgRequest request,
-		@AuthenticationPrincipal User user)
-	{
+		@AuthenticationPrincipal User user
+	) {
 		return ResponseEntity.ok(adminService.setAdmin(request, user, userId));
 	}
 
@@ -76,8 +76,8 @@ public class AdminController {
 	public ResponseEntity<UnifiedResponse<?>> setStatus(
 		@PathVariable Long userId,
 		@RequestBody OnlyMsgRequest request,
-		@AuthenticationPrincipal User user)
-	{
+		@AuthenticationPrincipal User user
+	) {
 		return ResponseEntity.ok(adminService.setStatus(user, userId, request));
 	}
 
@@ -85,8 +85,8 @@ public class AdminController {
 	public ResponseEntity<UnifiedResponse<?>> setRole(
 		@PathVariable Long userId,
 		@RequestBody OnlyMsgRequest request,
-		@AuthenticationPrincipal User user)
-	{
+		@AuthenticationPrincipal User user
+	) {
 		return ResponseEntity.ok(adminService.setRole(user, userId, request));
 	}
 }
