@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { CommonStyle } from '../../shared/Styles'
-import { StatementResponse, getStatement } from '../../api/userApi'
+import { StatementModifyMsgRequest, StatementResponse, getStatement, modifyStatementMsg } from '../../api/userApi'
 import { useMutation } from 'react-query'
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 
 function Statement() {
     const [value, setValue] = useState<StatementResponse[]>([]);
+    const [isModify, setIsModify] = useState<{[key: string]: boolean}>({});
+    const [inputValue, setInputValue] = useState<StatementModifyMsgRequest>({
+        statementId: 0,
+        msg: "",
+    });
 
     const StateMnetMutation = useMutation<UnifiedResponse<StatementResponse[]>, any>(getStatement, {
         onSuccess: (res)=>{
@@ -18,12 +23,46 @@ function Statement() {
         }
     });
 
+    const modifyStatementMsgMutation = 
+    useMutation<UnifiedResponse<undefined>, unknown, StatementModifyMsgRequest>(modifyStatementMsg, {
+        onSuccess: (res)=>{
+            if (res.code === 200) {
+                const targetItem = value.find(item => item.statementId === inputValue.statementId);
+                if (targetItem) {
+                    targetItem.msg = inputValue.msg;
+                    targetItem.modify = true;
+                    setValue([...value]);
+                }
+            }
+        },
+        onError: (err: any | Err)=>{
+            if  (err.code) alert(err.msg);
+        }
+    });
+
     useEffect(()=>{
         if  (value.length === 0)
         StateMnetMutation.mutate();
     }, []);
 
     useEffect(()=>console.log(value), [value]);
+    useEffect(()=>console.log(inputValue), [inputValue]);
+
+    const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {name, value} = e.target; 
+        setInputValue({
+            statementId: parseInt(name),
+            msg: value,
+        });
+    }
+
+    const onClickHandler = (statementId: number) => {
+        if (inputValue.msg !== "") {
+            modifyStatementMsgMutation.mutate(inputValue);
+        } 
+
+        setIsModify({ ...isModify, [statementId]: false })
+    }
 
     const TableStyle: React.CSSProperties = {
         border: "2px solid black",
@@ -49,18 +88,44 @@ function Statement() {
                 <div style={{ ...TableStyle, width: "50%", borderRight:"2px solid black" }}>Message</div>
             </div>
             {value.length !== 0 && (
-                value.map((item, index)=>{
-                    return (
-                        <div key={item.localDate + index} style={{ display: "flex", fontSize: "20px", width:"40cm"}}>
-                            <span style={TableStyle}>{item.localDate}</span>
-                            <span style={{ ...TableStyle, width: "34%", }}>{item.subject}</span>
-                            <span style={TableStyle}>{item.cash}</span>
-                            <span style={{ ...TableStyle, width:"50%", borderRight:"2px solid black" }}>
-                                {item.msg}
-                            </span>
-                        </div>   
-                    )
-                })
+                value.map((item, index)=>(
+                    <div key={item.localDate + index} style={{ display: "flex", fontSize: "20px", width:"40cm"}}>
+                        <span style={TableStyle}>{item.localDate}</span>
+                        <span style={{ ...TableStyle, width: "34%", }}>{item.subject}</span>
+                        <span style={TableStyle}>{item.cash}</span>
+                        <div style={{ ...TableStyle, width:"50%", borderRight:"2px solid black", flexDirection:"row" }}>
+                            {isModify[item.statementId] ? (
+                                <>
+                                    <input 
+                                        style={{ width:"90%" }}
+                                        name={`${item.statementId}`}
+                                        value={inputValue.msg}
+                                        placeholder='문자를 입력해주세요'
+                                        onChange={onChangeHandler} />
+                                    <button 
+                                        style={{ width:"10%" }} 
+                                        onClick={()=>onClickHandler(item.statementId)}
+                                    >
+                                        완료
+                                    </button>
+                                </>
+                            ):(
+                                <>
+                                    <div style={{ width:"90%" }}>
+                                        <span>{item.msg}</span>
+                                        {item.modify && (<span style={{ marginLeft:"5px", color:"red" }}>(수정됨)</span>)}
+                                    </div>
+                                    <button 
+                                        style={{ width:"10%" }} 
+                                        onClick={()=>setIsModify({ ...isModify, [item.statementId]: true })}
+                                    >
+                                        수정
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>   
+                ))
             )}
             <div style={{ borderTop: "2px solid black", width:"40cm"}} />
             {value.length === 0 && (
