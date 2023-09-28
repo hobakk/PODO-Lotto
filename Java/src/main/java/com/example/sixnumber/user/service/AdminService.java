@@ -110,7 +110,7 @@ public class AdminService {
 			countList.add(1);
 		}
 
-		Lotto lotto = new Lotto("main", email, null, countList,  "");
+		Lotto lotto = new Lotto("main", email, countList);
 		lottoRepository.save(lotto);
 		return UnifiedResponse.ok("생성 완료");
 	}

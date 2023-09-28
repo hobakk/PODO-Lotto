@@ -1,13 +1,11 @@
 package com.example.sixnumber.lotto.entity;
 
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -44,5 +42,13 @@ public class Lotto {
 		this.email = email;
 		this.countList = countList;
 		this.topNumber = topNumber;
+	}
+
+	public Lotto(String subject, String email, List<Integer> countList) {
+		this.subject = subject;
+		this.creationDate = null;
+		this.email = email;
+		this.countList = countList;
+		this.topNumber = "";
 	}
 }
