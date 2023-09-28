@@ -44,11 +44,13 @@ import com.example.sixnumber.user.dto.EmailRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
+import com.example.sixnumber.user.dto.StatementModifyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
 import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
+import com.example.sixnumber.user.repository.StatementRepository;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -61,6 +63,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final StatementRepository statementRepository;
 	private final JwtProvider jwtProvider;
 	private final PasswordEncoder passwordEncoder;
 	private final RedisDao redisDao;
@@ -261,6 +264,15 @@ public class UserService {
 			.map(StatementResponse::new)
 			.collect(Collectors.toList());
 		return UnifiedResponse.ok("거래내역 조회 완료", response);
+	}
+
+	public UnifiedResponse<?> modifyStatementMsg(StatementModifyMsgRequest request) {
+		statementRepository.findById(request.getStatementId()).stream()
+			.filter(res -> res.getLocalDate().isAfter(LocalDate.now().minusMonths(1)))
+			.findFirst()
+			.map(res -> res.modifyMsg(request.getMsg()))
+			.orElseThrow(() -> new CustomException(NOT_FOUND));
+		return UnifiedResponse.ok("텍스트 수정 성공");
 	}
 
 	public UnifiedResponse<List<SixNumberResponse>> getBuySixNumberList(Long userId) {
