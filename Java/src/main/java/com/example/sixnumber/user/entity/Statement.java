@@ -61,4 +61,7 @@ public class Statement {
 		modification();
 		return this;
 	}
+
+	// test
+	public void setId(Long id) { this.id = id; }
 }

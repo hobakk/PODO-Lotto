@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -512,7 +511,7 @@ public class UserServiceTest {
 
 	@Test
 	void getStatement_success() {
-		saveUser.setStatement(LocalDate.now() + ",5000");
+		saveUser.addStatement(TestDataFactory.statement());
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
