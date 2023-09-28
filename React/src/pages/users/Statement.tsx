@@ -100,7 +100,7 @@ function Statement() {
                                         style={{ width:"90%" }}
                                         name={`${item.statementId}`}
                                         value={inputValue.msg}
-                                        placeholder='문자를 입력해주세요'
+                                        placeholder='문자를 입력해주세요, 30자 제한'
                                         onChange={onChangeHandler} />
                                     <button 
                                         style={{ width:"10%" }} 
