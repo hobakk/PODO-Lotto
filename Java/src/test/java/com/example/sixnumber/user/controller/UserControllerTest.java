@@ -34,6 +34,7 @@ import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
+import com.example.sixnumber.user.dto.StatementModifyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
@@ -248,6 +249,21 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
 		verify(userService).getStatement(anyString());
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void modifyStatementMsg() throws Exception {
+		when(userService.modifyStatementMsg(any(StatementModifyMsgRequest.class)))
+			.thenReturn(UnifiedResponse.ok("텍스트 수정 성공"));
+
+		mockMvc.perform(patch("/api/users/statement").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.statementModifyMsgRequest())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("텍스트 수정 성공"));
+
+		verify(userService).modifyStatementMsg(any(StatementModifyMsgRequest.class));
 	}
 
 	@Test
