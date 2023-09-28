@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Getter
 public class StatementResponse {
+	private final Long statementId;
 	private final String subject;
 	private final String localDate;
 	private final int cash;
@@ -13,6 +14,7 @@ public class StatementResponse {
 	private final boolean modify;
 
 	public StatementResponse(Statement statement) {
+		this.statementId = statement.getId();
 		this.subject = statement.getSubject();
 		this.localDate = statement.getLocalDate().toString();
 		this.cash = statement.getCash();
