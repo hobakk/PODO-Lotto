@@ -89,6 +89,7 @@ export const setPaid = async (msg: string): Promise<UnifiedResponse<undefined>> 
 }
     
 export type StatementResponse = {
+    statementId: number,
     subject: string,
     localDate: string,
     cash: number,
