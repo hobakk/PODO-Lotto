@@ -69,8 +69,11 @@ public class AdminService {
 
 	public UnifiedResponse<AdminGetChargingResponse> searchCharging(String msg, int cash) {
 		String searchStr = msg + "-" + cash;
-		List<String> value = redisDao.multiGet(searchStr);
-		AdminGetChargingResponse response = new AdminGetChargingResponse(value.get(0));
+		AdminGetChargingResponse response = redisDao.multiGet(searchStr).stream()
+			.findFirst()
+			.map(AdminGetChargingResponse::new)
+			.orElseThrow(() -> new CustomException(NOT_FOUND));
+
 		return UnifiedResponse.ok("조회 성공", response);
 	}
 
