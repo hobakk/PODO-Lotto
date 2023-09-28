@@ -550,6 +550,17 @@ public class UserServiceTest {
 	}
 
 	@Test
+	void modifyStatementMsg_fail_notFound() {
+		StatementModifyMsgRequest request = TestDataFactory.statementModifyMsgRequest();
+
+		when(statementRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+		Assertions.assertThrows(CustomException.class, () -> userService.modifyStatementMsg(request));
+
+		verify(statementRepository).findById(anyLong());
+	}
+
+	@Test
 	void getBuySixNumberList_success() {
 		User user = mock(User.class);
 		when(user.getSixNumberList()).thenReturn(List.of(TestDataFactory.sixNumber()));
