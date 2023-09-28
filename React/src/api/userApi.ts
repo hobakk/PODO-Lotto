@@ -106,6 +106,20 @@ export const getStatement = async (): Promise<UnifiedResponse<StatementResponse[
     }
 }
 
+export type StatementModifyMsgRequest = {
+    statementId: number,
+    msg: string,
+}
+
+export const modifyStatementMsg = async (req: StatementModifyMsgRequest): Promise<UnifiedResponse<undefined>> => {
+    try {
+        const { data } = await api.patch("/users/statement", req);
+        return data;
+    } catch (error: any) {
+        throw error.data;
+    }
+}
+
 export type SixNumberResponse = {
     date: string,
     numberList: string[],
