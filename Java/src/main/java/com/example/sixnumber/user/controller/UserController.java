@@ -31,6 +31,7 @@ import com.example.sixnumber.user.dto.EmailRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
+import com.example.sixnumber.user.dto.StatementModifyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
@@ -141,6 +142,13 @@ public class UserController {
 		@AuthenticationPrincipal User user
 	) {
 		return ResponseEntity.ok(userService.getStatement(user.getEmail()));
+	}
+
+	@PatchMapping("/statement")
+	public ResponseEntity<UnifiedResponse<?>> modifyStatementMsg(
+		@RequestBody StatementModifyMsgRequest request
+	) {
+		return ResponseEntity.ok(userService.modifyStatementMsg(request));
 	}
 
 	@PatchMapping("/update")
