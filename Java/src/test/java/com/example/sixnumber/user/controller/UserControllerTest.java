@@ -166,8 +166,8 @@ class UserControllerTest {
 			.thenReturn(UnifiedResponse.ok("요청 성공"));
 
 		mockMvc.perform(post("/api/users/charge").with(csrf())
-				.contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(TestDataFactory.chargingRequest())))
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.chargingRequest())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("요청 성공"));
 
@@ -236,7 +236,7 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void getStatement() throws Exception {
-		StatementResponse response = new StatementResponse("2023-07-14,테스트");
+		StatementResponse response = TestDataFactory.statementResponse();
 
 		when(userService.getStatement(anyString()))
 			.thenReturn(UnifiedResponse.ok("거래내역 조회 완료", List.of(response)));

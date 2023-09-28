@@ -23,6 +23,7 @@ import com.example.sixnumber.user.dto.EmailRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
+import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.type.Status;
@@ -98,6 +99,8 @@ public class TestDataFactory {
 		statement.setId((long) 7);
 		return statement;
 	}
+
+	public static StatementResponse statementResponse() { return new StatementResponse(statement()); }
 
 	public static String chargeKey() { return "7-콩쥐팥쥐-2000-12시 30분 33초"; }
 
