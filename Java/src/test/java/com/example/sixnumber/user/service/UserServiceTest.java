@@ -47,10 +47,13 @@ import com.example.sixnumber.user.dto.EmailRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
+import com.example.sixnumber.user.dto.StatementModifyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
+import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
+import com.example.sixnumber.user.repository.StatementRepository;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
@@ -62,6 +65,8 @@ public class UserServiceTest {
 
 	@Mock
 	private UserRepository userRepository;
+	@Mock
+	private StatementRepository statementRepository;
 	@Mock
 	private JwtProvider jwtProvider;
 	@Mock
@@ -529,6 +534,19 @@ public class UserServiceTest {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getStatement(saveUser.getEmail()));
 
 		verify(manager).findUser(anyString());
+	}
+
+	@Test
+	void modifyStatementMsg_success() {
+		StatementModifyMsgRequest request = TestDataFactory.statementModifyMsgRequest();
+		Statement statement = TestDataFactory.statement();
+
+		when(statementRepository.findById(anyLong())).thenReturn(Optional.of(statement));
+
+		UnifiedResponse<?> response = userService.modifyStatementMsg(request);
+
+		verify(statementRepository).findById(anyLong());
+		TestUtil.UnifiedResponseEquals(response, 200, "텍스트 수정 성공");
 	}
 
 	@Test
