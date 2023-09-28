@@ -149,10 +149,11 @@ public class UserService {
 	}
 
 	public Cookie logout(HttpServletRequest request, User user) {
-		String accessToken = jwtProvider.getAccessTokenInCookie(request);
 		redisDao.delete(RedisDao.RT_KEY + user.getRefreshPointer());
 		user.setRefreshPointer(null);
 		userRepository.save(user);
+
+		String accessToken = jwtProvider.getAccessTokenInCookie(request);
 		if (accessToken != null) {
 			Long remainingTime = jwtProvider.getRemainingTime(accessToken);
 			redisDao.setBlackList(accessToken, remainingTime);
