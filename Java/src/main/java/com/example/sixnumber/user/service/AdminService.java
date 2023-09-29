@@ -5,7 +5,6 @@ import static com.example.sixnumber.global.exception.ErrorCode.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -70,12 +69,13 @@ public class AdminService {
 
 	public UnifiedResponse<AdminGetChargingResponse> searchCharging(String msg, int cash) {
 		String searchStr = msg + "-" + cash;
-		AdminGetChargingResponse response = redisDao.multiGet(searchStr).stream()
+		return redisDao.multiGet(searchStr).stream()
 			.findFirst()
-			.map(AdminGetChargingResponse::new)
+			.map(value -> {
+				AdminGetChargingResponse response = new AdminGetChargingResponse(value);
+				return UnifiedResponse.ok("조회 성공", response);
+			})
 			.orElseThrow(() -> new CustomException(NOT_FOUND));
-
-		return UnifiedResponse.ok("조회 성공", response);
 	}
 
 	public UnifiedResponse<?> upCash(CashRequest cashRequest) {
