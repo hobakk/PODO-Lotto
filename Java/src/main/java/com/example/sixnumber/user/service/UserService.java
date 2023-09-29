@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -95,25 +94,25 @@ public class UserService {
 	public UnifiedResponse<?> signUp(SignupRequest request, Errors errors) {
 		if (errors.hasErrors()) errorsHandler(errors);
 
-		Optional<User> dormantUser = userRepository.findByStatusAndEmail(Status.DORMANT, request.getEmail());
-		if (dormantUser.isPresent()) {
-			User user = dormantUser.get();
-			validatePasswordMatching(request.getPassword(), user.getPassword());
-			user.setStatus(Status.ACTIVE);
-			user.setWithdrawExpiration(null);
-			userRepository.save(user);
-			return UnifiedResponse.ok("재가입 완료");
-		}
+		return userRepository.findByStatusAndEmail(Status.DORMANT, request.getEmail())
+			.map(user -> {
+				validatePasswordMatching(request.getPassword(), user.getPassword());
+				user.setStatus(Status.ACTIVE);
+				user.setWithdrawExpiration(null);
+				userRepository.save(user);
+				return UnifiedResponse.ok("재가입 완료");
+			})
+			.orElseGet(() -> {
+				if (userRepository.existsUserByNickname(request.getNickname())) {
+					throw new OverlapException("중복된 닉네임입니다");
+				}
 
-		if (userRepository.existsUserByNickname(request.getNickname())) {
-			throw new OverlapException("중복된 닉네임입니다");
-		}
-
-		String password = passwordEncoder.encode(request.getPassword());
-		User user = new User(request, password);
-		user.addStatement(new Statement(user, "회원가입", 1000));
-		userRepository.save(user);
-		return UnifiedResponse.create("회원가입 완료");
+				String password = passwordEncoder.encode(request.getPassword());
+				User user = new User(request, password);
+				user.addStatement(new Statement(user, "회원가입", 1000));
+				userRepository.save(user);
+				return UnifiedResponse.create("회원가입 완료");
+			});
 	}
 
 	public UnifiedResponse<?> signIn(HttpServletResponse response, SigninRequest request) {
