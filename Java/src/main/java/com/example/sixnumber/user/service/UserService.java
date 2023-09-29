@@ -74,13 +74,10 @@ public class UserService {
 		List<String> mailList = Arrays.asList("gmail.com", "naver.com", "daum.net");
 		if (!mailList.contains(request.getEmail().split("@")[1])) throw new CustomException(INVALID_INPUT);
 
-		String toEmail = request.getEmail();
-		if (userRepository.existsUserByEmail(toEmail)) throw new OverlapException("중복된 이메일입니다");
-
 		Random random = new Random();
 		String authCode = String.valueOf(random.nextInt(888888) + 111111);
-		redisDao.setValues(RedisDao.AUTH_KEY + toEmail, authCode, 30L, TimeUnit.MINUTES);
-		manager.sendEmail(toEmail, authCode);
+		redisDao.setValues(RedisDao.AUTH_KEY + request.getEmail(), authCode, 30L, TimeUnit.MINUTES);
+		manager.sendEmail(request.getEmail(), authCode);
 		return UnifiedResponse.ok("인증번호 발급 성공");
 	}
 
@@ -103,9 +100,10 @@ public class UserService {
 				return UnifiedResponse.ok("재가입 완료");
 			})
 			.orElseGet(() -> {
-				if (userRepository.existsUserByNickname(request.getNickname())) {
+				if (userRepository.existsUserByEmail(request.getEmail()))
+					throw new OverlapException("중복된 이메일입니다");
+				if (userRepository.existsUserByNickname(request.getNickname()))
 					throw new OverlapException("중복된 닉네임입니다");
-				}
 
 				String password = passwordEncoder.encode(request.getPassword());
 				User user = new User(request, password);
