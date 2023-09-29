@@ -210,12 +210,13 @@ public class UserService {
 	}
 
 	public UnifiedResponse<ChargingResponse> getCharge(Long userId) {
-		String charge = redisDao.multiGet(RedisDao.CHARGE_KEY + userId).stream()
+		return redisDao.multiGet(RedisDao.CHARGE_KEY + userId).stream()
 			.findFirst()
+			.map(charge -> {
+				ChargingResponse response = new ChargingResponse(charge);
+				return UnifiedResponse.ok("충전 요청 조회 성공", response);
+			})
 			.orElseThrow(() -> new CustomException(NOT_FOUND));
-
-		ChargingResponse responses = new ChargingResponse(charge);
-		return UnifiedResponse.ok("충전 요청 조회 성공", responses);
 	}
 
 	public UnifiedResponse<?> deleteCharge(String key, User user) {
