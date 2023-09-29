@@ -85,11 +85,11 @@ public class UserService {
 		return redisDao.getValue(RedisDao.AUTH_KEY + request.getEmail())
 			.map(value -> {
 				if (!request.getAuthCode().equals(value))
-					throw new IllegalArgumentException("인증번호가 일치하지 않습니다");
+					throw new CustomException(NO_MATCHING_INFO_FOUND);
 
 				return UnifiedResponse.ok("인증번호 일치");
 			})
-			.orElseThrow(() -> new IllegalArgumentException("인증번호가 일치하지 않습니다"));
+			.orElseThrow(() -> new IllegalArgumentException("이메일 인증 이후 요청해주세요"));
 	}
 
 	public UnifiedResponse<?> signUp(SignupRequest request, Errors errors) {
