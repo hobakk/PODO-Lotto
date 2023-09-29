@@ -5,7 +5,6 @@ import static com.example.sixnumber.global.exception.ErrorCode.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -327,11 +326,9 @@ public class UserService {
 	}
 
 	private void errorsHandler(Errors errors) {
-		List<FieldError> fieldErrors = errors.getFieldErrors();
-		List<String> errorMsgList = new ArrayList<>();
-		for (FieldError fieldError : fieldErrors) {
-			errorMsgList.add(fieldError.getDefaultMessage());
-		}
+		List<String> errorMsgList = errors.getFieldErrors().stream()
+			.map(FieldError::getDefaultMessage)
+			.collect(Collectors.toList());
 
 		String errorMsg = IntStream.range(0, errorMsgList.size())
 			.mapToObj(index -> (index + 1) + ". " + errorMsgList.get(index))
