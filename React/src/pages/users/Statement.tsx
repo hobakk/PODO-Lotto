@@ -45,9 +45,6 @@ function Statement() {
         StateMnetMutation.mutate();
     }, []);
 
-    useEffect(()=>console.log(value), [value]);
-    useEffect(()=>console.log(inputValue), [inputValue]);
-
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = e.target; 
         setInputValue({
@@ -113,7 +110,9 @@ function Statement() {
                                 <>
                                     <div style={{ width:"90%" }}>
                                         <span>{item.msg}</span>
-                                        {item.modify && (<span style={{ marginLeft:"5px", color:"red" }}>(수정됨)</span>)}
+                                        {item.modify && (
+                                            <span style={{ marginLeft:"5px", color:"red" }}>(수정됨)</span>
+                                        )}
                                     </div>
                                     <button 
                                         style={{ width:"10%" }} 
