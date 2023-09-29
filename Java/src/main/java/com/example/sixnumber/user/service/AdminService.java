@@ -3,6 +3,7 @@ package com.example.sixnumber.user.service;
 import static com.example.sixnumber.global.exception.ErrorCode.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -122,12 +123,12 @@ public class AdminService {
 			default: throw new CustomException(INVALID_INPUT);
 		}
 
-		if (target.getStatus().equals(status)) throw new IllegalArgumentException("이미 적용되어 있는 상태코드 입니다");
+		if (target.getStatus().equals(status))
+			throw new IllegalArgumentException("이미 적용되어 있는 상태코드 입니다");
 
 		target.setStatus(status);
-		if (target.getStatus().equals(Status.SUSPENDED) || target.getStatus().equals(Status.DORMANT)) {
+		if (Arrays.asList(Status.SUSPENDED, Status.DORMANT).contains(status))
 			redisDao.delete(RedisDao.RT_KEY + target.getRefreshPointer());
-		}
 
 		return UnifiedResponse.ok("상태 변경 완료");
 	}
