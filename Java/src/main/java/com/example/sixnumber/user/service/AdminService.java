@@ -101,14 +101,17 @@ public class AdminService {
 		return UnifiedResponse.ok("차감 완료");
 	}
 
-	//초기 로또메인 만들기 위한 코드, 이후 사용할 일이 적어서 코드 중복사용을 안해서 생기는 불이익이 없을거라 생각
 	public UnifiedResponse<?> createLotto(String email) {
 		Optional<Lotto> findMain = lottoRepository.findByMain();
-		if (findMain.isPresent()) throw new IllegalArgumentException("메인 로또가 이미 생성되어 있습니다");
+		findMain.ifPresentOrElse(
+			main -> { throw new IllegalArgumentException("메인 로또가 이미 생성되어 있습니다"); },
+			() -> {
+				List<Integer> countList = new ArrayList<>(Collections.nCopies(45, 1));
+				Lotto lotto = new Lotto("main", email, countList);
+				lottoRepository.save(lotto);
+			}
+		);
 
-		List<Integer> countList = new ArrayList<>(Collections.nCopies(45, 1));
-		Lotto lotto = new Lotto("main", email, countList);
-		lottoRepository.save(lotto);
 		return UnifiedResponse.ok("생성 완료");
 	}
 
