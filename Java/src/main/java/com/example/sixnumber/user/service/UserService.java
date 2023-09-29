@@ -82,10 +82,14 @@ public class UserService {
 	}
 
 	public UnifiedResponse<?> compareAuthCode(EmailAuthCodeRequest request) {
-		String authCode = redisDao.getValue(RedisDao.AUTH_KEY + request.getEmail());
-		if (!request.getAuthCode().equals(authCode)) throw new IllegalArgumentException("인증번호가 일치하지 않습니다");
+		return redisDao.getValue(RedisDao.AUTH_KEY + request.getEmail())
+			.map(value -> {
+				if (!request.getAuthCode().equals(value))
+					throw new IllegalArgumentException("인증번호가 일치하지 않습니다");
 
-		return UnifiedResponse.ok("인증번호 일치");
+				return UnifiedResponse.ok("인증번호 일치");
+			})
+			.orElseThrow(() -> new IllegalArgumentException("인증번호가 일치하지 않습니다"));
 	}
 
 	public UnifiedResponse<?> signUp(SignupRequest request, Errors errors) {
