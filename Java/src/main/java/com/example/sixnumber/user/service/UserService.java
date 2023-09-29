@@ -288,7 +288,9 @@ public class UserService {
 		if (sixNumberList.size() >= 12) sixNumberList = sixNumberList.subList(0, 12);
 
 		List<SixNumberResponse> response = sixNumberList.stream()
-			.map(res -> new SixNumberResponse(dateFormatter(res.getBuyDate()), res.getNumberList()))
+			.map(sixNumber -> new SixNumberResponse(
+				dateFormatter(sixNumber.getBuyDate()), sixNumber.getNumberList()
+			))
 			.collect(Collectors.toList());
 		return UnifiedResponse.ok("조회 성공", response);
 	}
