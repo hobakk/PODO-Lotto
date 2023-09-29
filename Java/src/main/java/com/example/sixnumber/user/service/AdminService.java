@@ -3,6 +3,7 @@ package com.example.sixnumber.user.service;
 import static com.example.sixnumber.global.exception.ErrorCode.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -105,11 +106,7 @@ public class AdminService {
 		Optional<Lotto> findMain = lottoRepository.findByMain();
 		if (findMain.isPresent()) throw new IllegalArgumentException("메인 로또가 이미 생성되어 있습니다");
 
-		List<Integer> countList = new ArrayList<>();
-		for (int i = 0; i < 45; i++) {
-			countList.add(1);
-		}
-
+		List<Integer> countList = new ArrayList<>(Collections.nCopies(45, 1));
 		Lotto lotto = new Lotto("main", email, countList);
 		lottoRepository.save(lotto);
 		return UnifiedResponse.ok("생성 완료");
