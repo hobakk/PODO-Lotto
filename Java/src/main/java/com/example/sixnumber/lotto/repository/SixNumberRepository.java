@@ -1,5 +1,6 @@
 package com.example.sixnumber.lotto.repository;
 
+import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,6 @@ public interface SixNumberRepository extends JpaRepository<SixNumber, Long> {
 	@Query(value = "SELECT s FROM SixNumber s WHERE s.user = :user ORDER BY s.buyDate DESC")
 	List<SixNumber> findByRecentBuyNumbers(@Param("user") User user, Pageable pageable);
 
-	@Query(value = "SELECT s FROM SixNumber s WHERE YEAR(s.buyDate) = :year AND MONTH(s.buyDate) = :month")
-	List<SixNumber> findAllByBuyDate(@Param("year") int year, @Param("month") int month);
+	@Query(value = "SELECT s FROM SixNumber s WHERE YEARMONTH (s.buyDate) = :yearMonth")
+	List<SixNumber> findAllByBuyDate(@Param("yearMonth") YearMonth yearMonth);
 }
