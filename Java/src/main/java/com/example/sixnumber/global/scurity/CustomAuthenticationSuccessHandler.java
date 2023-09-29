@@ -1,6 +1,7 @@
 package com.example.sixnumber.global.scurity;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
@@ -34,10 +35,12 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		String email = oAuth2User.getAttribute("email");
 
 		User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원"));
-		String refreshTokenInRedis = redisDao.getValue(RedisDao.RT_KEY + user.getRefreshPointer());
+		Optional<String> refreshTokenInRedis = redisDao.getValue(RedisDao.RT_KEY + user.getRefreshPointer());
+
 		Cookie accessCookie;
-		if (refreshTokenInRedis != null) {
-			long remainingSeconds = Math.max(jwtProvider.getRemainingTime(refreshTokenInRedis) /1000, 0);
+		if (refreshTokenInRedis.isPresent()) {
+			String refreshToken = refreshTokenInRedis.get();
+			long remainingSeconds = Math.max(jwtProvider.getRemainingTime(refreshToken) /1000, 0);
 			String accessToken = jwtProvider.accessToken(user.getRefreshPointer());
 			accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken, remainingSeconds);
 		} else {
