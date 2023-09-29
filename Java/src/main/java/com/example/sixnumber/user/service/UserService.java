@@ -267,12 +267,13 @@ public class UserService {
 	}
 
 	public UnifiedResponse<?> modifyStatementMsg(StatementModifyMsgRequest request) {
-		statementRepository.findById(request.getStatementId()).stream()
-			.filter(res -> res.getLocalDate().isAfter(LocalDate.now().minusMonths(1)))
-			.findFirst()
-			.map(res -> res.modifyMsg(request.getMsg()))
+		LocalDate lastMonth =  LocalDate.now().minusMonths(1);
+		return statementRepository.findByIdAndAfterLastMonth(request.getStatementId(), lastMonth)
+			.map(statement -> {
+				statement.modifyMsg(request.getMsg());
+				return UnifiedResponse.ok("텍스트 수정 성공");
+			})
 			.orElseThrow(() -> new CustomException(NOT_FOUND));
-		return UnifiedResponse.ok("텍스트 수정 성공");
 	}
 
 	public UnifiedResponse<List<SixNumberResponse>> getBuySixNumberList(Long userId) {
