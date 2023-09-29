@@ -37,18 +37,15 @@ public class GlobalScheduler {
 
 	@Scheduled(cron = "0 0 11 ? * MON-FRI")
 	public void findByTopNumberListForMonth() {
-		String[] ym = YearMonth.now().minusMonths(1).toString().split("-");
-		int year = Integer.parseInt(ym[0]);
-		int lastMonth = Integer.parseInt(ym[1]);
-		YearMonth yLastMonth = YearMonth.of(year, lastMonth);
-
-		Optional<Lotto> lastMonthLotto = lottoRepository.findByTopNumbersForMonth(yLastMonth);
-
-		if (lastMonthLotto.isEmpty()) {
+		YearMonth lastMonth = YearMonth.now().minusMonths(1);
+		Optional<Lotto> monthlyStats = lottoRepository.findByTopNumbersForMonth(lastMonth);
+		if (monthlyStats.isEmpty()) {
 			List<Integer> countList = new ArrayList<>();
-			for (int i = 0; i < 45; i++) { countList.add(1); }
+			for (int i = 0; i < 45; i++) {
+				countList.add(1);
+			}
 
-			List<SixNumber> lastMonthDateList = sixNumberRepository.findAllByBuyDate(year, lastMonth);
+			List<SixNumber> lastMonthDateList = sixNumberRepository.findAllByBuyDate(lastMonth);
 			for (SixNumber sixNumber : lastMonthDateList) {
 				List<String> topNumberList = sixNumber.getNumberList();
 				for (String sentence : topNumberList) {
@@ -61,7 +58,7 @@ public class GlobalScheduler {
 			}
 
 			String result = manager.revisedTopIndicesAsStr(countList);
-			Lotto lotto = new Lotto(lastMonth + " Stats", "Scheduler", yLastMonth, countList, result);
+			Lotto lotto = new Lotto("Stats", "Scheduler", lastMonth, countList, result);
 			lottoRepository.save(lotto);
 		}
 	}
