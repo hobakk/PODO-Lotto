@@ -3,8 +3,10 @@ package com.example.sixnumber.global.scheduler;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.entity.Lotto;
-import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.user.entity.Statement;
@@ -39,23 +40,18 @@ public class GlobalScheduler {
 	public void findByTopNumberListForMonth() {
 		YearMonth lastMonth = YearMonth.now().minusMonths(1);
 		Optional<Lotto> monthlyStats = lottoRepository.findByTopNumbersForMonth(lastMonth);
-		if (monthlyStats.isEmpty()) {
-			List<Integer> countList = new ArrayList<>();
-			for (int i = 0; i < 45; i++) {
-				countList.add(1);
-			}
 
-			List<SixNumber> lastMonthDateList = sixNumberRepository.findAllByBuyDate(lastMonth);
-			for (SixNumber sixNumber : lastMonthDateList) {
-				List<String> topNumberList = sixNumber.getNumberList();
-				for (String sentence : topNumberList) {
-					String[] topNumbers = sentence.split(" ");
-					for (String topNumber : topNumbers) {
-						int num = Integer.parseInt(topNumber);
-						countList.set(num, countList.get(num) + 1);
-					}
-				}
-			}
+		if (monthlyStats.isEmpty()) {
+			List<Integer> countList = new ArrayList<>(Collections.nCopies(45, 1));
+
+			sixNumberRepository.findAllByBuyDate(lastMonth).forEach(sixNumber ->
+				sixNumber.getNumberList().forEach(sentence ->
+					Stream.of(sentence.split(" ")).forEach(topNumberStr -> {
+						int topNum = Integer.parseInt(topNumberStr);
+						countList.set(topNum, countList.get(topNum) + 1);
+					})
+				)
+			);
 
 			String result = manager.revisedTopIndicesAsStr(countList);
 			Lotto lotto = new Lotto("Stats", "Scheduler", lastMonth, countList, result);
