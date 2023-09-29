@@ -153,7 +153,7 @@ public class UserService {
 		String accessToken = jwtProvider.getAccessTokenInCookie(request);
 		if (accessToken != null) {
 			Long remainingTime = jwtProvider.getRemainingTime(accessToken);
-			redisDao.setBlackList(accessToken, remainingTime);
+			if (remainingTime != 0L) redisDao.setBlackList(accessToken, remainingTime);
 		}
 
 		return jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null, 0);

@@ -130,10 +130,14 @@ public class JwtProvider {
 	}
 
 	public Long getRemainingTime(String token) {
-		Date expirationDate = getClaims(token).getExpiration();
-		Instant now = Instant.now();
-		long remainingMillis = expirationDate.toInstant().toEpochMilli() - now.toEpochMilli();
-		return Math.max(remainingMillis, 0);
+		try {
+			Date expirationDate = getClaims(token).getExpiration();
+			Instant now = Instant.now();
+			long remainingMillis = expirationDate.toInstant().toEpochMilli() - now.toEpochMilli();
+			return Math.max(remainingMillis, 0);
+		} catch (ExpiredJwtException e) {
+			return (long) 0;
+		}
 	}
 
 	public Cookie createCookie(String key, String tokenValue, Object maxAge) {
