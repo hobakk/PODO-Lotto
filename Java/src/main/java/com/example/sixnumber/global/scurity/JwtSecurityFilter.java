@@ -45,33 +45,40 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 				validateAccessToken(accessToken);
 			} catch (ExpiredJwtException e) {
 				String refreshPointer = e.getClaims().getSubject();
-				String refreshToken = redisDao.getValue(RedisDao.RT_KEY + refreshPointer);
-				if (refreshToken == null || !encoder.matches(refreshToken, encodedRefreshToken)) {
-					deleteCookieAndThrowException(response);
-				}
+				redisDao.getValue(RedisDao.RT_KEY + refreshPointer)
+					.ifPresentOrElse(
+						value -> {
+							if (!encoder.matches(value, encodedRefreshToken))
+								deleteCookieAndThrowException(response);
 
-				Claims claims = jwtProvider.getClaims(refreshToken);
-				String newAccessToken = jwtProvider.accessToken(claims.get("key", String.class));
-				long remainingSeconds = Math.max(jwtProvider.getRemainingTime(refreshToken) /1000, 0);
-				if (remainingSeconds < 360) deleteCookieAndThrowException(response);
+							Claims claims = jwtProvider.getClaims(value);
+							String newAccessToken = jwtProvider.accessToken(claims.get("key", String.class));
+							long remainingSeconds = Math.max(jwtProvider.getRemainingTime(value) /1000, 0);
+							if (remainingSeconds < 360) deleteCookieAndThrowException(response);
 
-				Cookie cookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, newAccessToken, remainingSeconds);
-				response.addCookie(cookie);
-				createAuthentication(claims.get("id", Long.class));
+							Cookie cookie = jwtProvider.createCookie(
+								JwtProvider.ACCESS_TOKEN, newAccessToken, remainingSeconds);
+							response.addCookie(cookie);
+							createAuthentication(claims.get("id", Long.class));
+						},
+						() -> deleteCookieAndThrowException(response)
+					);
 			}
 		} else {
 			if (accessToken != null) {
 				try {
 					String verifiedAccessToken = validateAccessToken(accessToken);
 					String refreshPointer = jwtProvider.getClaims(verifiedAccessToken).getSubject();
-					String refreshToken = redisDao.getValue(RedisDao.RT_KEY + refreshPointer);
-					if (refreshToken == null) {
-						Long remainingTime = jwtProvider.getRemainingTime(accessToken);
-						redisDao.setBlackList(verifiedAccessToken, remainingTime);
-						deleteCookieAndThrowException(response);
-					}
 
-					createAuthentication(jwtProvider.getTokenInUserId(refreshToken));
+					redisDao.getValue(RedisDao.RT_KEY + refreshPointer)
+						.ifPresentOrElse(
+							value -> createAuthentication(jwtProvider.getTokenInUserId(value)),
+							() -> {
+								Long remainingTime = jwtProvider.getRemainingTime(accessToken);
+								redisDao.setBlackList(verifiedAccessToken, remainingTime);
+								deleteCookieAndThrowException(response);
+							}
+						);
 				} catch (ExpiredJwtException e) {
 					throw new AccessTokenIsExpiredException();
 				}
@@ -82,12 +89,10 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	}
 
 	private String validateAccessToken(String accessToken) {
-		if (!jwtProvider.validateToken(accessToken)) {
+		if (!jwtProvider.validateToken(accessToken))
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "잘못된 AccessToken 입니다");
-		}
-		if (redisDao.isEqualsBlackList(accessToken)) {
+		if (redisDao.isEqualsBlackList(accessToken))
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "이미 로그아웃된 AccessToken 입니다");
-		}
 
 		return accessToken;
 	}
