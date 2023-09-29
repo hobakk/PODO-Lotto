@@ -2,6 +2,7 @@ package com.example.sixnumber.global.util;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -29,8 +30,8 @@ public class RedisDao {
 		this.values = redisTemplate.opsForValue();
 	}
 
-	public String getValue(String key) {
-		return values.get(key);
+	public Optional<String> getValue(String key) {
+		return Optional.ofNullable(values.get(key));
 	}
 
 	public Set<String> getKeysList(String key) {
