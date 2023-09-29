@@ -85,7 +85,6 @@ public class GlobalScheduler {
 
 	@Scheduled(cron = "0 0 7 ? * MON-FRI")
 	public void	withdrawExpiration() {
-		System.out.println("탈퇴한 유저 정보 보유기간 만료 확인");
 		List<User> withdrawList = userRepository.findByStatusAndWithdrawExpiration(Status.DORMANT);
 		if (!withdrawList.isEmpty()) {
 			userRepository.deleteAll(withdrawList);
@@ -94,17 +93,13 @@ public class GlobalScheduler {
 
 	@Scheduled(cron = "0 0 6,18 * * *")
 	public void	autoSetSuspended() {
-		System.out.println("미처리 누적에 대한 정지 처리");
-		List<User> untreatedUsers = userRepository.findUserByUntreated(4);
-		if (!untreatedUsers.isEmpty()) {
-			for (User user : untreatedUsers) {
-				if (!user.getRole().equals(UserRole.ROLE_ADMIN)) {
-					user.setStatus(Status.SUSPENDED);
-					String Key = "RT: " + user.getId();
-					String refreshToken = redisTemplate.opsForValue().get(Key);
-					if (refreshToken != null) redisTemplate.delete(refreshToken);
-				}
-			}
-		}
+		userRepository.findUserByUntreated(4).stream()
+			.filter(user -> !user.getRole().equals(UserRole.ROLE_ADMIN))
+			.forEach(user -> {
+				user.setStatus(Status.SUSPENDED);
+				String Key = "RT: " + user.getId();
+				String refreshToken = redisTemplate.opsForValue().get(Key);
+				if (refreshToken != null) redisTemplate.delete(refreshToken);
+			});
 	}
 }
