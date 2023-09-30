@@ -5,7 +5,6 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.data.redis.core.RedisTemplate;
@@ -39,24 +38,25 @@ public class GlobalScheduler {
 	@Scheduled(cron = "0 0 11 ? * MON-FRI")
 	public void findByTopNumberListForMonth() {
 		YearMonth lastMonth = YearMonth.now().minusMonths(1);
-		Optional<Lotto> monthlyStats = lottoRepository.findByTopNumbersForMonth(lastMonth);
+		lottoRepository.findByTopNumbersForMonth(lastMonth).ifPresentOrElse(
+			lotto -> {},
+			() -> {
+				List<Integer> countList = new ArrayList<>(Collections.nCopies(45, 1));
 
-		if (monthlyStats.isEmpty()) {
-			List<Integer> countList = new ArrayList<>(Collections.nCopies(45, 1));
+				sixNumberRepository.findAllByBuyDate(lastMonth).forEach(sixNumber ->
+					sixNumber.getNumberList().forEach(sentence ->
+						Stream.of(sentence.split(" ")).forEach(topNumberStr -> {
+							int topNum = Integer.parseInt(topNumberStr);
+							countList.set(topNum, countList.get(topNum) + 1);
+						})
+					)
+				);
 
-			sixNumberRepository.findAllByBuyDate(lastMonth).forEach(sixNumber ->
-				sixNumber.getNumberList().forEach(sentence ->
-					Stream.of(sentence.split(" ")).forEach(topNumberStr -> {
-						int topNum = Integer.parseInt(topNumberStr);
-						countList.set(topNum, countList.get(topNum) + 1);
-					})
-				)
-			);
-
-			String result = manager.revisedTopIndicesAsStr(countList);
-			Lotto lotto = new Lotto("Stats", "Scheduler", lastMonth, countList, result);
-			lottoRepository.save(lotto);
-		}
+				String result = manager.revisedTopIndicesAsStr(countList);
+				Lotto lotto = new Lotto("Stats", "Scheduler", lastMonth, countList, result);
+				lottoRepository.save(lotto);
+			}
+		);
 	}
 
 	@Scheduled(cron = "0 0 9 * * *")
