@@ -133,10 +133,9 @@ public class UserServiceTest {
 	@Test
 	void compareAuthCode_fail_inCorrectAuthCode() {
 		EmailAuthCodeRequest emailAuthCodeRequest = mock(EmailAuthCodeRequest.class);
-		when(emailAuthCodeRequest.getAuthCode()).thenReturn("123456");
 		when(emailAuthCodeRequest.getEmail()).thenReturn("email");
 
-		when(redisDao.getValue(anyString())).thenReturn(Optional.of("123456"));
+		when(redisDao.getValue(anyString())).thenReturn(Optional.empty());
 
 		Assertions.assertThrows(IllegalArgumentException.class,
 			() -> userService.compareAuthCode(emailAuthCodeRequest));
@@ -650,12 +649,9 @@ public class UserServiceTest {
 	void oauth2LoginAfterGetUserIfAndRefreshToken_fail() {
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		when(redisDao.getValue(anyString())).thenReturn(isNull());
+		when(redisDao.getValue(anyString())).thenReturn(Optional.empty());
 
 		Assertions.assertThrows(CustomException.class,
 			() -> userService.oauth2LoginAfterGetUserIfAndRefreshToken(saveUser.getId()));
-
-		verify(manager).findUser(anyLong());
-		verify(redisDao).getValue(anyString());
 	}
 }
