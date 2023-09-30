@@ -100,7 +100,6 @@ public class UserServiceTest {
 	@Test
 	void sendAuthCodeToEmail_fail_ErrorsIsNotNull() {
 		EmailRequest emailRequest = TestDataFactory.emailRequest();
-		Errors errors = mock(Errors.class);
 		when(errors.hasErrors()).thenReturn(true);
 
 		Assertions.assertThrows(OverlapException.class,
