@@ -115,19 +115,6 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void sendAuthCodeToEmail_EmailOverlap() {
-		EmailRequest emailRequest = TestDataFactory.emailRequest();
-
-		when(userRepository.existsUserByEmail(anyString())).thenReturn(true);
-
-		Exception exception = assertThrows(OverlapException.class,
-			() -> userService.sendAuthCodeToEmail(emailRequest, errors));
-
-		verify(userRepository).existsUserByEmail(anyString());
-		assertEquals(exception.getMessage(), "중복된 이메일입니다");
-	}
-
-	@Test
 	void compareAuthCode_success() {
 		EmailAuthCodeRequest emailAuthCodeRequest = mock(EmailAuthCodeRequest.class);
 		when(emailAuthCodeRequest.getAuthCode()).thenReturn("123456");
@@ -187,6 +174,19 @@ public class UserServiceTest {
 		assertEquals(saveUser.getStatus(), Status.ACTIVE);
 		assertNull(saveUser.getWithdrawExpiration());
 		TestUtil.UnifiedResponseEquals(response, 200, "재가입 완료");
+	}
+
+	@Test
+	void signup_EmailOverlap() {
+		SignupRequest signupRequest = TestDataFactory.signupRequest();
+
+		when(userRepository.existsUserByEmail(anyString())).thenReturn(true);
+
+		Exception exception = assertThrows(OverlapException.class,
+			() -> userService.signUp(signupRequest, errors));
+
+		verify(userRepository).existsUserByEmail(anyString());
+		assertEquals(exception.getMessage(), "중복된 이메일입니다");
 	}
 
 	@Test
