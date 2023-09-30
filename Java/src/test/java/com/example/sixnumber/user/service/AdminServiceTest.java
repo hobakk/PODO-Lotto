@@ -162,15 +162,15 @@ public class AdminServiceTest {
 	}
 
 	@Test
-	void createLotto_success() {
-		Optional<Lotto> empty = Optional.empty();
-		when(lottoRepository.findByMain()).thenReturn(empty);
+	void createLotto_isPresent() {
+		Lotto lotto = mock(Lotto.class);
+
+		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
 
 		UnifiedResponse<?> response = adminService.createLotto("email");
 
 		verify(lottoRepository).findByMain();
-		verify(lottoRepository).save(any(Lotto.class));
-		TestUtil.UnifiedResponseEquals(response, 200, "생성 완료");
+		TestUtil.UnifiedResponseEquals(response, 400, "메인 로또가 이미 생성되어 있습니다");
 	}
 
 	@Test
