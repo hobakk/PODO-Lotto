@@ -116,7 +116,9 @@ public class UserService {
 			});
 	}
 
-	public UnifiedResponse<?> signIn(HttpServletResponse response, SigninRequest request) {
+	public UnifiedResponse<?> signIn(HttpServletResponse response, SigninRequest request, Errors errors) {
+		if (errors.hasErrors()) errorsHandler(errors);
+
 		User user = manager.findUser(request.getEmail());
 		if (user.getPassword().equals("Oauth2Login")) throw new CustomException(NOT_OAUTH2_LOGIN);
 
