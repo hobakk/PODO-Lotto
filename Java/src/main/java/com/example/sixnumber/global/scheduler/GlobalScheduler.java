@@ -39,7 +39,7 @@ public class GlobalScheduler {
 	public void findByTopNumberListForMonth() {
 		YearMonth lastMonth = YearMonth.now().minusMonths(1);
 		lottoRepository.findByTopNumbersForMonth(lastMonth).ifPresentOrElse(
-			lotto -> {},
+			lastMonthStats -> {},
 			() -> {
 				List<Integer> countList = new ArrayList<>(Collections.nCopies(45, 1));
 

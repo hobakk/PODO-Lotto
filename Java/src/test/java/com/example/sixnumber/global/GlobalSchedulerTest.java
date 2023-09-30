@@ -5,8 +5,8 @@ import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,20 +57,21 @@ public class GlobalSchedulerTest {
 	}
 
 	@Test
-	void findByTopNumberListForMonth() {
-		SixNumber sixNumber = mock(SixNumber.class);
+	void findByTopNumberListForMonth_isEmpty() {
+		SixNumber sixNumber = TestDataFactory.sixNumber();
 
-		when(sixNumber.getNumberList()).thenReturn(Arrays.asList("1 2 3", "4 5 6"));
+		when(lottoRepository.findByTopNumbersForMonth(any(YearMonth.class))).thenReturn(Optional.empty());
+
 		when(sixNumberRepository.findAllByBuyDate(any(YearMonth.class))).thenReturn(List.of(sixNumber));
 
 		when(manager.revisedTopIndicesAsStr(anyList())).thenReturn("1 2 3 4 5 6");
 
 		globalScheduler.findByTopNumberListForMonth();
 
-		verify(sixNumber).getNumberList();
+		verify(lottoRepository).findByTopNumbersForMonth(any(YearMonth.class));
 		verify(sixNumberRepository).findAllByBuyDate(any(YearMonth.class));
-		verify(lottoRepository).save(any(Lotto.class));
 		verify(manager).revisedTopIndicesAsStr(anyList());
+		verify(lottoRepository).save(any(Lotto.class));
 	}
 
 	@ParameterizedTest
