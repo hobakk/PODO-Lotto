@@ -57,6 +57,17 @@ public class GlobalSchedulerTest {
 	}
 
 	@Test
+	void findByTopNumberListForMonth_isPresent() {
+		Lotto lotto = mock(Lotto.class);
+
+		when(lottoRepository.findByTopNumbersForMonth(any(YearMonth.class))).thenReturn(Optional.of(lotto));
+
+		globalScheduler.findByTopNumberListForMonth();
+
+		verify(lottoRepository).findByTopNumbersForMonth(any(YearMonth.class));
+	}
+
+	@Test
 	void findByTopNumberListForMonth_isEmpty() {
 		SixNumber sixNumber = TestDataFactory.sixNumber();
 
