@@ -566,11 +566,12 @@ public class UserServiceTest {
 	void modifyStatementMsg_fail_notFound() {
 		StatementModifyMsgRequest request = TestDataFactory.statementModifyMsgRequest();
 
-		when(statementRepository.findById(anyLong())).thenReturn(Optional.empty());
+		when(statementRepository.findByIdAndAfterLastMonth(anyLong(), any(LocalDate.class)))
+			.thenReturn(Optional.empty());
 
 		Assertions.assertThrows(CustomException.class, () -> userService.modifyStatementMsg(request));
 
-		verify(statementRepository).findById(anyLong());
+		verify(statementRepository).findByIdAndAfterLastMonth(anyLong(), any(LocalDate.class));
 	}
 
 	@Test
