@@ -77,18 +77,17 @@ public class UserServiceTest {
 	private Manager manager;
 
 	private User saveUser;
-	private Errors errors;
 
 	@BeforeEach
 	public void setup() {
 		saveUser = TestDataFactory.user();
-		errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(false);
 	}
 
 	@Test
 	void sendAuthCodeToEmail_success() {
 		EmailRequest emailRequest = TestDataFactory.emailRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 
 		UnifiedResponse<?> response = userService.sendAuthCodeToEmail(emailRequest, errors);
 
@@ -100,6 +99,7 @@ public class UserServiceTest {
 	@Test
 	void sendAuthCodeToEmail_fail_ErrorsIsNotNull() {
 		EmailRequest emailRequest = TestDataFactory.emailRequest();
+		Errors errors = mock(Errors.class);
 		when(errors.hasErrors()).thenReturn(true);
 
 		Assertions.assertThrows(OverlapException.class,
@@ -109,6 +109,8 @@ public class UserServiceTest {
 	@Test
 	void sendAuthCodeToEmail_fail_inCorrectEmailType() {
 		EmailRequest emailRequest = new EmailRequest("test@false.com");
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 
 		Assertions.assertThrows(CustomException.class,
 			() -> userService.sendAuthCodeToEmail(emailRequest, errors));
@@ -143,6 +145,8 @@ public class UserServiceTest {
 	@Test
 	void signup_success() {
 		SignupRequest signupRequest = TestDataFactory.signupRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 
 		when(userRepository.findByStatusAndEmail(any(Status.class), anyString())).thenReturn(Optional.empty());
 		when(userRepository.existsUserByNickname(anyString())).thenReturn(false);
@@ -160,6 +164,8 @@ public class UserServiceTest {
 	@Test
 	void signup_success_ReJoin() {
 		SignupRequest request = TestDataFactory.signupRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 		saveUser.setStatus(Status.DORMANT);
 
 		when(userRepository.findByStatusAndEmail(eq(Status.DORMANT), anyString())).thenReturn(Optional.of(saveUser));
@@ -179,6 +185,8 @@ public class UserServiceTest {
 	@Test
 	void signup_EmailOverlap() {
 		SignupRequest signupRequest = TestDataFactory.signupRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 
 		when(userRepository.existsUserByEmail(anyString())).thenReturn(true);
 
@@ -192,6 +200,8 @@ public class UserServiceTest {
 	@Test
 	void signup_fail_NicknameOverlap() {
 		SignupRequest signupRequest = TestDataFactory.signupRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 
 		when(userRepository.existsUserByNickname(anyString())).thenReturn(true);
 
@@ -207,6 +217,8 @@ public class UserServiceTest {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 		TokenDto tokenDto = TestDataFactory.tokenRequest();
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 		saveUser.setRefreshPointer(null);
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
@@ -236,6 +248,8 @@ public class UserServiceTest {
 	void signin_userNotFound() {
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 
 		when(manager.findUser(anyString())).thenThrow(new CustomException(USER_NOT_FOUND));
 
@@ -249,6 +263,8 @@ public class UserServiceTest {
 	void signin_fail_oauth2Login() {
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 		User user = mock(User.class);
 		when(user.getPassword()).thenReturn("Oauth2Login");
 
@@ -265,6 +281,8 @@ public class UserServiceTest {
 	void signin_fail_notActive(Status status) {
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 		saveUser.setStatus(status);
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
@@ -279,6 +297,8 @@ public class UserServiceTest {
 	void signin_fail_inCorrectPassword() {
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
@@ -295,6 +315,8 @@ public class UserServiceTest {
 	void signin_fail_refreshPointerIsNotNull() {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
