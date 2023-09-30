@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Arrays;
 import java.util.List;
 
@@ -60,14 +61,14 @@ public class GlobalSchedulerTest {
 		SixNumber sixNumber = mock(SixNumber.class);
 
 		when(sixNumber.getNumberList()).thenReturn(Arrays.asList("1 2 3", "4 5 6"));
-		when(sixNumberRepository.findAllByBuyDate(anyInt(), anyInt())).thenReturn(List.of(sixNumber));
+		when(sixNumberRepository.findAllByBuyDate(any(YearMonth.class))).thenReturn(List.of(sixNumber));
 
 		when(manager.revisedTopIndicesAsStr(anyList())).thenReturn("1 2 3 4 5 6");
 
 		globalScheduler.findByTopNumberListForMonth();
 
 		verify(sixNumber).getNumberList();
-		verify(sixNumberRepository).findAllByBuyDate(anyInt(), anyInt());
+		verify(sixNumberRepository).findAllByBuyDate(any(YearMonth.class));
 		verify(lottoRepository).save(any(Lotto.class));
 		verify(manager).revisedTopIndicesAsStr(anyList());
 	}
