@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -551,11 +552,13 @@ public class UserServiceTest {
 		StatementModifyMsgRequest request = TestDataFactory.statementModifyMsgRequest();
 		Statement statement = TestDataFactory.statement();
 
-		when(statementRepository.findById(anyLong())).thenReturn(Optional.of(statement));
+		when(statementRepository.findByIdAndAfterLastMonth(anyLong(), any(LocalDate.class)))
+			.thenReturn(Optional.of(statement));
 
 		UnifiedResponse<?> response = userService.modifyStatementMsg(request);
 
-		verify(statementRepository).findById(anyLong());
+		verify(statementRepository).findByIdAndAfterLastMonth(anyLong(), any(LocalDate.class));
+		assertEquals(statement.getMsg(), request.getMsg());
 		TestUtil.UnifiedResponseEquals(response, 200, "텍스트 수정 성공");
 	}
 

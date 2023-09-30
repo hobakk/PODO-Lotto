@@ -104,7 +104,7 @@ public class TestDataFactory {
 	public static StatementResponse statementResponse() { return new StatementResponse(statement()); }
 
 	public static StatementModifyMsgRequest statementModifyMsgRequest() {
-		return new StatementModifyMsgRequest((long) 7, "테스트");
+		return new StatementModifyMsgRequest((long) 7, "변경될 메세지");
 	}
 
 	public static String chargeKey() { return "7-콩쥐팥쥐-2000-12시 30분 33초"; }
