@@ -77,23 +77,21 @@ public class UserServiceTest {
 	private Manager manager;
 
 	private User saveUser;
+	private Errors errors;
 
 	@BeforeEach
 	public void setup() {
 		saveUser = TestDataFactory.user();
+		errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
 	}
 
 	@Test
 	void sendAuthCodeToEmail_success() {
 		EmailRequest emailRequest = TestDataFactory.emailRequest();
-		Errors errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(false);
-
-		when(userRepository.existsUserByEmail(anyString())).thenReturn(false);
 
 		UnifiedResponse<?> response = userService.sendAuthCodeToEmail(emailRequest, errors);
 
-		verify(userRepository).existsUserByEmail(anyString());
 		verify(redisDao).setValues(anyString(), anyString(), anyLong(), any(TimeUnit.class));
 		verify(manager).sendEmail(anyString(), anyString());
 		TestUtil.UnifiedResponseEquals(response, 200, "인증번호 발급 성공");
@@ -112,8 +110,6 @@ public class UserServiceTest {
 	@Test
 	void sendAuthCodeToEmail_fail_inCorrectEmailType() {
 		EmailRequest emailRequest = new EmailRequest("test@false.com");
-		Errors errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(false);
 
 		Assertions.assertThrows(CustomException.class,
 			() -> userService.sendAuthCodeToEmail(emailRequest, errors));
@@ -122,8 +118,6 @@ public class UserServiceTest {
 	@Test
 	void sendAuthCodeToEmail_EmailOverlap() {
 		EmailRequest emailRequest = TestDataFactory.emailRequest();
-		Errors errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(false);
 
 		when(userRepository.existsUserByEmail(anyString())).thenReturn(true);
 
@@ -140,7 +134,7 @@ public class UserServiceTest {
 		when(emailAuthCodeRequest.getAuthCode()).thenReturn("123456");
 		when(emailAuthCodeRequest.getEmail()).thenReturn("email");
 
-		when(redisDao.getValue(anyString())).thenReturn("123456");
+		when(redisDao.getValue(anyString())).thenReturn(Optional.of("123456"));
 
 		UnifiedResponse<?> response = userService.compareAuthCode(emailAuthCodeRequest);
 
@@ -154,7 +148,7 @@ public class UserServiceTest {
 		when(emailAuthCodeRequest.getAuthCode()).thenReturn("123456");
 		when(emailAuthCodeRequest.getEmail()).thenReturn("email");
 
-		when(redisDao.getValue(anyString())).thenReturn("654321");
+		when(redisDao.getValue(anyString())).thenReturn(Optional.of("123456"));
 
 		Assertions.assertThrows(IllegalArgumentException.class,
 			() -> userService.compareAuthCode(emailAuthCodeRequest));
@@ -163,8 +157,6 @@ public class UserServiceTest {
 	@Test
 	void signup_success() {
 		SignupRequest signupRequest = TestDataFactory.signupRequest();
-		Errors errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(false);
 
 		when(userRepository.findByStatusAndEmail(any(Status.class), anyString())).thenReturn(Optional.empty());
 		when(userRepository.existsUserByNickname(anyString())).thenReturn(false);
@@ -182,8 +174,6 @@ public class UserServiceTest {
 	@Test
 	void signup_success_ReJoin() {
 		SignupRequest request = TestDataFactory.signupRequest();
-		Errors errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(false);
 		saveUser.setStatus(Status.DORMANT);
 
 		when(userRepository.findByStatusAndEmail(eq(Status.DORMANT), anyString())).thenReturn(Optional.of(saveUser));
@@ -203,8 +193,6 @@ public class UserServiceTest {
 	@Test
 	void signup_fail_NicknameOverlap() {
 		SignupRequest signupRequest = TestDataFactory.signupRequest();
-		Errors errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(false);
 
 		when(userRepository.existsUserByNickname(anyString())).thenReturn(true);
 
@@ -232,7 +220,7 @@ public class UserServiceTest {
 
 		when(passwordEncoder.encode(anyString())).thenReturn("encodedRefreshToken");
 
-		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest);
+		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest, errors);
 
 		verify(manager).findUser(anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
@@ -252,7 +240,8 @@ public class UserServiceTest {
 
 		when(manager.findUser(anyString())).thenThrow(new CustomException(USER_NOT_FOUND));
 
-		Assertions.assertThrows(CustomException.class, () -> userService.signIn(httpServletResponse, signinRequest));
+		Assertions.assertThrows(CustomException.class,
+			() -> userService.signIn(httpServletResponse, signinRequest, errors));
 
 		verify(manager).findUser(anyString());
 	}
@@ -266,7 +255,8 @@ public class UserServiceTest {
 
 		when(manager.findUser(anyString())).thenReturn(user);
 
-		Assertions.assertThrows(CustomException.class, () -> userService.signIn(httpServletResponse, signinRequest));
+		Assertions.assertThrows(CustomException.class,
+			() -> userService.signIn(httpServletResponse, signinRequest, errors));
 
 		verify(manager).findUser(anyString());
 	}
@@ -281,7 +271,7 @@ public class UserServiceTest {
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
 		Assertions.assertThrows(StatusNotActiveException.class,
-			() -> userService.signIn(httpServletResponse, signinRequest));
+			() -> userService.signIn(httpServletResponse, signinRequest, errors));
 
 		verify(manager).findUser(anyString());
 	}
@@ -296,7 +286,7 @@ public class UserServiceTest {
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
 		Assertions.assertThrows(IllegalArgumentException.class,
-			() -> userService.signIn(httpServletResponse, signinRequest));
+			() -> userService.signIn(httpServletResponse, signinRequest, errors));
 
 		verify(manager).findUser(anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
@@ -311,7 +301,7 @@ public class UserServiceTest {
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
-		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest);
+		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest, errors);
 
 		verify(manager).findUser(anyString());
 		verify(passwordEncoder).matches(anyString(), anyString());
@@ -623,7 +613,7 @@ public class UserServiceTest {
 	void oauth2LoginAfterGetUserIfAndRefreshToken_success() {
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		when(redisDao.getValue(anyString())).thenReturn("refreshT");
+		when(redisDao.getValue(anyString())).thenReturn(Optional.of("refreshT"));
 
 		when(passwordEncoder.encode(anyString())).thenReturn("encodedRefreshT");
 
