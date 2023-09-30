@@ -174,14 +174,14 @@ public class AdminServiceTest {
 	}
 
 	@Test
-	void createLotto_fail_overlapLotto() {
-		Lotto lotto = mock(Lotto.class);
+	void createLotto_isEmpty() {
+		when(lottoRepository.findByMain()).thenReturn(Optional.empty());
 
-		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
-
-		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.createLotto(admin.getEmail()));
+		UnifiedResponse<?> response = adminService.createLotto("email");
 
 		verify(lottoRepository).findByMain();
+		verify(lottoRepository).save(any(Lotto.class));
+		TestUtil.UnifiedResponseEquals(response, 200, "생성 완료");
 	}
 
 	@Test
