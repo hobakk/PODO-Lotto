@@ -137,6 +137,8 @@ public class User implements UserDetails {
 		this.role = role;
 	}
 
+	public void setPassword(String password) { this.password = password; }
+
 	public void setAdmin() {
 		this.role = UserRole.ROLE_ADMIN;
 	}

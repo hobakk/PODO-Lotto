@@ -40,6 +40,7 @@ import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.EmailAuthCodeRequest;
 import com.example.sixnumber.user.dto.EmailRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
+import com.example.sixnumber.user.dto.FindPasswordRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementModifyMsgRequest;
@@ -315,6 +316,12 @@ public class UserService {
 				return new UserResponseAndEncodedRefreshDto(new UserResponse(user), encodedRefreshToken);
 			})
 			.orElseThrow(() -> new CustomException(INVALID_TOKEN));
+	}
+
+	public UnifiedResponse<?> findPassword(FindPasswordRequest request) {
+		User user = manager.findUser(request.getEmail());
+		user.setPassword(request.getPassword());
+		return UnifiedResponse.ok("비밀번호 설정 성공");
 	}
 
 	private String dateFormatter(LocalDateTime localDateTime) {
