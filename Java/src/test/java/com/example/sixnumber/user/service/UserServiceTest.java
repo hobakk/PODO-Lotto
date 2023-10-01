@@ -45,6 +45,7 @@ import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.EmailAuthCodeRequest;
 import com.example.sixnumber.user.dto.EmailRequest;
+import com.example.sixnumber.user.dto.FindPasswordRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -657,5 +658,19 @@ public class UserServiceTest {
 
 		Assertions.assertThrows(CustomException.class,
 			() -> userService.oauth2LoginAfterGetUserIfAndRefreshToken(saveUser.getId()));
+	}
+
+	@Test
+	void findPassword() {
+		FindPasswordRequest request = TestDataFactory.findPasswordRequest();
+		Errors errors = mock(Errors.class);
+		when(errors.hasErrors()).thenReturn(false);
+
+		when(manager.findUser(anyString())).thenReturn(saveUser);
+
+		UnifiedResponse<?> response = userService.findPassword(request, errors);
+
+		verify(manager).findUser(anyString());
+		TestUtil.UnifiedResponseEquals(response, 200, "비밀번호 설정 성공");
 	}
 }
