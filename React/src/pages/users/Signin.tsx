@@ -82,7 +82,7 @@ function Signin() {
             </div>
         </form>
         <div style={{ display:"flex", flexDirection:"column", fontSize: "18px", marginRight:"auto", marginTop:"30px" }}>
-            <Link to="/incorrect" style={{ marginBottom:"20px" }}>비밀번호를 잊으셨나요 ?</Link>
+            <Link to="/find-password" style={{ marginBottom:"20px" }}>비밀번호를 잊으셨나요 ?</Link>
             <Link to="/signup">비회원 이신가요 ?</Link>
         </div>
         <div style={{ marginTop:"2cm", display:"flex", alignItems:"center", justifyItems:"center" }}>

@@ -145,7 +145,7 @@ export const getUserIfAndRefreshToken = async (): Promise<UnifiedResponse<UserDe
 
 export type FindPassword = {
     email: string,
-    password: any,
+    password: string,
 }
 
 export const findPassword = async (req: FindPassword): Promise<UnifiedResponse<undefined>> => {
