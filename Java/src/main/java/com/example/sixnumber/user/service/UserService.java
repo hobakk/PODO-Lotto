@@ -318,7 +318,9 @@ public class UserService {
 			.orElseThrow(() -> new CustomException(INVALID_TOKEN));
 	}
 
-	public UnifiedResponse<?> findPassword(FindPasswordRequest request) {
+	public UnifiedResponse<?> findPassword(FindPasswordRequest request, Errors errors) {
+		if (errors.hasErrors()) errorsHandler(errors);
+
 		User user = manager.findUser(request.getEmail());
 		user.setPassword(request.getPassword());
 		return UnifiedResponse.ok("비밀번호 설정 성공");

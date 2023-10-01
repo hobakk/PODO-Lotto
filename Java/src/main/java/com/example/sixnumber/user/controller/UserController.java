@@ -194,7 +194,10 @@ public class UserController {
 	}
 
 	@PostMapping("/find-password")
-	public ResponseEntity<UnifiedResponse<?>> findPassword(@RequestBody FindPasswordRequest request) {
-		return ResponseEntity.ok(userService.findPassword(request));
+	public ResponseEntity<UnifiedResponse<?>> findPassword(
+		@RequestBody FindPasswordRequest request,
+		Errors errors
+	) {
+		return ResponseEntity.ok(userService.findPassword(request, errors));
 	}
 }
