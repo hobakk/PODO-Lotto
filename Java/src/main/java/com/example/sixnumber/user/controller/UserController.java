@@ -28,6 +28,7 @@ import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.EmailAuthCodeRequest;
 import com.example.sixnumber.user.dto.EmailRequest;
+import com.example.sixnumber.user.dto.FindPasswordRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -190,5 +191,10 @@ public class UserController {
 		UserResponseAndEncodedRefreshDto dto = userService.oauth2LoginAfterGetUserIfAndRefreshToken(user.getId());
 		response.addHeader(JwtProvider.AUTHORIZATION_HEADER, "Bearer " + dto.getEncodedRefreshToken());
 		return ResponseEntity.ok(UnifiedResponse.ok("조회 성공", dto.getUserResponse()));
+	}
+
+	@PostMapping("/find-password")
+	public ResponseEntity<UnifiedResponse<?>> findPassword(@RequestBody FindPasswordRequest request) {
+		return ResponseEntity.ok(userService.findPassword(request));
 	}
 }
