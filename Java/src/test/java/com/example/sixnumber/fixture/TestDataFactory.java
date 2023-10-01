@@ -20,6 +20,7 @@ import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.EmailRequest;
+import com.example.sixnumber.user.dto.FindPasswordRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -60,6 +61,13 @@ public class TestDataFactory {
 			"test@gmail.com",
 			"password1!",
 			"nickname"
+		);
+	}
+
+	public static FindPasswordRequest findPasswordRequest() {
+		return new FindPasswordRequest(
+			"test@gmail.com",
+			"password1!"
 		);
 	}
 

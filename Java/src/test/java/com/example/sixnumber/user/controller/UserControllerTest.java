@@ -31,6 +31,7 @@ import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
+import com.example.sixnumber.user.dto.FindPasswordRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
@@ -335,7 +336,7 @@ class UserControllerTest {
 
 		when(userService.oauth2LoginAfterGetUserIfAndRefreshToken(anyLong())).thenReturn(dto);
 
-		mockMvc.perform(get("/api/users//oauth2/my-information").with(csrf())
+		mockMvc.perform(get("/api/users/oauth2/my-information").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("조회 성공"))
@@ -343,5 +344,20 @@ class UserControllerTest {
 			.andExpect(header().string("Authorization", "Bearer encodedRefreshToken"));
 
 		verify(userService).oauth2LoginAfterGetUserIfAndRefreshToken(anyLong());
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void findPassword() throws Exception {
+		when(userService.findPassword(any(FindPasswordRequest.class), any(Errors.class)))
+			.thenReturn(UnifiedResponse.ok("비밀번호 설정 성공"));
+
+		mockMvc.perform(post("/api/users/find-password").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.findPasswordRequest())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("비밀번호 설정 성공"));
+
+		verify(userService).findPassword(any(FindPasswordRequest.class), any(Errors.class));
 	}
 }
