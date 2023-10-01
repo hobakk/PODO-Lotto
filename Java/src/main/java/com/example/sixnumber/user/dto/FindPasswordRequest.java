@@ -3,11 +3,15 @@ package com.example.sixnumber.user.dto;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class FindPasswordRequest {
 	private String email;
 	@NotBlank(message = "비밀번호를 입력하세요.")
