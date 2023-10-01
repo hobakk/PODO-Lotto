@@ -142,3 +142,17 @@ export const getUserIfAndRefreshToken = async (): Promise<UnifiedResponse<UserDe
         throw error.data;
     }
 }
+
+export type FindPassword = {
+    email: string,
+    password: any,
+}
+
+export const findPassword = async (req: FindPassword): Promise<UnifiedResponse<undefined>> => {
+    try {
+        const { data } = await api.post("/users/find-password", req);
+        return data;
+    } catch (error: any) {
+        throw error.data;
+    }
+}
