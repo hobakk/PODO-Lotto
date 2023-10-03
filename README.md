@@ -1,7 +1,11 @@
 <h1 align=center><img src=React/public/logo.png width=33 height=33 /> PODO Lotto </h1><br/>
+<div align=center>
+  <img width="500cm" src="https://github.com/hobakk/PODO-Lotto/assets/117063625/21408a18-2585-4ddd-9b2a-7f42154c20f0" />
+</div><br/>
 
 <h2>사용기술</h2>
 <div display=flex>
+
   <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=SpringBoot&logoColor=white">
   <img src="https://img.shields.io/badge/SpringSecurity-6DB33F?style=for-the-badge&logo=SpringSecurity&logoColor=white">
   <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white">
