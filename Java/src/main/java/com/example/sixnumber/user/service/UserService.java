@@ -322,7 +322,8 @@ public class UserService {
 		if (errors.hasErrors()) errorsHandler(errors);
 
 		User user = manager.findUser(request.getEmail());
-		user.setPassword(request.getPassword());
+		String encodedPassword = passwordEncoder.encode(request.getPassword());
+		user.setPassword(encodedPassword);
 		return UnifiedResponse.ok("비밀번호 설정 성공");
 	}
 
