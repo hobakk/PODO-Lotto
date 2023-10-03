@@ -671,6 +671,7 @@ public class UserServiceTest {
 		UnifiedResponse<?> response = userService.findPassword(request, errors);
 
 		verify(manager).findUser(anyString());
+		verify(passwordEncoder).encode(anyString());
 		TestUtil.UnifiedResponseEquals(response, 200, "비밀번호 설정 성공");
 	}
 }
