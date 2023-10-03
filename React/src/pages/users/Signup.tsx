@@ -82,8 +82,8 @@ function Signiup() {
             </button>
         </div>
         <div style={{ display:"flex", flexDirection:"column", fontSize: "18px", marginRight: "auto", marginTop: "1cm"}}>
-          <Link to="/incorrect">아이디와 비밀번호를 잊으셨나요 ?</Link>
-          <Link to="/signip" style={{ marginTop:"15px" }}>회원 이신가요 ?</Link>
+          <Link to="/find-password">비밀번호를 잊으셨나요 ?</Link>
+          <Link to="/signin" style={{ marginTop:"15px" }}>회원 이신가요 ?</Link>
         </div>
       </div>
     </div>
