@@ -1,45 +1,19 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { CommonStyle, InputBox, MsgAndInput, ButtonDiv, ButtonStyle } from '../../shared/Styles'
 import { Link, useNavigate } from 'react-router-dom';
-import { compareAuthCode, EmailAuthCodeRequest, sendAuthCodeToEmail, signup, SignupRequest } from '../../api/noneUserApi';
+import { signup, SignupRequest } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';
 import { Err, UnifiedResponse } from '../../shared/TypeMenu';
+import EmailAuthentication from '../../components/EmailAuthentication';
 
 function Signiup() {
-  const emailRef = useRef<HTMLInputElement>(null);
-  const [checkList, setCheckList] = useState<{sendMsg:boolean, correctCode:boolean}>({
-    sendMsg: false,
-    correctCode: false,
-  })
   const navigate = useNavigate();
-  const [inputValue, setInputValue] = useState<SignupRequest>({
-    email: "",
+  const [email, setEmail] = useState<string>("");
+  const [inputValue, setInputValue] = useState<{password: string, nickname: string}>({
     password: "",
     nickname: "",
   });
-  const [authCode, setAuthCode] = useState<string>("");
-
-  const sendAuthCodeToEmailMutation = useMutation<UnifiedResponse<undefined>, Err, string>(sendAuthCodeToEmail, {
-    onSuccess: (res)=>{
-      if (res.code === 200) {
-        setCheckList({ ...checkList, sendMsg: true});
-      }
-    },
-    onError: (err: Err)=>{
-      if (err.code) alert(err.msg);
-    }
-  })
-
-  const compareAuthCodeMutation = useMutation<UnifiedResponse<unknown>, unknown, EmailAuthCodeRequest>(compareAuthCode, {
-    onSuccess: (res)=>{
-      if (res.code === 200) {
-        setCheckList({ ...checkList, correctCode: true });
-      }
-    },
-    onError: (err: any)=>{
-      if (err.status) alert(err.message);
-    }
-  })
+  const [isCorrectAuth, setIsCorrectAuth] = useState<boolean>(false);
 
   const signupMutation = useMutation<UnifiedResponse<undefined>, Err, SignupRequest>(signup, {
     onSuccess: (res)=>{
@@ -61,64 +35,25 @@ function Signiup() {
     })
   }
 
-  const authCodeOnchangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAuthCode(e.target.value);
-  }
-
   const onClickHandler = () => {
-    if (!checkList.correctCode) alert("이메일 인증 후 이용하실 수 있습니다"); 
-    else signupMutation.mutate(inputValue);
+    if (isCorrectAuth) signupMutation.mutate(
+      { email: email, password: inputValue.password, nickname: inputValue.nickname}
+    );
+    else alert("이메일 인증 후 이용하실 수 있습니다"); 
   }
-
-  useEffect(()=>{ 
-    setCheckList({ sendMsg: false, correctCode: false }); 
-    setAuthCode("");
-  }, [inputValue.email])
 
   return (
     <div style={ CommonStyle }>
-      <h3 style={{ fontSize: "80px"}}>Signup</h3>
+      <h3 style={{ fontSize: "80px"}}>회원가입</h3>
       <div style={{ fontSize: "30px", display: "flex", flexDirection: "column", width: "15cm" }}>
-        <div style={{ marginBottom:"30px" }}>
-          <div style={{ ...MsgAndInput, width:"19cm", marginBottom:"0px"}}>
-            <span>Email:</span>
-            <InputBox 
-              onChange={onChangeHandler} 
-              placeholder='test@email.com' 
-              value={inputValue.email} 
-              ref={emailRef} 
-              name='email'
-              autoComplete='current-email'  
-            />
-            <button 
-              style={{ width:"4cm", height:"30px"}}
-              onClick={()=>sendAuthCodeToEmailMutation.mutate(inputValue.email)}
-            >
-              이메일 인증하기
-            </button>
-          </div>
-          {checkList.sendMsg && (
-            <div style={{ display:"flex", width:"19cm", justifyContent:"center"}}>
-              <InputBox onChange={authCodeOnchangeHandler} value={authCode} />
-              {!checkList.correctCode ? (
-                <button 
-                  style={{ width:"4cm", height:"30px"}}
-                  onClick={()=>{
-                    const req: EmailAuthCodeRequest = { email:inputValue.email, authCode: authCode }
-                    compareAuthCodeMutation.mutate(req)
-                  }}
-                >
-                  인증요청
-                </button>
-              ):(
-                <span style={{ fontSize:"18px" , color: "red", marginLeft:"20px", marginRight:"56px" }}>인증 성공</span>
-              )}
-              
-            </div>
-          )}
-        </div>
+        <EmailAuthentication 
+          isCorrectAuth={isCorrectAuth} 
+          setIsCorrectAuth={setIsCorrectAuth} 
+          email={email}
+          setEmail={setEmail}
+        />
         <div style={MsgAndInput}>
-          <span>Password:</span>
+          <span>비밀번호:</span>
           <InputBox 
             onChange={onChangeHandler} 
             type="password" 
@@ -129,7 +64,7 @@ function Signiup() {
           />
         </div>
         <div style={MsgAndInput}>
-          <span>Nickname:</span>
+          <span>닉네임:</span>
           <InputBox 
             onChange={onChangeHandler} 
             type="text" 
