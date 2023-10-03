@@ -14,7 +14,7 @@
   <img src="https://img.shields.io/badge/StyledComponents-DB7093?style=for-the-badge&logo=StyledComponents&logoColor=white">
 </div><br/>
 
-<br/><h2>User [Code](https://github.com/hobakk/PODO-Lotto/blob/58a61078f438e254312d07f1e3f11f95f6992310/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L61)</h2>
+<br/><h2>User [Code](https://github.com/hobakk/PODO-Lotto/blob/c74f3050b0cb47408dfd51ce2447310d36759683/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L62)</h2>
 
 ### 1. 회원가입
 sendAuthCodeToEmail, compareAuthCode, signUp
@@ -37,9 +37,9 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 - Req 값에 따라 권한을 수정
 ### 6. 기타
 - 조회: 닉네임과 캐쉬, 충전요청, 거래명세, 회원 정보, 비밀번호 재확인, 최근 구매한 번호 리스트
-- 수정: 회원정보
+- 수정: 회원정보, 비밀번호 찾기
 
-<br/><br/><h2>Admin [Code](https://github.com/hobakk/PODO-Lotto/blob/58a61078f438e254312d07f1e3f11f95f6992310/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L35)</h2>
+<br/><br/><h2>Admin [Code](https://github.com/hobakk/PODO-Lotto/blob/c74f3050b0cb47408dfd51ce2447310d36759683/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L36)</h2>
 
 ### 1. 모든 유저 조회, 모든 충전요청 조회
 - FE: 조회된 정보들을 Nickname, cash 값으로 필터링
@@ -56,7 +56,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 ### 2. 월 통계, 저장된 월 통계 YearMonth(index)
 - entryTtl 제한을 두지 않음
 
-<br/><br/><h2>SixNumber [Code](https://github.com/hobakk/PODO-Lotto/blob/58a61078f438e254312d07f1e3f11f95f6992310/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L43)</h2>
+<br/><br/><h2>SixNumber [Code](https://github.com/hobakk/PODO-Lotto/blob/c74f3050b0cb47408dfd51ce2447310d36759683/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L44)</h2>
 
 ### 1. 랜덤 번호 추천
 ### 2. 반복 연산된 번호 추천 [code](https://github.com/hobakk/Lotto/blob/main/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L75-L131)
@@ -72,7 +72,7 @@ Redis Cache 사용해서 속도 개선
 ### 2. 당첨번호 등록
 - @CachePut 을 적용하여 저장되어 있는 RedisCache 를 갱신
 
-<br/><br/><h2>JwtSecurityFilter [Code](https://github.com/hobakk/PODO-Lotto/blob/58a61078f438e254312d07f1e3f11f95f6992310/Java/src/main/java/com/example/sixnumber/global/scurity/JwtSecurityFilter.java#L31)</h2>
+<br/><br/><h2>JwtSecurityFilter [Code](https://github.com/hobakk/PODO-Lotto/blob/c74f3050b0cb47408dfd51ce2447310d36759683/Java/src/main/java/com/example/sixnumber/global/scurity/JwtSecurityFilter.java#L31)</h2>
 
 ### 1. accessToken 재발급
 - AccessTokenIsExpiredException 을 ExceptionHandlerFilter catch
@@ -85,7 +85,7 @@ Redis Cache 사용해서 속도 개선
 accessToken 의 유효시간이 5분이라 로그아웃 이후 만료 전 탈취 당했을 상황에 대처할 목적
 - accessToken 을 Redis 에서 BlackList 로 관리
 
-<br/><br/><h2>Scheduler [Code](https://github.com/hobakk/PODO-Lotto/blob/58a61078f438e254312d07f1e3f11f95f6992310/Java/src/main/java/com/example/sixnumber/global/scheduler/GlobalScheduler.java#L30)</h2>
+<br/><br/><h2>Scheduler [Code](https://github.com/hobakk/PODO-Lotto/blob/c74f3050b0cb47408dfd51ce2447310d36759683/Java/src/main/java/com/example/sixnumber/global/scheduler/GlobalScheduler.java#L30)</h2>
 
 ### 1. 월 통계 생성
 - 현재 기준 저번달 통계가 존재하지 않을 때 통계를 생성 및 저장
