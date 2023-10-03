@@ -114,7 +114,7 @@ public class GlobalSchedulerTest {
 
 	@Test
 	void autoSetSuspended() {
-		saveUser.setTimeOutCount(4);
+		saveUser.setTimeoutCount(4);
 		when(userRepository.findUserByUntreated(4)).thenReturn(List.of(saveUser));
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 

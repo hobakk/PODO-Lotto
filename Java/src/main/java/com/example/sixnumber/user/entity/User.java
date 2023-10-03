@@ -64,9 +64,9 @@ public class User implements UserDetails {
 	private LocalDate withdrawExpiration;
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<Statement> statement;
+	private List<Statement> statementList;
 	@Column(name = "timeOutCount")
-	private int timeOutCount;
+	private int timeoutCount;
 	@Column(name = "refreshPointer")
 	private String refreshPointer;
 	@JsonIgnore
@@ -80,8 +80,8 @@ public class User implements UserDetails {
 		this.role = UserRole.ROLE_USER;
 		this.status = Status.ACTIVE;
 		this.cash = 1000;
-		this.statement = new ArrayList<>();
-		this.timeOutCount = 0;
+		this.statementList = new ArrayList<>();
+		this.timeoutCount = 0;
 		this.refreshPointer = null;
 		this.sixNumberList = new ArrayList<>();
 	}
@@ -94,8 +94,8 @@ public class User implements UserDetails {
 		this.role = role;
 		this.status = Status.ACTIVE;
 		this.cash = 1000;
-		this.statement = new ArrayList<>();
-		this.timeOutCount = 0;
+		this.statementList = new ArrayList<>();
+		this.timeoutCount = 0;
 		this.refreshPointer = null;
 		this.sixNumberList = new ArrayList<>();
 	}
@@ -108,8 +108,8 @@ public class User implements UserDetails {
 		this.role = role;
 		this.status = status;
 		this.cash = 1000;
-		this.statement = new ArrayList<>();
-		this.timeOutCount = 0;
+		this.statementList = new ArrayList<>();
+		this.timeoutCount = 0;
 	}
 
 	public void update(List<String> list) {
@@ -118,7 +118,7 @@ public class User implements UserDetails {
 		this.nickname = list.get(2);
 	}
 
-	public User setNickname(String nickname) {
+	public User setNiQKAKFQHSckname(String nickname) {
 		this.nickname = nickname;
 		return this;
 	}
@@ -150,14 +150,14 @@ public class User implements UserDetails {
 	public void setWithdrawExpiration(LocalDate localDate) {
 		this.withdrawExpiration = localDate;
 	}
-	public void addStatement(Statement statement) { this.getStatement().add(statement); }
+	public void addStatement(Statement statement) { this.getStatementList().add(statement); }
 
-	public void setTimeOutCount(int num) {
-		if (num == 0) this.timeOutCount = 0;
-		else this.timeOutCount += num;
+	public void setTimeoutCount(int num) {
+		if (num == 0) this.timeoutCount = 0;
+		else this.timeoutCount += num;
 	}
 
-	public void minusTimeOutCount() { if (this.getTimeOutCount() > 0) this.timeOutCount -= 1; }
+	public void minusTimeOutCount() { if (this.getTimeoutCount() > 0) this.timeoutCount -= 1; }
 
 	public void setRefreshPointer(String refreshPointer) {
 		this.refreshPointer = refreshPointer;

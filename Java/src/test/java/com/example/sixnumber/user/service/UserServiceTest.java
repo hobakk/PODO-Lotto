@@ -408,7 +408,7 @@ public class UserServiceTest {
 		assertEquals(saveUser.getCash(), 1000);
 		assertEquals(saveUser.getRole(), UserRole.ROLE_PAID);
 		assertNotNull(saveUser.getPaymentDate());
-		assertNotNull(saveUser.getStatement());
+		assertNotNull(saveUser.getStatementList());
 		TestUtil.UnifiedResponseEquals(response, 200, "권한 변경 성공");
 	}
 
@@ -446,14 +446,14 @@ public class UserServiceTest {
 		verify(redisDao).getKeysList(anyString());
 		verify(redisDao).setValues(anyString(), anyString(), anyLong(), any());
 		verify(userRepository).save(saveUser);
-		assertEquals(saveUser.getTimeOutCount(), 1);
+		assertEquals(saveUser.getTimeoutCount(), 1);
 		TestUtil.UnifiedResponseEquals(response, 200, "요청 성공");
 	}
 
 	@Test
 	void charging_fail_manyTimeOut() {
 		ChargingRequest request = TestDataFactory.chargingRequest();
-		saveUser.setTimeOutCount(4);
+		saveUser.setTimeoutCount(4);
 
 		Assertions.assertThrows(CustomException.class, () -> userService.charging(request, saveUser));
 	}

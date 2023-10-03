@@ -70,7 +70,7 @@ public class SixNumberServiceTest {
 		verify(lottoRepository).findByMain();
 		verify(sixNumberRepository).save(any(SixNumber.class));
 		List<String> data = response.getData();
-		assertNotNull(saveUser.getStatement());
+		assertNotNull(saveUser.getStatementList());
 		assertEquals(data.size(), 5);
 		TestUtil.UnifiedResponseListEquals(response, 200, "요청 성공");
 	}
@@ -104,7 +104,7 @@ public class SixNumberServiceTest {
 		verify(lottoRepository).findByMain();
 		verify(sixNumberRepository).save(any(SixNumber.class));
 		List<String> data = response.getData();
-		assertNotNull(saveUser.getStatement());
+		assertNotNull(saveUser.getStatementList());
 		assertEquals(data.size(), 5);
 		TestUtil.UnifiedResponseListEquals(response, 200, "요청 성공");
 	}

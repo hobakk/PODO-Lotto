@@ -130,8 +130,8 @@ public class AdminServiceTest {
 		verify(manager).findUser(anyLong());
 		verify(redisDao).delete(anyString());
 		assertEquals(saveUser.getCash(), 11000);
-		assertNotNull(saveUser.getStatement().get(0));
-		assertEquals(saveUser.getTimeOutCount(), 0);
+		assertNotNull(saveUser.getStatementList().get(0));
+		assertEquals(saveUser.getTimeoutCount(), 0);
 		TestUtil.UnifiedResponseEquals(response, 200, "충전 완료");
 	}
 
@@ -145,7 +145,7 @@ public class AdminServiceTest {
 
 		verify(manager).findUser(anyLong());
 		assertEquals(saveUser.getCash(), 1000);
-		assertNotNull(saveUser.getStatement().get(0));
+		assertNotNull(saveUser.getStatementList().get(0));
 		TestUtil.UnifiedResponseEquals(response, 200, "차감 완료");
 	}
 

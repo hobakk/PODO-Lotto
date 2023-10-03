@@ -201,7 +201,7 @@ public class UserService {
 	}
 
 	public UnifiedResponse<?> charging(ChargingRequest chargingRequest, User user) {
-		if (user.getTimeOutCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
+		if (user.getTimeoutCount() >= 4) throw new CustomException(BREAK_THE_ROLE);
 
 		String key = String.format("%d-%s-%d",
 			user.getId(), chargingRequest.getMsg(), chargingRequest.getCash());
@@ -210,7 +210,7 @@ public class UserService {
 
 		String chargeInfo = key + "-" + dateFormatter(LocalDateTime.now().plusHours(1));
 		redisDao.setValues(RedisDao.CHARGE_KEY + key, chargeInfo, (long) 1, TimeUnit.HOURS);
-		user.setTimeOutCount(1);
+		user.setTimeoutCount(1);
 		userRepository.save(user);
 		return UnifiedResponse.ok("요청 성공");
 	}
@@ -262,9 +262,9 @@ public class UserService {
 	// Statement 정보 보유기간 및 반환값에 대해 더 고민해야함
 	public UnifiedResponse<List<StatementResponse>> getStatement(String email) {
 		User user = manager.findUser(email);
-		if (user.getStatement().size() == 0) throw new IllegalArgumentException("거래내역이 존재하지 않습니다");
+		if (user.getStatementList().size() == 0) throw new IllegalArgumentException("거래내역이 존재하지 않습니다");
 
-		List<StatementResponse> response = user.getStatement().stream()
+		List<StatementResponse> response = user.getStatementList().stream()
 			.filter(res -> res.getLocalDate().isAfter(LocalDate.now().minusMonths(1)))
 			.map(StatementResponse::new)
 			.collect(Collectors.toList());

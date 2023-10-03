@@ -87,7 +87,7 @@ public class AdminService {
 
 		user.addStatement(new Statement(user, "충전", cashRequest.getCash()));
 		user.plusCash(cashRequest.getCash());
-		user.setTimeOutCount(0);
+		user.setTimeoutCount(0);
 		return UnifiedResponse.ok("충전 완료");
 	}
 
