@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -40,8 +39,8 @@ import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
 import com.example.sixnumber.user.dto.EmailAuthCodeRequest;
 import com.example.sixnumber.user.dto.EmailRequest;
-import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.FindPasswordRequest;
+import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementModifyMsgRequest;
@@ -289,19 +288,22 @@ public class UserService {
 	}
 
 	public UnifiedResponse<List<SixNumberResponse>> getBuySixNumberList(Long userId) {
-		User user = manager.findUser(userId);
-		List<SixNumber> sixNumberList = user.getSixNumberList();
-		if (sixNumberList.size() == 0) throw new CustomException(NOT_FOUND);
+		return userRepository.findById(userId)
+			.filter(user -> user.getSixNumberList().size() > 0)
+			.map(user -> {
+				List<SixNumber> sixNumberList = user.getSixNumberList();
+				if (sixNumberList.size() >= 12)
+					sixNumberList = sixNumberList.subList(sixNumberList.size() - 12, sixNumberList.size());
 
-		Collections.reverse(sixNumberList);
-		if (sixNumberList.size() >= 12) sixNumberList = sixNumberList.subList(0, 12);
+				List<SixNumberResponse> response = sixNumberList.stream()
+					.map(sixNumber -> new SixNumberResponse(
+						dateFormatter(sixNumber.getBuyDate()), sixNumber.getNumberList()
+					))
+					.collect(Collectors.toList());
 
-		List<SixNumberResponse> response = sixNumberList.stream()
-			.map(sixNumber -> new SixNumberResponse(
-				dateFormatter(sixNumber.getBuyDate()), sixNumber.getNumberList()
-			))
-			.collect(Collectors.toList());
-		return UnifiedResponse.ok("조회 성공", response);
+				return UnifiedResponse.ok("조회 성공", response);
+			})
+			.orElseThrow(() -> new CustomException(NOT_FOUND));
 	}
 
 	public UnifiedResponse<?> comparePassword(OnlyMsgRequest request, String encodedPassword) {
@@ -313,8 +315,8 @@ public class UserService {
 		return UnifiedResponse.ok("조회 성공", new UserResponse(user));
 	}
 
-	public UserResponseAndEncodedRefreshDto oauth2LoginAfterGetUserIfAndRefreshToken(Long userIf) {
-		User user = manager.findUser(userIf);
+	public UserResponseAndEncodedRefreshDto oauth2LoginAfterGetUserIfAndRefreshToken(Long userId) {
+		User user = manager.findUser(userId);
 		return redisDao.getValue(RedisDao.RT_KEY + user.getRefreshPointer())
 			.map(value -> {
 				String encodedRefreshToken = passwordEncoder.encode(value);
