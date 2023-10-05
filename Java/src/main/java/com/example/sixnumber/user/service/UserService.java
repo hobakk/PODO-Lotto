@@ -187,17 +187,17 @@ public class UserService {
 			});
 	}
 
-	public UnifiedResponse<?> changeToPaid(String email) {
-		User user = manager.findUser(email);
-		if (user.getCash() < 5000 || user.getRole().equals(UserRole.ROLE_PAID)) {
-			throw new IllegalArgumentException("금액이 부족하거나 이미 월정액 이용자입니다");
-		}
-
-		user.minusCash(5000);
-		user.setRole(UserRole.ROLE_PAID);
-		user.setPaymentDate(LocalDate.now().plusDays(31));
-		user.addStatement(new Statement(user, "프리미엄 등록", 5000));
-		return UnifiedResponse.ok("권한 변경 성공");
+	public UnifiedResponse<?> changeToPaid(Long userId) {
+		return userRepository.findById(userId)
+			.filter(user -> user.getCash() >= 5000 && user.getRole() != UserRole.ROLE_PAID)
+			.map(user -> {
+				user.minusCash(5000);
+				user.setRole(UserRole.ROLE_PAID);
+				user.setPaymentDate(LocalDate.now().plusDays(31));
+				user.addStatement(new Statement(user, "프리미엄 등록", 5000));
+				return UnifiedResponse.ok("권한 변경 성공");
+			})
+			.orElseThrow(() -> new IllegalArgumentException("금액이 부족하거나 이미 월정액 이용자입니다"));
 	}
 
 	public UnifiedResponse<CashNicknameResponse> getCashAndNickname(User user) {
