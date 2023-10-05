@@ -130,6 +130,11 @@ public class User implements UserDetails {
 		addStatement(new Statement(this, "프리미엄 등록", 5000));
 	}
 
+	public void changeToDORMANT() {
+		setStatus(Status.DORMANT);
+		setWithdrawExpiration(LocalDate.now().plusMonths(1));
+	}
+
 	public void setPaymentDate(LocalDate localDate) {
 		this.paymentDate = localDate;
 	}

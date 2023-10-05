@@ -173,8 +173,7 @@ public class UserService {
 		if (!request.getMsg().equals("회원탈퇴")) throw new IllegalArgumentException("잘못된 문자열 입력");
 
 		User user = manager.findUser(email);
-		user.setStatus(Status.DORMANT);
-		user.setWithdrawExpiration(LocalDate.now().plusMonths(1));
+		user.changeToDORMANT();
 		return UnifiedResponse.ok("회원 탈퇴 완료");
 	}
 
