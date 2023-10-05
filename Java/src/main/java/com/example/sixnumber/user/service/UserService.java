@@ -174,13 +174,17 @@ public class UserService {
 		return UnifiedResponse.ok("회원 탈퇴 완료");
 	}
 
-	public UnifiedResponse<?> changeToUser(User user) {
-		if (user.getRole().equals(UserRole.ROLE_USER)) throw new IllegalArgumentException("월정액 사용자가 아닙니다");
-		if (Boolean.TRUE.equals(user.getCancelPaid())) throw new OverlapException("프리미엄 해제 신청을 이미 하셨습니다");
-
-		user.setCancelPaid(true);
-		userRepository.save(user);
-		return UnifiedResponse.ok("해지 신청 성공");
+	public UnifiedResponse<?> changeToUser(Long userId) {
+		return userRepository.findById(userId)
+			.filter(user -> user.getRole() != UserRole.ROLE_USER && !user.getCancelPaid())
+			.map(user -> {
+				user.setCancelPaid(true);
+				return UnifiedResponse.ok("해지 신청 성공");
+			})
+			.orElseThrow(() -> {
+				String msg = "월정액 사용자가 아니거나, 프리미엄 해제 신청을 이미한 계정입니다";
+				throw new IllegalArgumentException(msg);
+			});
 	}
 
 	public UnifiedResponse<?> changeToPaid(String email) {
