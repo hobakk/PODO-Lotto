@@ -264,15 +264,18 @@ public class UserService {
 	}
 
 	// Statement 정보 보유기간 및 반환값에 대해 더 고민해야함
-	public UnifiedResponse<List<StatementResponse>> getStatement(String email) {
-		User user = manager.findUser(email);
-		if (user.getStatementList().size() == 0) throw new IllegalArgumentException("거래내역이 존재하지 않습니다");
+	public UnifiedResponse<List<StatementResponse>> getStatement(Long userId) {
+		return userRepository.findById(userId)
+			.filter(user -> user.getStatementList().size() > 0)
+			.map(user -> {
+				List<StatementResponse> response = user.getStatementList().stream()
+					.filter(res -> res.getLocalDate().isAfter(LocalDate.now().minusMonths(1)))
+					.map(StatementResponse::new)
+					.collect(Collectors.toList());
 
-		List<StatementResponse> response = user.getStatementList().stream()
-			.filter(res -> res.getLocalDate().isAfter(LocalDate.now().minusMonths(1)))
-			.map(StatementResponse::new)
-			.collect(Collectors.toList());
-		return UnifiedResponse.ok("거래내역 조회 완료", response);
+				return UnifiedResponse.ok("거래내역 조회 완료", response);
+			})
+			.orElseThrow(() -> new IllegalArgumentException("거래내역이 존재하지 않습니다"));
 	}
 
 	public UnifiedResponse<?> modifyStatementMsg(StatementModifyMsgRequest request) {
