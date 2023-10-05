@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -71,14 +72,17 @@ public class UserService {
 	public UnifiedResponse<?> sendAuthCodeToEmail(EmailRequest request, Errors errors) {
 		if (errors.hasErrors()) errorsHandler(errors);
 
-		List<String> mailList = Arrays.asList("gmail.com", "naver.com", "daum.net");
-		if (!mailList.contains(request.getEmail().split("@")[1])) throw new CustomException(INVALID_INPUT);
-
-		Random random = new Random();
-		String authCode = String.valueOf(random.nextInt(888888) + 111111);
-		redisDao.setValues(RedisDao.AUTH_KEY + request.getEmail(), authCode, 30L, TimeUnit.MINUTES);
-		manager.sendEmail(request.getEmail(), authCode);
-		return UnifiedResponse.ok("인증번호 발급 성공");
+		return Stream.of("gmail.com", "naver.com", "daum.net")
+			.filter(email -> email.equals(request.getEmail().split("@")[1]))
+			.findFirst()
+			.map(email -> {
+				Random random = new Random();
+				String authCode = String.valueOf(random.nextInt(888888) + 111111);
+				redisDao.setValues(RedisDao.AUTH_KEY + request.getEmail(), authCode, 30L, TimeUnit.MINUTES);
+				manager.sendEmail(request.getEmail(), authCode);
+				return UnifiedResponse.ok("인증번호 발급 성공");
+			})
+			.orElseThrow(() -> new CustomException(INVALID_INPUT));
 	}
 
 	public UnifiedResponse<?> compareAuthCode(EmailAuthCodeRequest request) {
