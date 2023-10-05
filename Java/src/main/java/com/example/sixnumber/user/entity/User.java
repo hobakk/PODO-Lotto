@@ -123,6 +123,13 @@ public class User implements UserDetails {
 		return this;
 	}
 
+	public void changeToROLE_PAID() {
+		minusCash(5000);
+		setRole(UserRole.ROLE_PAID);
+		setPaymentDate(LocalDate.now().plusDays(31));
+		addStatement(new Statement(this, "프리미엄 등록", 5000));
+	}
+
 	public void setPaymentDate(LocalDate localDate) {
 		this.paymentDate = localDate;
 	}

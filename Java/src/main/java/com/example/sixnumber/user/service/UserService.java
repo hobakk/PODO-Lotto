@@ -195,10 +195,7 @@ public class UserService {
 		return userRepository.findById(userId)
 			.filter(user -> user.getCash() >= 5000 && user.getRole() != UserRole.ROLE_PAID)
 			.map(user -> {
-				user.minusCash(5000);
-				user.setRole(UserRole.ROLE_PAID);
-				user.setPaymentDate(LocalDate.now().plusDays(31));
-				user.addStatement(new Statement(user, "프리미엄 등록", 5000));
+				user.changeToROLE_PAID();
 				return UnifiedResponse.ok("권한 변경 성공");
 			})
 			.orElseThrow(() -> new IllegalArgumentException("금액이 부족하거나 이미 월정액 이용자입니다"));
