@@ -135,15 +135,15 @@ public class UserController {
 		@RequestBody OnlyMsgRequest request,
 		@AuthenticationPrincipal User user
 	) {
-		if (request.getMsg().equals("월정액 해지")) return ResponseEntity.ok(userService.changeToUser(user));
-		else return ResponseEntity.ok(userService.changeToPaid(user.getEmail()));
+		if (request.getMsg().equals("월정액 해지")) return ResponseEntity.ok(userService.changeToUser(user.getId()));
+		else return ResponseEntity.ok(userService.changeToPaid(user.getId()));
 	}
 
 	@GetMapping("/statement")
 	public ResponseEntity<UnifiedResponse<List<StatementResponse>>> getStatement(
 		@AuthenticationPrincipal User user
 	) {
-		return ResponseEntity.ok(userService.getStatement(user.getEmail()));
+		return ResponseEntity.ok(userService.getStatement(user.getId()));
 	}
 
 	@PatchMapping("/statement")
@@ -165,7 +165,7 @@ public class UserController {
 	public ResponseEntity<UnifiedResponse<UserResponse>> getMyInformation(
 		@AuthenticationPrincipal User user
 	) {
-		return ResponseEntity.ok(userService.getMyInformation(user.getId()));
+		return ResponseEntity.ok(userService.getMyInformation(user));
 	}
 
 	@PostMapping("/check-pw")
