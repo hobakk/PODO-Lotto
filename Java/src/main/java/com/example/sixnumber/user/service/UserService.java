@@ -159,7 +159,7 @@ public class UserService {
 		String accessToken = jwtProvider.getAccessTokenInCookie(request);
 		if (accessToken != null) {
 			Long remainingTime = jwtProvider.getRemainingTime(accessToken);
-			if (remainingTime != 0L) redisDao.setBlackList(accessToken, remainingTime);
+			if (remainingTime != 0) redisDao.setBlackList(accessToken, remainingTime);
 		}
 
 		return jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null, 0);
@@ -325,10 +325,13 @@ public class UserService {
 	public UnifiedResponse<?> findPassword(FindPasswordRequest request, Errors errors) {
 		if (errors.hasErrors()) errorsHandler(errors);
 
-		User user = manager.findUser(request.getEmail());
-		String encodedPassword = passwordEncoder.encode(request.getPassword());
-		user.setPassword(encodedPassword);
-		return UnifiedResponse.ok("비밀번호 설정 성공");
+		return userRepository.findByEmail(request.getEmail())
+			.map(user -> {
+				String encodedPassword = passwordEncoder.encode(request.getPassword());
+				user.setPassword(encodedPassword);
+				return UnifiedResponse.ok("비밀번호 설정 성공");
+			})
+			.orElseThrow(() -> new CustomException(NOT_FOUND));
 	}
 
 	private String dateFormatter(LocalDateTime localDateTime) {
