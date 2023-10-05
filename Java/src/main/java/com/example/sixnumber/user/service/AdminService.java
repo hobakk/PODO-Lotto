@@ -3,10 +3,10 @@ package com.example.sixnumber.user.service;
 import static com.example.sixnumber.global.exception.ErrorCode.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -115,21 +115,22 @@ public class AdminService {
 
 	public UnifiedResponse<?> setStatus(User user, Long targetId, OnlyMsgRequest request) {
 		User target = confirmationProcess(user, targetId);
-		Status status;
+		Status changeToStatus;
 		switch (request.getMsg()) {
-			case "ACTIVE": status = Status.ACTIVE; break;
-			case "SUSPENDED": status = Status.SUSPENDED; break;
-			case "DORMANT": status = Status.DORMANT; break;
+			case "ACTIVE": changeToStatus = Status.ACTIVE; break;
+			case "SUSPENDED": changeToStatus = Status.SUSPENDED; break;
+			case "DORMANT": changeToStatus = Status.DORMANT; break;
 			default: throw new CustomException(INVALID_INPUT);
 		}
 
-		if (target.getStatus().equals(status))
+		if (target.getStatus().equals(changeToStatus))
 			throw new IllegalArgumentException("이미 적용되어 있는 상태코드 입니다");
 
-		target.setStatus(status);
-		if (Arrays.asList(Status.SUSPENDED, Status.DORMANT).contains(status))
-			redisDao.delete(RedisDao.RT_KEY + target.getRefreshPointer());
-
+		target.setStatus(changeToStatus);
+		Stream.of(Status.SUSPENDED, Status.DORMANT)
+			.filter(status -> status == changeToStatus)
+			.findFirst()
+			.ifPresent(status -> redisDao.delete(RedisDao.RT_KEY + target.getRefreshPointer()));
 		return UnifiedResponse.ok("상태 변경 완료");
 	}
 
