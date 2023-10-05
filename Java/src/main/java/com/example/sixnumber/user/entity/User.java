@@ -73,9 +73,9 @@ public class User implements UserDetails {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<SixNumber> sixNumberList;
 
-	public User(SignupRequest request, String password) {
+	public User(SignupRequest request, String encodedPassword) {
 		this.email = request.getEmail();
-		this.password = password;
+		this.password = encodedPassword;
 		this.nickname = request.getNickname();
 		this.role = UserRole.ROLE_USER;
 		this.status = Status.ACTIVE;
@@ -118,7 +118,7 @@ public class User implements UserDetails {
 		this.nickname = list.get(2);
 	}
 
-	public User setNiQKAKFQHSckname(String nickname) {
+	public User setNickname(String nickname) {
 		this.nickname = nickname;
 		return this;
 	}
@@ -150,6 +150,7 @@ public class User implements UserDetails {
 	public void setWithdrawExpiration(LocalDate localDate) {
 		this.withdrawExpiration = localDate;
 	}
+
 	public void addStatement(Statement statement) { this.getStatementList().add(statement); }
 
 	public void setTimeoutCount(int num) {

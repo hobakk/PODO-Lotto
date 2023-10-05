@@ -109,8 +109,8 @@ public class UserService {
 				if (userRepository.existsUserByNickname(request.getNickname()))
 					throw new OverlapException("중복된 닉네임입니다");
 
-				String password = passwordEncoder.encode(request.getPassword());
-				User user = new User(request, password);
+				String encodedPassword = passwordEncoder.encode(request.getPassword());
+				User user = new User(request, encodedPassword);
 				user.addStatement(new Statement(user, "회원가입", 1000));
 				userRepository.save(user);
 				return UnifiedResponse.create("회원가입 완료");
