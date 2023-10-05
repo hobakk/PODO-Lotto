@@ -306,10 +306,8 @@ public class UserService {
 		return UnifiedResponse.ok("본인확인 성공");
 	}
 
-	public UnifiedResponse<UserResponse> getMyInformation(Long userId) {
-		User userIf = manager.findUser(userId);
-		UserResponse response = new UserResponse(userIf);
-		return UnifiedResponse.ok("조회 성공", response);
+	public UnifiedResponse<UserResponse> getMyInformation(User user) {
+		return UnifiedResponse.ok("조회 성공", new UserResponse(user));
 	}
 
 	public UserResponseAndEncodedRefreshDto oauth2LoginAfterGetUserIfAndRefreshToken(Long userIf) {
