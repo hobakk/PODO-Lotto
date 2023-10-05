@@ -1,7 +1,11 @@
 <h1 align=center><img src=React/public/logo.png width=33 height=33 /> PODO Lotto </h1><br/>
+<div align=center>
+  <img width="500cm" src="https://github.com/hobakk/PODO-Lotto/assets/117063625/21408a18-2585-4ddd-9b2a-7f42154c20f0" />
+</div><br/>
 
 <h2>사용기술</h2>
 <div display=flex>
+
   <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=SpringBoot&logoColor=white">
   <img src="https://img.shields.io/badge/SpringSecurity-6DB33F?style=for-the-badge&logo=SpringSecurity&logoColor=white">
   <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white">
@@ -63,6 +67,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 - Thead 최종 출력 TopNumber 개수 만큼 생성하여 연산 
 - MultiThread 를 사용하여 23.5% 속도 개선 -> [Blog](https://holloweyed-snail.tistory.com/127)
 - 주어진 조건에 따라 무작위로 숫자를 생성하고, 그 중에서 가장 자주 등장하는 숫자를 찾아 리스트로 반환
+### 3. 최신 구매번호 조회
 
 <br/><br/><h2>WinNumber [Code](https://github.com/hobakk/Lotto/blob/331722f5f4e2f3da9b55a35fa9b411b69fda7c57/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L25)</h2>
 
