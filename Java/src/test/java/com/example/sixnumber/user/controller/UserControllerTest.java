@@ -210,7 +210,7 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void setPremium_changeToUser() throws Exception {
-		when(userService.changeToUser(any(User.class))).thenReturn(UnifiedResponse.ok("해지 신청 성공"));
+		when(userService.changeToUser(anyLong())).thenReturn(UnifiedResponse.ok("해지 신청 성공"));
 
 		mockMvc.perform(patch("/api/users/premium").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -218,13 +218,13 @@ class UserControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("해지 신청 성공"));
 
-		verify(userService).changeToUser(any(User.class));
+		verify(userService).changeToUser(anyLong());
 	}
 
 	@Test
 	@WithCustomMockUser
 	public void setPremium_changeToPaid() throws Exception {
-		when(userService.changeToPaid(anyString())).thenReturn(UnifiedResponse.ok("권한 변경 성공"));
+		when(userService.changeToPaid(anyLong())).thenReturn(UnifiedResponse.ok("권한 변경 성공"));
 
 		mockMvc.perform(patch("/api/users/premium").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -232,7 +232,7 @@ class UserControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("권한 변경 성공"));
 
-		verify(userService).changeToPaid(anyString());
+		verify(userService).changeToPaid(anyLong());
 	}
 
 	@Test
@@ -240,7 +240,7 @@ class UserControllerTest {
 	public void getStatement() throws Exception {
 		StatementResponse response = TestDataFactory.statementResponse();
 
-		when(userService.getStatement(anyString()))
+		when(userService.getStatement(anyLong()))
 			.thenReturn(UnifiedResponse.ok("거래내역 조회 완료", List.of(response)));
 
 		mockMvc.perform(get("/api/users/statement").with(csrf())
@@ -249,7 +249,7 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.msg").value("거래내역 조회 완료"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
-		verify(userService).getStatement(anyString());
+		verify(userService).getStatement(anyLong());
 	}
 
 	@Test
@@ -287,14 +287,14 @@ class UserControllerTest {
 	public void getMyInformation() throws Exception {
 		UserResponse response = new UserResponse(TestDataFactory.user());
 
-		when(userService.getMyInformation(anyLong())).thenReturn(UnifiedResponse.ok("조회 성공", response));
+		when(userService.getMyInformation(any(User.class))).thenReturn(UnifiedResponse.ok("조회 성공", response));
 
 		mockMvc.perform(get("/api/users/my-information").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("조회 성공"));
 
-		verify(userService).getMyInformation(anyLong());
+		verify(userService).getMyInformation(any(User.class));
 	}
 
 	@Test
