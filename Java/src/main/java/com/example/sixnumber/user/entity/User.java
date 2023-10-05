@@ -123,6 +123,12 @@ public class User implements UserDetails {
 		return this;
 	}
 
+	public void changeToROLE_USER() {
+		setRole(UserRole.ROLE_USER);
+		setPaymentDate(null);
+		setCancelPaid(null);
+	}
+
 	public void changeToROLE_PAID() {
 		minusCash(5000);
 		setRole(UserRole.ROLE_PAID);

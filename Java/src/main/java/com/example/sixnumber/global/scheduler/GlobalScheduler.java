@@ -72,9 +72,7 @@ public class GlobalScheduler {
 				user.setPaymentDate(now.plusDays(31));
 				user.addStatement(new Statement(user, "프리미엄 정기결제", 5000));
 			} else {
-				user.setRole(UserRole.ROLE_USER);
-				user.setPaymentDate(null);
-				user.setCancelPaid(null);
+				user.changeToROLE_USER();
 			}
 		}
 	}
