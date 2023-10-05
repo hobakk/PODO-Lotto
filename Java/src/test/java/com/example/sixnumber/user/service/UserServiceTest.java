@@ -378,16 +378,18 @@ public class UserServiceTest {
 		saveUser.setRole(UserRole.ROLE_PAID);
 		saveUser.setCancelPaid(false);
 
-		UnifiedResponse<?> response = userService.changeToUser(saveUser);
+		when(userRepository.findById(saveUser.getId())).thenReturn(Optional.of(saveUser));
 
-		verify(userRepository).save(any(User.class));
+		UnifiedResponse<?> response = userService.changeToUser(saveUser.getId());
+
+		verify(userRepository).findById(anyLong());
 		assertEquals(saveUser.getCancelPaid(), true);
 		TestUtil.UnifiedResponseEquals(response, 200, "해지 신청 성공");
 	}
 
 	@Test
 	void changeToUser_fail_notPaid() {
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.changeToUser(saveUser));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.changeToUser(saveUser.getId()));
 	}
 
 	@Test
@@ -395,14 +397,14 @@ public class UserServiceTest {
 		saveUser.setRole(UserRole.ROLE_PAID);
 		saveUser.setCancelPaid(true);
 
-		Assertions.assertThrows(OverlapException.class, () -> userService.changeToUser(saveUser));
+		Assertions.assertThrows(OverlapException.class, () -> userService.changeToUser(saveUser.getId()));
 	}
 
 	@Test
 	void changeToPaid_success() {
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
-		UnifiedResponse<?> response = userService.changeToPaid(saveUser.getEmail());
+		UnifiedResponse<?> response = userService.changeToPaid(saveUser.getId());
 
 		verify(manager).findUser(anyString());
 		assertEquals(saveUser.getCash(), 1000);
@@ -423,7 +425,7 @@ public class UserServiceTest {
 		when(manager.findUser(anyString())).thenReturn(user);
 
 		Assertions.assertThrows(IllegalArgumentException.class,
-			() -> userService.changeToPaid(user.getEmail()));
+			() -> userService.changeToPaid(user.getId()));
 
 		verify(manager).findUser(anyString());
 	}
@@ -532,7 +534,7 @@ public class UserServiceTest {
 
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
-		UnifiedResponse<List<StatementResponse>> response = userService.getStatement(saveUser.getEmail());
+		UnifiedResponse<List<StatementResponse>> response = userService.getStatement(saveUser.getId());
 
 		verify(manager).findUser(anyString());
 		assertEquals(response.getData().size(), 1);
@@ -543,7 +545,7 @@ public class UserServiceTest {
 	void getStatement_fail_notFound() {
 		when(manager.findUser(anyString())).thenReturn(saveUser);
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getStatement(saveUser.getEmail()));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getStatement(saveUser.getId()));
 
 		verify(manager).findUser(anyString());
 	}
@@ -628,7 +630,7 @@ public class UserServiceTest {
 	void getMyInformation() {
 		when(manager.findUser(anyLong())).thenReturn(saveUser);
 
-		UnifiedResponse<UserResponse> response = userService.getMyInformation(saveUser.getId());
+		UnifiedResponse<UserResponse> response = userService.getMyInformation(saveUser);
 
 		verify(manager).findUser(anyLong());
 		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공", UserResponse.class);
