@@ -398,11 +398,11 @@ public class UserServiceTest {
 
 	@Test
 	void changeToPaid_success() {
-		when(manager.findUser(anyString())).thenReturn(saveUser);
+		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
 
 		UnifiedResponse<?> response = userService.changeToPaid(saveUser.getId());
 
-		verify(manager).findUser(anyString());
+		verify(userRepository).findById(anyLong());
 		assertEquals(saveUser.getCash(), 1000);
 		assertEquals(saveUser.getRole(), UserRole.ROLE_PAID);
 		assertNotNull(saveUser.getPaymentDate());
