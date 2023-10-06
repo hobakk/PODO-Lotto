@@ -1,7 +1,6 @@
 package com.example.sixnumber.lotto.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CachePut;
@@ -33,16 +32,15 @@ public class WinNumberService {
 	@CachePut(value = "WinNumbers", key = "'all'")
 	public WinNumberResponse setWinNumbers(WinNumberRequest request) {
 		WinNumber winNumber = new WinNumber(request);
-		Optional<WinNumber> target = winNumberRepository.findByTimeAndTopNumberListIn(
-			winNumber.getTime(), winNumber.getTopNumberList());
-		if (target.isPresent()) throw new OverlapException("이미 등록된 정보입니다");
+
+		winNumberRepository.findByTimeAndTopNumberListIn(winNumber.getTime(),winNumber.getTopNumberList())
+			.ifPresent(win -> { throw new OverlapException("이미 등록된 정보입니다"); });
 
 		winNumberRepository.save(winNumber);
 
-		List<WinNumber> winNumberList = findAllAfterCheckIsEmpty();
-		if (winNumberList.size() >= 5) {
-			winNumberList = winNumberList.subList(winNumberList.size()-5, winNumberList.size());
-		}
+		List<WinNumber> winNumberList = findAllAfterCheckIsEmpty().stream()
+			.skip(Math.max(0, findAllAfterCheckIsEmpty().size() - 5))
+			.collect(Collectors.toList());
 
 		return transform(winNumberList);
 	}
