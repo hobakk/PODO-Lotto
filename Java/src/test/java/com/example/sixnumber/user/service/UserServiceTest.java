@@ -624,11 +624,8 @@ public class UserServiceTest {
 
 	@Test
 	void getMyInformation() {
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
-
 		UnifiedResponse<UserResponse> response = userService.getMyInformation(saveUser);
 
-		verify(manager).findUser(anyLong());
 		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공", UserResponse.class);
 	}
 
