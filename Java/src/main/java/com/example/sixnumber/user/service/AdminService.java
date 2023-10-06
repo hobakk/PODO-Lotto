@@ -60,9 +60,7 @@ public class AdminService {
 	}
 
 	public UnifiedResponse<List<AdminGetChargingResponse>> getCharges() {
-		List<String> valueList = redisDao.multiGet(RedisDao.CHARGE_KEY);
-
-		List<AdminGetChargingResponse> userChargesValues = valueList.stream()
+		List<AdminGetChargingResponse> userChargesValues = redisDao.multiGet(RedisDao.CHARGE_KEY).stream()
 			.map(AdminGetChargingResponse::new)
 			.collect(Collectors.toList());
 		return UnifiedResponse.ok("조회 성공", userChargesValues);
