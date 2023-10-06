@@ -591,11 +591,11 @@ public class UserServiceTest {
 		User user = mock(User.class);
 		when(user.getSixNumberList()).thenReturn(new ArrayList<>());
 
-		when(manager.findUser(anyLong())).thenReturn(user);
+		when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
 		Assertions.assertThrows(CustomException.class, () -> userService.getBuySixNumberList(anyLong()));
 
-		verify(manager).findUser(anyLong());
+		verify(userRepository).findById(anyLong());
 	}
 
 	@Test
