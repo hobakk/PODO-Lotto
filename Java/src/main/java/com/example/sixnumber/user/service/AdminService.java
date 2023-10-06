@@ -93,14 +93,14 @@ public class AdminService {
 	}
 
 	public UnifiedResponse<?> downCash(CashRequest cashRequest) {
-		User user = manager.findUser(cashRequest.getUserId());
-		if (user.getCash() < cashRequest.getCash()) {
-			throw new IllegalArgumentException("해당 유저가 보유한 금액보다 많습니다");
-		}
-
-		user.minusCash(cashRequest.getCash());
-		user.addStatement(new Statement(user, "차감", cashRequest.getCash(), "관리자에게 문의하세요"));
-		return UnifiedResponse.ok("차감 완료");
+		return userRepository.findById(cashRequest.getUserId())
+			.filter(user -> user.getCash() > cashRequest.getCash())
+			.map(user -> {
+				user.minusCash(cashRequest.getCash());
+				user.addStatement(new Statement(user, "차감", cashRequest.getCash(), "관리자에게 문의하세요"));
+				return UnifiedResponse.ok("차감 완료");
+			})
+			.orElseThrow(() -> new IllegalArgumentException("해당 유저가 보유한 금액보다 많습니다"));
 	}
 
 	public UnifiedResponse<?> createLotto(String email) {
