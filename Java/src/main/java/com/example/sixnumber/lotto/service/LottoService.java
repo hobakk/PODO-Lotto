@@ -38,10 +38,9 @@ public class LottoService {
 
 	@Cacheable(value = "MonthStats", key = "#yearMonth")
 	public LottoResponse getTopNumberForMonth(YearMonth yearMonth) {
-		Lotto lotto = lottoRepository.findByTopNumbersForMonth(yearMonth)
+		return lottoRepository.findByTopNumbersForMonth(yearMonth)
+			.map(lotto -> new LottoResponse(lotto.getCountList(), lotto.getTopNumber()))
 			.orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
-
-		return new LottoResponse(lotto.getCountList(), lotto.getTopNumber());
 	}
 
 	@Cacheable(value = "MonthStats", key = "'all'")
