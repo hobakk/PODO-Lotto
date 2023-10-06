@@ -414,16 +414,16 @@ public class UserServiceTest {
 	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#setPaidTestData")
 	void changeToPaid_fail_lowCash_Or_Role(int cash, UserRole role) {
 		User user = mock(User.class);
-		when(user.getEmail()).thenReturn("test@email.com");
+		when(user.getId()).thenReturn((long) 7);
 		when(user.getCash()).thenReturn(cash);
 		lenient().when(user.getRole()).thenReturn(role);
 
-		when(manager.findUser(anyString())).thenReturn(user);
+		when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
 		Assertions.assertThrows(IllegalArgumentException.class,
 			() -> userService.changeToPaid(user.getId()));
 
-		verify(manager).findUser(anyString());
+		verify(userRepository).findById(anyLong());
 	}
 
 	@Test
