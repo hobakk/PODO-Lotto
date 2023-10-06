@@ -139,11 +139,11 @@ public class AdminServiceTest {
 	void downCash_success() {
 		CashRequest request = TestDataFactory.cashRequest();
 
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
+		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
 
 		UnifiedResponse<?> response = adminService.downCash(request);
 
-		verify(manager).findUser(anyLong());
+		verify(userRepository).findById(anyLong());
 		assertEquals(saveUser.getCash(), 1000);
 		assertNotNull(saveUser.getStatementList().get(0));
 		TestUtil.UnifiedResponseEquals(response, 200, "차감 완료");
