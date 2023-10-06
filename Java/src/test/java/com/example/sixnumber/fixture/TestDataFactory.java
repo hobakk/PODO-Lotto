@@ -161,6 +161,13 @@ public class TestDataFactory {
 		);
 	}
 
+	public static Stream<Arguments> changeToUser() {
+		return Stream.of(
+			Arguments.of(UserRole.ROLE_USER, true),
+			Arguments.of(UserRole.ROLE_PAID, false)
+		);
+	}
+
 	public static Stream<Arguments> setPaidTestData() {
 		return Stream.of(
 			Arguments.of( 1000, UserRole.ROLE_USER),

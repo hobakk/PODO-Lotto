@@ -387,9 +387,11 @@ public class UserServiceTest {
 		TestUtil.UnifiedResponseEquals(response, 200, "해지 신청 성공");
 	}
 
-	@Test
-	void changeToUser_fail() {
-		saveUser.setRole(UserRole.ROLE_USER);
+	@ParameterizedTest
+	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#changeToUser")
+	void changeToUser_fail(UserRole role, boolean TF) {
+		saveUser.setRole(role);
+		saveUser.setCancelPaid(TF);
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.changeToUser(saveUser.getId()));
 	}
