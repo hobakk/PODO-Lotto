@@ -11,13 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.LottoResponse;
 import com.example.sixnumber.lotto.dto.YearMonthResponse;
-import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Service
 @Transactional
 @AllArgsConstructor
@@ -45,13 +42,11 @@ public class LottoService {
 
 	@Cacheable(value = "MonthStats", key = "'all'")
 	public YearMonthResponse getAllMonthStats() {
-		List<Lotto> lottoList = lottoRepository.findAllByMonthStats();
-		if (lottoList.isEmpty()) throw new IllegalArgumentException("해당 정보를 찾을 수 없습니다");
-
 		List<String> yearMonthList = new ArrayList<>();
-		for (Lotto lotto : lottoList) {
-			yearMonthList.add((lotto.getCreationDate()).toString());
-		}
+		lottoRepository.findAllByMonthStats().stream()
+			.findAny()
+			.map(lotto -> yearMonthList.add((lotto.getCreationDate()).toString()))
+			.orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
 
 		return new YearMonthResponse(yearMonthList);
 	}
