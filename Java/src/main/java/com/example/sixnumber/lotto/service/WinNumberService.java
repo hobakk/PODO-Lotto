@@ -1,9 +1,8 @@
 package com.example.sixnumber.lotto.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -12,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.lotto.dto.TransformResponse;
-import com.example.sixnumber.lotto.entity.WinNumber;
-import com.example.sixnumber.lotto.repository.WinNumberRepository;
 import com.example.sixnumber.lotto.dto.WinNumberRequest;
 import com.example.sixnumber.lotto.dto.WinNumberResponse;
+import com.example.sixnumber.lotto.entity.WinNumber;
+import com.example.sixnumber.lotto.repository.WinNumberRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -56,12 +55,17 @@ public class WinNumberService {
 	}
 
 	private WinNumberResponse transform(List<WinNumber> winNumberList) {
-		List<TransformResponse> responses = new ArrayList<>();
-		for (WinNumber winNumber : winNumberList) {
-			responses.add(new TransformResponse(winNumber.getData(), winNumber.getTime(), winNumber.getPrize(),
-				winNumber.getWinner(), winNumber.getTopNumberList(), winNumber.getBonus()));
-		}
+		List<TransformResponse> transformList = winNumberList.stream()
+			.map(winNumber -> new TransformResponse(
+				winNumber.getData(),
+				winNumber.getTime(),
+				winNumber.getPrize(),
+				winNumber.getWinner(),
+				winNumber.getTopNumberList(),
+				winNumber.getBonus())
+			)
+			.collect(Collectors.toList());
 
-		return new WinNumberResponse(responses);
+		return new WinNumberResponse(transformList);
 	}
 }
