@@ -528,11 +528,11 @@ public class UserServiceTest {
 	void getStatement_success() {
 		saveUser.addStatement(TestDataFactory.statement());
 
-		when(manager.findUser(anyString())).thenReturn(saveUser);
+		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
 
 		UnifiedResponse<List<StatementResponse>> response = userService.getStatement(saveUser.getId());
 
-		verify(manager).findUser(anyString());
+		verify(userRepository).findById(anyLong());
 		assertEquals(response.getData().size(), 1);
 		TestUtil.UnifiedResponseListEquals(response, 200, "거래내역 조회 완료");
 	}
