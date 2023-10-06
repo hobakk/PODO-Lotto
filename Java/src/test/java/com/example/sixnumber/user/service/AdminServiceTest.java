@@ -154,11 +154,11 @@ public class AdminServiceTest {
 		CashRequest request = mock(CashRequest.class);
 		when(request.getCash()).thenReturn(10000);
 
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
+		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.downCash(request));
 
-		verify(manager).findUser(anyLong());
+		verify(userRepository).findById(anyLong());
 	}
 
 	@Test
