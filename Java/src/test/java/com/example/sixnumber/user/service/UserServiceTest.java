@@ -388,8 +388,10 @@ public class UserServiceTest {
 	}
 
 	@Test
-	void changeToUser_fail_notPaid() {
-		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.changeToUser((long) 1));
+	void changeToUser_fail() {
+		saveUser.setRole(UserRole.ROLE_USER);
+
+		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.changeToUser(saveUser.getId()));
 	}
 
 	@Test
