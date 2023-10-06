@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -208,14 +208,18 @@ public class UserService {
 
 		String key = String.format("%d-%s-%d",
 			user.getId(), chargingRequest.getMsg(), chargingRequest.getCash());
-		Set<String> chargeList = redisDao.getKeysList(RedisDao.CHARGE_KEY + key);
-		if (chargeList.size() != 0) throw new OverlapException("다른 문자로 재시도 해주세요");
 
-		String chargeInfo = key + "-" + dateFormatter(LocalDateTime.now().plusHours(1));
-		redisDao.setValues(RedisDao.CHARGE_KEY + key, chargeInfo, (long) 1, TimeUnit.HOURS);
-		user.setTimeoutCount(1);
-		userRepository.save(user);
-		return UnifiedResponse.ok("요청 성공");
+		return redisDao.getKeysList(RedisDao.CHARGE_KEY + key).stream()
+			.filter(Objects::isNull)
+			.findFirst()
+			.map(keys -> {
+				String chargeInfo = key + "-" + dateFormatter(LocalDateTime.now().plusHours(1));
+				redisDao.setValues(RedisDao.CHARGE_KEY + key, chargeInfo, (long) 1, TimeUnit.HOURS);
+				user.setTimeoutCount(1);
+				userRepository.save(user);
+				return UnifiedResponse.ok("요청 성공");
+			})
+			.orElseThrow(() -> new OverlapException("다른 문자로 재시도 해주세요"));
 	}
 
 	public UnifiedResponse<ChargingResponse> getCharge(Long userId) {
