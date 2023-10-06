@@ -78,15 +78,18 @@ public class AdminService {
 	}
 
 	public UnifiedResponse<?> upCash(CashRequest cashRequest) {
-		User user = manager.findUser(cashRequest.getUserId());
-		String key = String.format("%d-%s-%d",
-			cashRequest.getUserId(), cashRequest.getMsg(), cashRequest.getCash());
-		redisDao.delete(RedisDao.CHARGE_KEY + key);
+		return userRepository.findById(cashRequest.getUserId())
+			.map(user -> {
+				String key = String.format("%d-%s-%d",
+					cashRequest.getUserId(), cashRequest.getMsg(), cashRequest.getCash());
+				redisDao.delete(RedisDao.CHARGE_KEY + key);
 
-		user.addStatement(new Statement(user, "충전", cashRequest.getCash()));
-		user.plusCash(cashRequest.getCash());
-		user.setTimeoutCount(0);
-		return UnifiedResponse.ok("충전 완료");
+				user.addStatement(new Statement(user, "충전", cashRequest.getCash()));
+				user.plusCash(cashRequest.getCash());
+				user.setTimeoutCount(0);
+				return UnifiedResponse.ok("충전 완료");
+			})
+			.orElseThrow(() -> new CustomException(NOT_FOUND));
 	}
 
 	public UnifiedResponse<?> downCash(CashRequest cashRequest) {
