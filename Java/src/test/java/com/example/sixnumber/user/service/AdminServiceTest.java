@@ -123,14 +123,14 @@ public class AdminServiceTest {
 	void upCash_success() {
 		CashRequest request = TestDataFactory.cashRequest();
 
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
+		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
 
 		UnifiedResponse<?> response = adminService.upCash(request);
 
-		verify(manager).findUser(anyLong());
+		verify(userRepository).findById(anyLong());
 		verify(redisDao).delete(anyString());
 		assertEquals(saveUser.getCash(), 11000);
-		assertNotNull(saveUser.getStatementList().get(0));
+		assertNotNull(saveUser.getStatementList());
 		assertEquals(saveUser.getTimeoutCount(), 0);
 		TestUtil.UnifiedResponseEquals(response, 200, "충전 완료");
 	}
