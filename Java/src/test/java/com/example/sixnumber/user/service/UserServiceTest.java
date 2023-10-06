@@ -578,11 +578,11 @@ public class UserServiceTest {
 		User user = mock(User.class);
 		when(user.getSixNumberList()).thenReturn(List.of(TestDataFactory.sixNumber()));
 
-		when(manager.findUser(anyLong())).thenReturn(user);
+		when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
 		UnifiedResponse<List<SixNumberResponse>> response = userService.getBuySixNumberList(anyLong());
 
-		verify(manager).findUser(anyLong());
+		verify(userRepository).findById(anyLong());
 		TestUtil.UnifiedResponseListEquals(response, 200, "조회 성공");
 	}
 
