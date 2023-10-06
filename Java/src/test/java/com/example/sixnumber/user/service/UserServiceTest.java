@@ -661,11 +661,11 @@ public class UserServiceTest {
 		Errors errors = mock(Errors.class);
 		when(errors.hasErrors()).thenReturn(false);
 
-		when(manager.findUser(anyString())).thenReturn(saveUser);
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
 
 		UnifiedResponse<?> response = userService.findPassword(request, errors);
 
-		verify(manager).findUser(anyString());
+		verify(userRepository).findByEmail(anyString());
 		verify(passwordEncoder).encode(anyString());
 		TestUtil.UnifiedResponseEquals(response, 200, "비밀번호 설정 성공");
 	}
