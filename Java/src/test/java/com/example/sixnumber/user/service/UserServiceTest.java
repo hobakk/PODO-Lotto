@@ -539,11 +539,11 @@ public class UserServiceTest {
 
 	@Test
 	void getStatement_fail_notFound() {
-		when(manager.findUser(anyString())).thenReturn(saveUser);
+		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getStatement(saveUser.getId()));
 
-		verify(manager).findUser(anyString());
+		verify(userRepository).findById(anyLong());
 	}
 
 	@Test
