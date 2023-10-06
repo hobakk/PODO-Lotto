@@ -28,11 +28,12 @@ public class LottoService {
 
 	@Cacheable(cacheNames = "MainStats", key = "'all'")
 	public LottoResponse mainTopNumbers() {
-		Lotto lotto = lottoRepository.findByMain().orElseThrow(
-			() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
-
-		String result = manager.revisedTopIndicesAsStr(lotto.getCountList());
-		return new LottoResponse(lotto.getCountList(), result);
+		return lottoRepository.findByMain()
+			.map(lotto -> {
+				String result = manager.revisedTopIndicesAsStr(lotto.getCountList());
+				return new LottoResponse(lotto.getCountList(), result);
+			})
+			.orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
 	}
 
 	@Cacheable(value = "MonthStats", key = "#yearMonth")
