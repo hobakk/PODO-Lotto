@@ -38,11 +38,11 @@ public class WinNumberService {
 
 		winNumberRepository.save(winNumber);
 
-		List<WinNumber> winNumberList = findAllAfterCheckIsEmpty().stream()
-			.skip(Math.max(0, findAllAfterCheckIsEmpty().size() - 5))
-			.collect(Collectors.toList());
+		List<WinNumber> winNumberList = findAllAfterCheckIsEmpty();
 
-		return transform(winNumberList);
+		return transform(winNumberList.stream()
+				.skip(Math.max(0, winNumberList.size() - 5))
+				.collect(Collectors.toList()));
 	}
 
 	private List<WinNumber> findAllAfterCheckIsEmpty() {
