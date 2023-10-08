@@ -141,6 +141,12 @@ public class User implements UserDetails {
 		setWithdrawExpiration(LocalDate.now().plusMonths(1));
 	}
 
+	public void depositProcessing(int cash) {
+		addStatement(new Statement(this, "충전", cash));
+		plusCash(cash);
+		setTimeoutCount(0);
+	}
+
 	public void setPaymentDate(LocalDate localDate) {
 		this.paymentDate = localDate;
 	}

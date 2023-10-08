@@ -84,9 +84,7 @@ public class AdminService {
 					cashRequest.getUserId(), cashRequest.getMsg(), cashRequest.getCash());
 				redisDao.delete(RedisDao.CHARGE_KEY + key);
 
-				user.addStatement(new Statement(user, "충전", cashRequest.getCash()));
-				user.plusCash(cashRequest.getCash());
-				user.setTimeoutCount(0);
+				user.depositProcessing(cashRequest.getCash());
 				return UnifiedResponse.ok("충전 완료");
 			})
 			.orElseThrow(() -> new CustomException(NOT_FOUND));
