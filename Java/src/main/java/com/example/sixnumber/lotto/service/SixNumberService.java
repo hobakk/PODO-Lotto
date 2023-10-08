@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +28,6 @@ import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
-import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
@@ -158,18 +158,18 @@ public class SixNumberService {
 		user.addStatement(statement);
 	}
 
-	private void saveMainLottoList(List<String> list) {
-		Lotto lotto = lottoRepository.findByMain()
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 정보"));
+	private void saveMainLottoList(List<String> topNumbersList) {
+		lottoRepository.findByMain()
+			.ifPresent(lotto -> {
+				List<Integer> countList = lotto.getCountList();
 
-		List<Integer> countList = lotto.getCountList();
-		for (String sentence : list) {
-			String[] numbers = sentence.split(" ");
-
-			for (String numberStr : numbers) {
-				int num = Integer.parseInt(numberStr) - 1;
-				countList.set(num, countList.get(num) + 1);
-			}
-		}
+				topNumbersList.forEach(sentence -> {
+					String[] numbers = sentence.split(" ");
+					Stream.of(numbers).forEach(numberStr -> {
+						int num = Integer.parseInt(numberStr) - 1;
+						countList.set(num, countList.get(num) + 1);
+					});
+				});
+			});
 	}
 }
