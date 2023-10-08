@@ -18,7 +18,7 @@
   <img src="https://img.shields.io/badge/StyledComponents-DB7093?style=for-the-badge&logo=StyledComponents&logoColor=white">
 </div><br/>
 
-<br/><h2>User [Code](https://github.com/hobakk/PODO-Lotto/blob/2538d8bc2e78fd7b280ad8a7c2930f8bc00a3d5e/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L62)</h2>
+<br/><h2>User [Code](https://github.com/hobakk/PODO-Lotto/blob/7bb6b7e0c4b96b4bb8555c98a70eecb8829cff4b/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L61)</h2>
 
 ### 1. 회원가입
 sendAuthCodeToEmail, compareAuthCode, signUp
@@ -52,7 +52,7 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 - 조회: 충전요청 검색
 - 수정: 관리자 등록, 충전, 차감, 상태 수정, 권한 수정
 
-<br/><br/><h2>Lotto [Code](https://github.com/hobakk/PODO-Lotto/blob/c5bcf5711fcb756f716c8e9e9f31ce87da27d81f/Java/src/main/java/com/example/sixnumber/lotto/service/LottoService.java#L21)</h2>
+<br/><br/><h2>Lotto [Code](https://github.com/hobakk/PODO-Lotto/blob/7bb6b7e0c4b96b4bb8555c98a70eecb8829cff4b/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L35)</h2>
 
 Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.tistory.com/131)
 ### 1. 메인 로또 통계
