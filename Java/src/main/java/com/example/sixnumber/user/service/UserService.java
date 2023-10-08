@@ -28,7 +28,6 @@ import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.OverlapException;
-import com.example.sixnumber.global.exception.StatusNotActiveException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
@@ -123,11 +122,9 @@ public class UserService {
 	public UnifiedResponse<?> signIn(HttpServletResponse response, SigninRequest request, Errors errors) {
 		if (errors.hasErrors()) errorsHandler(errors);
 
-		User user = manager.findUser(request.getEmail());
-		if (user.getPassword().equals("Oauth2Login")) throw new CustomException(NOT_OAUTH2_LOGIN);
-
-		List<Status> notActive = Arrays.asList(Status.SUSPENDED, Status.DORMANT);
-		if (notActive.contains(user.getStatus())) throw new StatusNotActiveException();
+		User user = userRepository.findByEmail(request.getEmail())
+			.filter(u -> !u.getPassword().equals("Oauth2Login") || !u.getStatus().equals(Status.ACTIVE))
+			.orElseThrow(() -> new IllegalArgumentException("등록되지 않은 이메일 또는 접속할 수 없는 상태입니다"));
 
 		validatePasswordMatching(request.getPassword(), user.getPassword());
 
