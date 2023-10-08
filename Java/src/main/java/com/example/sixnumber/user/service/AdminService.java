@@ -22,7 +22,6 @@ import com.example.sixnumber.user.dto.AdminGetChargingResponse;
 import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.UserResponse;
-import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -94,8 +93,7 @@ public class AdminService {
 		return userRepository.findById(cashRequest.getUserId())
 			.filter(user -> user.getCash() > cashRequest.getCash())
 			.map(user -> {
-				user.minusCash(cashRequest.getCash());
-				user.addStatement(new Statement(user, "차감", cashRequest.getCash(), "관리자에게 문의하세요"));
+				user.withdrawalProcessing(cashRequest.getCash());
 				return UnifiedResponse.ok("차감 완료");
 			})
 			.orElseThrow(() -> new IllegalArgumentException("해당 유저가 보유한 금액보다 많습니다"));

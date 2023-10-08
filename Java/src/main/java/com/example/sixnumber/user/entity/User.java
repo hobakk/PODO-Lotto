@@ -147,6 +147,11 @@ public class User implements UserDetails {
 		setTimeoutCount(0);
 	}
 
+	public void withdrawalProcessing(int cash) {
+		minusCash(cash);
+		addStatement(new Statement(this, "차감", cash, "관리자에게 문의하세요"));
+	}
+
 	public void setPaymentDate(LocalDate localDate) {
 		this.paymentDate = localDate;
 	}
