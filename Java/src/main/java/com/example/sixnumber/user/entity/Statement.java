@@ -56,10 +56,9 @@ public class Statement {
 
 	private void modification() { this.modify = true; }
 
-	public Statement modifyMsg(String msg) {
+	public void modifyMsg(String msg) {
 		this.msg = msg;
 		modification();
-		return this;
 	}
 
 	// test
