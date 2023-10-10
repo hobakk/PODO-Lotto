@@ -14,15 +14,24 @@ import com.example.sixnumber.user.type.UserRole;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	Boolean existsUserByEmail(String email);
+
 	Boolean existsUserByNickname(String nickname);
+
 	List<User> findAllByRoleAndPaymentDate(UserRole role, LocalDate localDateStr);
+
 	Optional<User> findByEmail(String email);
+
 	Optional<User> findByStatusAndEmail(Status status, String email);
 
 	@Query("SELECT u FROM User u WHERE u.status = :status AND u.withdrawExpiration < CURRENT_DATE ")
 	List<User> findByStatusAndWithdrawExpiration(@Param("status") Status status);
+
 	@Query("SELECT u FROM User u WHERE u.timeoutCount = :num")
 	List<User> findUserByUntreated(@Param("num") int num);
+
 	@Query("SELECT u FROM User u WHERE u.id = :userId AND u.role != :role")
 	Optional<User> findByIdAndRolesNotTheSame(@Param("userId") Long userId, @Param("role") UserRole role);
+
+	@Query("SELECT u FROM User u WHERE u.id = :userId AND u.cash >= :cash")
+	Optional<User> findByIdAndCashGreaterThanEqual(@Param("userId") Long userId, @Param("cash") int cash);
 }

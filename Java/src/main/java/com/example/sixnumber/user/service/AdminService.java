@@ -90,13 +90,15 @@ public class AdminService {
 	}
 
 	public UnifiedResponse<?> downCash(CashRequest cashRequest) {
-		return userRepository.findById(cashRequest.getUserId())
-			.filter(user -> user.getCash() > cashRequest.getCash())
+		return userRepository.findByIdAndCashGreaterThanEqual(cashRequest.getUserId(), cashRequest.getCash())
 			.map(user -> {
 				user.withdrawalProcessing(cashRequest.getCash());
 				return UnifiedResponse.ok("차감 완료");
 			})
-			.orElseThrow(() -> new IllegalArgumentException("해당 유저가 보유한 금액보다 많습니다"));
+			.orElseThrow(() -> {
+				String msg = "존재하지 않는 유저 또는 보유 금액보다 적은 유저입니다";
+				throw  new IllegalArgumentException(msg);
+			});
 	}
 
 	public UnifiedResponse<?> createLotto(String email) {
