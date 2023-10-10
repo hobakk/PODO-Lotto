@@ -151,7 +151,7 @@ public class AdminService {
 	private User getTargetForConfirmation(User user, Long targetId) {
 		if (user.getId().equals(targetId)) throw new IllegalArgumentException("본인 입니다");
 
-		return userRepository.findByIdAndRolesNotTheSame(targetId, UserRole.ROLE_ADMIN)
+		return userRepository.findByIdAndRoleNot(targetId, UserRole.ROLE_ADMIN)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 관리자 계정입니다."));
 	}
 }
