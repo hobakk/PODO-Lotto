@@ -23,4 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	List<User> findByStatusAndWithdrawExpiration(@Param("status") Status status);
 	@Query("SELECT u FROM User u WHERE u.timeoutCount = :num")
 	List<User> findUserByUntreated(@Param("num") int num);
+	@Query("SELECT u FROM User u WHERE u.id = :userId AND u.role != :role")
+	Optional<User> findByIdAndRolesNotTheSame(@Param("userId") Long userId, @Param("role") UserRole role);
 }
