@@ -45,7 +45,7 @@ public class AdminService {
 	public UnifiedResponse<?> setAdmin(OnlyMsgRequest request, User user, Long userId) {
 		if (!request.getMsg().equals(KEY)) throw new IllegalArgumentException("설정된 Key 값이 아닙니다");
 
-		User target = confirmationProcess(user, userId);
+		User target = getTargetForConfirmation(user, userId);
 		target.setAdmin();
 		return UnifiedResponse.ok("변경 완료");
 	}
@@ -111,7 +111,7 @@ public class AdminService {
 	}
 
 	public UnifiedResponse<?> setStatus(User user, Long targetId, OnlyMsgRequest request) {
-		User target = confirmationProcess(user, targetId);
+		User target = getTargetForConfirmation(user, targetId);
 		Status changeToStatus;
 		switch (request.getMsg()) {
 			case "ACTIVE": changeToStatus = Status.ACTIVE; break;
@@ -132,7 +132,7 @@ public class AdminService {
 	}
 
 	public UnifiedResponse<?> setRole(User user, Long targetId, OnlyMsgRequest request) {
-		User target = confirmationProcess(user, targetId);
+		User target = getTargetForConfirmation(user, targetId);
 		UserRole changeRole;
 		switch (request.getMsg()) {
 			case "USER": changeRole = UserRole.ROLE_USER; break;
@@ -146,12 +146,11 @@ public class AdminService {
 		return UnifiedResponse.ok("권한 변경 완료");
 	}
 
-	private User confirmationProcess(User user, Long targetId) {
+	private User getTargetForConfirmation(User user, Long targetId) {
 		if (user.getId().equals(targetId)) throw new IllegalArgumentException("본인 입니다");
 
-		User target = manager.findUser(targetId);
-		if (target.getRole().equals(UserRole.ROLE_ADMIN)) throw new IllegalArgumentException("운영자 계정입니다");
-
-		return target;
+		return userRepository.findById(targetId)
+			.filter(u -> !u.getRole().equals(UserRole.ROLE_ADMIN))
+			.orElseThrow(() -> new IllegalArgumentException("운영자 계정입니다"));
 	}
 }
