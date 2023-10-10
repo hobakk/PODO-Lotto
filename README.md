@@ -1,6 +1,6 @@
 <h1 align=center><img src=React/public/logo.png width=33 height=33 /> PODO Lotto </h1><br/>
 <div align=center>
-  <img width="500cm" src="https://github.com/hobakk/PODO-Lotto/assets/117063625/21408a18-2585-4ddd-9b2a-7f42154c20f0" />
+  <img width="600cm" src="https://github.com/hobakk/PODO-Lotto/assets/117063625/21408a18-2585-4ddd-9b2a-7f42154c20f0" />
 </div><br/>
 
 <h2>사용기술</h2>
@@ -43,7 +43,7 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 - 조회: 닉네임과 캐쉬, 충전요청, 거래명세, 회원 정보, 비밀번호 재확인, 최근 구매한 번호 리스트
 - 수정: 회원정보, 비밀번호 찾기
 
-<br/><br/><h2>Admin [Code](https://github.com/hobakk/PODO-Lotto/blob/2538d8bc2e78fd7b280ad8a7c2930f8bc00a3d5e/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L36)</h2>
+<br/><br/><h2>Admin [Code](https://github.com/hobakk/PODO-Lotto/blob/4c2a92a3742c99577594cc0d03a644b1346b0a8e/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L35)</h2>
 
 ### 1. 모든 유저 조회, 모든 충전요청 조회
 - FE: 조회된 정보들을 Nickname, cash 값으로 필터링
