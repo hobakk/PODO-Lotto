@@ -25,7 +25,7 @@ public class LottoService {
 
 	@Cacheable(cacheNames = "MainStats", key = "'all'")
 	public LottoResponse mainTopNumbers() {
-		return lottoRepository.findByMain()
+		return lottoRepository.findBySubjectContains("main")
 			.map(lotto -> {
 				String result = manager.revisedTopIndicesAsStr(lotto.getCountList());
 				return new LottoResponse(lotto.getCountList(), result);
