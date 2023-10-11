@@ -18,7 +18,7 @@
   <img src="https://img.shields.io/badge/StyledComponents-DB7093?style=for-the-badge&logo=StyledComponents&logoColor=white">
 </div><br/>
 
-<br/><h2>User [Code](https://github.com/hobakk/PODO-Lotto/blob/7bb6b7e0c4b96b4bb8555c98a70eecb8829cff4b/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L61)</h2>
+<br/><h2>User [Code](https://github.com/hobakk/PODO-Lotto/blob/a958ee2029dbf5c64d5147f687122d583293c35b/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L61)</h2>
 
 ### 1. 회원가입
 sendAuthCodeToEmail, compareAuthCode, signUp
@@ -43,7 +43,7 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 - 조회: 닉네임과 캐쉬, 충전요청, 거래명세, 회원 정보, 비밀번호 재확인, 최근 구매한 번호 리스트
 - 수정: 회원정보, 비밀번호 찾기
 
-<br/><br/><h2>Admin [Code](https://github.com/hobakk/PODO-Lotto/blob/fabb7daa486d77944e9f3d087b22cd145669ad6b/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L35)</h2>
+<br/><br/><h2>Admin [Code](https://github.com/hobakk/PODO-Lotto/blob/a958ee2029dbf5c64d5147f687122d583293c35b/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L35)</h2>
 
 ### 1. 모든 유저 조회, 모든 충전요청 조회
 - FE: 조회된 정보들을 Nickname, cash 값으로 필터링
