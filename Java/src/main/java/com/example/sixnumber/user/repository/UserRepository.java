@@ -35,6 +35,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findByIdAndRoleAndCancelPaidFalseOrCancelPaidIsNull(Long userId, UserRole role);
 
+	Optional<User> findByEmailAndPasswordNotContainingAndStatus(String email, String password, Status status);
+
 	@Query("SELECT u FROM User u WHERE u.status = :status AND u.withdrawExpiration < CURRENT_DATE ")
 	List<User> findByStatusAndWithdrawExpiration(@Param("status") Status status);
 
