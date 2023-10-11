@@ -174,8 +174,7 @@ public class UserService {
 	}
 
 	public UnifiedResponse<?> changeToUser(Long userId) {
-		return userRepository.findById(userId)
-			.filter(user -> user.getRole() != UserRole.ROLE_USER && !user.getCancelPaid())
+		return userRepository.findByIdAndRoleAndCancelPaidFalseOrCancelPaidIsNull(userId, UserRole.ROLE_PAID)
 			.map(user -> {
 				user.setCancelPaid(true);
 				return UnifiedResponse.ok("해지 신청 성공");
