@@ -286,8 +286,7 @@ public class UserService {
 	}
 
 	public UnifiedResponse<List<SixNumberResponse>> getBuySixNumberList(Long userId) {
-		return userRepository.findById(userId)
-			.filter(user -> user.getSixNumberList().size() > 0)
+		return userRepository.findByIdAndSixNumberListNotNull(userId)
 			.map(user -> {
 				List<SixNumber> sixNumberList = user.getSixNumberList();
 				if (sixNumberList.size() >= 12)
