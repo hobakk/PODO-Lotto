@@ -86,8 +86,7 @@ public class GlobalScheduler {
 
 	@Scheduled(cron = "0 0 6,18 * * *")
 	public void	autoSetSuspended() {
-		userRepository.findUserByUntreated(4).stream()
-			.filter(user -> !user.getRole().equals(UserRole.ROLE_ADMIN))
+		userRepository.findUserByUntreatedAndRoleNot(4, UserRole.ROLE_ADMIN)
 			.forEach(user -> {
 				user.setStatus(Status.SUSPENDED);
 				String Key = "RT: " + user.getId();
