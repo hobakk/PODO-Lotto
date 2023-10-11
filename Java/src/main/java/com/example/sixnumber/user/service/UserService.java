@@ -262,8 +262,7 @@ public class UserService {
 
 	// Statement 정보 보유기간 및 반환값에 대해 더 고민해야함
 	public UnifiedResponse<List<StatementResponse>> getStatement(Long userId) {
-		return userRepository.findById(userId)
-			.filter(user -> user.getStatementList().size() > 0)
+		return userRepository.findByIdAndStatementListNotNull(userId)
 			.map(user -> {
 				List<StatementResponse> response = user.getStatementList().stream()
 					.filter(res -> res.getLocalDate().isAfter(LocalDate.now().minusMonths(1)))
