@@ -180,7 +180,7 @@ public class UserController {
 	public ResponseEntity<UnifiedResponse<List<SixNumberResponse>>> getBuySixNumberList(
 		@AuthenticationPrincipal User user
 	) {
-		return ResponseEntity.ok(userService.getBuySixNumberList(user.getId()));
+		return ResponseEntity.ok(userService.getSixNumberList(user.getId()));
 	}
 
 	@GetMapping("/oauth2/my-information")

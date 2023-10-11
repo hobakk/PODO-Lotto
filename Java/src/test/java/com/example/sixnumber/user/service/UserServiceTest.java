@@ -580,7 +580,7 @@ public class UserServiceTest {
 
 		when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
-		UnifiedResponse<List<SixNumberResponse>> response = userService.getBuySixNumberList(anyLong());
+		UnifiedResponse<List<SixNumberResponse>> response = userService.getSixNumberList(anyLong());
 
 		verify(userRepository).findById(anyLong());
 		TestUtil.UnifiedResponseListEquals(response, 200, "조회 성공");
@@ -593,7 +593,7 @@ public class UserServiceTest {
 
 		when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
-		Assertions.assertThrows(CustomException.class, () -> userService.getBuySixNumberList(anyLong()));
+		Assertions.assertThrows(CustomException.class, () -> userService.getSixNumberList(anyLong()));
 
 		verify(userRepository).findById(anyLong());
 	}

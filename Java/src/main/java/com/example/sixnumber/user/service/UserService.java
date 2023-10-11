@@ -285,7 +285,7 @@ public class UserService {
 			.orElseThrow(() -> new CustomException(NOT_FOUND));
 	}
 
-	public UnifiedResponse<List<SixNumberResponse>> getBuySixNumberList(Long userId) {
+	public UnifiedResponse<List<SixNumberResponse>> getSixNumberList(Long userId) {
 		return userRepository.findByIdAndSixNumberListNotNull(userId)
 			.map(user -> {
 				List<SixNumber> sixNumberList = user.getSixNumberList();

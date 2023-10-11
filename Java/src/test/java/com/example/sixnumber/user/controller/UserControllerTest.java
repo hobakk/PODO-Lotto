@@ -317,7 +317,7 @@ class UserControllerTest {
 	public void getBuySixNumberList() throws Exception {
 		List<SixNumberResponse> response = List.of(new SixNumberResponse("date", List.of("1 2 3 4 5")));
 
-		when(userService.getBuySixNumberList(anyLong())).thenReturn(UnifiedResponse.ok("조회 성공", response));
+		when(userService.getSixNumberList(anyLong())).thenReturn(UnifiedResponse.ok("조회 성공", response));
 
 		mockMvc.perform(get("/api/users/sixnumber-list").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
@@ -325,7 +325,7 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.msg").value("조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
-		verify(userService).getBuySixNumberList(anyLong());
+		verify(userService).getSixNumberList(anyLong());
 	}
 
 	@Test
