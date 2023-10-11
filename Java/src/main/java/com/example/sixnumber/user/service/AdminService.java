@@ -102,7 +102,7 @@ public class AdminService {
 	}
 
 	public UnifiedResponse<?> createLotto(String email) {
-		return lottoRepository.findBySubjectContains("main")
+		return lottoRepository.findByMain()
 			.map(main -> UnifiedResponse.badRequest("메인 로또가 이미 생성되어 있습니다"))
 			.orElseGet(() -> {
 				List<Integer> countList = new ArrayList<>(Collections.nCopies(45, 1));

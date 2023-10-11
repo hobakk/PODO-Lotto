@@ -12,7 +12,8 @@ import com.example.sixnumber.lotto.entity.Lotto;
 
 public interface LottoRepository extends JpaRepository<Lotto, Long> {
 
-	Optional<Lotto> findBySubjectContains(String subject);
+	@Query(value = "SELECT l FROM Lotto l WHERE l.subject = 'main'")
+	Optional<Lotto> findByMain();
 
 	@Query(value = "SELECT l FROM Lotto l WHERE l.creationDate = :yearMonth")
 	Optional<Lotto> findByTopNumbersForMonth(@Param("yearMonth") YearMonth yearMonth);
