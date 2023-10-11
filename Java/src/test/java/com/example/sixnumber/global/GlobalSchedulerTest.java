@@ -115,12 +115,13 @@ public class GlobalSchedulerTest {
 	@Test
 	void autoSetSuspended() {
 		saveUser.setTimeoutCount(4);
-		when(userRepository.findUserByUntreated(4)).thenReturn(List.of(saveUser));
+
+		when(userRepository.findUserByUntreatedAndRoleNot(anyInt(), any(UserRole.class))).thenReturn(List.of(saveUser));
 		when(redisTemplate.opsForValue()).thenReturn(valueOperations);
 
 		globalScheduler.autoSetSuspended();
 
-		verify(userRepository).findUserByUntreated(4);
+		verify(userRepository).findUserByUntreatedAndRoleNot(anyInt(), any(UserRole.class));
 		verify(valueOperations).get(anyString());
 		assertEquals(saveUser.getStatus(), Status.SUSPENDED);
 	}
