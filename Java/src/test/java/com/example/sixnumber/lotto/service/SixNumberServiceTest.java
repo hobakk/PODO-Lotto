@@ -77,6 +77,8 @@ public class SixNumberServiceTest {
 
 	@Test
 	void buyNumber_fail_lowCash() {
+		saveUser.minusCash(5000);
+
 		BuyNumberRequest request = mock(BuyNumberRequest.class);
 		when(request.getValue()).thenReturn(50);
 
