@@ -12,9 +12,12 @@ function CreateMainLotto() {
             alert(res.msg);
             navigate("/");
         },
-        onError: (err: any)=>{
+        onError: (err: any | Err)=>{
             if (err.status) {
                 alert(err.message);
+                navigate("/");
+            } else {
+                alert(err.msg);
                 navigate("/");
             }
         }
