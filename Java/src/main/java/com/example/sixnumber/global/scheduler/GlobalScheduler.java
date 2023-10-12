@@ -61,18 +61,13 @@ public class GlobalScheduler {
 
 	@Scheduled(cron = "0 0 9 * * *")
 	public void paymentAndCancellation() {
-		LocalDate now = LocalDate.now();
-
-		userRepository.findAllByRoleAndPaymentDate(UserRole.ROLE_PAID, now)
+		userRepository.findAllByRoleAndPaymentDate(UserRole.ROLE_PAID, LocalDate.now())
 			.forEach(user -> {
 				Boolean cancelPaid = user.getCancelPaid();
 				int cash = user.getCash();
 
-				if (cash >= 5000 && !cancelPaid || cancelPaid == null) {
-					user.minusCash(5000);
-					user.setPaymentDate(now.plusDays(31));
-					user.addStatement(new Statement(user, "프리미엄 정기결제", 5000));
-				} else user.changeToROLE_USER();
+				if (cash >= 5000 && !cancelPaid || cancelPaid == null) user.monthlyPayment();
+				else user.changeToROLE_USER();
 			});
 	}
 
