@@ -222,7 +222,8 @@ public class UserServiceTest {
 		when(errors.hasErrors()).thenReturn(false);
 		saveUser.setRefreshPointer(null);
 
-		when(manager.findUser(anyString())).thenReturn(saveUser);
+		when(userRepository.findByEmailAndPasswordNotContainingAndStatus(anyString(), anyString(), any(Status.class)))
+			.thenReturn(Optional.of(saveUser));
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
@@ -234,7 +235,7 @@ public class UserServiceTest {
 
 		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest, errors);
 
-		verify(manager).findUser(anyString());
+		verify(userRepository).findByEmailAndPasswordNotContainingAndStatus(anyString(), anyString(), any(Status.class));
 		verify(passwordEncoder).matches(anyString(), anyString());
 		verify(jwtProvider).generateTokens(any(User.class));
 		verify(redisDao).setValues(anyString(), anyString(), anyLong(), any(TimeUnit.class));
@@ -252,46 +253,11 @@ public class UserServiceTest {
 		Errors errors = mock(Errors.class);
 		when(errors.hasErrors()).thenReturn(false);
 
-		when(manager.findUser(anyString())).thenThrow(new CustomException(USER_NOT_FOUND));
+		when(userRepository.findByEmailAndPasswordNotContainingAndStatus(anyString(), anyString(), any(Status.class)))
+			.thenReturn(Optional.empty());
 
-		Assertions.assertThrows(CustomException.class,
+		Assertions.assertThrows(IllegalArgumentException.class,
 			() -> userService.signIn(httpServletResponse, signinRequest, errors));
-
-		verify(manager).findUser(anyString());
-	}
-
-	@Test
-	void signin_fail_oauth2Login() {
-		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
-		SigninRequest signinRequest = TestDataFactory.signinRequest();
-		Errors errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(false);
-		User user = mock(User.class);
-		when(user.getPassword()).thenReturn("Oauth2Login");
-
-		when(manager.findUser(anyString())).thenReturn(user);
-
-		Assertions.assertThrows(CustomException.class,
-			() -> userService.signIn(httpServletResponse, signinRequest, errors));
-
-		verify(manager).findUser(anyString());
-	}
-
-	@ParameterizedTest
-	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#statusTestData")
-	void signin_fail_notActive(Status status) {
-		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
-		SigninRequest signinRequest = TestDataFactory.signinRequest();
-		Errors errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(false);
-		saveUser.setStatus(status);
-
-		when(manager.findUser(anyString())).thenReturn(saveUser);
-
-		Assertions.assertThrows(StatusNotActiveException.class,
-			() -> userService.signIn(httpServletResponse, signinRequest, errors));
-
-		verify(manager).findUser(anyString());
 	}
 
 	@Test
@@ -301,14 +267,15 @@ public class UserServiceTest {
 		Errors errors = mock(Errors.class);
 		when(errors.hasErrors()).thenReturn(false);
 
-		when(manager.findUser(anyString())).thenReturn(saveUser);
+		when(userRepository.findByEmailAndPasswordNotContainingAndStatus(anyString(), anyString(), any(Status.class)))
+			.thenReturn(Optional.of(saveUser));
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
 		Assertions.assertThrows(IllegalArgumentException.class,
 			() -> userService.signIn(httpServletResponse, signinRequest, errors));
 
-		verify(manager).findUser(anyString());
+		verify(userRepository).findByEmailAndPasswordNotContainingAndStatus(anyString(), anyString(), any(Status.class));
 		verify(passwordEncoder).matches(anyString(), anyString());
 	}
 
@@ -319,13 +286,14 @@ public class UserServiceTest {
 		Errors errors = mock(Errors.class);
 		when(errors.hasErrors()).thenReturn(false);
 
-		when(manager.findUser(anyString())).thenReturn(saveUser);
+		when(userRepository.findByEmailAndPasswordNotContainingAndStatus(anyString(), anyString(), any(Status.class)))
+			.thenReturn(Optional.of(saveUser));
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
 		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest, errors);
 
-		verify(manager).findUser(anyString());
+		verify(userRepository).findByEmailAndPasswordNotContainingAndStatus(anyString(), anyString(), any(Status.class));
 		verify(passwordEncoder).matches(anyString(), anyString());
 		verify(redisDao).delete(anyString());
 		TestUtil.UnifiedResponseEquals(response, 400, "중복 로그인입니다");
@@ -378,31 +346,32 @@ public class UserServiceTest {
 		saveUser.setRole(UserRole.ROLE_PAID);
 		saveUser.setCancelPaid(false);
 
-		when(userRepository.findById(saveUser.getId())).thenReturn(Optional.of(saveUser));
+		when(userRepository.findByIdAndRoleAndCancelPaidFalseOrCancelPaidIsNull(anyLong(), any(UserRole.class)))
+			.thenReturn(Optional.of(saveUser));
 
 		UnifiedResponse<?> response = userService.changeToUser(saveUser.getId());
 
-		verify(userRepository).findById(anyLong());
+		verify(userRepository).findByIdAndRoleAndCancelPaidFalseOrCancelPaidIsNull(anyLong(), any(UserRole.class));
 		assertEquals(saveUser.getCancelPaid(), true);
 		TestUtil.UnifiedResponseEquals(response, 200, "해지 신청 성공");
 	}
 
-	@ParameterizedTest
-	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#changeToUser")
-	void changeToUser_fail(UserRole role, boolean TF) {
-		saveUser.setRole(role);
-		saveUser.setCancelPaid(TF);
+	@Test
+	void changeToUser_fail() {
+		when(userRepository.findByIdAndRoleAndCancelPaidFalseOrCancelPaidIsNull(anyLong(), any(UserRole.class)))
+			.thenReturn(Optional.empty());
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.changeToUser(saveUser.getId()));
 	}
 
 	@Test
 	void changeToPaid_success() {
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(userRepository.findByIdAndCashGreaterThanEqualAndRoleNot(anyLong(), anyInt(), any(UserRole.class)))
+			.thenReturn(Optional.of(saveUser));
 
 		UnifiedResponse<?> response = userService.changeToPaid(saveUser.getId());
 
-		verify(userRepository).findById(anyLong());
+		verify(userRepository).findByIdAndCashGreaterThanEqualAndRoleNot(anyLong(), anyInt(), any(UserRole.class));
 		assertEquals(saveUser.getCash(), 1000);
 		assertEquals(saveUser.getRole(), UserRole.ROLE_PAID);
 		assertNotNull(saveUser.getPaymentDate());
@@ -410,20 +379,14 @@ public class UserServiceTest {
 		TestUtil.UnifiedResponseEquals(response, 200, "권한 변경 성공");
 	}
 
-	@ParameterizedTest
-	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#setPaidTestData")
-	void changeToPaid_fail_lowCash_Or_Role(int cash, UserRole role) {
-		User user = mock(User.class);
-		when(user.getId()).thenReturn((long) 7);
-		when(user.getCash()).thenReturn(cash);
-		lenient().when(user.getRole()).thenReturn(role);
-
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+	@Test
+	void changeToPaid_fail() {
+		when(userRepository.findByIdAndCashGreaterThanEqualAndRoleNot(anyLong(), anyInt(), any(UserRole.class)))
+			.thenReturn(Optional.empty());
 
 		Assertions.assertThrows(IllegalArgumentException.class,
-			() -> userService.changeToPaid(user.getId()));
+			() -> userService.changeToPaid(saveUser.getId()));
 
-		verify(userRepository).findById(anyLong());
 	}
 
 	@Test
@@ -528,22 +491,20 @@ public class UserServiceTest {
 	void getStatement_success() {
 		saveUser.addStatement(TestDataFactory.statement());
 
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(userRepository.findByIdAndStatementListNotNull(anyLong())).thenReturn(Optional.of(saveUser));
 
 		UnifiedResponse<List<StatementResponse>> response = userService.getStatement(saveUser.getId());
 
-		verify(userRepository).findById(anyLong());
+		verify(userRepository).findByIdAndStatementListNotNull(anyLong());
 		assertEquals(response.getData().size(), 1);
 		TestUtil.UnifiedResponseListEquals(response, 200, "거래내역 조회 완료");
 	}
 
 	@Test
 	void getStatement_fail_notFound() {
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(userRepository.findByIdAndStatementListNotNull(anyLong())).thenReturn(Optional.empty());
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> userService.getStatement(saveUser.getId()));
-
-		verify(userRepository).findById(anyLong());
 	}
 
 	@Test
@@ -569,33 +530,26 @@ public class UserServiceTest {
 			.thenReturn(Optional.empty());
 
 		Assertions.assertThrows(CustomException.class, () -> userService.modifyStatementMsg(request));
-
-		verify(statementRepository).findByIdAndAfterLastMonth(anyLong(), any(LocalDate.class));
 	}
 
 	@Test
-	void getBuySixNumberList_success() {
+	void getSixNumberList_success() {
 		User user = mock(User.class);
 		when(user.getSixNumberList()).thenReturn(List.of(TestDataFactory.sixNumber()));
 
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+		when(userRepository.findByIdAndSixNumberListNotNull(anyLong())).thenReturn(Optional.of(user));
 
 		UnifiedResponse<List<SixNumberResponse>> response = userService.getSixNumberList(anyLong());
 
-		verify(userRepository).findById(anyLong());
+		verify(userRepository).findByIdAndSixNumberListNotNull(anyLong());
 		TestUtil.UnifiedResponseListEquals(response, 200, "조회 성공");
 	}
 
 	@Test
-	void getBuySixNumberList_fail_isEmpty() {
-		User user = mock(User.class);
-		when(user.getSixNumberList()).thenReturn(new ArrayList<>());
-
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+	void getSixNumberList_fail_isEmpty() {
+		when(userRepository.findByIdAndSixNumberListNotNull(anyLong())).thenReturn(Optional.empty());
 
 		Assertions.assertThrows(CustomException.class, () -> userService.getSixNumberList(anyLong()));
-
-		verify(userRepository).findById(anyLong());
 	}
 
 	@Test
