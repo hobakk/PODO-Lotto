@@ -39,7 +39,6 @@ public class JwtProvider {
 
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 	public static final String BEARER_PREFIX = "Bearer";
-	public static final String REFRESH_TOKEN = "refreshToken";
 	public static final String ACCESS_TOKEN = "accessToken";
 	public static final String ONE_WEEK = "oneWeek";
 
@@ -95,22 +94,6 @@ public class JwtProvider {
 		try {
 			Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
 			return true;
-		} catch (SecurityException | MalformedJwtException e) {
-			log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
-		} catch (UnsupportedJwtException e) {
-			log.info("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-		} catch (IllegalArgumentException e) {
-			log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
-		}
-		return false;
-	}
-
-	public Boolean validateRefreshToken(String token) {
-		try {
-			Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
-			return getRemainingTime(token) > 5 * 60 * 1000;
-		} catch (ExpiredJwtException e) {
-			log.info("RefreshToken Expired, 만료된 RefreshToken 입니다");
 		} catch (SecurityException | MalformedJwtException e) {
 			log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
 		} catch (UnsupportedJwtException e) {
