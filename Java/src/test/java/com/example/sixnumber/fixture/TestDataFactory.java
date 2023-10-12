@@ -21,7 +21,6 @@ import com.example.sixnumber.user.dto.CashRequest;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.EmailRequest;
 import com.example.sixnumber.user.dto.FindPasswordRequest;
-import com.example.sixnumber.user.dto.OnlyMsgRequest;
 import com.example.sixnumber.user.dto.SigninRequest;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementModifyMsgRequest;
@@ -123,10 +122,6 @@ public class TestDataFactory {
 
 	public static EmailRequest emailRequest() { return new EmailRequest("test@gmail.com"); }
 
-	public static OnlyMsgRequest onlyMsgRequest(String msg) {
-		return new OnlyMsgRequest(msg);
-	}
-
 	public static WinNumber winNumber() {
 		return  new WinNumber(winNumberRequest());
 	}
@@ -152,27 +147,6 @@ public class TestDataFactory {
 
 	public static TokenDto tokenRequest() {
 		return new TokenDto("accessT", "refreshT", "refreshTPointer");
-	}
-
-	public static Stream<Arguments> statusTestData() {
-		return Stream.of(
-			Arguments.of(Status.SUSPENDED),
-			Arguments.of(Status.DORMANT)
-		);
-	}
-
-	public static Stream<Arguments> changeToUser() {
-		return Stream.of(
-			Arguments.of(UserRole.ROLE_USER, true),
-			Arguments.of(UserRole.ROLE_PAID, false)
-		);
-	}
-
-	public static Stream<Arguments> setPaidTestData() {
-		return Stream.of(
-			Arguments.of( 1000, UserRole.ROLE_USER),
-			Arguments.of( 6000, UserRole.ROLE_PAID)
-		);
 	}
 
 	public static Stream<Arguments> statisticalNumber() {
