@@ -39,9 +39,7 @@ public class AdminService {
 	private final UserRepository userRepository;
 	private final LottoRepository lottoRepository;
 	private final RedisDao redisDao;
-	private final Manager manager;
 
-	// 보안관련 더 생각해봐야함
 	public UnifiedResponse<?> setAdmin(OnlyMsgRequest request, User user, Long userId) {
 		if (!request.getMsg().equals(KEY)) throw new IllegalArgumentException("설정된 Key 값이 아닙니다");
 
@@ -97,7 +95,7 @@ public class AdminService {
 			})
 			.orElseThrow(() -> {
 				String msg = "존재하지 않는 유저 또는 보유 금액보다 적은 유저입니다";
-				throw  new IllegalArgumentException(msg);
+				return new IllegalArgumentException(msg);
 			});
 	}
 
