@@ -181,7 +181,7 @@ public class UserService {
 			})
 			.orElseThrow(() -> {
 				String msg = "월정액 사용자가 아니거나, 프리미엄 해제 신청을 이미한 계정입니다";
-				throw new IllegalArgumentException(msg);
+				return new IllegalArgumentException(msg);
 			});
 	}
 
@@ -205,7 +205,7 @@ public class UserService {
 			user.getId(), chargingRequest.getMsg(), chargingRequest.getCash());
 
 		Set<String> keyList = redisDao.getKeysList(RedisDao.CHARGE_KEY + key);
-		if (keyList.size() > 0) throw new OverlapException("다른 문자로 재시도 해주세요");
+		if (keyList.isEmpty()) throw new OverlapException("다른 문자로 재시도 해주세요");
 
 		String chargeInfo = key + "-" + dateFormatter(LocalDateTime.now().plusHours(1));
 		redisDao.setValues(RedisDao.CHARGE_KEY + key, chargeInfo, (long) 1, TimeUnit.HOURS);
@@ -235,7 +235,7 @@ public class UserService {
 	// 무슨 경우에서도 프론트로 password 를 보내지 않음
 	public UnifiedResponse<?> update(SignupRequest request, User user) {
 		String password = request.getPassword();
-		if (password.equals("")) password = user.getPassword();
+		if (password.isEmpty()) password = user.getPassword();
 
 		List<String> userIf = Arrays.asList(user.getEmail(), user.getPassword(), user.getNickname());
 		List<String> inputData = Arrays.asList(request.getEmail(), password, request.getNickname());
