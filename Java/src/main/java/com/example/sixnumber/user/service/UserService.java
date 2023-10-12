@@ -205,7 +205,7 @@ public class UserService {
 			user.getId(), chargingRequest.getMsg(), chargingRequest.getCash());
 
 		Set<String> keyList = redisDao.getKeysList(RedisDao.CHARGE_KEY + key);
-		if (keyList.isEmpty()) throw new OverlapException("다른 문자로 재시도 해주세요");
+		if (!keyList.isEmpty()) throw new OverlapException("다른 문자로 재시도 해주세요");
 
 		String chargeInfo = key + "-" + dateFormatter(LocalDateTime.now().plusHours(1));
 		redisDao.setValues(RedisDao.CHARGE_KEY + key, chargeInfo, (long) 1, TimeUnit.HOURS);
@@ -311,6 +311,7 @@ public class UserService {
 
 	public UserResponseAndEncodedRefreshDto oauth2LoginAfterGetUserIfAndRefreshToken(Long userId) {
 		User user = manager.findUser(userId);
+
 		return redisDao.getValue(RedisDao.RT_KEY + user.getRefreshPointer())
 			.map(value -> {
 				String encodedRefreshToken = passwordEncoder.encode(value);

@@ -112,6 +112,7 @@ public class AdminService {
 
 	public UnifiedResponse<?> setStatus(User user, Long targetId, OnlyMsgRequest request) {
 		User target = getTargetForConfirmation(user, targetId);
+
 		Status changeToStatus;
 		switch (request.getMsg()) {
 			case "ACTIVE": changeToStatus = Status.ACTIVE; break;
@@ -133,6 +134,7 @@ public class AdminService {
 
 	public UnifiedResponse<?> setRole(User user, Long targetId, OnlyMsgRequest request) {
 		User target = getTargetForConfirmation(user, targetId);
+
 		UserRole changeRole;
 		switch (request.getMsg()) {
 			case "USER": changeRole = UserRole.ROLE_USER; break;
