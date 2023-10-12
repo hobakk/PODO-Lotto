@@ -49,7 +49,7 @@ public class RedisDao {
 
 	public List<String> multiGet(String key) {
 		Set<String> keys = getKeysList(key);
-		if (keys.size() == 0) throw new CustomException(ErrorCode.NOT_FOUND);
+		if (keys.isEmpty()) throw new CustomException(ErrorCode.NOT_FOUND);
 
 		return values.multiGet(keys);
 	}
