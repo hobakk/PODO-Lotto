@@ -47,8 +47,6 @@ public class AdminServiceTest {
 	private LottoRepository lottoRepository;
 	@Mock
 	private RedisDao redisDao;
-	@Mock
-	private Manager manager;
 
 	private User saveUser;
 	private User admin;
@@ -64,11 +62,11 @@ public class AdminServiceTest {
 		ReflectionTestUtils.setField(adminService, "KEY", "AdminSecurityKey");
 		OnlyMsgRequest request = new OnlyMsgRequest("AdminSecurityKey");
 
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
+		when(userRepository.findByIdAndRoleNot(anyLong(), any(UserRole.class))).thenReturn(Optional.of(saveUser));
 
 		UnifiedResponse<?> response = adminService.setAdmin(request, admin, saveUser.getId());
 
-		verify(manager).findUser(anyLong());
+		verify(userRepository).findByIdAndRoleNot(anyLong(), any(UserRole.class));
 		assertEquals(saveUser.getRole(), UserRole.ROLE_ADMIN);
 		TestUtil.UnifiedResponseEquals(response, 200, "변경 완료");
 	}
@@ -139,11 +137,12 @@ public class AdminServiceTest {
 	void downCash_success() {
 		CashRequest request = TestDataFactory.cashRequest();
 
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(userRepository.findByIdAndCashGreaterThanEqual(anyLong(), anyInt()))
+			.thenReturn(Optional.of(saveUser));
 
 		UnifiedResponse<?> response = adminService.downCash(request);
 
-		verify(userRepository).findById(anyLong());
+		verify(userRepository).findByIdAndCashGreaterThanEqual(anyLong(), anyInt());
 		assertEquals(saveUser.getCash(), 1000);
 		assertNotNull(saveUser.getStatementList().get(0));
 		TestUtil.UnifiedResponseEquals(response, 200, "차감 완료");
@@ -152,13 +151,13 @@ public class AdminServiceTest {
 	@Test
 	void downCash_fail_manyValue() {
 		CashRequest request = mock(CashRequest.class);
-		when(request.getCash()).thenReturn(10000);
 
-		when(userRepository.findById(anyLong())).thenReturn(Optional.of(saveUser));
+		when(userRepository.findByIdAndCashGreaterThanEqual(anyLong(), anyInt()))
+			.thenReturn(Optional.empty());
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.downCash(request));
 
-		verify(userRepository).findById(anyLong());
+		verify(userRepository).findByIdAndCashGreaterThanEqual(anyLong(), anyInt());
 	}
 
 	@Test
@@ -190,11 +189,11 @@ public class AdminServiceTest {
 
 		saveUser.setStatus(Status.SUSPENDED);
 
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
+		when(userRepository.findByIdAndRoleNot(anyLong(), any(UserRole.class))).thenReturn(Optional.of(saveUser));
 
 		UnifiedResponse<?> response = adminService.setStatus(admin, saveUser.getId(), request);
 
-		verify(manager).findUser(anyLong());
+		verify(userRepository).findByIdAndRoleNot(anyLong(), any(UserRole.class));
 		assertEquals(saveUser.getStatus(), Status.ACTIVE);
 		TestUtil.UnifiedResponseEquals(response, 200, "상태 변경 완료");
 	}
@@ -204,11 +203,11 @@ public class AdminServiceTest {
 	void setStatus_success_suspended_or_dormant(String statusStr) {
 		OnlyMsgRequest request = new OnlyMsgRequest(statusStr);
 
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
+		when(userRepository.findByIdAndRoleNot(anyLong(), any(UserRole.class))).thenReturn(Optional.of(saveUser));
 
 		UnifiedResponse<?> response = adminService.setStatus(admin, saveUser.getId(), request);
 
-		verify(manager).findUser(anyLong());
+		verify(userRepository).findByIdAndRoleNot(anyLong(), any(UserRole.class));
 		verify(redisDao).delete(anyString());
 		TestUtil.UnifiedResponseEquals(response, 200, "상태 변경 완료");
 	}
@@ -217,34 +216,35 @@ public class AdminServiceTest {
 	void setStatus_fail_incorrectMsg() {
 		OnlyMsgRequest request = new OnlyMsgRequest("false");
 
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
+		when(userRepository.findByIdAndRoleNot(anyLong(), any(UserRole.class))).thenReturn(Optional.of(saveUser));
 
 		Assertions.assertThrows(
 			CustomException.class, () -> adminService.setStatus(admin, saveUser.getId(), request));
 
-		verify(manager).findUser(anyLong());
+		verify(userRepository).findByIdAndRoleNot(anyLong(), any(UserRole.class));
 	}
 
 	@Test
 	void setStatus_fail_overlapStatus() {
 		OnlyMsgRequest request = new OnlyMsgRequest("ACTIVE");
 
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
+		when(userRepository.findByIdAndRoleNot(anyLong(), any(UserRole.class))).thenReturn(Optional.of(saveUser));
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.setStatus(admin, saveUser.getId(), request));
+		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> adminService.setStatus(admin, saveUser.getId(), request));
 
-		verify(manager).findUser(anyLong());
+		verify(userRepository).findByIdAndRoleNot(anyLong(), any(UserRole.class));
 	}
 
 	@Test
 	void setRole_success() {
 		OnlyMsgRequest request = new OnlyMsgRequest("PAID");
 
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
+		when(userRepository.findByIdAndRoleNot(anyLong(), any(UserRole.class))).thenReturn(Optional.of(saveUser));
 
 		UnifiedResponse<?> response = adminService.setRole(admin, saveUser.getId(), request);
 
-		verify(manager).findUser(anyLong());
+		verify(userRepository).findByIdAndRoleNot(anyLong(), any(UserRole.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "권한 변경 완료");
 	}
 
@@ -252,8 +252,11 @@ public class AdminServiceTest {
 	void setRole_fail_incorrect() {
 		OnlyMsgRequest request = new OnlyMsgRequest("USER");
 
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
+		when(userRepository.findByIdAndRoleNot(anyLong(), any(UserRole.class))).thenReturn(Optional.of(saveUser));
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.setRole(admin, saveUser.getId(), request));
+		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> adminService.setRole(admin, saveUser.getId(), request));
+
+		verify(userRepository).findByIdAndRoleNot(anyLong(), any(UserRole.class));
 	}
 }
