@@ -237,23 +237,23 @@ public class UserService {
 		String password = request.getPassword();
 		if (password.isEmpty()) password = user.getPassword();
 
-		List<String> userIf = Arrays.asList(user.getEmail(), user.getPassword(), user.getNickname());
+		List<String> userData = Arrays.asList(user.getEmail(), user.getPassword(), user.getNickname());
 		List<String> inputData = Arrays.asList(request.getEmail(), password, request.getNickname());
-		if (userIf.equals(inputData)) throw new IllegalArgumentException("변경된 부분이 없습니다");
+		if (userData.equals(inputData)) throw new IllegalArgumentException("변경된 부분이 없습니다");
 
-		for (int i = 0; i < userIf.size(); i++) {
+		for (int i = 0; i < userData.size(); i++) {
 			switch (i) {
 				case 0: if (userRepository.existsUserByEmail(inputData.get(i)))
 					throw new OverlapException("중복된 이메일입니다"); break;
-				case 1: if (passwordEncoder.matches(inputData.get(i), userIf.get(i))) break;
+				case 1: if (passwordEncoder.matches(inputData.get(i), userData.get(i))) break;
 					else inputData.set(i, passwordEncoder.encode(inputData.get(i))); continue;
 				case 2: if (userRepository.existsUserByNickname(inputData.get(i)))
 					throw new OverlapException("중복된 닉네임입니다"); break;
 			}
-			userIf.set(i, inputData.get(i));
+			userData.set(i, inputData.get(i));
 		}
 
-		user.update(userIf);
+		user.update(userData);
 		userRepository.save(user);
 		return UnifiedResponse.ok("수정 완료");
 	}
@@ -309,7 +309,7 @@ public class UserService {
 		return UnifiedResponse.ok("조회 성공", new UserResponse(user));
 	}
 
-	public UserResponseAndEncodedRefreshDto oauth2LoginAfterGetUserIfAndRefreshToken(Long userId) {
+	public UserResponseAndEncodedRefreshDto oauth2LoginAfterGetUserInfoAndRefreshToken(Long userId) {
 		User user = manager.findUser(userId);
 
 		return redisDao.getValue(RedisDao.RT_KEY + user.getRefreshPointer())

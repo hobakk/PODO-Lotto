@@ -188,7 +188,7 @@ public class UserController {
 		@AuthenticationPrincipal User user,
 		HttpServletResponse response
 	) {
-		UserResponseAndEncodedRefreshDto dto = userService.oauth2LoginAfterGetUserIfAndRefreshToken(user.getId());
+		UserResponseAndEncodedRefreshDto dto = userService.oauth2LoginAfterGetUserInfoAndRefreshToken(user.getId());
 		response.addHeader(JwtProvider.AUTHORIZATION_HEADER, "Bearer " + dto.getEncodedRefreshToken());
 		return ResponseEntity.ok(UnifiedResponse.ok("조회 성공", dto.getUserResponse()));
 	}

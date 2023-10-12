@@ -334,7 +334,7 @@ class UserControllerTest {
 		UserResponseAndEncodedRefreshDto dto = new UserResponseAndEncodedRefreshDto(
 			new UserResponse(TestDataFactory.user()), "encodedRefreshToken");
 
-		when(userService.oauth2LoginAfterGetUserIfAndRefreshToken(anyLong())).thenReturn(dto);
+		when(userService.oauth2LoginAfterGetUserInfoAndRefreshToken(anyLong())).thenReturn(dto);
 
 		mockMvc.perform(get("/api/users/oauth2/my-information").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
@@ -343,7 +343,7 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.data").isNotEmpty())
 			.andExpect(header().string("Authorization", "Bearer encodedRefreshToken"));
 
-		verify(userService).oauth2LoginAfterGetUserIfAndRefreshToken(anyLong());
+		verify(userService).oauth2LoginAfterGetUserInfoAndRefreshToken(anyLong());
 	}
 
 	@Test

@@ -1,6 +1,5 @@
 package com.example.sixnumber.user.service;
 
-import static com.example.sixnumber.global.exception.ErrorCode.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -21,8 +20,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -35,7 +32,6 @@ import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.OverlapException;
-import com.example.sixnumber.global.exception.StatusNotActiveException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
@@ -591,7 +587,7 @@ public class UserServiceTest {
 
 		when(passwordEncoder.encode(anyString())).thenReturn("encodedRefreshT");
 
-		UserResponseAndEncodedRefreshDto dto = userService.oauth2LoginAfterGetUserIfAndRefreshToken(saveUser.getId());
+		UserResponseAndEncodedRefreshDto dto = userService.oauth2LoginAfterGetUserInfoAndRefreshToken(saveUser.getId());
 
 		verify(manager).findUser(anyLong());
 		verify(redisDao).getValue(anyString());
@@ -606,7 +602,7 @@ public class UserServiceTest {
 		when(redisDao.getValue(anyString())).thenReturn(Optional.empty());
 
 		Assertions.assertThrows(CustomException.class,
-			() -> userService.oauth2LoginAfterGetUserIfAndRefreshToken(saveUser.getId()));
+			() -> userService.oauth2LoginAfterGetUserInfoAndRefreshToken(saveUser.getId()));
 	}
 
 	@Test
