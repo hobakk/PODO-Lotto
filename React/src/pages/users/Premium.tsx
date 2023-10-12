@@ -24,6 +24,12 @@ function Premium() {
     }
 
     useEffect(()=>{ setUserRole(userIf.role) }, [userIf])
+    useEffect(()=>{ 
+        if (userIf.role === "ROLE_ADMIN") {
+            alert("관리자는 이용할 수 없습니다");
+            navigate("/");
+        } 
+    })
 
     const getCashNicknameMutation = useMutation<UnifiedResponse<CashNicknameDto>>(getCashNickname, {
         onSuccess: (res)=>{
