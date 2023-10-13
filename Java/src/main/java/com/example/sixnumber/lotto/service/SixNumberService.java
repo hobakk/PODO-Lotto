@@ -63,7 +63,7 @@ public class SixNumberService {
 				set.add(randomNum);
 			}
 
-			String result = new ArrayList<>(set).stream()
+			String result = set.stream()
 				.sorted()
 				.map(Objects::toString)
 				.collect(Collectors.joining(" "));
@@ -100,10 +100,10 @@ public class SixNumberService {
 						set.add(num);
 					}
 
-					for (int num : set) {
+					set.forEach(num -> {
 						int count = localCountMap.get(num);
 						localCountMap.put(num, count + 1);
-					}
+					});
 				}
 
 				List<Integer> list = new ArrayList<>(localCountMap.keySet());
