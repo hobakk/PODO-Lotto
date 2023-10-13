@@ -152,6 +152,6 @@ public class AdminService {
 		if (user.getId().equals(targetId)) throw new IllegalArgumentException("본인 입니다");
 
 		return userRepository.findByIdAndRoleNot(targetId, UserRole.ROLE_ADMIN)
-			.orElseThrow(() -> new IllegalArgumentException("존재하지 않거나 관리자 계정입니다."));
+			.orElseThrow(() -> new IllegalArgumentException("관리자 계정입니다"));
 	}
 }

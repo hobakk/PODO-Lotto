@@ -74,9 +74,8 @@ public class GlobalScheduler {
 	@Scheduled(cron = "0 0 7 ? * MON-FRI")
 	public void	withdrawExpiration() {
 		List<User> withdrawList = userRepository.findByStatusAndWithdrawExpiration(Status.DORMANT);
-		if (!withdrawList.isEmpty()) {
-			userRepository.deleteAll(withdrawList);
-		}
+
+		if (!withdrawList.isEmpty()) userRepository.deleteAll(withdrawList);
 	}
 
 	@Scheduled(cron = "0 0 6,18 * * *")
