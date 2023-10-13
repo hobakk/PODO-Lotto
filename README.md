@@ -61,14 +61,14 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 ### 2. 월 통계, 저장된 월 통계 YearMonth(index)
 - entryTtl 제한을 두지 않음
 
-<br/><br/><h2>SixNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/bfb80e761d2bb514c7d2b88cc0a6abacd2aa53d5/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L44)</h2>
+<br/><br/><h2>SixNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/1d2ea48cf474327ab3dec876f796648c464b2d50/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L44)</h2>
 
 ### 1. 랜덤 번호 추천
 ### 2. 반복 연산된 번호 추천
 - Thead 최종 출력 TopNumber 개수 만큼 생성하여 연산 
 - MultiThread 를 사용하여 23.5% 속도 개선 -> [Blog](https://holloweyed-snail.tistory.com/127)
 - 주어진 조건에 따라 무작위로 숫자를 생성하고, 그 중에서 가장 자주 등장하는 숫자를 찾아 리스트로 반환
-### 3. 최신 구매번호 조회
+### 3. 이전 구매번호 조회
 
 <br/><br/><h2>WinNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/58d702b93b4f904d1d58cabc3a74fdbaa785b30b/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L25)</h2>
 
