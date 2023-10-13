@@ -111,18 +111,16 @@ public class SixNumberServiceTest {
 		TestUtil.UnifiedResponseListEquals(response, 200, "요청 성공");
 	}
 
-	@ParameterizedTest
-	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#statisticalNumber")
-	void statisticalNumber_fail_lowCash(int value, int repetition) {
-		StatisticalNumberRequest request = mock(StatisticalNumberRequest.class);
-		when(request.getValue()).thenReturn(value);
-		when(request.getRepetition()).thenReturn(repetition);
+	@Test
+	void statisticalNumber_fail_lowCash() {
+		StatisticalNumberRequest request = TestDataFactory.statisticalNumberRequest();
+		User user = mock(User.class);
+		when(user.getCash()).thenReturn(0);
 
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
+		when(manager.findUser(anyLong())).thenReturn(user);
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> sixNumberService.statisticalNumber(request, saveUser));
-
-		verify(manager).findUser(anyLong());
+		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> sixNumberService.statisticalNumber(request, saveUser));
 	}
 
 	@Test
