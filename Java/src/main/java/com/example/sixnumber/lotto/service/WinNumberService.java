@@ -1,5 +1,7 @@
 package com.example.sixnumber.lotto.service;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,9 +34,11 @@ public class WinNumberService {
 	@CachePut(value = "WinNumbers", key = "'all'")
 	public WinNumberResponse setWinNumbers(WinNumberRequest request) {
 		WinNumber winNumber = new WinNumber(request);
+		int time = winNumber.getTime();
+		List<Integer> topNumberList = winNumber.getTopNumberList();
 
-		winNumberRepository.findByTimeAndTopNumberListIn(winNumber.getTime(),winNumber.getTopNumberList())
-			.ifPresent(win -> { throw new OverlapException("이미 등록된 정보입니다"); });
+		if (winNumberRepository.existsWinNumberByTimeAndTopNumberListIn(time, topNumberList))
+			throw new OverlapException("이미 등록된 당첨 결과 입니다");
 
 		winNumberRepository.save(winNumber);
 
