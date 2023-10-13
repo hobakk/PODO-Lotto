@@ -67,12 +67,12 @@ public class WinNumberServiceTest {
 		List<WinNumber> winNumberList = new ArrayList<>();
 		winNumberList.add(winNumber);
 
-		when(winNumberRepository.findByTimeAndTopNumberListIn(anyInt(), anyList())).thenReturn(Optional.empty());
+		when(winNumberRepository.existsWinNumberByTimeAndTopNumberListIn(anyInt(), anyList())).thenReturn(false);
 		when(winNumberRepository.findAll()).thenReturn(winNumberList);
 
 		WinNumberResponse response = winNumberService.setWinNumbers(request);
 
-		verify(winNumberRepository).findByTimeAndTopNumberListIn(anyInt(), anyList());
+		verify(winNumberRepository).existsWinNumberByTimeAndTopNumberListIn(anyInt(), anyList());
 		verify(winNumberRepository).save(any(WinNumber.class));
 		verify(winNumberRepository).findAll();
 		assertEquals(response.getWinNumberList().size(), 1);
@@ -82,11 +82,10 @@ public class WinNumberServiceTest {
 	void setWinNumber_fail_overLap() {
 		WinNumberRequest request = TestDataFactory.winNumberRequest();
 
-		when(winNumberRepository.findByTimeAndTopNumberListIn(
-			anyInt(), anyList())).thenReturn(Optional.of(winNumber));
+		when(winNumberRepository.existsWinNumberByTimeAndTopNumberListIn(anyInt(), anyList())).thenReturn(true);
 
 		Assertions.assertThrows(OverlapException.class, () -> winNumberService.setWinNumbers(request));
 
-		verify(winNumberRepository).findByTimeAndTopNumberListIn(anyInt(), anyList());
+		verify(winNumberRepository).existsWinNumberByTimeAndTopNumberListIn(anyInt(), anyList());
 	}
 }
