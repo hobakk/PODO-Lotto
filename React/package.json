@@ -53,6 +53,7 @@
     ]
   },
   "devDependencies": {
-    "@types/axios": "^0.14.0"
+    "@types/axios": "^0.14.0",
+    "serve": "^14.2.1"
   }
 }
