@@ -8,6 +8,5 @@ RUN chmod +x ./gradlew
 RUN ./gradlew bootJar
 
 FROM amazoncorretto:11
-ARG JAR_FILE=build/libs/*.jar
-COPY ${JAR_FILE} sixnumber.jar
-ENTRYPOINT ["java", "-jar","sixnumber.jar"]
+COPY --from=builder /build/libs/*.jar app.jar
+ENTRYPOINT ["java", "-jar","app.jar"]
