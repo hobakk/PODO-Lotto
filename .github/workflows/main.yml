@@ -46,7 +46,7 @@ jobs:
         password: ${{ secrets.DOCKER_TOKEN }}
 
   deploy:
-    runs-on: ${{ RUNNER_LABEL }}
+    runs-on: ip-172-31-36-116
 
     steps:
     - name: Checkout code
