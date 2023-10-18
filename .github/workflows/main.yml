@@ -1,10 +1,7 @@
-name: Build and Push Docker Image
+name: Build and Push Docker Image and deploy
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
@@ -52,9 +49,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: SSH login
+      run: |
+        echo "${{ secrets.SSH_PEM_KEY }}" > $HOME/key.pem
+        chmod 400 $HOME/key.pem
+        ssh -i $HOME/key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.EC2_HOST }} '~/script.sh'
+      
     - name: Docker-compose setting
       run: |
-        ssh -i ${{ secrets.EC2_SSH_KEY_PATH }} ubuntu@${{ secrets.EC2_HOST }}
         docker-compose -f /home/ubuntu/docker-compose.yml down
         docker-compose -f /home/ubuntu/docker-compose.yml pull
         docker rmi -f $(docker images -f "dangling=true" -q)
