@@ -46,7 +46,7 @@ jobs:
         password: ${{ secrets.DOCKER_TOKEN }}
 
   deploy:
-    runs-on: ip-172-31-36-116
+    runs-on: self-hosted
 
     steps:
     - name: Checkout code
@@ -55,6 +55,7 @@ jobs:
     - name: Docker-compose setting
       run: |
         ssh -i ${{ secrets.EC2_SSH_KEY_PATH }} ubuntu@${{ secrets.EC2_HOST }}
+        docker-compose -f /home/ubuntu/docker-compose.yml down
         docker-compose -f /home/ubuntu/docker-compose.yml pull
         docker rmi -f $(docker images -f "dangling=true" -q)
         docker-compose -f /home/ubuntu/docker-compose.yml up -d
