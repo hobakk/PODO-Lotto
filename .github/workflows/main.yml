@@ -49,15 +49,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: SSH login
+    - name: Setup key and Docker-compose
+      env: 
+        PRIVATE_KEY: ${{ secrets.SSH_PEM_KEY }}
       run: |
-        echo "${{ secrets.SSH_PEM_KEY }}" > $HOME/key.pem
+        echo "$PRIVATE_KEY" >> $HOME/key.pem
         chmod 400 $HOME/key.pem
         ssh -i $HOME/key.pem -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.EC2_HOST }} '~/script.sh'
-      
-    - name: Docker-compose setting
-      run: |
-        docker-compose -f /home/ubuntu/docker-compose.yml down
-        docker-compose -f /home/ubuntu/docker-compose.yml pull
-        docker rmi -f $(docker images -f "dangling=true" -q)
-        docker-compose -f /home/ubuntu/docker-compose.yml up -d
+        docker-compose pull 
+        docker-compose up -d
+        docker image prune -a -f
