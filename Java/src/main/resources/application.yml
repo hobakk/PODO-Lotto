@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: ${DNS}
+    active: ${PRIVATE_URL}
     include: oauth, mail
   datasource:
     username: ${DB_USERNAME}
@@ -18,7 +18,7 @@ spring:
         format_sql: true
 
   redis:
-    host: ${DNS}
+    host: ${PRIVATE_URL}
     port: ${REDIS_PORT}
 
   jwt:
