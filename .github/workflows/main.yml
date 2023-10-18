@@ -45,5 +45,15 @@ jobs:
         username: ${{ secrets.DOCKER_ID }}
         password: ${{ secrets.DOCKER_TOKEN }}
 
-    - name: Push Docker image
-      run: docker push manlyman/podo_repo:nginx
+  deploy:
+    runs-on: ${{ RUNNER_LABEL }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Docker-compose setting
+      run: |
+        docker-compose -f /home/ubuntu/docker-compose.yml pull
+        docker rmi -f $(docker images -f "dangling=true" -q)
+        docker-compose -f /home/ubuntu/docker-compose.yml up -d
