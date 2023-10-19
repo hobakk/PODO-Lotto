@@ -51,7 +51,7 @@ jobs:
 
     - name: Docker-compose setting
       run: |
-        ssh -i ${{ secrets.EC2_SSH_KEY_PATH }} -o StrictHostKeyChecking=no ubuntu@${{ secrets.EC2_HOST }}
+        ssh -i "${{ secrets.EC2_SSH_KEY_PATH }}" -o StrictHostKeyChecking=no ubuntu@"${{ secrets.EC2_HOST }}"
         docker-compose down
         docker-compose pull
         docker-compose up -d
