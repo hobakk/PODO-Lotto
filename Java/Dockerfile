@@ -1,5 +1,4 @@
 FROM amazoncorretto:11 AS builder
-WORKDIR /Java
 COPY gradlew .
 COPY gradle gradle
 COPY build.gradle .
@@ -9,5 +8,5 @@ RUN chmod +x ./gradlew
 RUN ./gradlew bootJar
 
 FROM amazoncorretto:11
-COPY --from=builder /Java/build/libs/*.jar app.jar
+COPY --from=builder /build/libs/*.jar app.jar
 ENTRYPOINT ["java", "-jar","app.jar"]
