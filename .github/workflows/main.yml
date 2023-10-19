@@ -43,7 +43,7 @@ jobs:
         password: ${{ secrets.DOCKER_TOKEN }}
 
     - name: Push Docker image
-      run: docker push manlyman/podo_repo:spring-boot
+      run: docker push manlyman/podo_repo:nginx
 
   deploy:
     runs-on: self-hosted
