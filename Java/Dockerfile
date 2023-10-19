@@ -1,4 +1,5 @@
 FROM amazoncorretto:11 AS builder
+WORKDIR /Java
 COPY gradlew .
 COPY gradle gradle
 COPY build.gradle .
