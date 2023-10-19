@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: private-environment
+    active: ${PUBLIC_URL}
     include: oauth, mail
   datasource:
     username: ${DB_USERNAME}
