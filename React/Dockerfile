@@ -3,6 +3,8 @@ WORKDIR /app
 COPY package.json .
 RUN yarn install
 COPY . .
+ENV REACT_APP_SPRING_URL=http://3.37.27.227:8080/api
+ENV REACT_APP_ENCRYPTION_KEY=rlaalswodmldbxnqmvmflaldjarPwjddmswkdustksalsekdvoddldlrhqlalfqjsghsmsrhdrogkwldksgrpTek
 RUN yarn build
 
 FROM nginx:latest
