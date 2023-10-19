@@ -10,13 +10,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
-	@Value("${spring.redis.host}")
-	private String ec2Url;
+	@Value("${spring.profiles.active}")
+	private String public_url;
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-			.allowedOrigins(ec2Url + ":80")
+			.allowedOrigins(public_url + ":80", public_url + ":3000")
 			.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
 			.allowedHeaders("*")
 			.exposedHeaders("Authorization")
