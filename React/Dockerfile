@@ -1,13 +1,14 @@
-FROM node:alpine as builder
-COPY ./package* /usr/src/app/
-WORKDIR /usr/src/app
+FROM node:18 as builder
+WORKDIR /app
+COPY package.json .
 RUN yarn install
-COPY . /usr/src/app
+COPY . .
 RUN yarn build
 
 FROM nginx:latest
-RUN rm -rf /etc/nginx/conf.d 
-COPY conf /etc/nginx
+RUN rm -rf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY --from=builder /usr/src/app/build /usr/share/nginx/html
+COPY --from=builder /app/build /usr/share/nginx/html
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
