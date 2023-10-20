@@ -52,9 +52,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Docker-compose setting
+    - name: Create pem after SSH login
       run: |
-        ssh -i "${{ secrets.EC2_SSH_KEY_PATH }}" -o StrictHostKeyChecking=no ubuntu@"${{ secrets.EC2_HOST }}"
+        echo "$KEY_PEM" > pem.key
+        chmod 600 pem.key
+        ssh -i pem.key -o StrictHostKeyChecking=no ubuntu@"$HOST"
+      env:
+        KEY_PEM: ${{ secrets.SSH_PEM_KEY }}
+        HOST: ${{ secrets.EC2_HOST }}
+
+    - name: Docker-compose update
+      run: |
         docker-compose down
         docker-compose pull
         docker-compose up -d
