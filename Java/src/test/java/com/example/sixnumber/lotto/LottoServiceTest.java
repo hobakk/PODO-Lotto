@@ -1,4 +1,4 @@
-package com.example.sixnumber.lotto.service;
+package com.example.sixnumber.lotto;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -22,6 +22,7 @@ import com.example.sixnumber.lotto.dto.LottoResponse;
 import com.example.sixnumber.lotto.dto.YearMonthResponse;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
+import com.example.sixnumber.lotto.service.LottoService;
 
 @ExtendWith(MockitoExtension.class)
 public class LottoServiceTest {

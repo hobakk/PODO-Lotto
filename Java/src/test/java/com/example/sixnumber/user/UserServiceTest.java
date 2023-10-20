@@ -1,4 +1,4 @@
-package com.example.sixnumber.user.service;
+package com.example.sixnumber.user;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -53,6 +53,7 @@ import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.StatementRepository;
 import com.example.sixnumber.user.repository.UserRepository;
+import com.example.sixnumber.user.service.UserService;
 import com.example.sixnumber.user.type.Status;
 import com.example.sixnumber.user.type.UserRole;
 

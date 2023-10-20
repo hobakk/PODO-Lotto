@@ -1,4 +1,4 @@
-package com.example.sixnumber.user.controller;
+package com.example.sixnumber.user;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.any;
@@ -28,6 +28,7 @@ import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.WithCustomMockUser;
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.lotto.dto.SixNumberResponse;
+import com.example.sixnumber.user.controller.UserController;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;

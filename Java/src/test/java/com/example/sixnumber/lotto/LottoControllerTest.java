@@ -1,4 +1,4 @@
-package com.example.sixnumber.lotto.controller;
+package com.example.sixnumber.lotto;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.WithCustomMockUser;
+import com.example.sixnumber.lotto.controller.LottoController;
 import com.example.sixnumber.lotto.dto.LottoResponse;
 import com.example.sixnumber.lotto.dto.YearMonthResponse;
 import com.example.sixnumber.lotto.service.LottoService;
