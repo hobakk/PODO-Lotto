@@ -4,7 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
-group = 'com.example'
+group = 'com.example.sixnumber'
 version = '0.0.1'
 sourceCompatibility = '11'
 
@@ -48,5 +48,5 @@ dependencies {
 
 test {
     useJUnitPlatform()
-    include '**/sixnumber/test/**/*Test.class'
+    include 'src/test/**/*Test.class'
 }
