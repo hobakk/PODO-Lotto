@@ -87,7 +87,7 @@ class UserControllerTest {
 	@Test
 	@WithMockUser
 	public void signin_success() throws Exception {
-		when(userService.signIn(any(HttpServletResponse.class), any(SigninRequest.class), any(Errors.class)))
+		when(userService.signIn(any(HttpServletResponse.class), any(SigninRequest.class)))
 			.thenReturn(UnifiedResponse.ok("로그인 성공"));
 
 		mockMvc.perform(post("/api/users/signin").with(csrf())
@@ -96,13 +96,13 @@ class UserControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("로그인 성공"));
 
-		verify(userService).signIn(any(HttpServletResponse.class), any(SigninRequest.class), any(Errors.class));
+		verify(userService).signIn(any(HttpServletResponse.class), any(SigninRequest.class));
 	}
 
 	@Test
 	@WithMockUser
 	public void signin_fail() throws Exception {
-		when(userService.signIn(any(HttpServletResponse.class), any(SigninRequest.class), any(Errors.class)))
+		when(userService.signIn(any(HttpServletResponse.class), any(SigninRequest.class)))
 			.thenReturn(UnifiedResponse.badRequest("중복 로그인입니다"));
 
 		mockMvc.perform(post("/api/users/signin").with(csrf())
@@ -111,7 +111,7 @@ class UserControllerTest {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.msg").value("중복 로그인입니다"));
 
-		verify(userService).signIn(any(HttpServletResponse.class), any(SigninRequest.class), any(Errors.class));
+		verify(userService).signIn(any(HttpServletResponse.class), any(SigninRequest.class));
 	}
 
 	@Test

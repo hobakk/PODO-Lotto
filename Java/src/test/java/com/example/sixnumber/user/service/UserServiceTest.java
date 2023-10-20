@@ -214,8 +214,6 @@ public class UserServiceTest {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 		TokenDto tokenDto = TestDataFactory.tokenRequest();
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
-		Errors errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(false);
 		saveUser.setRefreshPointer(null);
 
 		when(userRepository.findByEmailAndPasswordNotContainingAndStatus(anyString(), anyString(), any(Status.class)))
@@ -229,7 +227,7 @@ public class UserServiceTest {
 
 		when(passwordEncoder.encode(anyString())).thenReturn("encodedRefreshToken");
 
-		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest, errors);
+		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest);
 
 		verify(userRepository).findByEmailAndPasswordNotContainingAndStatus(anyString(), anyString(), any(Status.class));
 		verify(passwordEncoder).matches(anyString(), anyString());
@@ -246,22 +244,18 @@ public class UserServiceTest {
 	void signin_userNotFound() {
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
-		Errors errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(false);
 
 		when(userRepository.findByEmailAndPasswordNotContainingAndStatus(anyString(), anyString(), any(Status.class)))
 			.thenReturn(Optional.empty());
 
 		Assertions.assertThrows(IllegalArgumentException.class,
-			() -> userService.signIn(httpServletResponse, signinRequest, errors));
+			() -> userService.signIn(httpServletResponse, signinRequest));
 	}
 
 	@Test
 	void signin_fail_inCorrectPassword() {
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
-		Errors errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(false);
 
 		when(userRepository.findByEmailAndPasswordNotContainingAndStatus(anyString(), anyString(), any(Status.class)))
 			.thenReturn(Optional.of(saveUser));
@@ -269,7 +263,7 @@ public class UserServiceTest {
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
 		Assertions.assertThrows(IllegalArgumentException.class,
-			() -> userService.signIn(httpServletResponse, signinRequest, errors));
+			() -> userService.signIn(httpServletResponse, signinRequest));
 
 		verify(userRepository).findByEmailAndPasswordNotContainingAndStatus(anyString(), anyString(), any(Status.class));
 		verify(passwordEncoder).matches(anyString(), anyString());
@@ -279,15 +273,13 @@ public class UserServiceTest {
 	void signin_fail_refreshPointerIsNotNull() {
 		SigninRequest signinRequest = TestDataFactory.signinRequest();
 		HttpServletResponse httpServletResponse = mock(HttpServletResponse.class);
-		Errors errors = mock(Errors.class);
-		when(errors.hasErrors()).thenReturn(false);
 
 		when(userRepository.findByEmailAndPasswordNotContainingAndStatus(anyString(), anyString(), any(Status.class)))
 			.thenReturn(Optional.of(saveUser));
 
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
-		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest, errors);
+		UnifiedResponse<?> response = userService.signIn(httpServletResponse, signinRequest);
 
 		verify(userRepository).findByEmailAndPasswordNotContainingAndStatus(anyString(), anyString(), any(Status.class));
 		verify(passwordEncoder).matches(anyString(), anyString());
