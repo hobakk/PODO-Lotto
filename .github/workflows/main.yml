@@ -38,10 +38,9 @@ jobs:
         with:
           java-version: 11
           distribution: temurin
-          cache: gradle
 
       - name: Run Tests with Gradle
-        run: ./gradlew test
+        run: ./gradlew sixnumber:test
 
       - name: Publish Unit Test Results
         uses: actions/upload-artifact@v2
