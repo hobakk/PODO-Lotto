@@ -40,7 +40,7 @@ jobs:
           distribution: temurin
 
       - name: Run Tests with Gradle
-        run: ./gradlew sixnumber:test
+        run: ./gradlew test
 
       - name: Publish Unit Test Results
         uses: actions/upload-artifact@v2
