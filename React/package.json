@@ -55,5 +55,6 @@
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "serve": "^14.2.1"
-  }
+  },
+  "proxy": "http://podo-lotto.site/:8080"
 }
