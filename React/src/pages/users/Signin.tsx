@@ -47,8 +47,8 @@ function Signin() {
     }, [])
 
     const URL = `${process.env.REACT_APP_BASE_URL}`;
-    const BE_SERVER = `http://${URL}:8080`;
-    const REDIRECT_URL = `?redirect_uri=http://${URL}:3000/oauth2/user`;
+    const BE_SERVER = `${URL}:8080`;
+    const REDIRECT_URL = `?redirect_uri=${URL}:3000/oauth2/user`;
     const siteLoginHandler = (site: string) => {
          window.location.href = `${BE_SERVER}/oauth2/authorization/${site}${REDIRECT_URL}`; 
     };
