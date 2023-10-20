@@ -16,10 +16,14 @@
   <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=HTML5&logoColor=white">
   <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=CSS3&logoColor=white">
   <img src="https://img.shields.io/badge/Redux-764ABC?style=for-the-badge&logo=Redux&logoColor=white">
-  <img src="https://img.shields.io/badge/StyledComponents-DB7093?style=for-the-badge&logo=StyledComponents&logoColor=white">
+  <img src="https://img.shields.io/badge/StyledComponents-DB7093?style=for-the-badge&logo=StyledComponents&logoColor=white"></br>
+  <img src="https://img.shields.io/badge/amazon ec2-FF9900.svg?style=for-the-badge&logo=amazonec2&logoColor=white">
+  <img src="https://img.shields.io/badge/github actions-2088FF.svg?style=for-the-badge&logo=githubactions&logoColor=white">
+  <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white">
+  <img src="https://img.shields.io/badge/nginx-009639.svg?style=for-the-badge&logo=nginx&logoColor=white">
 </div><br/>
 
-<br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/50ede047bf1c27d4a985367726298caa2deb1106/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L61)</h2>
+<br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/44802390b2a65e85352d207da0761d2a87528190/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L61)</h2>
 
 ### 1. 회원가입
 sendAuthCodeToEmail, compareAuthCode, signUp
