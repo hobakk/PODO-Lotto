@@ -119,9 +119,7 @@ public class UserService {
 			});
 	}
 
-	public UnifiedResponse<?> signIn(HttpServletResponse response, SigninRequest request, Errors errors) {
-		if (errors.hasErrors()) errorsHandler(errors);
-
+	public UnifiedResponse<?> signIn(HttpServletResponse response, SigninRequest request) {
 		User user = userRepository
 			.findByEmailAndPasswordNotContainingAndStatus(request.getEmail(), "Oauth2Login", Status.ACTIVE)
 			.orElseThrow(() -> new IllegalArgumentException("등록되지 않은 이메일 또는 접속할 수 없는 상태입니다"));

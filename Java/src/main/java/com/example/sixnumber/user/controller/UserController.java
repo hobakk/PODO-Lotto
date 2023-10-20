@@ -72,10 +72,9 @@ public class UserController {
 	@PostMapping("/signin")
 	public ResponseEntity<UnifiedResponse<?>> signIn(
 		@RequestBody SigninRequest request,
-		HttpServletResponse response,
-		Errors errors
+		HttpServletResponse response
 	) {
-		UnifiedResponse<?> unifiedResponse = userService.signIn(response, request, errors);
+		UnifiedResponse<?> unifiedResponse = userService.signIn(response, request);
 		if (unifiedResponse.getCode() == HttpStatus.OK.value()) return ResponseEntity.ok(unifiedResponse);
 		else return ResponseEntity.badRequest().body(unifiedResponse);
 	}
