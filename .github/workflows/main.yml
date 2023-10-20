@@ -37,10 +37,11 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 11
-          distribution: adopt
+          distribution: temurin
+          cache: gradle
 
       - name: Run Tests with Gradle
-        run: ./gradlew sixnumber:test
+        run: ./gradlew test
 
       - name: Publish Unit Test Results
         uses: actions/upload-artifact@v2
