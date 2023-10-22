@@ -10,13 +10,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
-	@Value("${spring.profiles.active}")
+	@Value("${PUBLIC_URL}")
 	private String public_url;
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-			.allowedOrigins(public_url + ":80", public_url + ":3000")
+			.allowedOrigins(public_url, "http://3.37.27.227")
 			.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
 			.allowedHeaders("*")
 			.exposedHeaders("Authorization")
