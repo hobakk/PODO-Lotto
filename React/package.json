@@ -56,5 +56,5 @@
     "@types/axios": "^0.14.0",
     "serve": "^14.2.1"
   },
-  "proxy": "http://podo-lotto.site/:8080"
+  "proxy": "http://172.31.41.246:8080"
 }
