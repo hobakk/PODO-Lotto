@@ -3,9 +3,9 @@ WORKDIR /app
 COPY package.json .
 RUN yarn install
 COPY . .
-ENV REACT_APP_SPRING_URL=http://172.31.41.246:8080/api
+ENV REACT_APP_BASE_URL=http://3.37.27.227/
 ENV REACT_APP_ENCRYPTION_KEY=rlaalswodmldbxnqmvmflaldjarPwjddmswkdustksalsekdvoddldlrhqlalfqjsghsmsrhdrogkwldksgrpTek
-ENV REACT_APP_BASE_URL=http://podo-lotto.site/
+ENV REACT_APP_DOMAIN=http://podo-lotto.site
 RUN yarn build
 
 FROM nginx:latest
