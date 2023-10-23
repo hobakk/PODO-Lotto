@@ -56,9 +56,8 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 							long remainingSeconds = Math.max(jwtProvider.getRemainingTime(value) /1000, 0);
 							if (remainingSeconds < 360) deleteCookieAndThrowException(response);
 
-							Cookie cookie = jwtProvider.createCookie(
-								JwtProvider.ACCESS_TOKEN, newAccessToken, remainingSeconds);
-							response.addCookie(cookie);
+							jwtProvider.createCookie(
+								response, JwtProvider.ACCESS_TOKEN, newAccessToken, remainingSeconds);
 							createAuthentication(claims.get("id", Long.class));
 						},
 						() -> deleteCookieAndThrowException(response)
@@ -103,8 +102,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	}
 
 	private void deleteCookies(HttpServletResponse response) {
-		Cookie access = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null, 0);
-		response.addCookie(access);
+		jwtProvider.createCookie(response, JwtProvider.ACCESS_TOKEN, null, 0);
 	}
 
 	private void createAuthentication(Long userId) {

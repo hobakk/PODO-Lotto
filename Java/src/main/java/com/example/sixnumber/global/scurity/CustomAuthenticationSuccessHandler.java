@@ -42,18 +42,16 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 			String refreshToken = refreshTokenInRedis.get();
 			long remainingSeconds = Math.max(jwtProvider.getRemainingTime(refreshToken) /1000, 0);
 			String accessToken = jwtProvider.accessToken(user.getRefreshPointer());
-			accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, accessToken, remainingSeconds);
+			jwtProvider.createCookie(response, JwtProvider.ACCESS_TOKEN, accessToken, remainingSeconds);
 		} else {
 			TokenDto tokenDto = jwtProvider.generateTokens(user);
 			user.setRefreshPointer(tokenDto.getRefreshPointer());
 			redisDao.setValues(RedisDao.RT_KEY + tokenDto.getRefreshPointer(), tokenDto.getRefreshToken(), (long) 7, TimeUnit.DAYS);
-			accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), "oneWeek");
+			jwtProvider.createCookie(response, JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), "oneWeek");
 		}
 
 		userRepository.save(user);
-		Cookie JsessionId = jwtProvider.createCookie("JSESSIONID", null, 0);
-		response.addCookie(accessCookie);
-		response.addCookie(JsessionId);
+		jwtProvider.createCookie(response, "JSESSIONID", null, 0);
 		getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/oauth2/user");
 	}
 }
