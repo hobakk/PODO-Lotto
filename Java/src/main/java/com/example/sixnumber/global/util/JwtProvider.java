@@ -12,11 +12,15 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import com.example.sixnumber.global.dto.TokenDto;
+import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.user.entity.User;
 
 import io.jsonwebtoken.Claims;
@@ -123,14 +127,23 @@ public class JwtProvider {
 		}
 	}
 
-	public Cookie createCookie(String key, String tokenValue, Object maxAge) {
-		Cookie cookie = new Cookie(key, tokenValue);
-		cookie.setPath("/");
-		cookie.setHttpOnly(true);
-		if (maxAge instanceof Integer) cookie.setMaxAge((int) maxAge);
-		else if (maxAge.equals(ONE_WEEK)) cookie.setMaxAge(603000);
+	public void createCookie(HttpServletResponse response, String key, String tokenValue, Object maxAge) {
+		int age;
+		if (maxAge instanceof Integer) age = ((int) maxAge);
+		else if (maxAge.equals(ONE_WEEK)) age = 603000;
+		else throw new CustomException(ErrorCode.INVALID_INPUT);
 
-		return cookie;
+		if (tokenValue == null) tokenValue = "";
+		ResponseCookie cookie = ResponseCookie.from(key, tokenValue)
+			.path("/")
+			.sameSite("None")
+			.httpOnly(true)
+			.secure(true)
+			.maxAge(age)
+			.build();
+
+		response.addHeader("Set-Cookie", cookie.toString());
+
 	}
 
 	public String getAccessTokenInCookie(HttpServletRequest request) {
