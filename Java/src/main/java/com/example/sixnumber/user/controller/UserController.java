@@ -85,9 +85,7 @@ public class UserController {
 		HttpServletRequest request,
 		HttpServletResponse response
 	) {
-		Cookie access = userService.logout(request, user);
-		response.addCookie(access);
-		return ResponseEntity.ok(UnifiedResponse.ok("로그아웃 성공"));
+		return ResponseEntity.ok(userService.logout(request, response, user));
 	}
 
 	@PatchMapping("/withdraw")

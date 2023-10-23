@@ -133,11 +133,10 @@ public class UserService {
 			redisDao.setValues(RedisDao.RT_KEY + tokenDto.getRefreshPointer(),
 				tokenDto.getRefreshToken(), (long) 7, TimeUnit.DAYS);
 
-			Cookie accessCookie = jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN,
-				tokenDto.getAccessToken(), JwtProvider.ONE_WEEK);
+			jwtProvider.createCookie(
+				response, JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), JwtProvider.ONE_WEEK);
 
 			String enCodedRefreshToken = passwordEncoder.encode(tokenDto.getRefreshToken());
-			response.addCookie(accessCookie);
 			response.addHeader(JwtProvider.AUTHORIZATION_HEADER, "Bearer " + enCodedRefreshToken);
 			unifiedResponse = UnifiedResponse.ok("로그인 성공");
 		} else {
@@ -149,7 +148,7 @@ public class UserService {
 		return unifiedResponse;
 	}
 
-	public Cookie logout(HttpServletRequest request, User user) {
+	public UnifiedResponse<?> logout(HttpServletRequest request, HttpServletResponse response, User user) {
 		redisDao.delete(RedisDao.RT_KEY + user.getRefreshPointer());
 		user.setRefreshPointer(null);
 		userRepository.save(user);
@@ -160,7 +159,8 @@ public class UserService {
 			redisDao.setBlackList(accessToken, remainingTime);
 		}
 
-		return jwtProvider.createCookie(JwtProvider.ACCESS_TOKEN, null, 0);
+		jwtProvider.createCookie(response, JwtProvider.ACCESS_TOKEN, null, 0);
+		return UnifiedResponse.ok("로그아웃 성공");
 	}
 
 	public UnifiedResponse<?> withdraw(OnlyMsgRequest request, String email) {
