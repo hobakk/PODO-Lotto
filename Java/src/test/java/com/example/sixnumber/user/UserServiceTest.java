@@ -223,8 +223,6 @@ public class UserServiceTest {
 		when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
 		when(jwtProvider.generateTokens(any(User.class))).thenReturn(tokenDto);
-		when(jwtProvider.createCookie(anyString(), anyString(), anyString()))
-			.thenReturn(new Cookie("accessToken", "value"));
 
 		when(passwordEncoder.encode(anyString())).thenReturn("encodedRefreshToken");
 
@@ -234,7 +232,7 @@ public class UserServiceTest {
 		verify(passwordEncoder).matches(anyString(), anyString());
 		verify(jwtProvider).generateTokens(any(User.class));
 		verify(redisDao).setValues(anyString(), anyString(), anyLong(), any(TimeUnit.class));
-		verify(jwtProvider).createCookie(anyString(), anyString(), anyString());
+		verify(jwtProvider).createCookie(any(HttpServletResponse.class), anyString(), anyString(), anyString());
 		verify(passwordEncoder).encode(anyString());
 		verify(httpServletResponse).addCookie(any(Cookie.class));
 		verify(httpServletResponse).addHeader(anyString(), anyString());
@@ -291,20 +289,20 @@ public class UserServiceTest {
 	@Test
 	void logout() {
 		HttpServletRequest request = mock(HttpServletRequest.class);
+		HttpServletResponse response = mock(HttpServletResponse.class);
 		Cookie accessInCookie = new Cookie("accessToken", "value");
 		Cookie access = new Cookie("accessToken", null);
 
 		when(jwtProvider.getAccessTokenInCookie(request)).thenReturn(accessInCookie.getValue());
 		when(jwtProvider.getRemainingTime(anyString())).thenReturn((long) 3000);
-		when(jwtProvider.createCookie(anyString(), eq(null), anyInt())).thenReturn(access);
 
-		Cookie cookie = userService.logout(request, saveUser);
+		UnifiedResponse<?> unifiedResponse = userService.logout(request, response, saveUser);
 
 		verify(redisDao).delete(anyString());
 		verify(userRepository).save(saveUser);
 		verify(redisDao).setBlackList(anyString(), anyLong());
-		verify(jwtProvider).createCookie(anyString(), eq(null), anyInt());
-		assertNull(cookie.getValue());
+		verify(jwtProvider).createCookie(any(HttpServletResponse.class), anyString(), eq(null), anyInt());
+		TestUtil.UnifiedResponseEquals(unifiedResponse, 200, "로그아웃 성공");
 	}
 
 	@Test
