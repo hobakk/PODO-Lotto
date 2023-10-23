@@ -28,6 +28,12 @@ spring:
     set-admin-key: ${ADMIN_KEY}
 
 server:
+  port: 443
+  ssl:
+    key-store: ${SSL_PATH}
+    key-store-password: pw
+    key-store-type: PKCS12
+
   servlet:
     session:
       tracking-modes: cookie
