@@ -9,6 +9,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -27,6 +28,9 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 	private final RedisDao redisDao;
 	private final UserRepository userRepository;
 
+	@Value("${DOMAIN}")
+	private String url;
+
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 		Authentication authentication) throws IOException, ServletException {
@@ -37,7 +41,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원"));
 		Optional<String> refreshTokenInRedis = redisDao.getValue(RedisDao.RT_KEY + user.getRefreshPointer());
 
-		Cookie accessCookie;
 		if (refreshTokenInRedis.isPresent()) {
 			String refreshToken = refreshTokenInRedis.get();
 			long remainingSeconds = Math.max(jwtProvider.getRemainingTime(refreshToken) /1000, 0);
@@ -52,6 +55,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 		userRepository.save(user);
 		jwtProvider.createCookie(response, "JSESSIONID", null, 0);
-		getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/oauth2/user");
+		getRedirectStrategy().sendRedirect(request, response, url + "/oauth2/user");
 	}
 }
