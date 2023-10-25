@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CommonStyle } from '../../shared/Styles'
+import { ButtonDiv, ButtonStyle, CommonStyle, TitleStyle } from '../../shared/Styles'
 import { getCashNickname, setPaid, CashNicknameDto } from '../../api/userApi'
 import { useMutation } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,8 +16,8 @@ function Premium() {
 
     const borderDiv: React.CSSProperties = {
         border: "3px solid black",
-        width: "14cm",
-        height:"18cm",
+        width: "24cm",
+        height:"6cm",
         padding:"50px",
         backgroundColor: "yellow",
         fontSize: "18px",
@@ -76,33 +76,35 @@ function Premium() {
   return (
     <div style={ CommonStyle }>
         {userRole === "ROLE_PAID" ? (
-            <div style={borderDiv}>
-                <div style={{ height:"80%" }}>
-                    <h1 style={{ fontSize: "80px", textAlign:"center" }}>Release</h1>
-                    <p>{userIf.nickname} 님은 Premium 등급입니다</p>
+            <div style={ borderDiv }>
+                <div style={{ height:"90%" }}>
+                    <h1 style={ TitleStyle }>프리미엄 해제</h1>
                     <p>등급 변경은 매월 초에 업데이트됩니다</p>
                     <p>프리미엄을 해제 신청 후 납기일 기준 31일 경과전까지 유지됩니다</p>
                 </div>
-                <div style={{ textAlign:"center" }}>
+                <div style={ ButtonDiv }>
                     <button 
                         onClick={() => { setUserMutation.mutate("월정액 해지") }}
-                        style={{ width: "7cm", height:"1cm"}}
+                        style={ ButtonStyle }
                     >
-                        프리미엄 해제하기
+                        프리미엄 해제
                     </button>
                 </div>
             </div>  
         ):(
             <div style={borderDiv}>
-                <div style={{ height:"80%" }}>
-                    <h1 style={{ fontSize: "80px", textAlign:"center" }}>Premium</h1>
-                    <p>매월 5000원 차감</p>
-                    <p>통계 서비스 이용 가능</p>
+                <div style={{ height:"90%" }}>
+                    <div style={{ display: "flex", alignItems: "center" }}>
+                        <h3 style={{ fontSize: "40px" }}>프리미엄 신청</h3>
+                        <p style={{ marginLeft: "auto", fontSize: "22px" }}>월 5,000원</p>
+                    </div>
+                    <p>사이트 개설 이후 모든 데이터 통계 및 월별 통계 이용 가능</p>
+                    <p>추천 번호 발급 내역 조회 가능</p>
                 </div> 
-                <div style={{ textAlign:"center" }}>
+                <div style={ ButtonDiv }>
                     <button 
                         onClick={onClikcHandler}
-                        style={{ width: "7cm", height:"1cm"}}
+                        style={ ButtonStyle }
                     >
                         프리미엄 이용하기
                     </button>
