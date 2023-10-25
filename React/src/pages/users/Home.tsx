@@ -63,7 +63,7 @@ function Home() {
           value.map((result)=>{
             return (
               <div key={`WinNumber${result.time}`} style={Rectangle}>
-                <div style={{ display: "flex", height: "1.2cm" }}>
+                <div style={{ display: "flex", height: "1cm" }}>
                   <p>
                     <span style={SpanStyle}>{result.time}</span>회 당첨결과
                   </p>
@@ -71,7 +71,7 @@ function Home() {
                     <span style={SpanStyle}>{result.date}</span>추첨
                   </p>
                 </div>
-                <div style={{ display: "flex", height: "1.2cm" }}>
+                <div style={{ display: "flex", height: "1cm" }}>
                   <p>1등 총 당첨금 <span style={SpanStyle}>{result.prize.toLocaleString()}</span>원</p>
                   <p style={{ marginLeft: "auto"}}>당첨인원 <span style={SpanStyle}>{result.winner}</span>명</p>
                 </div>
