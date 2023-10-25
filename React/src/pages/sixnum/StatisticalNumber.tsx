@@ -87,7 +87,9 @@ function StatisticalNumber() {
 
   return (
     <div style={ CommonStyle }>
-        <h1 style={ TitleStyle }>Statistical Number</h1>
+        <h3 style={ TitleStyle }>프리미엄 번호 발급</h3>
+        <p>반복횟수 만큼 랜덤 번호 발급이 이루어지며,</p>
+        <p style={{ marginBottom:"2cm" }}>그 중 가장 많이 도출된 6자리를 제공합니다.</p>
         {isEmpty ? (
             <div id='buycontent'>
                 <p>반복횟수 입력란 </p>
