@@ -53,7 +53,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 
 							Claims claims = jwtProvider.getClaims(value);
 							String newAccessToken = jwtProvider.accessToken(claims.get("key", String.class));
-							long remainingSeconds = Math.max(jwtProvider.getRemainingTime(value) /1000, 0);
+							int remainingSeconds = (int) Math.floor((double) jwtProvider.getRemainingTime(value) / 1000);
 							if (remainingSeconds < 360) deleteCookieAndThrowException(response);
 
 							jwtProvider.createCookie(
