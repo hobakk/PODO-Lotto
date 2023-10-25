@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ButtonDiv, ButtonStyle, CommonStyle, MsgAndInput } from '../../shared/Styles'
+import { ButtonDiv, ButtonStyle, CommonStyle, MsgAndInput, TitleStyle } from '../../shared/Styles'
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from 'react-query';
 import { signin, SigninRequest } from '../../api/noneUserApi';
@@ -54,10 +54,10 @@ function Signin() {
 
   return (
     <div style={ CommonStyle }>
-        <h3 style={{ fontSize: "80px"}}>Login</h3>
+        <h3 style={ TitleStyle }>로그인</h3>
         <form onSubmit={submitHandler} style={{ fontSize: "30px" }}>
             <div style={MsgAndInput}>
-                <span>Email:</span>
+                <span>이메일:</span>
                 <InputBox 
                     type='text' 
                     name="email" 
@@ -68,7 +68,7 @@ function Signin() {
                 />
             </div>
             <div style={MsgAndInput}>
-                <span>Password:</span>
+                <span>비밀번호:</span>
                 <InputBox 
                     type='password' 
                     name='password' 
@@ -77,11 +77,11 @@ function Signin() {
                     onChange={onChangeHandler} 
                 />
             </div>
-            <div style={{ display:"flex", marginLeft: "auto", width: "100%",}}>
-                <button style={{ width: "7.2cm", height: "30px", marginLeft:"auto", }}>로그인</button>
+            <div style={ButtonDiv}>
+                <button style={ButtonStyle}>로그인</button>
             </div>
         </form>
-        <div style={{ display:"flex", flexDirection:"column", fontSize: "18px", marginRight:"auto", marginTop:"30px" }}>
+        <div style={{ display:"flex", flexDirection:"column", fontSize: "18px", marginRight:"auto", marginTop:"60px" }}>
             <Link to="/find-password" style={{ marginBottom:"20px" }}>비밀번호를 잊으셨나요 ?</Link>
             <Link to="/signup">비회원 이신가요 ?</Link>
         </div>
