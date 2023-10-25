@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CommonStyle } from '../../shared/Styles'
+import { CommonStyle, TitleStyle } from '../../shared/Styles'
 import { statisticalNumber, repetitionAndNum } from '../../api/sixNumberApi';
 import { useMutation } from 'react-query';
 import { ResultContainer } from '../../components/Manufacturing';
@@ -87,7 +87,7 @@ function StatisticalNumber() {
 
   return (
     <div style={ CommonStyle }>
-        <h1 style={{  fontSize: "80px" }}>Statistical Number</h1>
+        <h1 style={ TitleStyle }>Statistical Number</h1>
         {isEmpty ? (
             <div id='buycontent'>
                 <p>반복횟수 입력란 </p>

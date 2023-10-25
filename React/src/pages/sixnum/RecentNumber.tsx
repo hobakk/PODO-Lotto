@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ResultContainer } from '../../components/Manufacturing'
 import { useMutation } from 'react-query'
-import { CommonStyle } from '../../shared/Styles';
+import { CommonStyle, TitleStyle } from '../../shared/Styles';
 import { getRecentNumber } from '../../api/sixNumberApi';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 
@@ -24,7 +24,7 @@ function RecentNumber() {
   return (
     <div>
         <div style={ CommonStyle }>
-            <h3 style={{ fontSize: "80px"}}>Recent Number</h3>
+            <h3 style={ TitleStyle }>이전 발급 번호 조회</h3>
             <div>
                 {value.length !== 0 ? (
                     <ResultContainer numSentenceList={value} />

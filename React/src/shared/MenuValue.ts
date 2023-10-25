@@ -39,8 +39,8 @@ export const StatsMenuValue: MenuType = {
 export const LottoMenuValue: MenuType = {
     title: "추천번호",
     content: [
-        ["랜덤 번호 구매", "/buynum"], 
-        ["프리미엄 번호 구매", "/stats/num"],
-        ["이전 구매번호 조회", "/recent/num"], 
+        ["랜덤 번호 발급", "/buynum"], 
+        ["프리미엄 번호 발급", "/stats/num"],
+        ["이전 발급 번호 조회", "/recent/num"], 
     ]
 }

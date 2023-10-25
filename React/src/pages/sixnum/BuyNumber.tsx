@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CommonStyle, InputBox, MsgAndInput } from '../../shared/Styles'
+import { CommonStyle, InputBox, MsgAndInput, TitleStyle } from '../../shared/Styles'
 import { buyNumber } from '../../api/sixNumberApi';
 import { useMutation } from 'react-query';
 import useUserInfo from '../../hooks/useUserInfo';
@@ -64,7 +64,7 @@ function BuyNumber() {
 
   return (
     <div style={ CommonStyle }>
-        <h1 style={{  fontSize: "80px", textAlign:"center" }}>Buy Number</h1>
+        <h1 style={ TitleStyle }>랜덤 번호 발급</h1>
         <p style={{ marginBottom:"60px" }}>1회 발급당 100원이 차감됩니다</p>
         {isEmpty ? (
             <div style={{ display:"flex", fontSize:"25px", width:"17cm", placeItems:"center"}}>
