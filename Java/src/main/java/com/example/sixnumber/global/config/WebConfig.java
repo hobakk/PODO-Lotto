@@ -13,13 +13,10 @@ public class WebConfig implements WebMvcConfigurer {
 	@Value("${DOMAIN}")
 	private String domain;
 
-	@Value("${PUBLIC_URL}")
-	private String public_url;
-
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-			.allowedOrigins(domain, public_url)
+			.allowedOrigins(domain)
 			.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
 			.allowedHeaders("*")
 			.exposedHeaders("Authorization")
