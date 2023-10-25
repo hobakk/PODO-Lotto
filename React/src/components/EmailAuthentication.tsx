@@ -83,7 +83,7 @@ function EmailAuthentication({ isCorrectAuth, setIsCorrectAuth, email, setEmail 
     return (
       <>
         <div style={{ marginBottom:"30px" }}>
-          <div style={{ ...MsgAndInput, width:"19cm", marginBottom:"0px"}}>
+          <div style={{ ...MsgAndInput, width:"18cm", marginBottom:"0px"}}>
             <span>이메일:</span>
             <InputBox 
               onChange={onChangeHandler} 
@@ -114,7 +114,7 @@ function EmailAuthentication({ isCorrectAuth, setIsCorrectAuth, email, setEmail 
             )}
           </div>
         </div>
-        <div style={{ ...MsgAndInput, width:"19cm", }}>
+        <div style={{ ...MsgAndInput, width:"18cm", }}>
           <span>인증번호 확인:</span>
           <InputBox onChange={authCodeOnchangeHandler} value={authCode} />
           {!isCorrectAuth ? (

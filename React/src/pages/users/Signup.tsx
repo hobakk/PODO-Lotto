@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { CommonStyle, InputBox, MsgAndInput, ButtonDiv, ButtonStyle } from '../../shared/Styles'
+import { CommonStyle, InputBox, MsgAndInput, ButtonDiv, ButtonStyle, TitleStyle } from '../../shared/Styles'
 import { Link, useNavigate } from 'react-router-dom';
 import { signup, SignupRequest } from '../../api/noneUserApi';
 import { useMutation } from 'react-query';
@@ -44,8 +44,8 @@ function Signiup() {
 
   return (
     <div style={ CommonStyle }>
-      <h3 style={{ fontSize: "80px"}}>회원가입</h3>
-      <div style={{ fontSize: "30px", display: "flex", flexDirection: "column", width: "15cm" }}>
+      <h3 style={ TitleStyle }>회원가입</h3>
+      <div style={{ fontSize: "30px", display: "flex", flexDirection: "column", width: "14cm" }}>
         <EmailAuthentication 
           isCorrectAuth={isCorrectAuth} 
           setIsCorrectAuth={setIsCorrectAuth} 
@@ -81,7 +81,7 @@ function Signiup() {
               회원가입
             </button>
         </div>
-        <div style={{ display:"flex", flexDirection:"column", fontSize: "18px", marginRight: "auto", marginTop: "1cm"}}>
+        <div style={{ display:"flex", flexDirection:"column", fontSize: "18px", marginRight: "auto", marginTop: "2cm"}}>
           <Link to="/find-password">비밀번호를 잊으셨나요 ?</Link>
           <Link to="/signin" style={{ marginTop:"15px" }}>회원 이신가요 ?</Link>
         </div>
