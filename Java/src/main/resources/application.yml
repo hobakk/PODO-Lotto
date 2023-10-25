@@ -37,5 +37,7 @@ server:
   servlet:
     session:
       tracking-modes: cookie
+      cookie:
+        secure: true
   error:
     include-message: always
