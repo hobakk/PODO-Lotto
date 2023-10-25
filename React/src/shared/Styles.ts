@@ -23,18 +23,23 @@ export const LogoutStyle: React.CSSProperties = {
 }
 
 export const MsgAndInput: React.CSSProperties = {
-  fontSize: "30px",
-  marginBottom: "30px",
-  width: "15cm",
+  fontSize: "23px",
+  marginBottom: "25px",
+  width: "14cm",
   display: "flex",
 }
 export const ButtonDiv: React.CSSProperties = {
   marginLeft: "auto",
-  width: "7.2cm",
+  width: "6.7cm",
 }
 export const ButtonStyle: React.CSSProperties = {
   width: "100%",
   height: "30px",
+}
+
+export const TitleStyle: React.CSSProperties = {
+  fontSize: "40px",
+  marginBottom: "2cm",
 }
 
 type UlBoxProps = { 
@@ -43,7 +48,7 @@ type UlBoxProps = {
 }
 
 export const InputBox =styled.input`
-  width: 7cm;
+  width: 6.5cm;
   height: 25px;
   margin-left: auto;
   text-align: center;
