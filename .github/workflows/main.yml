@@ -89,7 +89,7 @@ jobs:
 
     - name: Docker-compose update
       run: |
-        docker-compose down
+        docker-compose stop
         docker-compose pull
         docker-compose up -d
         docker image prune -a -f
