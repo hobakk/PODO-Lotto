@@ -142,8 +142,7 @@ public class JwtProvider {
 			.maxAge(age)
 			.build();
 
-		response.addHeader("Set-Cookie", cookie.toString());
-
+		response.addHeader(key, "Bearer " + cookie.getValue());
 	}
 
 	public String getAccessTokenInCookie(HttpServletRequest request) {
