@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { CommonStyle, CommonP, InputBox, MsgAndInput, ButtonDiv, ButtonStyle } from '../../shared/Styles'
+import { CommonStyle, CommonP, InputBox, MsgAndInput, ButtonDiv, ButtonStyle, TitleStyle } from '../../shared/Styles'
 import { checkPW, update } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import LogoutMutation from '../../hooks/useLogoutMutation';
@@ -95,9 +95,9 @@ function InformationUpdate() {
     
   return (
     <div style={CommonStyle}>
+        <h1 style={ TitleStyle }>내정보 수정</h1>
         {!isPassword ? (
             <form id='form' onSubmit={submitHandler} style={{ fontSize: "30px" }}>
-                <h1 style={{ fontSize: "80px"}}>Identification</h1>
                 <div style={MsgAndInput}>
                     <span>Password:</span>
                     <InputBox 

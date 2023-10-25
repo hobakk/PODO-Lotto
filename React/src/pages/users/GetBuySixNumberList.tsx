@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
 import { SixNumberResponse, getBuySixNumberList } from '../../api/userApi'
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
-import { CommonStyle } from '../../shared/Styles';
+import { CommonStyle, TitleStyle } from '../../shared/Styles';
 import { ResultContainer } from '../../components/Manufacturing';
 
 function GetBuySixNumberList() {
@@ -48,7 +48,7 @@ function GetBuySixNumberList() {
 
   return (
     <div style={ CommonStyle }>
-        <h1 style={{  fontSize: "60px" }}>최근 번호 조회</h1>
+        <h1 style={ TitleStyle }>최근 번호 조회</h1>
         {!show ? (
           <div>
             {date.length === 0 ? (
