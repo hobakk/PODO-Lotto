@@ -23,7 +23,7 @@ export const UserMenuValue: MenuType = {
         ["충전 요청", "/set-charging"],
         ["충전 요청 확인", "/get-charging"], 
         ["월정액 신청", "/premium"],
-        ["결재 내역", "/statement"],
+        ["거래 내역", "/statement"],
         ["최근 구매 조회", "/sixnumber-list"],
     ]
 }
