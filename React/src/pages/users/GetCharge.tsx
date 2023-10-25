@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ButtonDiv, ButtonStyle, CommonStyle } from '../../shared/Styles'
+import { ButtonDiv, ButtonStyle, CommonStyle, TitleStyle } from '../../shared/Styles'
 import { ChargeResponse, deleteCharge, getCharges } from '../../api/userApi'
 import { useMutation } from 'react-query'
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
@@ -56,7 +56,7 @@ function GetCharge() {
 
   return (
     <div style={ CommonStyle }>
-        <h1 style={{  fontSize: "80px" }}>get Charge</h1>
+        <h1 style={ TitleStyle }>충전 요청 확인</h1>
         {msg !== "" && date !== "" ? (
           <div style={BoxStyle}>
             <div style={inDivStyle}>

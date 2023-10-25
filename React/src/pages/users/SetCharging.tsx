@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { InputBox, CommonStyle, MsgAndInput, ButtonDiv, ButtonStyle } from '../../shared/Styles'
+import { InputBox, CommonStyle, MsgAndInput, ButtonDiv, ButtonStyle, TitleStyle } from '../../shared/Styles'
 import { ChargingRequest, setCharges } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -40,7 +40,7 @@ function SetCharging() {
 
   return (
     <form onSubmit={submitHandler} style={ CommonStyle }>
-        <h1 style={{ marginBottom:"10px", fontSize: "80px" }}>Charging</h1>
+        <h1 style={ TitleStyle }>충전 요청</h1>
         <p style={{ marginBottom:"70px" }}>금액과 입금 메세지를 입력해주세요</p>
         <div style={MsgAndInput}>
             <span>Cash:</span>
