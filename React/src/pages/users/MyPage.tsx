@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { CommonStyle, MsgAndInput, InputBox } from '../../shared/Styles'
+import { CommonStyle, MsgAndInput, InputBox, TitleStyle } from '../../shared/Styles'
 import { withdraw } from '../../api/userApi';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -47,17 +47,17 @@ function MyPage() {
         }
     }
 
-    const LinkStyle: React.CSSProperties = { 
-        textDecoration: "none",
+    const ButtonStlye: React.CSSProperties = { 
         marginTop: "30px",
         marginLeft: "auto",
-        fontSize:"20px",
-        color:"red"
+        width:"5cm",
+        height: "0.8cm",
     }
+
     const InputBoxStyle: React.CSSProperties = { 
         marginLeft:"auto",
         textAlign: "center",
-        width:"60%",
+        width:"70%",
     }
 
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,33 +65,34 @@ function MyPage() {
     }
 
   return (
-    <div style={CommonStyle}>
-        <div>
-            <h1 style={{ fontSize: "80px", textAlign:"center"}}>My Page</h1>
-            <div style={{ marginTop: "50px" }}>
-                <div style={ MsgAndInput }>
-                    <span style={{ width:"40%" }}>Email:</span>
-                    <span style={ InputBoxStyle }>{userIf.email}</span>
-                </div>
-                <div style={ MsgAndInput }>
-                    <span style={{ width:"40%" }}>Nickname:</span>
-                    <span style={ InputBoxStyle }>{userIf.nickname}</span>
-                </div>
-                <div style={ MsgAndInput }>
-                    <span style={{ width:"40%" }}>Cash:</span>
-                    <span style={ InputBoxStyle }>{userIf.cash}</span>
-                </div>
-                <div style={ MsgAndInput }>
-                    <span style={{ width:"40%" }}>Role:</span>
-                    <span style={ InputBoxStyle }>{role}</span>
-                </div>
-            </div>
+    <div style={ CommonStyle }>
+        <h1 style={ TitleStyle }>내정보</h1>
+        <div style={ MsgAndInput }>
+            <span style={{ width:"30%" }}>Email:</span>
+            <span style={ InputBoxStyle }>{userIf.email}</span>
         </div>
-        <Link to="/my-page/update" style={LinkStyle}>회원정보 수정하기</Link>
+        <div style={ MsgAndInput }>
+            <span style={{ width:"30%" }}>Nickname:</span>
+            <span style={ InputBoxStyle }>{userIf.nickname}</span>
+        </div>
+        <div style={ MsgAndInput }>
+            <span style={{ width:"30%" }}>Cash:</span>
+            <span style={ InputBoxStyle }>{userIf.cash}</span>
+        </div>
+        <div style={ MsgAndInput }>
+            <span style={{ width:"30%" }}>Role:</span>
+            <span style={ InputBoxStyle }>{role}</span>
+        </div>
+        <button 
+            style={ ButtonStlye }
+            onClick={()=>(navigate("/my-page/update"))}
+        >
+            내정보 수정하기
+        </button>
         
         {role !== "관리자" && (
-            <div style={{ marginTop: '5cm', }}>
-                <form id='form' onSubmit={sunmitHandler} style={{ ...MsgAndInput, width:"12cm"}}>
+            <div style={{ marginTop: '3cm', }}>
+                <form id='form' onSubmit={sunmitHandler} style={ MsgAndInput }>
                     <InputBox 
                         onChange={onChangeHandler} 
                         type='text' 
