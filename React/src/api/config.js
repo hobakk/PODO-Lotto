@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = `${process.env.REACT_APP_BASE_URL}`
+const url = `${process.env.REACT_APP_DOMAIN}`
 
 const dontLogin = axios.create({
     headers: {
@@ -11,9 +11,6 @@ const dontLogin = axios.create({
 })
 
 const api = axios.create({
-    // headers: {
-    //     'Access-Control-Allow-Origin': `${url}:8080`,
-    // },
     baseURL: `${url}/api`,
     withCredentials: true,
 })
