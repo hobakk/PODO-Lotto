@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CommonStyle } from '../../shared/Styles'
+import { CommonStyle, TitleStyle } from '../../shared/Styles'
 import { StatementModifyMsgRequest, StatementResponse, getStatement, modifyStatementMsg } from '../../api/userApi'
 import { useMutation } from 'react-query'
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
@@ -75,10 +75,10 @@ function Statement() {
 
   return (
     <div style={ CommonStyle }>
-        <h1 style={{  fontSize: "80px" }}>Statement</h1>
+        <h1 style={  TitleStyle }>거래 내역</h1>
         <span style={{ marginBottom:"20px", fontSize:"18px" }} >최근 한달 동안 거래내역만 출력됩니다</span>
         <div>
-            <div style={{ display: "flex", fontSize:"22px", backgroundColor:"#D4F0F0", width:"40cm"}}>
+            <div style={{ display: "flex", fontSize:"22px", backgroundColor:"#D4F0F0", width:"35cm"}}>
                 <div style={TableStyle}>Date</div>
                 <div style={{ ...TableStyle, width: "34%", }}>Subject</div>
                 <div style={TableStyle}>Cash</div>
@@ -86,7 +86,7 @@ function Statement() {
             </div>
             {value.length !== 0 && (
                 value.map((item, index)=>(
-                    <div key={item.localDate + index} style={{ display: "flex", fontSize: "20px", width:"40cm"}}>
+                    <div key={item.localDate + index} style={{ display: "flex", fontSize: "20px", width:"35cm"}}>
                         <span style={TableStyle}>{item.localDate}</span>
                         <span style={{ ...TableStyle, width: "34%", }}>{item.subject}</span>
                         <span style={TableStyle}>{item.cash}</span>
@@ -126,7 +126,7 @@ function Statement() {
                     </div>   
                 ))
             )}
-            <div style={{ borderTop: "2px solid black", width:"40cm"}} />
+            <div style={{ borderTop: "2px solid black", width:"35cm"}} />
             {value.length === 0 && (
                 <div style={{ textAlign:"center", fontSize:"22px", marginTop:"2cm" }}>
                     <span>거래내역이 존재하지 않습니다</span>
