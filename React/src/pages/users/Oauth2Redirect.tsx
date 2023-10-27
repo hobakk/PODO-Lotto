@@ -14,6 +14,7 @@ function Oauth2Redirect() {
     onSuccess: (res)=>{
       if (res.code === 200 && res.data) {
           dispatch(setUserIf(res.data));
+          navigate("/");
       }
     },
     onError: (err: Err)=>{
@@ -23,7 +24,6 @@ function Oauth2Redirect() {
 
   useEffect(()=>{ 
     getUserIfAndRefreshMutation.mutate(); 
-    navigate("/");
   }, [])
 
   return null;
