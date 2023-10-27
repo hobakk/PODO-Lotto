@@ -43,7 +43,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 		if (refreshTokenInRedis.isPresent()) {
 			String refreshToken = refreshTokenInRedis.get();
-			long remainingSeconds = Math.max(jwtProvider.getRemainingTime(refreshToken) /1000, 0);
+			int remainingSeconds = (int) Math.floor((double) jwtProvider.getRemainingTime(refreshToken) / 1000);
 			String accessToken = jwtProvider.accessToken(user.getRefreshPointer());
 			jwtProvider.createCookie(response, JwtProvider.ACCESS_TOKEN, accessToken, remainingSeconds);
 		} else {
