@@ -55,6 +55,6 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
 		userRepository.save(user);
 		jwtProvider.createCookie(response, "JSESSIONID", null, 0);
-		getRedirectStrategy().sendRedirect(request, response, url + "/oauth2/user");
+		getRedirectStrategy().sendRedirect(request, response, url + "/user/oauth2");
 	}
 }
