@@ -51,7 +51,7 @@ const Router = () => {
                 <Route path='/admin/lotto' element={<CreateMainLotto />} />
                 <Route path='/admin/winnumber' element={<SetWinNumber />} />
                 <Route path='/sixnumber-list' element={<GetBuySixNumberList />} />
-                <Route path='/oauth2/user' element={<Oauth2Redirect />} />
+                <Route path='/user/oauth2' element={<Oauth2Redirect />} />
                 <Route path='/find-password' element={<FindPassword />} />
             </Routes>
         </Layout>
