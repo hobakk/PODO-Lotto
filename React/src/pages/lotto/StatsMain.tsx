@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CommonStyle } from '../../shared/Styles'
+import { CommonStyle, TitleStyle } from '../../shared/Styles'
 import { useMutation } from 'react-query';
 import { LottoResponse, getMainTopNumber } from '../../api/lottoApi';
 import { NumSentenceResult } from '../../components/Manufacturing';
@@ -23,7 +23,7 @@ function StatsMain() {
 
   return (
     <div id='recent' style={ CommonStyle }>
-        <h1 style={{  fontSize: "80px", height: "1cm" }}>Stats Main</h1>
+        <h1 style={ TitleStyle }>사이트 통계</h1>
         <div style={{ marginBottom: "2cm"}}>
                 {value.value !== "" &&(
                     <span style={{ textAlign: "center"}}>
