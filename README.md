@@ -1,9 +1,8 @@
 <h1 align=center><img src=React/public/logo.png width=33 height=33 /> PODO Lotto </h1><br/>
 <div align=center>
   <p>참고: 소제목 옆 Service 클릭하시면 제목에 알맞은 코드로 이동됩니다. ( 예: User Service )</p></br>
-  <img width="600cm" src="https://github.com/hobakk/PODO-Lotto/assets/117063625/21408a18-2585-4ddd-9b2a-7f42154c20f0" />
-</div><br/>
-
+  <img width="600cm" src="https://github.com/hobakk/PODO-Lotto/assets/117063625/9f2120df-a334-45fe-b0d1-c6d854cc22ce" />
+</div><br/><br/>
 <h2>사용기술</h2>
 <div display=flex>
 
@@ -21,9 +20,11 @@
   <img src="https://img.shields.io/badge/github actions-2088FF.svg?style=for-the-badge&logo=githubactions&logoColor=white">
   <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white">
   <img src="https://img.shields.io/badge/nginx-009639.svg?style=for-the-badge&logo=nginx&logoColor=white">
-</div><br/>
+</div><br/><br/>
+<h2>ERD 구조도</h2>
+https://github.com/hobakk/PODO-Lotto/blob/main/podo_erd.png
 
-<br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/44802390b2a65e85352d207da0761d2a87528190/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L61)</h2>
+<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/3c779ac7704c93d58c1ec657cee397b9b6b55423/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L61)</h2>
 
 ### 1. 회원가입
 sendAuthCodeToEmail, compareAuthCode, signUp
