@@ -15,7 +15,7 @@ export const StatsContainer = ({ res }: {res: number[]}) => {
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        width: "4cm",
+        textAlign: "center",
         height: "1.4cm",
         border: "1px solid gray",
     }
@@ -28,7 +28,7 @@ export const StatsContainer = ({ res }: {res: number[]}) => {
                 <div key={chunkIndex}>
                   {countList.slice(chunkIndex * chunkSize, (chunkIndex + 1) * chunkSize).map((num, index) => (
                     <div style={Style} key={index}>
-                      {ChangingNumStyle({ num: index + 1, index: 0 })}
+                      {ChangingNumStyle({ num: index + 1 + chunkIndex * chunkSize, index: 0 })}
                       <p style={{ margin: "5px" }}>:</p>
                       <p>{num}</p>
                     </div>
