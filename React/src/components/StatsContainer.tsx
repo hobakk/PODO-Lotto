@@ -3,6 +3,7 @@ import { ChangingNumStyle } from './Manufacturing';
 
 export const StatsContainer = ({ res }: {res: number[]}) => {
     const [countList, setCountList] = useState<number[]>([]);
+    const chunkSize = 5;
 
     useEffect(()=>{
         if (res !== null) {
@@ -18,23 +19,26 @@ export const StatsContainer = ({ res }: {res: number[]}) => {
         height: "1.4cm",
         border: "1px solid gray",
     }
-  return (
-    <div style={{ fontSize: "20px", width: "42cm" }}>
-        {countList.length !== 0 && (
-            <div style={{ display: "flex", flexWrap: "wrap"}}>
-                {countList.map((num, index)=>{
-                    return (
-                        <div style={Style}>
-                            {ChangingNumStyle({num: index + 1, index: 0})}
-                            <p style={{ margin: "5px" }}>:</p>
-                            <p>{num}</p>             
-                        </div>
-                    )
-                })}
+
+    return (
+        <div style={{ fontSize: "20px", width: "42cm" }}>
+          {countList.length !== 0 && (
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {Array.from({ length: 9 }).map((_, chunkIndex) => (
+                <div key={chunkIndex}>
+                  {countList.slice(chunkIndex * chunkSize, (chunkIndex + 1) * chunkSize).map((num, index) => (
+                    <div style={Style} key={index}>
+                      {ChangingNumStyle({ num: index + 1, index: 0 })}
+                      <p style={{ margin: "5px" }}>:</p>
+                      <p>{num}</p>
+                    </div>
+                  ))}
+                </div>
+              ))}
             </div>
-        )}
-    </div>
-  )
-}
+          )}
+        </div>
+      )
+    }
 
 export default StatsContainer;
