@@ -23,7 +23,7 @@ function StatsMain() {
 
   return (
     <div id='recent' style={ CommonStyle }>
-        <h1 style={ TitleStyle }>사이트 통계</h1>
+        <h1 style={{ fontSize: "40px", marginBottom: "1cm" }}>사이트 통계</h1>
         <div style={{ marginBottom: "2cm"}}>
                 {value.value !== "" &&(
                     <span style={{ textAlign: "center"}}>
