@@ -4,7 +4,7 @@ import { useMutation } from 'react-query';
 import { AllMonthProps, LottoResponse, getAllMonthStats, getTopNumberForMonth } from '../../api/lottoApi';
 import { NumSentenceResult } from '../../components/Manufacturing';
 import StatsContainer from '../../components/StatsContainer';
-import { UnifiedResponse, Err } from '../../shared/TypeMenu';
+import { UnifiedResponse } from '../../shared/TypeMenu';
 
 function StatsMonth() {
     const [yMList, setYMList] = useState<string[]>([]);
@@ -12,37 +12,34 @@ function StatsMonth() {
     const [value, setValue] = useState<LottoResponse>({countList: [], value: ""});
     const [render, setRender] = useState<boolean>(true);
 
-    const allMonthStatsMutation = useMutation<UnifiedResponse<AllMonthProps>, Err>(getAllMonthStats, {
+    const allMonthStatsMutation = useMutation<UnifiedResponse<AllMonthProps>, any>(getAllMonthStats, {
         onSuccess: (res)=>{
             if (res.code === 200 && res.data)
             setYMList(res.data.yearMonthList);
         },
         onError: (err)=>{
-            if (err.code === 500) {
-                alert(err.msg);
-            }
+            if (err.status !== 500) alert(err.message);
         }
     })
 
-    const getMonthStatsMutation = useMutation<UnifiedResponse<LottoResponse>, Err, string>(getTopNumberForMonth, {
+    const getMonthStatsMutation = useMutation<UnifiedResponse<LottoResponse>, any, string>(getTopNumberForMonth, {
         onSuccess: (res)=>{
             if (res.code === 200 && res.data)
             setValue(res.data);
         },
         onError: (err)=>{
-            if (err.code === 500) {
-                alert(err.msg);
-            }
+            if (err.status !== 500) alert(err.message);
         }
     })
 
     useEffect(()=>{
         allMonthStatsMutation.mutate();
-    }, [render])
+    }, [])
 
     useEffect(()=>{
-        if (yearMonth !== "") 
-        getMonthStatsMutation.mutate(yearMonth);
+        if (yearMonth !== "") {
+            getMonthStatsMutation.mutate(yearMonth);
+        }
     }, [yearMonth])
 
     useEffect(()=>{
