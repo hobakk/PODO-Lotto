@@ -51,7 +51,7 @@ function StatsMonth() {
 
   return (
     <div style={ CommonStyle }>
-        <h1 style={{  fontSize: "80px", height: "1cm"}}>Stats Month</h1>
+        <h1 style={{ fontSize: "40px", marginBottom: "1cm" }}>월별 통계</h1>
         {value.value !== "" ? (
             <>
                 <button 
