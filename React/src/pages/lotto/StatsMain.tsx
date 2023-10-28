@@ -9,17 +9,21 @@ import { Err, UnifiedResponse } from '../../shared/TypeMenu';
 function StatsMain() {
     const [value, setValue] = useState<LottoResponse>({countList: [], value: ""});
 
-    const MainMutation = useMutation<UnifiedResponse<LottoResponse>, Err>(getMainTopNumber, {
+    const MainMutation = useMutation<UnifiedResponse<LottoResponse>, any>(getMainTopNumber, {
         onSuccess: (res)=>{
             if (res.code === 200 && res.data)
             setValue(res.data);
         },
         onError: (err)=>{
-            if (err.msg) alert(err.msg);
+            if (err.status !== 500) alert(err.message);
         }
     })
 
-    useEffect(()=>{ MainMutation.mutate(); }, [])
+    useEffect(()=>{ 
+        if (value.countList.length === 0 && value.value === "") {
+            MainMutation.mutate(); 
+        }
+    }, [])
 
   return (
     <div id='recent' style={ CommonStyle }>
