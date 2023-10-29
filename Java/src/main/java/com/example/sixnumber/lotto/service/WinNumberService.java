@@ -43,13 +43,12 @@ public class WinNumberService {
 
 		winNumberRepository.save(winNumber);
 
-		List<WinNumber> winNumberList = findAllAfterCheckIsEmpty().stream()
-			.sorted(Comparator.comparing(WinNumber::getTime).reversed())
-			.collect(Collectors.toList());
+		List<WinNumber> winNumberList = findAllAfterCheckIsEmpty();
 
 		return transform(winNumberList.stream()
-				.skip(Math.max(0, winNumberList.size() - 5))
-				.collect(Collectors.toList()));
+			.sorted(Comparator.comparing(WinNumber::getTime).reversed())
+			.skip(Math.max(0, winNumberList.size() - 5))
+			.collect(Collectors.toList()));
 	}
 
 	private List<WinNumber> findAllAfterCheckIsEmpty() {
