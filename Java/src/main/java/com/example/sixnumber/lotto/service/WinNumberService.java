@@ -2,6 +2,7 @@ package com.example.sixnumber.lotto.service;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,9 @@ public class WinNumberService {
 
 		winNumberRepository.save(winNumber);
 
-		List<WinNumber> winNumberList = findAllAfterCheckIsEmpty();
+		List<WinNumber> winNumberList = findAllAfterCheckIsEmpty().stream()
+			.sorted(Comparator.comparing(WinNumber::getTime).reversed())
+			.collect(Collectors.toList());
 
 		return transform(winNumberList.stream()
 				.skip(Math.max(0, winNumberList.size() - 5))
