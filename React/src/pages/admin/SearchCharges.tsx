@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ButtonDiv, ButtonStyle, CommonStyle, InputBox, MsgAndInput } from '../../shared/Styles'
+import { ButtonDiv, ButtonStyle, CommonStyle, InputBox, MsgAndInput, TitleStyle } from '../../shared/Styles'
 import { useMutation } from 'react-query';
 import { getSearch, AdminGetCharges } from '../../api/adminApi';
 import { UnifiedResponse } from '../../shared/TypeMenu';
@@ -59,7 +59,7 @@ function SearchCharges() {
 
   return (
     <div id='recent' style={{ ...CommonStyle, fontSize:"22px"}}>
-        <h1 style={{  fontSize: "80px" }}>Search Charges</h1>
+        <h1 style={ TitleStyle }>충전 요청 검색</h1>
         {value.userId === 0 ? (
             <form onSubmit={onSubmitHandler}>
                 <div style={MsgAndInput}>

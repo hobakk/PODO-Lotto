@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
 import { getAdminCharges, AdminGetCharges, upCash } from '../../api/adminApi';
-import { CommonStyle } from '../../shared/Styles';
+import { CommonStyle, TitleStyle } from '../../shared/Styles';
 import { upDownCashRequest, UnifiedResponse, Err } from '../../shared/TypeMenu';
 
 function GetAllCharges() {
@@ -18,8 +18,8 @@ function GetAllCharges() {
             }
         },
         onError: (err: any | Err)=>{
-            if (err.status) alert(err.message);
-            else alert(err.msg);
+            if (err.status) console.error(err.message);
+            else console.error(err.msg);
         }
     })
 
@@ -79,7 +79,7 @@ function GetAllCharges() {
 
   return (
     <div id='recent' style={ CommonStyle }>
-        <h1 style={{  fontSize: "80px", height:"1.5cm" }}>Get AllCharges</h1>
+        <h1 style={ TitleStyle }>AllCharges</h1>
         <div style={{ display:"flex", flexDirection:"row", textAlign:"center"}}>
             <select id="selectOption" value={selectValue} onChange={(e)=>setSelectValue(e.target.value)} style={{ height:"0.65cm" }}>
                 <option value="selectCash">cash</option>

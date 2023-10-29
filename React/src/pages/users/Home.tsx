@@ -53,7 +53,7 @@ function Home() {
   return (
     <div style={CommonStyle}>
       <div style={{ marginLeft: "auto", marginBottom: "10px"}}>
-        <Link to={"/buynum"} style={{ fontWeight: "bold", textDecoration: "none" }}>추천 번호 구매하기</Link>
+        <Link to={"/buynum"} style={{ fontWeight: "bold", textDecoration: "none" }}>추천번호 발급하기</Link>
         <button style={ButtonStyle} onClick={()=>{setBoolean(true)}}>새로고침</button>
       </div>
       <div style={{ fontSize: "20px" }}>

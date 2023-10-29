@@ -1,7 +1,7 @@
 import React from 'react'
 import { useMutation } from 'react-query';
 import { createLotto } from '../../api/adminApi';
-import { CommonStyle } from '../../shared/Styles';
+import { CommonStyle, TitleStyle } from '../../shared/Styles';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 
@@ -25,7 +25,7 @@ function CreateMainLotto() {
 
   return (
     <div id='recent' style={ CommonStyle }>
-        <h1 style={{  fontSize: "80px", height:"4.5cm"}}>Create Main Lotto</h1>
+        <h1 style={ TitleStyle }>Create Main Lotto</h1>
         <button onClick={()=>setMainLottoMutation.mutate()}>메인 로또 생성</button>
     </div>
   )

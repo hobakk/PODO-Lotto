@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query'
 import { downCash, getUsers, setRoleFromAdmin, setStatusFromAdmin, setAdmin, UserIdMsgProps } from '../../api/adminApi';
-import { CommonStyle } from '../../shared/Styles';
+import { CommonStyle, TitleStyle } from '../../shared/Styles';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedResponse, UserDetailInfo, Err, upDownCashRequest } from '../../shared/TypeMenu';
 
@@ -218,7 +218,7 @@ function GetUsers() {
 
   return (
     <div id='recent' style={ CommonStyle }>
-        <h1 style={{  fontSize: "80px", height:"1.5cm"}}>Get Users</h1>
+        <h1 style={ TitleStyle }>Users</h1>
         <input onChange={(e)=>setSearchInputValue(e.target.value)} placeholder='검색할 값을 입력해주세요' style={{ marginBottom:"1cm", width:"7cm", height:"0.5cm" }}/>
         {searchInputValue === "" ? (
             value.filter(user=>user.role !== "ROLE_ADMIN").map(user=>{

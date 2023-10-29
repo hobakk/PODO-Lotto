@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ButtonDiv, ButtonStyle, CommonStyle, InputBox, MsgAndInput } from '../../shared/Styles'
+import { ButtonDiv, ButtonStyle, CommonStyle, InputBox, MsgAndInput, TitleStyle } from '../../shared/Styles'
 import { useMutation } from 'react-query';
 import { WinNumberRequest, setWinNumber } from '../../api/adminApi';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
@@ -51,7 +51,7 @@ function SetWinNumber() {
 
   return (
     <form style={ CommonStyle } onSubmit={onSubmitHandler}>
-        <h1 style={{ fontSize: "80px" }}>Set WinNumber</h1>
+        <h1 style={ TitleStyle }>당첨번호 등록</h1>
         <div style={MsgAndInput}>
             <span>Date:</span>
             <InputBox name='date' onChange={onChangeHandler} ref={dateRef} placeholder='2023-07-14' />
