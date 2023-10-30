@@ -28,8 +28,7 @@ public class WinNumberService {
 
 	@Cacheable(value = "WinNumbers", key = "'all'")
 	public WinNumberResponse getWinNumbers() {
-		List<WinNumber> winNumberList = findAllAfterCheckIsEmpty();
-		return transform(winNumberList);
+		return transform(getWinNumberList());
 	}
 
 	@CachePut(value = "WinNumbers", key = "'all'")
@@ -43,18 +42,22 @@ public class WinNumberService {
 
 		winNumberRepository.save(winNumber);
 
-		List<WinNumber> winNumberList = findAllAfterCheckIsEmpty().stream()
-			.sorted(Comparator.comparing(WinNumber::getTime).reversed())
-			.collect(Collectors.toList());
-
-		if (winNumberList.size() > 5) winNumberList = winNumberList.subList(0, 5);
-
-		return transform(winNumberList);
+		return transform(getWinNumberList());
 	}
 
 	private List<WinNumber> findAllAfterCheckIsEmpty() {
 		List<WinNumber> winNumberList = winNumberRepository.findAll();
 		if (winNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
+
+		return winNumberList;
+	}
+
+	private List<WinNumber> getWinNumberList() {
+		List<WinNumber> winNumberList = findAllAfterCheckIsEmpty().stream()
+			.sorted(Comparator.comparing(WinNumber::getTime).reversed())
+			.collect(Collectors.toList());
+
+		if (winNumberList.size() > 5) winNumberList = winNumberList.subList(0, 5);
 
 		return winNumberList;
 	}
