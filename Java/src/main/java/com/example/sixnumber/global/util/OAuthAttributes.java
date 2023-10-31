@@ -3,6 +3,7 @@ package com.example.sixnumber.global.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.type.UserRole;
 
@@ -71,7 +72,9 @@ public class OAuthAttributes {
 	}
 
 	public User toEntity(){
-		return new User(email, name, UserRole.ROLE_USER);
+		User user = new User(email, name, UserRole.ROLE_USER);
+		user.addStatement(new Statement(user, nameAttributeKey + " 회원가입", 1000));
+		return user;
 	}
 
 	Map<String, Object> convertToMap() {

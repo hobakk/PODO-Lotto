@@ -225,7 +225,6 @@ public class UserService {
 		return UnifiedResponse.ok("충전 요청 삭제 성공");
 	}
 
-	// 무슨 경우에서도 프론트로 password 를 보내지 않음
 	public UnifiedResponse<?> update(SignupRequest request, User user) {
 		String password = request.getPassword();
 		if (password.isEmpty()) password = user.getPassword();
@@ -251,7 +250,6 @@ public class UserService {
 		return UnifiedResponse.ok("수정 완료");
 	}
 
-	// Statement 정보 보유기간 및 반환값에 대해 더 고민해야함
 	public UnifiedResponse<List<StatementResponse>> getStatement(Long userId) {
 		return userRepository.findByIdAndStatementListNotNull(userId)
 			.map(user -> {
