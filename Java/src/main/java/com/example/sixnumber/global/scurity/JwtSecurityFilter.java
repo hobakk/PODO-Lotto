@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.example.sixnumber.global.exception.AccessTokenIsExpiredException;
+import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.global.exception.RefreshTokenIsNullException;
 import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.RedisDao;
@@ -37,12 +36,28 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		String accessToken = jwtProvider.getAccessTokenInCookie(request);
-		String encodedRefreshToken = jwtProvider.resolveToken(request);
+		TokenDto tokenDto = jwtProvider.resolveTokens(request);
+		String accessToken = tokenDto.getAccessToken();
+		String encodedRefreshToken = tokenDto.getRefreshToken();
 
-		if (encodedRefreshToken != null) {
+		if (tokensIsNotNull(tokenDto)) {
 			try {
-				validateAccessToken(accessToken);
+				String verifiedAccessToken = validateAccessToken(accessToken);
+				String refreshPointer = jwtProvider.getClaims(verifiedAccessToken).getSubject();
+
+				redisDao.getValue(RedisDao.RT_KEY + refreshPointer)
+					.ifPresentOrElse(
+						value -> {
+							if (!encoder.matches(value, encodedRefreshToken))
+								deleteCookieAndThrowException(response);
+
+							createAuthentication(jwtProvider.getTokenInUserId(value));
+						},
+						() -> {
+							redisDao.setBlackList(verifiedAccessToken, (long) 300000);
+							deleteCookieAndThrowException(response);
+						}
+					);
 			} catch (ExpiredJwtException e) {
 				String refreshPointer = e.getClaims().getSubject();
 				redisDao.getValue(RedisDao.RT_KEY + refreshPointer)
@@ -56,35 +71,20 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 							int remainingSeconds = (int) Math.floor((double) jwtProvider.getRemainingTime(value) / 1000);
 							if (remainingSeconds < 360) deleteCookieAndThrowException(response);
 
-							jwtProvider.createCookie(
+							jwtProvider.createCookieForAddHeaders(
 								response, JwtProvider.ACCESS_TOKEN, newAccessToken, remainingSeconds);
 							createAuthentication(claims.get("id", Long.class));
 						},
 						() -> deleteCookieAndThrowException(response)
 					);
 			}
-		} else {
-			if (accessToken != null) {
-				try {
-					String verifiedAccessToken = validateAccessToken(accessToken);
-					String refreshPointer = jwtProvider.getClaims(verifiedAccessToken).getSubject();
-
-					redisDao.getValue(RedisDao.RT_KEY + refreshPointer)
-						.ifPresentOrElse(
-							value -> createAuthentication(jwtProvider.getTokenInUserId(value)),
-							() -> {
-								Long remainingTime = jwtProvider.getRemainingTime(accessToken);
-								redisDao.setBlackList(verifiedAccessToken, remainingTime);
-								deleteCookieAndThrowException(response);
-							}
-						);
-				} catch (ExpiredJwtException e) {
-					throw new AccessTokenIsExpiredException();
-				}
-			}
-		}
+		} else throw new RefreshTokenIsNullException();
 
 		filterChain.doFilter(request, response);
+	}
+
+	private boolean tokensIsNotNull(TokenDto tokenDto) {
+		return tokenDto.getAccessToken() != null && tokenDto.getRefreshToken() != null;
 	}
 
 	private String validateAccessToken(String accessToken) {
@@ -97,12 +97,13 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	}
 
 	private void deleteCookieAndThrowException(HttpServletResponse response) {
-		deleteCookies(response);
+		deleteCookies(response, JwtProvider.ACCESS_TOKEN);
+		deleteCookies(response, JwtProvider.REFRESH_TOKEN);
 		throw new RefreshTokenIsNullException();
 	}
 
-	private void deleteCookies(HttpServletResponse response) {
-		jwtProvider.createCookie(response, JwtProvider.ACCESS_TOKEN, null, 0);
+	private void deleteCookies(HttpServletResponse response, String name) {
+		jwtProvider.createCookieForAddHeaders(response, name, null, 0);
 	}
 
 	private void createAuthentication(Long userId) {
