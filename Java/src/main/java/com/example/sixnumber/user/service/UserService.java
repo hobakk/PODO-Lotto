@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -132,12 +131,7 @@ public class UserService {
 			user.setRefreshPointer(tokenDto.getRefreshPointer());
 			redisDao.setValues(RedisDao.RT_KEY + tokenDto.getRefreshPointer(),
 				tokenDto.getRefreshToken(), (long) 7, TimeUnit.DAYS);
-
-			jwtProvider.createCookie(
-				response, JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), JwtProvider.ONE_WEEK);
-
-			String enCodedRefreshToken = passwordEncoder.encode(tokenDto.getRefreshToken());
-			response.addHeader(JwtProvider.AUTHORIZATION_HEADER, "Bearer " + enCodedRefreshToken);
+			jwtProvider.addCookiesToHeaders(response, tokenDto, JwtProvider.ONE_WEEK);
 			unifiedResponse = UnifiedResponse.ok("로그인 성공");
 		} else {
 			redisDao.delete(RedisDao.RT_KEY + user.getRefreshPointer());
@@ -159,7 +153,7 @@ public class UserService {
 			redisDao.setBlackList(accessToken, remainingTime);
 		}
 
-		jwtProvider.createCookie(response, JwtProvider.ACCESS_TOKEN, null, 0);
+		jwtProvider.createCookieForAddHeaders(response, JwtProvider.ACCESS_TOKEN, null, 0);
 		return UnifiedResponse.ok("로그아웃 성공");
 	}
 
