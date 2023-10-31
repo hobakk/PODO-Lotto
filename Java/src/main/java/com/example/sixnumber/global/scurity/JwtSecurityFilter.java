@@ -96,13 +96,8 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	}
 
 	private void deleteCookieAndThrowException(HttpServletResponse response) {
-		deleteCookies(response, JwtProvider.ACCESS_TOKEN);
-		deleteCookies(response, JwtProvider.REFRESH_TOKEN);
+		jwtProvider.addCookiesToHeaders(response, new TokenDto(), 0);
 		throw new RefreshTokenIsNullException();
-	}
-
-	private void deleteCookies(HttpServletResponse response, String name) {
-		jwtProvider.createCookieForAddHeaders(response, name, null, 0);
 	}
 
 	private void createAuthentication(Long userId) {
