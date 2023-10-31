@@ -1,16 +1,11 @@
 import { useEffect } from "react"
 import axios, { AxiosHeaders, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { api } from "../api/config"
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../config/configStore";
 import { useNavigate } from "react-router-dom";
-import { setRefreshToken } from "../modules/refreshTokenSlice";
 import { persistor } from "../config/configStore";
 
 const useAxiosResponseInterceptor = () => {
-    const refreshTokenSlice = useSelector((state: RootState)=>state.refreshToken);
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
     const requestHandler = (request: InternalAxiosRequestConfig<any>) => {
         request.headers['Content-Type'] = 'application/json';
@@ -18,23 +13,6 @@ const useAxiosResponseInterceptor = () => {
     };
 
     const responseHandler = (response: AxiosResponse<any, any>) => {
-        const header = response.headers;
-        if (header instanceof AxiosHeaders) {
-            if (header.has('Authorization')) {
-                const encodedRefresh: string = header.get('Authorization')?.toString().split(" ")[1] ?? "";
-                if (encodedRefresh !== "") {
-                    const currentDate = new Date();
-                    const oneWeekLater = new Date(currentDate);
-                    oneWeekLater.setDate(currentDate.getDate() + 7);
-
-                    dispatch(setRefreshToken({
-                        value: encodedRefresh,
-                        expirationTime: oneWeekLater.toISOString(),
-                    }));
-                }
-            } 
-        }
-
         return response;
     }
 
@@ -43,17 +21,6 @@ const useAxiosResponseInterceptor = () => {
             const { exceptionType, msg } = error.response.data;
             if (exceptionType === "RE_ISSUANCE") {
                 const newConfig = error.response.config;
-                const { value, expirationTime } = refreshTokenSlice;
-                
-                if (expirationTime !== "") {
-                    const now = new Date();
-                    const expirationDate = new Date(parseInt(expirationTime));
-                    if (now > expirationDate) {
-                        if (value !== null) {
-                            newConfig.headers.set('Authorization', `Bearer ${value}`);
-                        } else console.log("encodedRefresh 값이 존재하지 않음");
-                    } else await persistor.purge();
-                }
             
                 return await axios.request(newConfig)
             } else if (exceptionType === "DONT_LOGIN") {
