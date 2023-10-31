@@ -6,7 +6,7 @@ import LogoutMutation from '../hooks/useLogoutMutation';
 import MenuContainer from '../components/MenuContainer';
 import { AdminMenuValue, LottoMenuValue, StatsMenuValue, UserMenuValue } from './MenuValue';
 import { RootState } from '../config/configStore';
-import useAxiosResponseInterceptor from '../hooks/UseAxiosResponseInterceptor';
+import useAxiosResponseInterceptor from '../hooks/UseAxiosInterceptor';
 
 const mainColor = `#9957F0`;
 
