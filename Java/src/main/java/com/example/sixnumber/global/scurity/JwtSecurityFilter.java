@@ -31,14 +31,13 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	private final UserDetailsServiceImpl userDetailsService;
 	private final JwtProvider jwtProvider;
 	private final RedisDao redisDao;
-	private final PasswordEncoder encoder;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 		TokenDto tokenDto = jwtProvider.resolveTokens(request);
 		String accessToken = tokenDto.getAccessToken();
-		String encodedRefreshToken = tokenDto.getRefreshToken();
+		String refreshToken = tokenDto.getRefreshToken();
 
 		if (tokensIsNotNull(tokenDto)) {
 			try {
@@ -48,9 +47,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 				redisDao.getValue(RedisDao.RT_KEY + refreshPointer)
 					.ifPresentOrElse(
 						value -> {
-							if (!encoder.matches(value, encodedRefreshToken))
-								deleteCookieAndThrowException(response);
-
+							validateRefreshToken(response, refreshToken, value);
 							createAuthentication(jwtProvider.getTokenInUserId(value));
 						},
 						() -> {
@@ -63,9 +60,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 				redisDao.getValue(RedisDao.RT_KEY + refreshPointer)
 					.ifPresentOrElse(
 						value -> {
-							if (!encoder.matches(value, encodedRefreshToken))
-								deleteCookieAndThrowException(response);
-
+							validateRefreshToken(response, refreshToken, value);
 							Claims claims = jwtProvider.getClaims(value);
 							String newAccessToken = jwtProvider.accessToken(claims.get("key", String.class));
 							int remainingSeconds = (int) Math.floor((double) jwtProvider.getRemainingTime(value) / 1000);
@@ -94,6 +89,10 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "이미 로그아웃된 AccessToken 입니다");
 
 		return accessToken;
+	}
+
+	private void validateRefreshToken(HttpServletResponse response, String refreshToken, String refreshTokenInRedis) {
+		if (!refreshToken.equals(refreshTokenInRedis)) deleteCookieAndThrowException(response);
 	}
 
 	private void deleteCookieAndThrowException(HttpServletResponse response) {

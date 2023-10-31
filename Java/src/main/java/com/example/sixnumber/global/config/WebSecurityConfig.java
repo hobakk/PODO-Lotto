@@ -49,7 +49,7 @@ public class WebSecurityConfig {
 
 	@Bean
 	public JwtSecurityFilter jwtSecurityFilter() {
-		return new JwtSecurityFilter(userDetailsService, jwtProvider, redisDao, passwordEncoder());
+		return new JwtSecurityFilter(userDetailsService, jwtProvider, redisDao);
 	}
 
 	@Bean
