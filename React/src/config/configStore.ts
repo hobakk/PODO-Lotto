@@ -1,7 +1,6 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
 import userIfReducer from "../modules/userIfSlice";
-import refreshTokenReducer from "../modules/refreshTokenSlice";
 import { persistReducer, persistStore, PURGE, PERSIST } from "redux-persist";
 import { encryptTransform } from 'redux-persist-transform-encrypt';
 import { PersistConfig, Transform } from "redux-persist/es/types";
@@ -23,7 +22,6 @@ const persistConfig: PersistConfig<any>= {
 
 const rootReducer = combineReducers({
   userIf: userIfReducer,
-  refreshToken: refreshTokenReducer,
 });
 
 const persistRootReducer = persistReducer(persistConfig, rootReducer);
