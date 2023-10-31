@@ -129,7 +129,7 @@ public class JwtProvider {
 
 		ResponseCookie cookie = ResponseCookie.from(key, tokenValue)
 			.path("/")
-			.sameSite("None")
+			.sameSite("Strict")
 			.httpOnly(true)
 			.secure(true)
 			.maxAge(age)
