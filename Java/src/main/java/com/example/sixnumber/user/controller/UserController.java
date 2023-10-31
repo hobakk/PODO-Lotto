@@ -180,16 +180,6 @@ public class UserController {
 		return ResponseEntity.ok(userService.getSixNumberList(user.getId()));
 	}
 
-	@GetMapping("/oauth2/my-information")
-	public ResponseEntity<UnifiedResponse<UserResponse>> oauth2LoginAfterGetUserIfAndRefreshToken(
-		@AuthenticationPrincipal User user,
-		HttpServletResponse response
-	) {
-		UserResponseAndEncodedRefreshDto dto = userService.oauth2LoginAfterGetUserInfoAndRefreshToken(user.getId());
-		response.addHeader(JwtProvider.AUTHORIZATION_HEADER, "Bearer " + dto.getEncodedRefreshToken());
-		return ResponseEntity.ok(UnifiedResponse.ok("조회 성공", dto.getUserResponse()));
-	}
-
 	@PostMapping("/find-password")
 	public ResponseEntity<UnifiedResponse<?>> findPassword(
 		@RequestBody FindPasswordRequest request,

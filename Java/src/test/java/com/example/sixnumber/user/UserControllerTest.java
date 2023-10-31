@@ -330,24 +330,6 @@ class UserControllerTest {
 
 	@Test
 	@WithCustomMockUser
-	public void oauth2LoginAfterGetUserIfAndRefreshToken() throws Exception {
-		UserResponseAndEncodedRefreshDto dto = new UserResponseAndEncodedRefreshDto(
-			new UserResponse(TestDataFactory.user()), "encodedRefreshToken");
-
-		when(userService.oauth2LoginAfterGetUserInfoAndRefreshToken(anyLong())).thenReturn(dto);
-
-		mockMvc.perform(get("/api/users/oauth2/my-information").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.msg").value("조회 성공"))
-			.andExpect(jsonPath("$.data").isNotEmpty())
-			.andExpect(header().string("Authorization", "Bearer encodedRefreshToken"));
-
-		verify(userService).oauth2LoginAfterGetUserInfoAndRefreshToken(anyLong());
-	}
-
-	@Test
-	@WithCustomMockUser
 	public void findPassword() throws Exception {
 		when(userService.findPassword(any(FindPasswordRequest.class), any(Errors.class)))
 			.thenReturn(UnifiedResponse.ok("비밀번호 설정 성공"));

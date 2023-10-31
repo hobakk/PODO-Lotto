@@ -302,17 +302,6 @@ public class UserService {
 		return UnifiedResponse.ok("조회 성공", new UserResponse(user));
 	}
 
-	public UserResponseAndEncodedRefreshDto oauth2LoginAfterGetUserInfoAndRefreshToken(Long userId) {
-		User user = manager.findUser(userId);
-
-		return redisDao.getValue(RedisDao.RT_KEY + user.getRefreshPointer())
-			.map(value -> {
-				String encodedRefreshToken = passwordEncoder.encode(value);
-				return new UserResponseAndEncodedRefreshDto(new UserResponse(user), encodedRefreshToken);
-			})
-			.orElseThrow(() -> new CustomException(INVALID_TOKEN));
-	}
-
 	public UnifiedResponse<?> findPassword(FindPasswordRequest request, Errors errors) {
 		if (errors.hasErrors()) errorsHandler(errors);
 
