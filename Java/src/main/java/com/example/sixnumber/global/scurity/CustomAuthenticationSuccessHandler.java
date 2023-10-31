@@ -1,11 +1,9 @@
 package com.example.sixnumber.global.scurity;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -39,22 +37,25 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 		String email = oAuth2User.getAttribute("email");
 
 		User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원"));
-		Optional<String> refreshTokenInRedis = redisDao.getValue(RedisDao.RT_KEY + user.getRefreshPointer());
 
-		if (refreshTokenInRedis.isPresent()) {
-			String refreshToken = refreshTokenInRedis.get();
-			int remainingSeconds = (int) Math.floor((double) jwtProvider.getRemainingTime(refreshToken) / 1000);
-			String accessToken = jwtProvider.accessToken(user.getRefreshPointer());
-			jwtProvider.createCookie(response, JwtProvider.ACCESS_TOKEN, accessToken, remainingSeconds);
-		} else {
-			TokenDto tokenDto = jwtProvider.generateTokens(user);
-			user.setRefreshPointer(tokenDto.getRefreshPointer());
-			redisDao.setValues(RedisDao.RT_KEY + tokenDto.getRefreshPointer(), tokenDto.getRefreshToken(), (long) 7, TimeUnit.DAYS);
-			jwtProvider.createCookie(response, JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), "oneWeek");
-		}
+		redisDao.getValue(RedisDao.RT_KEY + user.getRefreshPointer()).ifPresentOrElse(
+			value -> {
+				int remainingSeconds = (int) Math.floor((double) jwtProvider.getRemainingTime(value) / 1000);
+				String accessToken = jwtProvider.accessToken(user.getRefreshPointer());
+				TokenDto tokenDto = new TokenDto(accessToken, value);
+				jwtProvider.addCookiesToHeaders(response, tokenDto, remainingSeconds);
+			},
+			() -> {
+				TokenDto tokenDto = jwtProvider.generateTokens(user);
+				user.setRefreshPointer(tokenDto.getRefreshPointer());
+				redisDao.setValues(RedisDao.RT_KEY + tokenDto.getRefreshPointer(),
+					tokenDto.getRefreshToken(), (long) 7, TimeUnit.DAYS);
+				jwtProvider.addCookiesToHeaders(response, tokenDto, "oneWeek");
+			}
+		);
 
 		userRepository.save(user);
-		jwtProvider.createCookie(response, "JSESSIONID", null, 0);
+		jwtProvider.createCookieForAddHeaders(response, "JSESSIONID", null, 0);
 		getRedirectStrategy().sendRedirect(request, response, url + "/user/oauth2");
 	}
 }
