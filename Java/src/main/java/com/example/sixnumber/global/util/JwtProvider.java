@@ -2,12 +2,10 @@ package com.example.sixnumber.global.util;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import javax.crypto.SecretKey;
@@ -18,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.example.sixnumber.global.dto.TokenDto;
@@ -37,17 +34,14 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class JwtProvider {
 	private final SecretKey secretKey;
-	private final PasswordEncoder passwordEncoder;
 
-	public JwtProvider(@Value("${spring.jwt.secret-key}") String keyValue, PasswordEncoder passwordEncoder) {
+	public JwtProvider(@Value("${spring.jwt.secret-key}") String keyValue) {
 		String keyBase64Encoded = Base64.getEncoder().encodeToString(keyValue.getBytes());
 		byte[] decodedKey = Base64.getDecoder().decode(keyBase64Encoded);
 		this.secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
-		this.passwordEncoder = passwordEncoder;
 	}
 
 	public static final String AUTHORIZATION_HEADER = "Authorization";
-	public static final String BEARER_PREFIX = "Bearer ";
 	public static final String ACCESS_TOKEN = "accessToken";
 	public static final String REFRESH_TOKEN = "refreshToken";
 	public static final String ONE_WEEK = "oneWeek";
@@ -132,7 +126,6 @@ public class JwtProvider {
 		else throw new CustomException(ErrorCode.INVALID_INPUT);
 
 		if (tokenValue == null) tokenValue = "";
-		else tokenValue = BEARER_PREFIX + tokenValue;
 
 		ResponseCookie cookie = ResponseCookie.from(key, tokenValue)
 			.path("/")
@@ -154,30 +147,27 @@ public class JwtProvider {
 
 	public TokenDto resolveTokens(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
-		return new TokenDto(getTokenValue(cookies, ACCESS_TOKEN), getTokenValue(cookies, REFRESH_TOKEN));
+		if(cookies != null && cookies.length >= 2) {
+			String accessToken = getTokenValue(cookies, ACCESS_TOKEN);
+			String refreshToken = getTokenValue(cookies, REFRESH_TOKEN);
+			return new TokenDto(accessToken, refreshToken);
+		}
+
+		return new TokenDto();
 	}
 
 	public void addCookiesToHeaders(HttpServletResponse response, TokenDto tokenDto, Object maxAge) {
 		createCookieForAddHeaders(
 			response, JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), maxAge);
-
-		String enCodedRefreshToken = passwordEncoder.encode(tokenDto.getRefreshToken());
 		createCookieForAddHeaders(
-			response, JwtProvider.REFRESH_TOKEN, enCodedRefreshToken, maxAge);
+			response, JwtProvider.REFRESH_TOKEN, tokenDto.getRefreshToken(), maxAge);
 	}
 
 	private String getTokenValue(Cookie[] cookies, String name) {
 		return Stream.of(cookies)
 			.filter(cookie -> cookie.getName().equals(name))
 			.findFirst()
-			.map(cookie -> {
-				String bearerToken = cookie.getValue();
-				if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
-					cookie.setValue(bearerToken.split(" ")[1]);
-				}
-
-				return cookie.getValue();
-			})
+			.map(Cookie::getValue)
 			.orElse(null);
 	}
 }
