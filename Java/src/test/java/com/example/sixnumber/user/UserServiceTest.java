@@ -232,7 +232,7 @@ public class UserServiceTest {
 		verify(passwordEncoder).matches(anyString(), anyString());
 		verify(jwtProvider).generateTokens(any(User.class));
 		verify(redisDao).setValues(anyString(), anyString(), anyLong(), any(TimeUnit.class));
-		verify(jwtProvider).createCookie(any(HttpServletResponse.class), anyString(), anyString(), anyString());
+		verify(jwtProvider).addCookiesToHeaders(any(HttpServletResponse.class), any(TokenDto.class), any(Object.class));
 		verify(passwordEncoder).encode(anyString());
 		verify(httpServletResponse).addCookie(any(Cookie.class));
 		verify(httpServletResponse).addHeader(anyString(), anyString());
@@ -290,10 +290,9 @@ public class UserServiceTest {
 	void logout() {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
-		Cookie accessInCookie = new Cookie("accessToken", "value");
-		Cookie access = new Cookie("accessToken", null);
+		TokenDto tokenDto = new TokenDto("accessTokenValue", "refreshTokenValue");
 
-		when(jwtProvider.getAccessTokenInCookie(request)).thenReturn(accessInCookie.getValue());
+		when(jwtProvider.resolveTokens(request)).thenReturn(tokenDto);
 		when(jwtProvider.getRemainingTime(anyString())).thenReturn((long) 3000);
 
 		UnifiedResponse<?> unifiedResponse = userService.logout(request, response, saveUser);
@@ -301,7 +300,7 @@ public class UserServiceTest {
 		verify(redisDao).delete(anyString());
 		verify(userRepository).save(saveUser);
 		verify(redisDao).setBlackList(anyString(), anyLong());
-		verify(jwtProvider).createCookie(any(HttpServletResponse.class), anyString(), eq(null), anyInt());
+		verify(jwtProvider).addCookiesToHeaders(any(HttpServletResponse.class), any(TokenDto.class), anyInt());
 		TestUtil.UnifiedResponseEquals(unifiedResponse, 200, "로그아웃 성공");
 	}
 
