@@ -24,7 +24,7 @@
 <h2>ERD 구조도</h2>
 https://github.com/hobakk/PODO-Lotto/blob/main/podo_erd.png
 
-<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/3c779ac7704c93d58c1ec657cee397b9b6b55423/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L61)</h2>
+<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/abd3235f2223e29639887c505fe8ece56d770914/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L60)</h2>
 
 ### 1. 회원가입
 sendAuthCodeToEmail, compareAuthCode, signUp
@@ -82,15 +82,6 @@ Redis Cache 사용해서 속도 개선
 - @Cacheable 을 적용하고 entryTtl 제한을 두지않음
 ### 2. 당첨번호 등록
 - @CachePut 을 적용하여 저장되어 있는 RedisCache 를 갱신
-
-<br/><br/><h2>JwtSecurityFilter [Service](https://github.com/hobakk/PODO-Lotto/blob/c74f3050b0cb47408dfd51ce2447310d36759683/Java/src/main/java/com/example/sixnumber/global/scurity/JwtSecurityFilter.java#L31)</h2>
-
-### 1. accessToken 재발급
-- AccessTokenIsExpiredException 을 ExceptionHandlerFilter catch
-- ExceptionHandlerFilter 에서 HttpServletResponse 안에 error 를 실어서 전송
-- [UesAxiosInterceptor](https://github.com/hobakk/Lotto/blob/a875aa52277d7994c4c0ac2fd401833752155cc6/React/src/hooks/UseAxiosResponseInterceptor.ts#L10C7-L10C35) errorHandler 에서 encodedRefreshToken 의 만료 여부를 확인
-- HttpServletRequest headers 에 실어서 이전 Api 로 재요청
-- encodedRefreshToken 유효한지 확인하고 accessToken 을 재발급
 
 ### 2. BlackList
 accessToken 의 유효시간이 5분이라 로그아웃 이후 만료 전 탈취 당했을 상황에 대처할 목적
