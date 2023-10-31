@@ -7,6 +7,8 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.example.sixnumber.global.dto.TokenDto;
@@ -34,16 +37,19 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class JwtProvider {
 	private final SecretKey secretKey;
+	private final PasswordEncoder passwordEncoder;
 
-	public JwtProvider(@Value("${spring.jwt.secret-key}") String keyValue) {
+	public JwtProvider(@Value("${spring.jwt.secret-key}") String keyValue, PasswordEncoder passwordEncoder) {
 		String keyBase64Encoded = Base64.getEncoder().encodeToString(keyValue.getBytes());
 		byte[] decodedKey = Base64.getDecoder().decode(keyBase64Encoded);
 		this.secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	public static final String AUTHORIZATION_HEADER = "Authorization";
-	public static final String BEARER_PREFIX = "Bearer";
+	public static final String BEARER_PREFIX = "Bearer ";
 	public static final String ACCESS_TOKEN = "accessToken";
+	public static final String REFRESH_TOKEN = "refreshToken";
 	public static final String ONE_WEEK = "oneWeek";
 
 	private final Duration expire = Duration.ofMinutes(5);
@@ -75,19 +81,11 @@ public class JwtProvider {
 			.setHeader(headers)
 			.setSubject(email)
 			.claim("id", userId)
-			.claim("key", refreshPointer) // accessToken 재발급시 필요
+			.claim("key", refreshPointer) // accessToken 재발급 시 필요
 			.setIssuedAt(Date.from(now))
 			.setExpiration(Date.from(expiration))
 			.signWith(secretKey)
 			.compact();
-	}
-
-	public String resolveToken(HttpServletRequest request) {
-		String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-		if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
-			return bearerToken.substring(7);
-		}
-		return null;
 	}
 
 	public Long getTokenInUserId(String token) {
@@ -127,13 +125,15 @@ public class JwtProvider {
 		}
 	}
 
-	public void createCookie(HttpServletResponse response, String key, String tokenValue, Object maxAge) {
+	public void createCookieForAddHeaders(HttpServletResponse response, String key, String tokenValue, Object maxAge) {
 		int age;
 		if (maxAge instanceof Integer) age = ((int) maxAge);
 		else if (maxAge.equals(ONE_WEEK)) age = 603000;
 		else throw new CustomException(ErrorCode.INVALID_INPUT);
 
 		if (tokenValue == null) tokenValue = "";
+		else tokenValue = BEARER_PREFIX + tokenValue;
+
 		ResponseCookie cookie = ResponseCookie.from(key, tokenValue)
 			.path("/")
 			.sameSite("None")
@@ -145,24 +145,39 @@ public class JwtProvider {
 		response.addHeader("Set-Cookie", cookie.toString());
 	}
 
-	public String getAccessTokenInCookie(HttpServletRequest request) {
-		Cookie accessValueIsNull = new Cookie(JwtProvider.ACCESS_TOKEN, null);
-
-		try {
-			Cookie[] cookies = request.getCookies();
-
-			Cookie access = Arrays.stream(cookies).filter(
-				cookie -> cookie.getName().equals(JwtProvider.ACCESS_TOKEN)).findFirst().orElse(accessValueIsNull);
-			return access.getValue();
-		} catch (NullPointerException e) {
-			return null;
-		}
-	}
-
 	public TokenDto generateTokens(User user) {
 		String refreshPointer = UUID.randomUUID().toString();
 		String accessToken = accessToken(refreshPointer);
 		String refreshToken = refreshToken(user.getEmail(), user.getId(), refreshPointer);
 		return new TokenDto(accessToken, refreshToken, refreshPointer);
+	}
+
+	public TokenDto resolveTokens(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		return new TokenDto(getTokenValue(cookies, ACCESS_TOKEN), getTokenValue(cookies, REFRESH_TOKEN));
+	}
+
+	public void addCookiesToHeaders(HttpServletResponse response, TokenDto tokenDto, Object maxAge) {
+		createCookieForAddHeaders(
+			response, JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), maxAge);
+
+		String enCodedRefreshToken = passwordEncoder.encode(tokenDto.getRefreshToken());
+		createCookieForAddHeaders(
+			response, JwtProvider.REFRESH_TOKEN, enCodedRefreshToken, maxAge);
+	}
+
+	private String getTokenValue(Cookie[] cookies, String name) {
+		return Stream.of(cookies)
+			.filter(cookie -> cookie.getName().equals(name))
+			.findFirst()
+			.map(cookie -> {
+				String bearerToken = cookie.getValue();
+				if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
+					cookie.setValue(bearerToken.split(" ")[1]);
+				}
+
+				return cookie.getValue();
+			})
+			.orElse(null);
 	}
 }
