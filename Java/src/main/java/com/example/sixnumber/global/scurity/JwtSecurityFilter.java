@@ -78,7 +78,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 						() -> deleteCookieAndThrowException(response)
 					);
 			}
-		} else throw new RefreshTokenIsNullException();
+		}
 
 		filterChain.doFilter(request, response);
 	}
