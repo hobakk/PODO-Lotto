@@ -156,3 +156,12 @@ export const findPassword = async (req: FindPassword): Promise<UnifiedResponse<u
         throw error.data;
     }
 }
+
+export const attendance = async (): Promise<UnifiedResponse<undefined>> => {
+    try {
+        const { data } = await api.patch("/users/attendance");
+        return data;
+    } catch (error: any) {
+        throw error.data.msg;
+    }
+}
