@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -44,7 +46,6 @@ import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementModifyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.dto.UserResponse;
-import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
 import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.StatementRepository;
@@ -312,17 +313,28 @@ public class UserService {
 	}
 
 	public UnifiedResponse<?> attendance(User user) {
-		int randomNumber = generateRandomNumber(100);
+		return redisDao.getValue(RedisDao.ATTENDANCE_KEY + user.getId())
+			.map(value -> UnifiedResponse.badRequest("오늘 이미 출석하셨습니다"))
+			.orElseGet(() -> {
+				int randomNumber = generateRandomNumber(100);
+				int point = reward(randomNumber);
 
-		int point;
-		if (randomNumber <= 30) point = 10;
-		else if (randomNumber <= 60) point = 30;
-		else if (randomNumber <= 90) point = 50;
-		else point = 100;
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(new Date());
+				calendar.add(Calendar.DAY_OF_YEAR, 1);
+				calendar.set(Calendar.HOUR_OF_DAY, 0);
+				calendar.set(Calendar.MINUTE, 0);
+				calendar.set(Calendar.SECOND, 0);
+				Date nextDayMidnight = calendar.getTime();
 
-		user.plusCash(point);
-		userRepository.save(user);
-		return UnifiedResponse.ok(point + " 당첨");
+				long millisecondsUntilMidnight = nextDayMidnight.getTime() - System.currentTimeMillis();
+				redisDao.setValues(RedisDao.ATTENDANCE_KEY + user.getId(),
+					String.valueOf(point), millisecondsUntilMidnight, TimeUnit.MILLISECONDS);
+
+				user.plusCash(point);
+				userRepository.save(user);
+				return UnifiedResponse.ok(point + " 당첨");
+			});
 	}
 
 	private int generateRandomNumber(int range) {
@@ -349,5 +361,15 @@ public class UserService {
 			.mapToObj(index -> (index + 1) + ". " + errorMsgList.get(index))
 			.collect(Collectors.joining(".\n"));
 		throw new OverlapException(errorMsg);
+	}
+
+	private int reward(int randomNumber) {
+		int point;
+		if (randomNumber <= 30) point = 10;
+		else if (randomNumber <= 60) point = 30;
+		else if (randomNumber <= 90) point = 50;
+		else point = 100;
+
+		return point;
 	}
 }

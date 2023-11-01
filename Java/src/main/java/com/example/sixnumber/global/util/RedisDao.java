@@ -24,6 +24,7 @@ public class RedisDao {
 	public static final String RT_KEY = "RT: ";
 	public static final String CHARGE_KEY = "CHARGE: ";
 	public static final String AUTH_KEY = "AUTH: ";
+	public static final String ATTENDANCE_KEY = "ATTENDANCE: ";
 
 	public RedisDao(RedisTemplate<String, String> redisTemplate) {
 		this.redisTemplate = redisTemplate;
