@@ -190,6 +190,8 @@ public class UserController {
 
 	@GetMapping("/attendance")
 	public ResponseEntity<UnifiedResponse<?>> attendance(@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(userService.attendance(user));
+		UnifiedResponse<?> response = userService.attendance(user);
+		if (response.getCode() == 200) return ResponseEntity.ok(response);
+		else return ResponseEntity.badRequest().body(response);
 	}
 }
