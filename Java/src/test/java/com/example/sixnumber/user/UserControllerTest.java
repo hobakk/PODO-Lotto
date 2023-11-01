@@ -342,4 +342,31 @@ class UserControllerTest {
 
 		verify(userService).findPassword(any(FindPasswordRequest.class), any(Errors.class));
 	}
+
+	@Test
+	@WithCustomMockUser
+	public void attendance_success() throws Exception {
+		when(userService.attendance(any(User.class))).thenReturn(UnifiedResponse.ok("포인트 당첨!!"));
+
+		mockMvc.perform(patch("/api/users/attendance").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("포인트 당첨!!"));
+
+		verify(userService).attendance(any(User.class));
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void attendance_fail() throws Exception {
+		when(userService.attendance(any(User.class)))
+			.thenReturn(UnifiedResponse.badRequest("오늘 이미 출석하셨습니다"));
+
+		mockMvc.perform(patch("/api/users/attendance").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.msg").value("오늘 이미 출석하셨습니다"));
+
+		verify(userService).attendance(any(User.class));
+	}
 }
