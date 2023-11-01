@@ -73,8 +73,7 @@ public class UserService {
 			.filter(email -> email.equals(request.getEmail().split("@")[1]))
 			.findFirst()
 			.map(email -> {
-				Random random = new Random();
-				String authCode = String.valueOf(random.nextInt(888888) + 111111);
+				String authCode = String.valueOf(generateRandomNumber(888888) + 111111);
 				redisDao.setValues(RedisDao.AUTH_KEY + request.getEmail(), authCode, 30L, TimeUnit.MINUTES);
 				manager.sendEmail(request.getEmail(), authCode);
 				return UnifiedResponse.ok("인증번호 발급 성공");
@@ -310,6 +309,25 @@ public class UserService {
 				return UnifiedResponse.ok("비밀번호 설정 성공");
 			})
 			.orElseThrow(() -> new CustomException(NOT_FOUND));
+	}
+
+	public UnifiedResponse<?> attendance(User user) {
+		int randomNumber = generateRandomNumber(100);
+
+		int point;
+		if (randomNumber <= 30) point = 10;
+		else if (randomNumber <= 60) point = 30;
+		else if (randomNumber <= 90) point = 50;
+		else point = 100;
+
+		user.plusCash(point);
+		userRepository.save(user);
+		return UnifiedResponse.ok(point + " 당첨");
+	}
+
+	private int generateRandomNumber(int range) {
+		Random random = new Random();
+		return random.nextInt(range);
 	}
 
 	private String dateFormatter(LocalDateTime localDateTime) {
