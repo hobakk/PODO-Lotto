@@ -583,4 +583,27 @@ public class UserServiceTest {
 		verify(passwordEncoder).encode(anyString());
 		TestUtil.UnifiedResponseEquals(response, 200, "비밀번호 설정 성공");
 	}
+
+	@Test
+	void attendance_exceeded() {
+		when(redisDao.getValue(anyString())).thenReturn(Optional.of("value"));
+
+		UnifiedResponse<?> response = userService.attendance(saveUser);
+
+		verify(redisDao).getValue(anyString());
+		TestUtil.UnifiedResponseEquals(response, 400, "오늘 이미 출석하셨습니다");
+	}
+
+	@Test
+	void attendance_success() {
+		when(redisDao.getValue(anyString())).thenReturn(Optional.empty());
+
+		UnifiedResponse<?> response = userService.attendance(saveUser);
+
+		verify(redisDao).getValue(anyString());
+		verify(redisDao).setValues(anyString(), anyString(), anyLong(), any(TimeUnit.class));
+		verify(userRepository).save(any(User.class));
+		assertEquals(response.getCode(), 200);
+		assertNotNull(response.getMsg());
+	}
 }
