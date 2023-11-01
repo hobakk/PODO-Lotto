@@ -24,7 +24,7 @@
 <h2>ERD 구조도</h2>
 https://github.com/hobakk/PODO-Lotto/blob/main/podo_erd.png
 
-<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/abd3235f2223e29639887c505fe8ece56d770914/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L60)</h2>
+<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/1d7719faf81ee4a3677f3fb16e8fe4676965d272/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L61)</h2>
 
 ### 1. 회원가입
 sendAuthCodeToEmail, compareAuthCode, signUp
@@ -47,7 +47,7 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 - Req 값에 따라 권한을 수정
 ### 6. 기타
 - 조회: 닉네임과 캐쉬, 충전요청, 거래명세, 회원 정보, 비밀번호 재확인, 최근 구매한 번호 리스트
-- 수정: 회원정보, 비밀번호 찾기
+- 수정: 회원정보, 비밀번호 찾기, 출석 체크
 
 <br/><br/><h2>Admin [Service](https://github.com/hobakk/PODO-Lotto/blob/694e68dd9c749b2edfefc4114dab18e3fa30ef5c/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L35)</h2>
 
