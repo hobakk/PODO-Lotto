@@ -188,7 +188,7 @@ public class UserController {
 		return ResponseEntity.ok(userService.findPassword(request, errors));
 	}
 
-	@GetMapping("/attendance")
+	@PatchMapping("/attendance")
 	public ResponseEntity<UnifiedResponse<?>> attendance(@AuthenticationPrincipal User user) {
 		UnifiedResponse<?> response = userService.attendance(user);
 		if (response.getCode() == 200) return ResponseEntity.ok(response);

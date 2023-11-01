@@ -333,7 +333,7 @@ public class UserService {
 
 				user.plusCash(point);
 				userRepository.save(user);
-				return UnifiedResponse.ok(point + " 당첨");
+				return UnifiedResponse.ok(point + " 포인트 당첨!!");
 			});
 	}
 
