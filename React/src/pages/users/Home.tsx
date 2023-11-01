@@ -5,10 +5,12 @@ import { CommonStyle } from '../../shared/Styles';
 import { ChangingNumStyle } from '../../components/Manufacturing';
 import { WinNumber, Err, UnifiedResponse } from '../../shared/TypeMenu';
 import { Link } from 'react-router-dom';
+import useAttendance from '../../hooks/useAttendance';
 
 function Home() {
   const [value, setValue] = useState<WinNumber[]>([]);
   const [isEmpty, setBoolean] = useState<boolean>(true);
+  const attendance = useAttendance();
   
   const getWinnumberMutation = useMutation<UnifiedResponse<{winNumberList: WinNumber[]}>, Err>(getWinNumber, {
     onSuccess: (res)=>{
@@ -51,7 +53,7 @@ function Home() {
     <div style={CommonStyle}>
       <div style={{ marginLeft: "auto", marginBottom: "10px"}}>
         <Link to={"/buynum"} style={{ fontWeight: "bold", textDecoration: "none" }}>추천번호 발급하기</Link>
-        <button style={ButtonStyle} onClick={()=>{setBoolean(true)}}>새로고침</button>
+        <button style={ButtonStyle} onClick={()=>{attendance.mutate();}}>출석체크</button>
       </div>
       <div style={{ fontSize: "20px" }}>
         {isEmpty ? (
