@@ -129,7 +129,7 @@ export const CommonLink = styled(Link)<ColorProps>`
 export const MenuDiv =styled.div<ColorProps>`
   cursor: pointer;
   width: 4cm;
-  height: 43px;
+  height: 42px;
   background-color: ${(props)=>props.color};
 `
 
