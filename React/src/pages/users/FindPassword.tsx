@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { CommonStyle, MsgAndInput, InputBox  } from '../../shared/Styles';
+import { CommonStyle, MsgAndInput, InputBox, TitleStyle  } from '../../shared/Styles';
 import { useMutation } from 'react-query';
 import { findPassword } from '../../api/userApi';
 import { useNavigate } from 'react-router-dom';
@@ -38,7 +38,7 @@ function FindPassword() {
 
     return (
         <div style={CommonStyle}>
-            <h1 style={{  fontSize: "60px", marginBottom:"3cm" }}>비밀번호 찾기</h1>
+            <h1 style={ TitleStyle }>비밀번호 찾기</h1>
             <div style={{ fontSize: "30px", display: "flex", flexDirection: "column", width: "15cm" }}>
                 {isCorrectAuth ? (
                     <form onSubmit={submitHandler}>

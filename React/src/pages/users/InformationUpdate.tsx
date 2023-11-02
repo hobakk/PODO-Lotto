@@ -114,7 +114,6 @@ function InformationUpdate() {
             </form>
         ):(
             <div id="update" >
-                <h1 style={{ fontSize: "80px", textAlign:"center"}}>Update</h1>
                 <div style={MsgAndInput}>
                     <span>Email:</span>
                     <InputBox 
