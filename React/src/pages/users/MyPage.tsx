@@ -8,7 +8,6 @@ import { setStatus } from '../../modules/userIfSlice';
 import LogoutMutation from '../../hooks/useLogoutMutation';
 import { RootState } from '../../config/configStore';
 import { UnifiedResponse } from '../../shared/TypeMenu';
-import { Link } from 'react-router-dom';
 
 function MyPage() {
     const userIf = useSelector((state: RootState)=>state.userIf);
