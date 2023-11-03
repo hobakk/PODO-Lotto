@@ -161,8 +161,7 @@ public class UserService {
 	public UnifiedResponse<?> withdraw(OnlyMsgRequest request, String email) {
 		if (!request.getMsg().equals("회원탈퇴")) throw new IllegalArgumentException("잘못된 문자열 입력");
 
-		User user = manager.findUser(email);
-		user.changeToDORMANT();
+		userRepository.findByEmail(email).ifPresent(User::changeToDORMANT);
 		return UnifiedResponse.ok("회원 탈퇴 완료");
 	}
 
