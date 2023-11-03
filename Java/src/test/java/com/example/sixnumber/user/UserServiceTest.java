@@ -309,11 +309,11 @@ public class UserServiceTest {
 		OnlyMsgRequest request = mock(OnlyMsgRequest.class);
 		when(request.getMsg()).thenReturn("회원탈퇴");
 
-		when(manager.findUser(anyString())).thenReturn(saveUser);
+		when(userRepository.findByEmail(anyString())).thenReturn(Optional.of(saveUser));
 
 		UnifiedResponse<?> response = userService.withdraw(request, saveUser.getEmail());
 
-		verify(manager).findUser(anyString());
+		verify(userRepository).findByEmail(anyString());
 		assertEquals(saveUser.getStatus(), Status.DORMANT);
 		assertNotNull(saveUser.getWithdrawExpiration());
 		TestUtil.UnifiedResponseEquals(response, 200, "회원 탈퇴 완료");
