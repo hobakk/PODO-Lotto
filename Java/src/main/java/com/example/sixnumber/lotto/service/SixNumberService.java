@@ -33,6 +33,7 @@ import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
+import com.example.sixnumber.user.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,14 +46,14 @@ public class SixNumberService {
 
 	private final SixNumberRepository sixNumberRepository;
 	private final LottoRepository lottoRepository;
-	private final Manager manager;
+	private final UserRepository userRepository;
 	private final Random rd = new Random();
 
 	private static final String RANDOM_NUMBER = "buyNumber";
 	private static final String PREMIUM_NUMBER = "statisticalNumber";
 
 	public UnifiedResponse<List<String>> buyNumber(BuyNumberRequest request, User user) {
-		handlerEventAndPayment(RANDOM_NUMBER, request.getValue(), 0,  user.getId());
+		handlerEventAndPayment(RANDOM_NUMBER, request.getValue(),  user.getId());
 
 		List<String> topNumbers = new ArrayList<>();
 		for (int i = 0; i < request.getValue(); i++) {
@@ -77,7 +78,7 @@ public class SixNumberService {
 	}
 
 	public UnifiedResponse<List<String>> statisticalNumber(StatisticalNumberRequest request, User user) {
-		handlerEventAndPayment(PREMIUM_NUMBER, request.getValue(), request.getRepetition(), user.getId());
+		handlerEventAndPayment(PREMIUM_NUMBER, request.getValue(), user.getId());
 
 		List<String> topNumbers = new ArrayList<>();
 		HashMap<Integer, Integer> countMap = new HashMap<>();
@@ -138,24 +139,25 @@ public class SixNumberService {
 		return UnifiedResponse.ok("최근 구매 번호 조회 성공", recentBuyNumberList.get(0).getNumberList());
 	}
 
-	private void handlerEventAndPayment(String event, int generationCount, int repeatCount, Long userId) {
-		User user = manager.findUser(userId);
-
+	private void handlerEventAndPayment(String event, int generationCount, Long userId) {
 		int payment;
-		Statement statement;
+		String subject;
+
 		if (event.equals(RANDOM_NUMBER)) {
 			payment = generationCount * 100;
-			statement = new  Statement(user, "랜덤 번호 " + generationCount + "회 발급", payment);
+			subject = "랜덤 번호 " + generationCount + "회 발급";
 		} else {
 			payment = generationCount * 200;
-			statement = new Statement(user, "프리미엄 번호 " + generationCount + "회 발급",
-				payment, repeatCount + " 회 반복 처리");
+			subject = "프리미엄 번호 " + generationCount + "회 발급";
 		}
 
-		if (user.getCash() < payment) throw new IllegalArgumentException("금액이 부족합니다");
-
-		user.minusCash(payment);
-		user.addStatement(statement);
+		userRepository.findByIdAndCashGreaterThanEqual(userId, payment)
+			.map(user -> {
+				user.minusCash(payment);
+				user.addStatement(new Statement(user, subject, payment));
+				return user;
+			})
+			.orElseThrow(() -> new IllegalArgumentException("금액이 부족합니다"));
 	}
 
 	private void saveMainLottoList(List<String> topNumbersList) {
