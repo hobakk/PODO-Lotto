@@ -31,6 +31,7 @@ import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.lotto.service.SixNumberService;
 import com.example.sixnumber.user.entity.User;
+import com.example.sixnumber.user.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class SixNumberServiceTest {
@@ -42,7 +43,7 @@ public class SixNumberServiceTest {
 	@Mock
 	private LottoRepository lottoRepository;
 	@Mock
-	private Manager manager;
+	private UserRepository userRepository;
 
 	private Lotto lotto;
 	private SixNumber sixNumber;
@@ -59,7 +60,8 @@ public class SixNumberServiceTest {
 	void buyNumber_success() {
 		BuyNumberRequest buyNumberRequest = TestDataFactory.buyNumberRequest();
 
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
+		when(userRepository.findByIdAndCashGreaterThanEqual(anyLong(), anyInt()))
+			.thenReturn(Optional.of(saveUser));
 
 		List<Integer> countList = TestDataFactory.countList();
 		when(lotto.getCountList()).thenReturn(countList);
@@ -68,7 +70,7 @@ public class SixNumberServiceTest {
 
 		UnifiedResponse<List<String>> response = sixNumberService.buyNumber(buyNumberRequest, saveUser);
 
-		verify(manager).findUser(anyLong());
+		verify(userRepository).findByIdAndCashGreaterThanEqual(anyLong(), anyInt());
 		verify(lottoRepository).findByMain();
 		verify(sixNumberRepository).save(any(SixNumber.class));
 		List<String> data = response.getData();
@@ -84,18 +86,20 @@ public class SixNumberServiceTest {
 		BuyNumberRequest request = mock(BuyNumberRequest.class);
 		when(request.getValue()).thenReturn(50);
 
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
+		when(userRepository.findByIdAndCashGreaterThanEqual(anyLong(), anyInt()))
+			.thenReturn(Optional.of(saveUser));
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> sixNumberService.buyNumber(request, saveUser));
 
-		verify(manager).findUser(anyLong());
+		verify(userRepository).findByIdAndCashGreaterThanEqual(anyLong(), anyInt());
 	}
 
 	@Test
 	void statisticalNumber_success() {
 		StatisticalNumberRequest request = TestDataFactory.statisticalNumberRequest();
 
-		when(manager.findUser(anyLong())).thenReturn(saveUser);
+		when(userRepository.findByIdAndCashGreaterThanEqual(anyLong(), anyInt()))
+			.thenReturn(Optional.of(saveUser));
 
 		List<Integer> countList = TestDataFactory.countList();
 		when(lotto.getCountList()).thenReturn(countList);
@@ -104,7 +108,7 @@ public class SixNumberServiceTest {
 
 		UnifiedResponse<List<String>> response = sixNumberService.statisticalNumber(request, saveUser);
 
-		verify(manager).findUser(anyLong());
+		verify(userRepository).findByIdAndCashGreaterThanEqual(anyLong(), anyInt());
 		verify(lottoRepository).findByMain();
 		verify(sixNumberRepository).save(any(SixNumber.class));
 		List<String> data = response.getData();
@@ -119,15 +123,19 @@ public class SixNumberServiceTest {
 		User user = mock(User.class);
 		when(user.getCash()).thenReturn(0);
 
-		when(manager.findUser(anyLong())).thenReturn(user);
+		when(userRepository.findByIdAndCashGreaterThanEqual(anyLong(), anyInt()))
+			.thenReturn(Optional.of(saveUser));
 
 		Assertions.assertThrows(IllegalArgumentException.class,
 			() -> sixNumberService.statisticalNumber(request, saveUser));
+
+		verify(userRepository).findByIdAndCashGreaterThanEqual(anyLong(), anyInt());
 	}
 
 	@Test
 	void getRecentBuyNumbers_success() {
-		when(sixNumberRepository.findByRecentBuyNumbers(any(User.class), any(Pageable.class))).thenReturn(List.of(sixNumber));
+		when(sixNumberRepository.findByRecentBuyNumbers(any(User.class), any(Pageable.class)))
+			.thenReturn(List.of(sixNumber));
 
 		UnifiedResponse<List<String>> response = sixNumberService.getRecentBuyNumbers(saveUser);
 
@@ -137,7 +145,8 @@ public class SixNumberServiceTest {
 
 	@Test
 	void getRecentBuyNumbers_fail_isEmpty() {
-		when(sixNumberRepository.findByRecentBuyNumbers(any(User.class), any(Pageable.class))).thenReturn(new ArrayList<>());
+		when(sixNumberRepository.findByRecentBuyNumbers(any(User.class), any(Pageable.class)))
+			.thenReturn(new ArrayList<>());
 
 		Assertions.assertThrows(CustomException.class, () -> sixNumberService.getRecentBuyNumbers(saveUser));
 
