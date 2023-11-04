@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
-import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.lotto.entity.SixNumber;
@@ -53,7 +52,7 @@ public class SixNumberService {
 	private static final String PREMIUM_NUMBER = "statisticalNumber";
 
 	public UnifiedResponse<List<String>> buyNumber(BuyNumberRequest request, User user) {
-		handlerEventAndPayment(RANDOM_NUMBER, request.getValue(),  user.getId());
+		paymentHandler(RANDOM_NUMBER, request.getValue(),  user.getId());
 
 		List<String> topNumbers = new ArrayList<>();
 		for (int i = 0; i < request.getValue(); i++) {
@@ -78,7 +77,7 @@ public class SixNumberService {
 	}
 
 	public UnifiedResponse<List<String>> statisticalNumber(StatisticalNumberRequest request, User user) {
-		handlerEventAndPayment(PREMIUM_NUMBER, request.getValue(), user.getId());
+		paymentHandler(PREMIUM_NUMBER, request.getValue(), user.getId());
 
 		List<String> topNumbers = new ArrayList<>();
 		HashMap<Integer, Integer> countMap = new HashMap<>();
@@ -139,7 +138,7 @@ public class SixNumberService {
 		return UnifiedResponse.ok("최근 구매 번호 조회 성공", recentBuyNumberList.get(0).getNumberList());
 	}
 
-	private void handlerEventAndPayment(String event, int generationCount, Long userId) {
+	private void paymentHandler(String event, int generationCount, Long userId) {
 		int payment;
 		String subject;
 
