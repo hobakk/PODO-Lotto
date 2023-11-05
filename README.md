@@ -66,7 +66,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 ### 2. 월 통계, 저장된 월 통계 YearMonth(index)
 - entryTtl 제한을 두지 않음
 
-<br/><br/><h2>SixNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/1d2ea48cf474327ab3dec876f796648c464b2d50/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L44)</h2>
+<br/><br/><h2>SixNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/8c45bd1c971c3d5b876bb653ed916aa44af50ec2/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L44)</h2>
 
 ### 1. 랜덤 번호 추천
 ### 2. 반복 연산된 번호 추천
