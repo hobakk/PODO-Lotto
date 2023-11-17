@@ -1,11 +1,10 @@
-<h1 align=center><img src=React/public/logo.png width=33 height=33 /> PODO Lotto </h1><br/>
+<h1 align=center><img src=React/public/logo.png width=33 height=33 />PODO Lotto</h1><br/>
 <div align=center>
   <p>참고: 소제목 옆 Service 클릭하시면 제목에 알맞은 코드로 이동됩니다. ( 예: User Service )</p></br>
   <img width="600cm" src="https://github.com/hobakk/PODO-Lotto/assets/117063625/9f2120df-a334-45fe-b0d1-c6d854cc22ce" />
 </div><br/><br/>
 <h2>사용기술</h2>
 <div display=flex>
-
   <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=SpringBoot&logoColor=white">
   <img src="https://img.shields.io/badge/SpringSecurity-6DB33F?style=for-the-badge&logo=SpringSecurity&logoColor=white">
   <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white">
@@ -19,8 +18,9 @@
   <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white">
   <img src="https://img.shields.io/badge/nginx-009639.svg?style=for-the-badge&logo=nginx&logoColor=white">
 </div><br/><br/>
-<h2>ERD 구조도</h2>
-https://github.com/hobakk/PODO-Lotto/blob/main/podo_erd.png
+<h2>ERD 구조도 & Site</h2>
+https://github.com/hobakk/PODO-Lotto/blob/main/podo_erd.png</br>
+https://podo-lotto.site/
 
 <br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/1d7719faf81ee4a3677f3fb16e8fe4676965d272/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L61)</h2>
 
@@ -97,4 +97,4 @@ accessToken 의 유효시간이 5분이라 로그아웃 이후 만료 전 탈취
 ### 4. 이용정지
 - 충전 요청 미처리 횟수 초과시 상태 변경
 
-<br/><br/>
+<br/>
