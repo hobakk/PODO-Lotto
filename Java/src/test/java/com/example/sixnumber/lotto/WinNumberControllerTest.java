@@ -62,7 +62,7 @@ public class WinNumberControllerTest {
 
 	@Test
 	public void SetWinNumber() throws Exception {
-		when(winNumberService.setWinNumbers(any(WinNumberRequest.class))).thenReturn(response);
+		when(winNumberService.setWinNumbers(anyInt())).thenReturn(response);
 
 		mockMvc.perform(post("/api/winnumber/set").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON)
@@ -70,6 +70,6 @@ public class WinNumberControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("등록 성공"));
 
-		verify(winNumberService).setWinNumbers(any(WinNumberRequest.class));
+		verify(winNumberService).setWinNumbers(anyInt());
 	}
 }
