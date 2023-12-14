@@ -7,6 +7,8 @@ spring:
     password: ${DB_PASSWORD}
     url: ${DB_URL}
     driver-class-name: org.mariadb.jdbc.Driver
+  application:
+    timezone: Asia/Seoul
 
   jpa:
     database-platform: org.hibernate.dialect.MariaDBDialect
