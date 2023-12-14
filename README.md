@@ -73,13 +73,14 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 - 주어진 조건에 따라 무작위로 숫자를 생성하고, 그 중에서 가장 자주 등장하는 숫자를 찾아 리스트로 반환
 ### 3. 이전 구매번호 조회
 
-<br/><br/><h2>WinNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/58d702b93b4f904d1d58cabc3a74fdbaa785b30b/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L25)</h2>
+<br/><br/><h2>WinNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/e0f1c6300dcb07b7e6995c09a0f6f0bbf5ca257c/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L30)</h2>
 
 Redis Cache 사용해서 속도 개선
 ### 1. 당첨번호 조회
 - @Cacheable 을 적용하고 entryTtl 제한을 두지않음
 ### 2. 당첨번호 등록
 - @CachePut 을 적용하여 저장되어 있는 RedisCache 를 갱신
+- openApi 파싱해 값을 가져옴
 
 ### 2. BlackList
 accessToken 의 유효시간이 5분이라 로그아웃 이후 만료 전 탈취 당했을 상황에 대처할 목적
