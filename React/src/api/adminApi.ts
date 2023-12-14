@@ -98,9 +98,9 @@ export type WinNumberRequest = {
     numbers: string,
 }
 
-export const setWinNumber = async (inputValue: WinNumberRequest): Promise<UnifiedResponse<undefined>> => {
+export const setWinNumber = async (inputValue: number): Promise<UnifiedResponse<undefined>> => {
     try {
-        const { data } = await api.post("/winnumber/set", inputValue);
+        const { data } = await api.post(`/winnumber/set/${inputValue}`);
         return data;
     } catch (error: any) {
         throw error.data;
