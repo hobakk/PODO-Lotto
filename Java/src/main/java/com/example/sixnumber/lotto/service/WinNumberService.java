@@ -2,25 +2,19 @@ package com.example.sixnumber.lotto.service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
-import com.example.sixnumber.global.exception.CustomException;
-import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.global.exception.OverlapException;
+import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.TransformResponse;
-import com.example.sixnumber.lotto.dto.WinNumberRequest;
 import com.example.sixnumber.lotto.dto.WinNumberResponse;
 import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.lotto.repository.WinNumberRepository;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.AllArgsConstructor;
 
@@ -29,7 +23,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class WinNumberService {
 	private final WinNumberRepository winNumberRepository;
-	private final String URL = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=";
+	private final Manager manager;
 
 	@Cacheable(value = "WinNumbers", key = "'all'")
 	public WinNumberResponse getWinNumbers() {
@@ -38,7 +32,7 @@ public class WinNumberService {
 
 	@CachePut(value = "WinNumbers", key = "'all'")
 	public WinNumberResponse setWinNumbers(int round) {
-		WinNumber winNumber = retrieveLottoResult(round)
+		WinNumber winNumber = manager.retrieveLottoResult(round)
 			.map(WinNumber::new)
 			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
 
@@ -48,38 +42,6 @@ public class WinNumberService {
 
 		winNumberRepository.save(winNumber);
 		return transform(getWinNumberList());
-	}
-
-	private Optional<WinNumberRequest> retrieveLottoResult(int round) {
-		RestTemplate restTemplate = new RestTemplate();
-		String responseBody = restTemplate.getForObject(URL + round, String.class);
-		StringBuilder sb = new StringBuilder();
-		try {
-			ObjectMapper objectMapper = new ObjectMapper();
-			JsonNode jsonNode = objectMapper.readTree(responseBody);
-
-			int count = 1;
-			while (true) {
-				String index = "drwtNo" + count;
-				JsonNode node = jsonNode.get(index);
-				if (node == null || node.isNull()) break;
-
-				sb.append(node.asText()).append(" ");
-				count++;
-			}
-
-			sb.append(jsonNode.get("bnusNo").asText());
-
-			return Optional.ofNullable(WinNumberRequest.builder()
-				.date(jsonNode.get("drwNoDate").asText())
-				.time(jsonNode.get("drwNo").asInt())
-				.prize(jsonNode.get("firstAccumamnt").asLong())
-				.winner(jsonNode.get("firstPrzwnerCo").asInt())
-				.numbers(sb.toString())
-				.build());
-		} catch (Exception e) {
-			return Optional.empty();
-		}
 	}
 
 	private List<WinNumber> findAllAfterCheckIsEmpty() {
