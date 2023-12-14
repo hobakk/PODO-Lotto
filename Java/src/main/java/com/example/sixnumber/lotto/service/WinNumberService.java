@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
+import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.lotto.dto.TransformResponse;
 import com.example.sixnumber.lotto.dto.WinNumberRequest;
@@ -35,20 +37,20 @@ public class WinNumberService {
 	}
 
 	@CachePut(value = "WinNumbers", key = "'all'")
-	public WinNumberResponse setWinNumbers(WinNumberRequest request) {
-		WinNumber winNumber = new WinNumber(request);
-		int time = winNumber.getTime();
-		List<Integer> topNumberList = winNumber.getTopNumberList();
+	public WinNumberResponse setWinNumbers(int round) {
+		WinNumber winNumber = retrieveLottoResult(round)
+			.map(WinNumber::new)
+			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
 
-		if (winNumberRepository.existsWinNumberByTimeAndTopNumberListIn(time, topNumberList))
+		int time = winNumber.getTime();
+		if (winNumberRepository.existsWinNumberByTime(time))
 			throw new OverlapException("이미 등록된 당첨 결과 입니다");
 
 		winNumberRepository.save(winNumber);
-
 		return transform(getWinNumberList());
 	}
 
-	private Optional<WinNumberRequest> retrieveLottoResult(String round) {
+	private Optional<WinNumberRequest> retrieveLottoResult(int round) {
 		RestTemplate restTemplate = new RestTemplate();
 		String responseBody = restTemplate.getForObject(URL + round, String.class);
 		StringBuilder sb = new StringBuilder();
@@ -58,7 +60,7 @@ public class WinNumberService {
 
 			int count = 1;
 			while (true) {
-				String index = "drwNo" + count;
+				String index = "drwtNo" + count;
 				JsonNode node = jsonNode.get(index);
 				if (node == null || node.isNull()) break;
 
