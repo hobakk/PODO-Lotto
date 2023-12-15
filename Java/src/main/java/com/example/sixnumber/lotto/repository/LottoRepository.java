@@ -20,4 +20,6 @@ public interface LottoRepository extends JpaRepository<Lotto, Long> {
 
 	@Query(value = "SELECT l FROM Lotto l WHERE l.subject = 'Stats'")
 	List<Lotto> findAllByMonthStats();
+
+	Boolean existsLottoByCreationDate(YearMonth yearMonth);
 }
