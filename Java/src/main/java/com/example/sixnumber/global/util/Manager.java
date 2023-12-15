@@ -1,8 +1,7 @@
 package com.example.sixnumber.global.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -24,18 +23,15 @@ public class Manager {
 
 	private final String URL = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=";
 
-	public String revisedTopIndicesAsStr(List<Integer> countList) {
-		List<Integer> indices = new ArrayList<>();
-		for (int i = 0; i < countList.size(); i++) { indices.add(i); }
+	public String getTopNumbersAsString(Map<String, Integer> map) {
+		List<String> topNumberList = map.entrySet().stream()
+			.sorted(Map.Entry.<String, Integer> comparingByValue().reversed())
+			.limit(6)
+			.map(Map.Entry::getKey)
+			.sorted()
+			.collect(Collectors.toList());
 
-		indices.sort((i1, i2) -> Integer.compare(countList.get(i2), countList.get(i1)));
-
-		List<Integer> integers = indices.subList(0, Math.min(6, countList.size()));
-		integers.replaceAll(Integer -> Integer + 1);
-		Collections.sort(integers);
-		return integers.stream()
-			.map(Object::toString)
-			.collect(Collectors.joining(" "));
+		return String.join(" ", topNumberList);
 	}
 
 	public void sendEmail(String email, String authCode) {
