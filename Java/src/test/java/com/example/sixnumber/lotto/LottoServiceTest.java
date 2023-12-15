@@ -45,12 +45,12 @@ public class LottoServiceTest {
 	void mainTopNumbers() {
 		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
 
-		when(manager.revisedTopIndicesAsStr(anyList())).thenReturn("1 2 3 4 5 6");
+		when(manager.getTopNumbersAsString(anyMap())).thenReturn("1 2 3 4 5 6");
 
 		LottoResponse response = lottoService.mainTopNumbers();
 
 		verify(lottoRepository).findByMain();
-		verify(manager).revisedTopIndicesAsStr(anyList());
+		verify(manager).getTopNumbersAsString(anyMap());
 		assertEquals(response.getValue(), "1 2 3 4 5 6");
 		assertEquals(response.getCountList(), TestDataFactory.countList());
 	}
