@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
@@ -24,8 +25,10 @@ import com.example.sixnumber.global.scheduler.GlobalScheduler;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.SixNumber;
+import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
+import com.example.sixnumber.lotto.repository.WinNumberRepository;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -42,6 +45,8 @@ public class GlobalSchedulerTest {
 	private LottoRepository lottoRepository;
 	@Mock
 	private SixNumberRepository sixNumberRepository;
+	@Mock
+	private WinNumberRepository winNumberRepository;
 	@Mock
 	private RedisTemplate<String, String> redisTemplate;
 	@Mock
@@ -124,5 +129,17 @@ public class GlobalSchedulerTest {
 		verify(userRepository).findUserByUntreatedAndRoleNot(anyInt(), any(UserRole.class));
 		verify(valueOperations).get(anyString());
 		assertEquals(saveUser.getStatus(), Status.SUSPENDED);
+	}
+
+	@Test
+	void updateLottoResultsOnSunday_success() {
+		when(winNumberRepository.findTopByTime(any(Pageable.class))).thenReturn(List.of(TestDataFactory.winNumber()));
+		when(manager.retrieveLottoResult(1075)).thenReturn(Optional.of(TestDataFactory.winNumberRequest()));
+
+		globalScheduler.updateLottoResultsOnSunday();
+
+		verify(winNumberRepository).findTopByTime(any(Pageable.class));
+		verify(manager).retrieveLottoResult(anyInt());
+		verify(winNumberRepository).save(any(WinNumber.class));
 	}
 }
