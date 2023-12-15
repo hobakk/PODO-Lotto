@@ -63,30 +63,28 @@ public class GlobalSchedulerTest {
 
 	@Test
 	void findByTopNumberListForMonth_isPresent() {
-		Lotto lotto = mock(Lotto.class);
-
-		when(lottoRepository.findByTopNumbersForMonth(any(YearMonth.class))).thenReturn(Optional.of(lotto));
+		when(lottoRepository.existsLottoByCreationDate(any(YearMonth.class))).thenReturn(true);
 
 		globalScheduler.findByTopNumberListForMonth();
 
-		verify(lottoRepository).findByTopNumbersForMonth(any(YearMonth.class));
+		verify(lottoRepository).existsLottoByCreationDate(any(YearMonth.class));
 	}
 
 	@Test
 	void findByTopNumberListForMonth_isEmpty() {
 		SixNumber sixNumber = TestDataFactory.sixNumber();
 
-		when(lottoRepository.findByTopNumbersForMonth(any(YearMonth.class))).thenReturn(Optional.empty());
+		when(lottoRepository.existsLottoByCreationDate(any(YearMonth.class))).thenReturn(false);
 
 		when(sixNumberRepository.findAllByBuyDate(any(YearMonth.class))).thenReturn(List.of(sixNumber));
 
-		when(manager.revisedTopIndicesAsStr(anyList())).thenReturn("1 2 3 4 5 6");
+		when(manager.getTopNumbersAsString(anyMap())).thenReturn("1 2 3 4 5 6");
 
 		globalScheduler.findByTopNumberListForMonth();
 
-		verify(lottoRepository).findByTopNumbersForMonth(any(YearMonth.class));
+		verify(lottoRepository).existsLottoByCreationDate(any(YearMonth.class));
 		verify(sixNumberRepository).findAllByBuyDate(any(YearMonth.class));
-		verify(manager).revisedTopIndicesAsStr(anyList());
+		verify(manager).getTopNumbersAsString(anyMap());
 		verify(lottoRepository).save(any(Lotto.class));
 	}
 
