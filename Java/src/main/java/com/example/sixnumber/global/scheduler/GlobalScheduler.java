@@ -4,7 +4,11 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.springframework.data.domain.PageRequest;
@@ -44,25 +48,33 @@ public class GlobalScheduler {
 	@Scheduled(cron = "0 0 11 ? * MON-FRI")
 	public void findByTopNumberListForMonth() {
 		YearMonth lastMonth = YearMonth.now().minusMonths(1);
-		lottoRepository.findByTopNumbersForMonth(lastMonth).ifPresentOrElse(
-			lastMonthStats -> {},
-			() -> {
-				List<Integer> countList = new ArrayList<>(Collections.nCopies(45, 1));
+		if (!lottoRepository.existsLottoByCreationDate(lastMonth)) {
+			Map<String, Integer> map = new HashMap<>();
 
-				sixNumberRepository.findAllByBuyDate(lastMonth).forEach(sixNumber ->
-					sixNumber.getNumberList().forEach(sentence ->
-						Stream.of(sentence.split(" ")).forEach(topNumberStr -> {
-							int topNum = Integer.parseInt(topNumberStr);
-							countList.set(topNum, countList.get(topNum) + 1);
-						})
-					)
-				);
+			sixNumberRepository.findAllByBuyDate(lastMonth).forEach(sixNumber ->
+				sixNumber.getNumberList().forEach(sentence ->
+					Stream.of(sentence.split(" ")).forEach(topNumberStr -> {
+						map.put(topNumberStr, map.getOrDefault(topNumberStr, 0) + 1);
+					})
+				)
+			);
 
-				String result = manager.revisedTopIndicesAsStr(countList);
-				Lotto lotto = new Lotto("Stats", "Scheduler", lastMonth, countList, result);
-				lottoRepository.save(lotto);
-			}
-		);
+			List<String> topNumberList = map.entrySet().stream()
+				.sorted(Map.Entry.<String, Integer> comparingByValue().reversed())
+				.limit(6)
+				.map(Map.Entry::getKey)
+				.sorted()
+				.collect(Collectors.toList());
+
+			String result = String.join(" ", topNumberList);
+
+			List<Integer> countList = IntStream.rangeClosed(1, 45)
+				.mapToObj(i -> map.getOrDefault(Integer.toString(i), 0))
+				.collect(Collectors.toList());
+
+			Lotto lotto = new Lotto("Stats", "Scheduler", lastMonth, countList, result);
+			lottoRepository.save(lotto);
+		}
 	}
 
 	@Scheduled(cron = "0 0 9 * * *")
