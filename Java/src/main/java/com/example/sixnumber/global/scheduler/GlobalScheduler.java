@@ -7,11 +7,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.WinNumber;
@@ -93,7 +97,12 @@ public class GlobalScheduler {
 
 	@Scheduled(cron = "0 0 21 ? * SUN")
 	public void updateLottoResultsOnSunday() {
-		int target = winNumberRepository.findTopByTime().getTime() + 1;
+		Pageable pageable = PageRequest.of(0, 1);
+		int target = winNumberRepository.findTopByTime(pageable).stream()
+			.findFirst()
+			.map(WinNumber::getTime)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+
 		WinNumber winNumber = manager.retrieveLottoResult(target)
 			.map(WinNumber::new)
 			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
