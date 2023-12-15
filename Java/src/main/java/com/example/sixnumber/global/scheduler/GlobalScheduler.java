@@ -2,8 +2,6 @@ package com.example.sixnumber.global.scheduler;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +43,7 @@ public class GlobalScheduler {
 	private final RedisTemplate<String, String> redisTemplate;
 	private final Manager manager;
 
-	@Scheduled(cron = "0 0 11 ? * MON-FRI")
+	@Scheduled(cron = "0 0 11 ? * SUN")
 	public void findByTopNumberListForMonth() {
 		YearMonth lastMonth = YearMonth.now().minusMonths(1);
 		if (!lottoRepository.existsLottoByCreationDate(lastMonth)) {
@@ -59,14 +57,7 @@ public class GlobalScheduler {
 				)
 			);
 
-			List<String> topNumberList = map.entrySet().stream()
-				.sorted(Map.Entry.<String, Integer> comparingByValue().reversed())
-				.limit(6)
-				.map(Map.Entry::getKey)
-				.sorted()
-				.collect(Collectors.toList());
-
-			String result = String.join(" ", topNumberList);
+			String result = manager.getTopNumbersAsString(map);
 
 			List<Integer> countList = IntStream.rangeClosed(1, 45)
 				.mapToObj(i -> map.getOrDefault(Integer.toString(i), 0))
