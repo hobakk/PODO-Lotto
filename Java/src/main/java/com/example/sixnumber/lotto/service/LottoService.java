@@ -2,7 +2,9 @@ package com.example.sixnumber.lotto.service;
 
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,12 @@ public class LottoService {
 	public LottoResponse mainTopNumbers() {
 		return lottoRepository.findByMain()
 			.map(lotto -> {
-				String result = manager.revisedTopIndicesAsStr(lotto.getCountList());
+				Map<String, Integer> map = new HashMap<>();
+				for (int i = 0; i < lotto.getCountList().size(); i++) {
+					map.put(Integer.toString(i + 1), lotto.getCountList().get(i));
+				}
+
+				String result = manager.getTopNumbersAsString(map);
 				return new LottoResponse(lotto.getCountList(), result);
 			})
 			.orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
