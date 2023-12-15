@@ -100,7 +100,7 @@ public class GlobalScheduler {
 		Pageable pageable = PageRequest.of(0, 1);
 		int target = winNumberRepository.findTopByTime(pageable).stream()
 			.findFirst()
-			.map(WinNumber::getTime)
+			.map(winNumber -> winNumber.getTime() + 1)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 
 		WinNumber winNumber = manager.retrieveLottoResult(target)
