@@ -28,10 +28,9 @@ public class Manager {
 			.sorted(Map.Entry.<String, Integer> comparingByValue().reversed())
 			.limit(6)
 			.map(Map.Entry::getKey)
-			.sorted()
 			.collect(Collectors.toList());
 
-		return String.join(" ", topNumberList);
+		return topNumberList.stream().sorted().collect(Collectors.joining(" "));
 	}
 
 	public void sendEmail(String email, String authCode) {
