@@ -1,5 +1,6 @@
 package com.example.sixnumber.global.util;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,12 +26,13 @@ public class Manager {
 
 	public String getTopNumbersAsString(Map<String, Integer> map) {
 		List<String> topNumberList = map.entrySet().stream()
-			.sorted(Map.Entry.<String, Integer> comparingByValue().reversed())
+			.sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
 			.limit(6)
 			.map(Map.Entry::getKey)
+			.sorted(Comparator.naturalOrder())
 			.collect(Collectors.toList());
 
-		return topNumberList.stream().sorted().collect(Collectors.joining(" "));
+		return String.join(" ", topNumberList);
 	}
 
 	public void sendEmail(String email, String authCode) {
