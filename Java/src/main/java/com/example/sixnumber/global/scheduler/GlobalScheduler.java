@@ -49,7 +49,7 @@ public class GlobalScheduler {
 		if (!lottoRepository.existsLottoByCreationDate(lastMonth)) {
 			Map<Integer, Integer> map = new HashMap<>();
 
-			sixNumberRepository.findAllByBuyDate(lastMonth).forEach(sixNumber ->
+			sixNumberRepository.findAllByBuyDate(lastMonth.getYear(), lastMonth.getMonthValue()).forEach(sixNumber ->
 				sixNumber.getNumberList().forEach(sentence ->
 					Stream.of(sentence.split(" ")).forEach(topNumberStr -> {
 						int key = Integer.parseInt(topNumberStr);
