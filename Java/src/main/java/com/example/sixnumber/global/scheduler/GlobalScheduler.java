@@ -47,12 +47,13 @@ public class GlobalScheduler {
 	public void findByTopNumberListForMonth() {
 		YearMonth lastMonth = YearMonth.now().minusMonths(1);
 		if (!lottoRepository.existsLottoByCreationDate(lastMonth)) {
-			Map<String, Integer> map = new HashMap<>();
+			Map<Integer, Integer> map = new HashMap<>();
 
 			sixNumberRepository.findAllByBuyDate(lastMonth).forEach(sixNumber ->
 				sixNumber.getNumberList().forEach(sentence ->
 					Stream.of(sentence.split(" ")).forEach(topNumberStr -> {
-						map.put(topNumberStr, map.getOrDefault(topNumberStr, 0) + 1);
+						int key = Integer.parseInt(topNumberStr);
+						map.put(key, map.getOrDefault(key, 0) + 1);
 					})
 				)
 			);
@@ -60,7 +61,7 @@ public class GlobalScheduler {
 			String result = manager.getTopNumbersAsString(map);
 
 			List<Integer> countList = IntStream.rangeClosed(1, 45)
-				.mapToObj(i -> map.getOrDefault(Integer.toString(i), 0))
+				.mapToObj(i -> map.getOrDefault(i, 0))
 				.collect(Collectors.toList());
 
 			Lotto lotto = new Lotto("Stats", "Scheduler", lastMonth, countList, result);

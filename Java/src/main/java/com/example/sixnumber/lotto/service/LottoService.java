@@ -29,9 +29,9 @@ public class LottoService {
 	public LottoResponse mainTopNumbers() {
 		return lottoRepository.findByMain()
 			.map(lotto -> {
-				Map<String, Integer> map = new HashMap<>();
+				Map<Integer, Integer> map = new HashMap<>();
 				for (int i = 0; i < lotto.getCountList().size(); i++) {
-					map.put(Integer.toString(i + 1), lotto.getCountList().get(i));
+					map.put(i + 1, lotto.getCountList().get(i));
 				}
 
 				String result = manager.getTopNumbersAsString(map);

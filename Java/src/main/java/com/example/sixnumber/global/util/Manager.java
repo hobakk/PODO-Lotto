@@ -1,6 +1,5 @@
 package com.example.sixnumber.global.util;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,15 +23,20 @@ public class Manager {
 
 	private final String URL = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=";
 
-	public String getTopNumbersAsString(Map<String, Integer> map) {
-		List<String> topNumberList = map.entrySet().stream()
-			.sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+	public String getTopNumbersAsString(Map<Integer, Integer> map) {
+		List<Integer> topNumberList = map.entrySet().stream()
+			.sorted(Map.Entry.<Integer, Integer> comparingByValue().reversed())
 			.limit(6)
 			.map(Map.Entry::getKey)
-			.sorted(Comparator.naturalOrder())
+			.sorted()
 			.collect(Collectors.toList());
 
-		return String.join(" ", topNumberList);
+		StringBuilder sb = new StringBuilder();
+		for (int num : topNumberList) {
+			sb.append(num).append(" ");
+		}
+
+		return sb.toString().trim();
 	}
 
 	public void sendEmail(String email, String authCode) {
