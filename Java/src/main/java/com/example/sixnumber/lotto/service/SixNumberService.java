@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
 import com.example.sixnumber.lotto.entity.SixNumber;
@@ -46,6 +47,7 @@ public class SixNumberService {
 	private final SixNumberRepository sixNumberRepository;
 	private final LottoRepository lottoRepository;
 	private final UserRepository userRepository;
+	private final Manager manager;
 	private final Random rd = new Random();
 
 	private static final String RANDOM_NUMBER = "buyNumber";
@@ -106,12 +108,7 @@ public class SixNumberService {
 					});
 				}
 
-				List<Integer> list = new ArrayList<>(localCountMap.keySet());
-				list.sort((num1, num2) -> localCountMap.get(num2).compareTo(localCountMap.get(num1)));
-
-				List<Integer> checkLotto = list.subList(0, 6);
-				Collections.sort(checkLotto);
-				String result = checkLotto.stream().map(Object::toString).collect(Collectors.joining(" "));
+				String result = manager.getTopNumbersAsString(localCountMap);
 				synchronized (topNumbers) {
 					topNumbers.add(result);
 				}
