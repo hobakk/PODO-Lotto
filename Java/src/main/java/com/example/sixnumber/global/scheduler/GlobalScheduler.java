@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.ErrorCode;
+import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.WinNumber;
@@ -99,7 +100,7 @@ public class GlobalScheduler {
 			});
 	}
 
-	@Scheduled(cron = "0 0 21 ? * SUN")
+	@Scheduled(cron = "0 0 6 ? * SUN")
 	public void updateLottoResultsOnSunday() {
 		Pageable pageable = PageRequest.of(0, 1);
 		int target = winNumberRepository.findTopByTime(pageable).stream()
@@ -107,10 +108,12 @@ public class GlobalScheduler {
 			.map(winNumber -> winNumber.getTime() + 1)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 
-		WinNumber winNumber = manager.retrieveLottoResult(target)
-			.map(WinNumber::new)
-			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
+		if (!winNumberRepository.existsWinNumberByTime(target)) {
+			WinNumber winNumber = manager.retrieveLottoResult(target)
+				.map(WinNumber::new)
+				.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
 
-		winNumberRepository.save(winNumber);
+			winNumberRepository.save(winNumber);
+		}
 	}
 }
