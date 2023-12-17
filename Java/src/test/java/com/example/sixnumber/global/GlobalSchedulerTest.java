@@ -76,14 +76,14 @@ public class GlobalSchedulerTest {
 
 		when(lottoRepository.existsLottoByCreationDate(any(YearMonth.class))).thenReturn(false);
 
-		when(sixNumberRepository.findAllByBuyDate(any(YearMonth.class))).thenReturn(List.of(sixNumber));
+		when(sixNumberRepository.findAllByBuyDate(anyInt(), anyInt())).thenReturn(List.of(sixNumber));
 
 		when(manager.getTopNumbersAsString(anyMap())).thenReturn("1 2 3 4 5 6");
 
 		globalScheduler.findByTopNumberListForMonth();
 
 		verify(lottoRepository).existsLottoByCreationDate(any(YearMonth.class));
-		verify(sixNumberRepository).findAllByBuyDate(any(YearMonth.class));
+		verify(sixNumberRepository).findAllByBuyDate(anyInt(), anyInt());
 		verify(manager).getTopNumbersAsString(anyMap());
 		verify(lottoRepository).save(any(Lotto.class));
 	}
