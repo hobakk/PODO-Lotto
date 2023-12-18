@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CommentRequest {
-	private Long boardId;
+	// boardId || commentId
+	private Long id;
 	private String message;
 }
