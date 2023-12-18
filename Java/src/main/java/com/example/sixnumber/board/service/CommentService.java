@@ -31,8 +31,7 @@ public class CommentService {
 				})
 				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 		} else {
-			comment = boardRepository.findById(request.getId())
-				.filter(board -> board.getUser().equals(user) && board.isCommentEnabled())
+			comment = boardRepository.findByIdAndCommentEnabled(request.getId(), true)
 				.map(board ->  {
 					board.setCommentWithAdmin();
 					return new Comment(user, board, request.getMessage());
