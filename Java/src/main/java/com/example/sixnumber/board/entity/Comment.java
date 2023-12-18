@@ -41,4 +41,9 @@ public class Comment {
 		this.board = board;
 		this.message = message;
 	}
+
+	public Comment setMessage(String newMessage) {
+		this.message = newMessage;
+		return this;
+	}
 }
