@@ -51,12 +51,16 @@ public class Board {
 	@OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
 	private List<Comment> commentList;
 
+	@Column(nullable = false)
+	private boolean commentEnabled;
+
 	public Board(User user, BoardRequest request) {
 		this.user = user;
 		this.subject = request.getSubject();
 		this.contents = request.getContents();
 		this.status = BoardStatus.UNPROCESSED;
 		this.commentList = new ArrayList<>();
+		this.commentEnabled = true;
 	}
 
 	public Board(String subject, String contents) {
@@ -66,6 +70,7 @@ public class Board {
 		this.contents = contents;
 		this.status = this.getStatus();
 		this.commentList = null;
+		this.commentEnabled = true;
 	}
 
 	public Board getResult() {
@@ -74,6 +79,14 @@ public class Board {
 
 	public String setValue(String target) {
 		return target.length() > 13 ? target.substring(10) + "..." : target;
+	}
+
+	public void setComment() {
+		this.commentEnabled = !this.isCommentEnabled();
+	}
+
+	public void setCommentWithAdmin() {
+		this.commentEnabled = this.commentEnabled == false ? true : false;
 	}
 }
 
