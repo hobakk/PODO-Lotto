@@ -1,6 +1,9 @@
 package com.example.sixnumber.board.dto;
 
+import java.util.List;
+
 import com.example.sixnumber.board.entity.Board;
+import com.example.sixnumber.board.entity.Comment;
 import com.example.sixnumber.board.type.BoardStatus;
 
 import lombok.Getter;
@@ -12,6 +15,7 @@ public class BoardResponse {
 	private final String subject;
 	private final String contents;
 	private final BoardStatus status;
+	private final List<Comment> commentList;
 
 	public BoardResponse(Board board) {
 		this.boardId = board.getId();
@@ -19,5 +23,6 @@ public class BoardResponse {
 		this.subject = board.getSubject();
 		this.contents = board.getContents();
 		this.status = board.getStatus();
+		this.commentList = board.getCommentList();
 	}
 }
