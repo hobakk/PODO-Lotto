@@ -31,7 +31,7 @@ public class BoardController {
 	}
 
 	@GetMapping("")
-	public ResponseEntity<UnifiedResponse<?>> getBoards(@AuthenticationPrincipal User user) {
-		return ResponseEntity.ok(boardService.getBoards(user.getId()));
+	public ResponseEntity<UnifiedResponse<?>> getUnprocessedBoards(@AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(boardService.getUnprocessedBoards(user.getId()));
 	}
 }
