@@ -52,9 +52,15 @@ public class BoardService {
 	}
 
 	public UnifiedResponse<?> deleteBoard(User user, Long boardId) {
-		Board board = boardRepository.findById(boardId)
-			.filter(b -> b.getUser().equals(user) || user.getRole().equals(UserRole.ROLE_ADMIN))
-			.orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
+		Board board;
+		if (user.getRole().equals(UserRole.ROLE_ADMIN)) {
+			board = boardRepository.findById(boardId)
+				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+		} else {
+			board = boardRepository.findById(boardId)
+				.filter(b -> b.getUser().equals(user) && b.getCommentList().isEmpty())
+				.orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
+		}
 
 		boardRepository.delete(board);
 		return UnifiedResponse.ok("삭제 성공");
