@@ -14,6 +14,7 @@ import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.user.entity.User;
+import com.example.sixnumber.user.type.UserRole;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,5 +49,14 @@ public class BoardService {
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 
 		return UnifiedResponse.ok("조회 성공", response);
+	}
+
+	public UnifiedResponse<?> deleteBoard(User user, Long boardId) {
+		Board board = boardRepository.findById(boardId)
+			.filter(b -> b.getUser().equals(user) || user.getRole().equals(UserRole.ROLE_ADMIN))
+			.orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
+
+		boardRepository.delete(board);
+		return UnifiedResponse.ok("삭제 성공");
 	}
 }
