@@ -2,6 +2,7 @@ package com.example.sixnumber.board.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,5 +28,10 @@ public class BoardController {
 		@AuthenticationPrincipal User user
 	) {
 		return ResponseEntity.ok(boardService.setBoard(request, user));
+	}
+
+	@GetMapping("")
+	public ResponseEntity<UnifiedResponse<?>> getBoards(@AuthenticationPrincipal User user) {
+		return ResponseEntity.ok(boardService.getBoards(user.getId()));
 	}
 }
