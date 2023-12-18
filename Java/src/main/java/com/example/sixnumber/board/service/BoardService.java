@@ -26,9 +26,9 @@ public class BoardService {
 		return UnifiedResponse.ok("생성 완료");
 	}
 
-	public UnifiedResponse<List<Board>> getUnprocessedBoards(Long userId) {
+	public UnifiedResponse<List<Board>> getBoards(Long userId, BoardStatus status) {
 		List<Board> boardList = boardRepository
-			.findAllByUserIdAndStatus(userId, BoardStatus.UNPROCESSED).stream()
+			.findAllByUserIdAndStatus(userId, status).stream()
 			.map(Board::getResult)
 			.collect(Collectors.toList());
 
