@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.example.sixnumber.board.dto.BoardRequest;
+import com.example.sixnumber.board.dto.BoardResponse;
 import com.example.sixnumber.board.entity.Board;
 import com.example.sixnumber.board.repository.BoardRepository;
 import com.example.sixnumber.board.type.BoardStatus;
@@ -31,12 +32,12 @@ public class BoardService {
 		return UnifiedResponse.ok("생성 완료");
 	}
 
-	public UnifiedResponse<List<Board>> getBoards(Long userId, BoardStatus status) {
-		List<Board> boardList = boardRepository
+	public UnifiedResponse<List<BoardResponse>> getBoards(Long userId, BoardStatus status) {
+		List<BoardResponse> responses = boardRepository
 			.findAllByUserIdAndStatus(userId, status).stream()
-			.map(Board::getResult)
+			.map(board -> new BoardResponse(board.getResult()))
 			.collect(Collectors.toList());
 
-		return UnifiedResponse.ok("조회 성공", boardList);
+		return UnifiedResponse.ok("조회 성공", responses);
 	}
 }
