@@ -43,4 +43,12 @@ public class BoardController {
 	) {
 		return ResponseEntity.ok(boardService.getBoards(user.getId(), status));
 	}
+
+	@GetMapping("/{boardId}")
+	public ResponseEntity<UnifiedResponse<BoardResponse>> getBoard(
+		@PathVariable Long boardId,
+		@AuthenticationPrincipal User user
+	) {
+		return	ResponseEntity.ok(boardService.getBoard(user, boardId));
+	}
 }

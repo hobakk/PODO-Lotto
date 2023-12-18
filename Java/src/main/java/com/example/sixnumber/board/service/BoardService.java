@@ -40,4 +40,13 @@ public class BoardService {
 
 		return UnifiedResponse.ok("조회 성공", responses);
 	}
+
+	public UnifiedResponse<BoardResponse> getBoard(User user, Long boardId) {
+		BoardResponse response = boardRepository.findById(boardId)
+			.filter(b -> b.getUser().getId().equals(user.getId()))
+			.map(BoardResponse::new)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+
+		return UnifiedResponse.ok("조회 성공", response);
+	}
 }
