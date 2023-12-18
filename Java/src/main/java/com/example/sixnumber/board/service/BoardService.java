@@ -13,8 +13,8 @@ import com.example.sixnumber.board.type.BoardStatus;
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.ErrorCode;
+import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.user.entity.User;
-import com.example.sixnumber.user.type.UserRole;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardService {
 
 	private final BoardRepository boardRepository;
+	private final Manager manager;
 
 	public UnifiedResponse<?> setBoard(BoardRequest request, User user) {
 		if (boardRepository.findAllByUserIdAndStatus(user.getId(), BoardStatus.UNPROCESSED).size() > 3)
@@ -53,7 +54,7 @@ public class BoardService {
 
 	public UnifiedResponse<?> deleteBoard(User user, Long boardId) {
 		Board board;
-		if (user.getRole().equals(UserRole.ROLE_ADMIN)) {
+		if (manager.isAdmin(user)) {
 			board = boardRepository.findById(boardId)
 				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 		} else {

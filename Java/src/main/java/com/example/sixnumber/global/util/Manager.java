@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.example.sixnumber.lotto.dto.WinNumberRequest;
+import com.example.sixnumber.user.entity.User;
+import com.example.sixnumber.user.type.UserRole;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -77,5 +79,9 @@ public class Manager {
 		} catch (Exception e) {
 			return Optional.empty();
 		}
+	}
+
+	public boolean isAdmin(User user) {
+		return user.getRole() == UserRole.ROLE_ADMIN;
 	}
 }

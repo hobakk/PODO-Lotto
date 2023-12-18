@@ -9,6 +9,7 @@ import com.example.sixnumber.board.repository.CommentRepository;
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.ErrorCode;
+import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.type.UserRole;
 
@@ -20,10 +21,11 @@ public class CommentService {
 
 	private final BoardRepository boardRepository;
 	private final CommentRepository commentRepository;
+	private final Manager manager;
 
 	public UnifiedResponse<?> setComment(User user, CommentRequest request) {
 		Comment comment;
-		if (user.getRole().equals(UserRole.ROLE_ADMIN)) {
+		if (manager.isAdmin(user)) {
 			comment = boardRepository.findById(request.getId())
 				.map(board -> {
 					board.setComment();
