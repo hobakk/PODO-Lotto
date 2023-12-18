@@ -45,6 +45,22 @@ public class Board {
 		this.contents = request.getContents();
 		this.status = BoardStatus.UNPROCESSED;
 	}
+
+	public Board(String subject, String contents) {
+		this.id = this.getId();
+		this.user = this.getUser();
+		this.subject = subject;
+		this.contents = contents;
+		this.status = this.getStatus();
+	}
+
+	public Board getResult() {
+		return new Board(setValue(this.subject), setValue(this.contents));
+	}
+
+	public String setValue(String target) {
+		return target.length() > 13 ? target.substring(10) + "..." : target;
+	}
 }
 
 

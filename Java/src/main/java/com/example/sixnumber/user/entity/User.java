@@ -22,6 +22,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.example.sixnumber.board.entity.Board;
 import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.type.Status;
@@ -72,6 +73,8 @@ public class User implements UserDetails {
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<SixNumber> sixNumberList;
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Board> boardList;
 
 	public User(SignupRequest request, String encodedPassword) {
 		this.email = request.getEmail();
