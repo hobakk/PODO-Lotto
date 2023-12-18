@@ -22,12 +22,21 @@ public class CommentService {
 	private final CommentRepository commentRepository;
 
 	public UnifiedResponse<?> setComment(User user, CommentRequest request) {
-		Comment comment = boardRepository.findById(request.getBoardId())
+		Comment comment = boardRepository.findById(request.getId())
 			.filter(board -> board.getUser().equals(user) || user.getRole().equals(UserRole.ROLE_ADMIN))
 			.map(board ->  new Comment(user, board, request.getMessage()))
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+			.orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
 
 		commentRepository.save(comment);
 		return UnifiedResponse.ok("댓글 작성 완료");
+	}
+
+	public UnifiedResponse<?> fixComment(User user, CommentRequest request) {
+		commentRepository.findById(request.getId())
+			.filter(comment -> comment.getUser().equals(user) || user.getRole().equals(UserRole.ROLE_ADMIN))
+			.map(comment -> comment.setMessage(request.getMessage()))
+			.orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
+
+		return UnifiedResponse.ok("댓글 수정 성공");
 	}
 }
