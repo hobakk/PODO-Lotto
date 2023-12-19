@@ -73,4 +73,12 @@ public class BoardService {
 
 		return UnifiedResponse.ok("수정 성공");
 	}
+
+	public UnifiedResponse<List<BoardResponse>> getAllBoardsByStatus(BoardStatus status) {
+		List<BoardResponse> responses = boardRepository.findAllByStatus(status).stream()
+			.map(board -> new BoardResponse(board.getResult()))
+			.collect(Collectors.toList());
+
+		return UnifiedResponse.ok("조회 성공", responses);
+	}
 }

@@ -70,4 +70,11 @@ public class BoardController {
 	) {
 		return	ResponseEntity.ok(boardService.fixBoard(user, boardId, request));
 	}
+
+	@GetMapping("/admin")
+	public ResponseEntity<UnifiedResponse<List<BoardResponse>>> getAllBoardsByStatus(
+		@RequestParam BoardStatus status
+	) {
+		return ResponseEntity.ok(boardService.getAllBoardsByStatus(status));
+	}
 }
