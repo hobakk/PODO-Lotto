@@ -67,6 +67,19 @@ public class CommentControllerTest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.msg").value("댓글 수정 성공\""));
+			.andExpect(jsonPath("$.msg").value("댓글 수정 성공"));
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void deleteComment() throws Exception {
+		when(commentService.deleteComment(any(User.class), any(CommentRequest.class)))
+			.thenReturn(UnifiedResponse.ok("삭제 완료"));
+
+		mockMvc.perform(delete("/api/comment").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(request)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("삭제 완료"));
 	}
 }
