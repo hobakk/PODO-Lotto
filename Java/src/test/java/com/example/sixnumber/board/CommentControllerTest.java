@@ -46,7 +46,7 @@ public class CommentControllerTest {
 
 	@Test
 	@WithCustomMockUser
-	public void setBoard() throws Exception {
+	public void setComment() throws Exception {
 		when(commentService.setComment(any(User.class), any(CommentRequest.class)))
 			.thenReturn(UnifiedResponse.ok("댓글 작성 완료"));
 
@@ -55,5 +55,18 @@ public class CommentControllerTest {
 			.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("댓글 작성 완료"));
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void fixComment() throws Exception {
+		when(commentService.fixComment(any(User.class), any(CommentRequest.class)))
+			.thenReturn(UnifiedResponse.ok("댓글 수정 성공"));
+
+		mockMvc.perform(patch("/api/comment").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(request)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("댓글 수정 성공\""));
 	}
 }
