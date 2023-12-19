@@ -34,7 +34,7 @@ public class BoardService {
 		return UnifiedResponse.ok("생성 완료");
 	}
 
-	public UnifiedResponse<List<BoardResponse>> getBoards(Long userId, BoardStatus status) {
+	public UnifiedResponse<List<BoardResponse>> getBoardsByStatus(Long userId, BoardStatus status) {
 		List<BoardResponse> responses = boardRepository
 			.findAllByUserIdAndStatus(userId, status).stream()
 			.map(board -> new BoardResponse(board.getResult()))

@@ -39,11 +39,11 @@ public class BoardController {
 	}
 
 	@GetMapping("")
-	public ResponseEntity<UnifiedResponse<List<BoardResponse>>> getBoards(
+	public ResponseEntity<UnifiedResponse<List<BoardResponse>>> getBoardsByStatus(
 		@RequestParam BoardStatus status,
 		@AuthenticationPrincipal User user
 	) {
-		return ResponseEntity.ok(boardService.getBoards(user.getId(), status));
+		return ResponseEntity.ok(boardService.getBoardsByStatus(user.getId(), status));
 	}
 
 	@GetMapping("/{boardId}")
