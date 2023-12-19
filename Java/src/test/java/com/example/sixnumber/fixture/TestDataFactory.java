@@ -9,6 +9,8 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.params.provider.Arguments;
 
+import com.example.sixnumber.board.dto.BoardRequest;
+import com.example.sixnumber.board.entity.Board;
 import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
@@ -171,4 +173,11 @@ public class TestDataFactory {
 		);
 	}
 
+	public static BoardRequest boardRequest() {
+		return new BoardRequest("제목", "내용");
+	}
+
+	public static Board board() {
+		return new Board(user(), boardRequest());
+	}
 }

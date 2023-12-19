@@ -66,4 +66,17 @@ public class BoardControllerTest {
 			.andExpect(jsonPath("$.msg").value("조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());;
 	}
+
+	@Test
+	@WithCustomMockUser
+	public void getBoard() throws Exception {
+		when(boardService.getBoard(any(User.class), anyLong()))
+			.thenReturn(UnifiedResponse.ok("조회 성공", new BoardResponse(TestDataFactory.board())));
+
+		mockMvc.perform(get("/api/board/1").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("조회 성공"))
+			.andExpect(jsonPath("$.data").isNotEmpty());;
+	}
 }
