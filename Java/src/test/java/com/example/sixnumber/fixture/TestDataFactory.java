@@ -10,7 +10,9 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.provider.Arguments;
 
 import com.example.sixnumber.board.dto.BoardRequest;
+import com.example.sixnumber.board.dto.CommentRequest;
 import com.example.sixnumber.board.entity.Board;
+import com.example.sixnumber.board.entity.Comment;
 import com.example.sixnumber.global.dto.TokenDto;
 import com.example.sixnumber.lotto.dto.BuyNumberRequest;
 import com.example.sixnumber.lotto.dto.StatisticalNumberRequest;
@@ -179,5 +181,13 @@ public class TestDataFactory {
 
 	public static Board board() {
 		return new Board(user(), boardRequest());
+	}
+
+	public static CommentRequest commentRequest() {
+		return new CommentRequest(7L, "댓글");
+	}
+
+	public static Comment comment() {
+		return new Comment(user(), board(), "댓글");
 	}
 }
