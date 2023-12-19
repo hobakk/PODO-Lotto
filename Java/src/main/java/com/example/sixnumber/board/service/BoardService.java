@@ -58,8 +58,7 @@ public class BoardService {
 			board = boardRepository.findById(boardId)
 				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 		} else {
-			board = boardRepository.findById(boardId)
-				.filter(b -> b.getUser().equals(user) && b.getCommentList().isEmpty())
+			board = boardRepository.findByIdAndUserAndCommentList_Empty(boardId, user)
 				.orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
 		}
 
