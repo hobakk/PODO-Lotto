@@ -26,6 +26,7 @@ import com.example.sixnumber.fixture.WithCustomMockUser;
 import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.lotto.controller.LottoController;
 import com.example.sixnumber.user.entity.User;
+import com.example.sixnumber.user.type.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @AutoConfigureMockMvc
@@ -103,5 +104,18 @@ public class BoardControllerTest {
 			.content(objectMapper.writeValueAsString(TestDataFactory.boardRequest())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("수정 성공"));
+	}
+
+	@Test
+	@WithCustomMockUser(username = "testAdmin", role = UserRole.ROLE_ADMIN)
+	public void getAllBoardsByStatus() throws Exception {
+		when(boardService.getAllBoardsByStatus(any(BoardStatus.class)))
+			.thenReturn(UnifiedResponse.ok("조회 성공", List.of(new BoardResponse(TestDataFactory.board()))));
+
+		mockMvc.perform(patch("/api/board/1").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("수정 성공"))
+			.andExpect(jsonPath("$.data").isNotEmpty());;;
 	}
 }
