@@ -79,4 +79,16 @@ public class BoardControllerTest {
 			.andExpect(jsonPath("$.msg").value("조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());;
 	}
+
+	@Test
+	@WithCustomMockUser
+	public void deleteBoard() throws Exception {
+		when(boardService.deleteBoard(any(User.class), anyLong()))
+			.thenReturn(UnifiedResponse.ok("삭제 성공"));
+
+		mockMvc.perform(delete("/api/board/1").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("삭제 성공"));
+	}
 }
