@@ -91,4 +91,17 @@ public class BoardControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("삭제 성공"));
 	}
+
+	@Test
+	@WithCustomMockUser
+	public void fixBoard() throws Exception {
+		when(boardService.fixBoard(any(User.class), anyLong(), any(BoardRequest.class)))
+			.thenReturn(UnifiedResponse.ok("수정 성공"));
+
+		mockMvc.perform(patch("/api/board/1").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(TestDataFactory.boardRequest())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("수정 성공"));
+	}
 }
