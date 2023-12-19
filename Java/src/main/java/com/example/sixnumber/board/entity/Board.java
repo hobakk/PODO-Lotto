@@ -73,6 +73,12 @@ public class Board {
 		this.commentEnabled = true;
 	}
 
+	public Board update(BoardRequest request) {
+		this.subject = request.getSubject().isEmpty() ? this.subject : request.getSubject();
+		this.contents = request.getContents().isEmpty() ? this.contents : request.getContents();
+		return this;
+	}
+
 	public Board getResult() {
 		return new Board(setValue(this.subject), setValue(this.contents));
 	}
