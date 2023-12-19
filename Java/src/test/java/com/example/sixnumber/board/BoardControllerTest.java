@@ -7,6 +7,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,7 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.sixnumber.board.dto.BoardRequest;
+import com.example.sixnumber.board.dto.BoardResponse;
 import com.example.sixnumber.board.service.BoardService;
+import com.example.sixnumber.board.type.BoardStatus;
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.WithCustomMockUser;
 import com.example.sixnumber.global.dto.UnifiedResponse;
@@ -48,5 +52,18 @@ public class BoardControllerTest {
 			.content(objectMapper.writeValueAsString(TestDataFactory.boardRequest())))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("생성 완료"));
+	}
+
+	@Test
+	@WithCustomMockUser
+	public void getBoardsByStatus() throws Exception {
+		when(boardService.getBoardsByStatus(anyLong(), any(BoardStatus.class)))
+			.thenReturn(UnifiedResponse.ok("조회 성공", List.of(new BoardResponse(TestDataFactory.board()))));
+
+		mockMvc.perform(get("/api/board").with(csrf())
+			.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.msg").value("조회 성공"))
+			.andExpect(jsonPath("$.data").isNotEmpty());;
 	}
 }
