@@ -61,4 +61,13 @@ public class BoardController {
 	) {
 		return	ResponseEntity.ok(boardService.deleteBoard(user, boardId));
 	}
+
+	@PatchMapping("/{boardId}")
+	public ResponseEntity<UnifiedResponse<?>> fixBoard(
+		@PathVariable Long boardId,
+		@RequestBody BoardRequest request,
+		@AuthenticationPrincipal User user
+	) {
+		return	ResponseEntity.ok(boardService.fixBoard(user, boardId, request));
+	}
 }

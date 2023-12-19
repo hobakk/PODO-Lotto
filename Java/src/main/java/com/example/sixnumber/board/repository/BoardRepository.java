@@ -15,4 +15,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 	Optional<Board> findByIdAndCommentEnabled(Long boardId, boolean bool);
 
 	Optional<Board> findByIdAndUserAndCommentList_Empty(Long boardId, User user);
+
+	Optional<Board> findByIdAndUser(Long boardId, User user);
 }
