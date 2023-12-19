@@ -68,7 +68,7 @@ public class WebSecurityConfig {
 			.authorizeRequests()
 				.antMatchers(HttpMethod.OPTIONS).permitAll()
 				.antMatchers(URL_PERMIT_ALL).permitAll()
-				.antMatchers("/api/admin/**", "/api/winnumber/set").hasRole("ADMIN")
+				.antMatchers("/api/admin/**", "/api/winnumber/set", "/api/board/admin/**").hasRole("ADMIN")
 				.antMatchers("/api/lotto/**", "/api/users/sixnumber-list").hasAnyRole("ADMIN", "PAID")
 				.anyRequest().authenticated()
 
