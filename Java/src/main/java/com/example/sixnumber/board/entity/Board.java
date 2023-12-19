@@ -1,5 +1,6 @@
 package com.example.sixnumber.board.entity;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +54,7 @@ public class Board {
 
 	@Column(nullable = false)
 	private boolean commentEnabled;
+	private LocalDate correctionDate;
 
 	public Board(User user, BoardRequest request) {
 		this.user = user;
@@ -61,6 +63,7 @@ public class Board {
 		this.status = BoardStatus.UNPROCESSED;
 		this.commentList = new ArrayList<>();
 		this.commentEnabled = true;
+		this.correctionDate = null;
 	}
 
 	public Board(String subject, String contents) {
@@ -71,11 +74,13 @@ public class Board {
 		this.status = this.getStatus();
 		this.commentList = null;
 		this.commentEnabled = true;
+		this.correctionDate = null;
 	}
 
 	public Board update(BoardRequest request) {
 		this.subject = request.getSubject().isEmpty() ? this.subject : request.getSubject();
 		this.contents = request.getContents().isEmpty() ? this.contents : request.getContents();
+		this.correctionDate = LocalDate.now();
 		return this;
 	}
 

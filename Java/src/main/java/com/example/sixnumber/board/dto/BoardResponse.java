@@ -1,5 +1,6 @@
 package com.example.sixnumber.board.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.example.sixnumber.board.entity.Board;
@@ -16,6 +17,7 @@ public class BoardResponse {
 	private final String contents;
 	private final BoardStatus status;
 	private final List<Comment> commentList;
+	private final LocalDate correctionDate;
 
 	public BoardResponse(Board board) {
 		this.boardId = board.getId();
@@ -24,5 +26,6 @@ public class BoardResponse {
 		this.contents = board.getContents();
 		this.status = board.getStatus();
 		this.commentList = board.getCommentList();
+		this.correctionDate = board.getCorrectionDate();
 	}
 }
