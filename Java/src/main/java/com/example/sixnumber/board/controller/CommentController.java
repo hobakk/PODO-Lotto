@@ -17,7 +17,7 @@ import com.example.sixnumber.user.entity.User;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/comment")
+@RequestMapping("/api/comment")
 @RequiredArgsConstructor
 public class CommentController {
 
