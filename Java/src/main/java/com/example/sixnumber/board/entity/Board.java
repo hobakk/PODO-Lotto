@@ -87,6 +87,11 @@ public class Board {
 
 	public void setCommentWithAdmin() {
 		this.commentEnabled = this.commentEnabled == false ? true : false;
+		this.status = BoardStatus.COMPLETE;
+	}
+
+	public void setCommentEnabled() {
+		this.commentEnabled = true;
 	}
 }
 

@@ -60,7 +60,7 @@ public class CommentService {
 			.filter(c -> c.getUser().equals(user) || user.getRole().equals(UserRole.ROLE_ADMIN))
 			.orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
 
-		comment.getBoard().setCommentWithAdmin();
+		comment.getBoard().setCommentEnabled();
 		commentRepository.delete(comment);
 		return UnifiedResponse.ok("삭제 완료");
 	}
