@@ -40,6 +40,8 @@ public class BoardService {
 			.map(board -> new BoardResponse(board.getResult()))
 			.collect(Collectors.toList());
 
+		if (responses.isEmpty()) throw new CustomException(ErrorCode.NOT_FOUND);
+
 		return UnifiedResponse.ok("조회 성공", responses);
 	}
 
@@ -78,6 +80,8 @@ public class BoardService {
 		List<BoardResponse> responses = boardRepository.findAllByStatus(status).stream()
 			.map(board -> new BoardResponse(board.getResult()))
 			.collect(Collectors.toList());
+
+		if (responses.isEmpty()) throw new CustomException(ErrorCode.NOT_FOUND);
 
 		return UnifiedResponse.ok("조회 성공", responses);
 	}
