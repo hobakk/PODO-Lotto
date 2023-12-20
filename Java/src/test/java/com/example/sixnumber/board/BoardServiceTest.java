@@ -104,4 +104,19 @@ public class BoardServiceTest {
 
 		verify(boardRepository).findById(anyLong());
 	}
+
+	@Test
+	void deleteBoard_isAdmin() {
+		User admin = TestDataFactory.Admin();
+
+		when(manager.isAdmin(any(User.class))).thenReturn(true);
+		when(boardRepository.findById(anyLong())).thenReturn(Optional.of(TestDataFactory.board()));
+
+		UnifiedResponse<?> response = boardService.deleteBoard(admin, TestDataFactory.board().getId());
+
+		verify(manager).isAdmin(any(User.class));
+		verify(boardRepository).findById(anyLong());
+		verify(boardRepository).delete(any(Board.class));
+		TestUtil.UnifiedResponseEquals(response, 200, "삭제 성공");
+	}
 }
