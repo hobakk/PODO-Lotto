@@ -145,4 +145,18 @@ public class BoardServiceTest {
 		verify(boardRepository).findByIdAndUser(anyLong(), any(User.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "수정 성공");
 	}
+
+	@Test
+	void fixBoard_fail() {
+		User user = mock(User.class);
+		when(user.getId()).thenReturn(91L);
+		when(user.getEmail()).thenReturn("test");
+
+		when(boardRepository.findByIdAndUser(anyLong(), any(User.class))).thenReturn(Optional.empty());
+
+		Assertions.assertThrows(CustomException.class,
+			() -> boardService.fixBoard(user, TestDataFactory.board().getId(), TestDataFactory.boardRequest()));
+
+		verify(boardRepository).findByIdAndUser(anyLong(), any(User.class));
+	}
 }
