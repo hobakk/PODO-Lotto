@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.sixnumber.board.dto.BoardResponse;
 import com.example.sixnumber.board.entity.Board;
 import com.example.sixnumber.board.repository.BoardRepository;
 import com.example.sixnumber.board.service.BoardService;
@@ -65,5 +66,17 @@ public class BoardServiceTest {
 			() -> boardService.setBoard(TestDataFactory.boardRequest(), saveUser));
 
 		verify(boardRepository).findAllByUserIdAndStatus(anyLong(), any(BoardStatus.class));
+	}
+
+	@Test
+	void getBoardsByStatus() {
+		when(boardRepository.findAllByUserIdAndStatus(anyLong(), any(BoardStatus.class)))
+			.thenReturn(List.of(TestDataFactory.board()));
+
+		UnifiedResponse<List<BoardResponse>> response = boardService
+			.getBoardsByStatus(saveUser.getId(), BoardStatus.UNPROCESSED);
+
+		verify(boardRepository).findAllByUserIdAndStatus(anyLong(), any(BoardStatus.class));
+		TestUtil.UnifiedResponseListEquals(response, 200, "조회 성공");
 	}
 }
