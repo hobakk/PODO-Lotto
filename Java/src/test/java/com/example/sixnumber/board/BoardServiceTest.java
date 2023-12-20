@@ -133,4 +133,16 @@ public class BoardServiceTest {
 		verify(boardRepository).delete(any(Board.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "삭제 성공");
 	}
+
+	@Test
+	void fixBoard_success() {
+		when(boardRepository.findByIdAndUser(anyLong(), any(User.class)))
+			.thenReturn(Optional.of(TestDataFactory.board()));
+
+		UnifiedResponse<?> response = boardService
+			.fixBoard(saveUser, TestDataFactory.board().getId(), TestDataFactory.boardRequest());
+
+		verify(boardRepository).findByIdAndUser(anyLong(), any(User.class));
+		TestUtil.UnifiedResponseEquals(response, 200, "수정 성공");
+	}
 }
