@@ -119,4 +119,18 @@ public class BoardServiceTest {
 		verify(boardRepository).delete(any(Board.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "삭제 성공");
 	}
+
+	@Test
+	void deleteBoard_isNotAdmin() {
+		when(manager.isAdmin(any(User.class))).thenReturn(false);
+		when(boardRepository.findByIdAndUserAndCommentList_Empty(anyLong(), any(User.class)))
+			.thenReturn(Optional.of(TestDataFactory.board()));
+
+		UnifiedResponse<?> response = boardService.deleteBoard(saveUser, TestDataFactory.board().getId());
+
+		verify(manager).isAdmin(any(User.class));
+		verify(boardRepository).findByIdAndUserAndCommentList_Empty(anyLong(), any(User.class));
+		verify(boardRepository).delete(any(Board.class));
+		TestUtil.UnifiedResponseEquals(response, 200, "삭제 성공");
+	}
 }
