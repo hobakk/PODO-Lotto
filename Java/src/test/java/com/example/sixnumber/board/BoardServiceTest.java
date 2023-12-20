@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,7 @@ import com.example.sixnumber.board.type.BoardStatus;
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.TestUtil;
 import com.example.sixnumber.global.dto.UnifiedResponse;
+import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.user.entity.User;
 
@@ -62,7 +64,7 @@ public class BoardServiceTest {
 
 		when(boardRepository.findAllByUserIdAndStatus(anyLong(), any(BoardStatus.class))).thenReturn(boardList);
 
-		Assertions.assertThrows(IllegalArgumentException.class,
+		Assertions.assertThrows(CustomException.class,
 			() -> boardService.setBoard(TestDataFactory.boardRequest(), saveUser));
 
 		verify(boardRepository).findAllByUserIdAndStatus(anyLong(), any(BoardStatus.class));
@@ -78,5 +80,15 @@ public class BoardServiceTest {
 
 		verify(boardRepository).findAllByUserIdAndStatus(anyLong(), any(BoardStatus.class));
 		TestUtil.UnifiedResponseListEquals(response, 200, "조회 성공");
+	}
+
+	@Test
+	void getBoard_success() {
+		when(boardRepository.findById(anyLong())).thenReturn(Optional.of(TestDataFactory.board()));
+
+		UnifiedResponse<BoardResponse> response = boardService.getBoard(saveUser, TestDataFactory.board().getId());
+
+		verify(boardRepository).findById(anyLong());
+		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공");
 	}
 }
