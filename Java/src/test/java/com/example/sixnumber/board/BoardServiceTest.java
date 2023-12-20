@@ -159,4 +159,15 @@ public class BoardServiceTest {
 
 		verify(boardRepository).findByIdAndUser(anyLong(), any(User.class));
 	}
+
+	@Test
+	void getAllBoardsByStatus() {
+		when(boardRepository.findAllByStatus(any(BoardStatus.class))).thenReturn(List.of(TestDataFactory.board()));
+
+		UnifiedResponse<List<BoardResponse>> responses = boardService
+			.getAllBoardsByStatus(BoardStatus.UNPROCESSED);
+
+		verify(boardRepository).findAllByStatus(any(BoardStatus.class));
+		TestUtil.UnifiedResponseListEquals(responses, 200, "조회 성공");
+	}
 }
