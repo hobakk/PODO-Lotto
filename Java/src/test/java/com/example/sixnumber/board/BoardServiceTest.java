@@ -91,4 +91,17 @@ public class BoardServiceTest {
 		verify(boardRepository).findById(anyLong());
 		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공");
 	}
+
+	@Test
+	void getBoard_fail() {
+		User user = mock(User.class);
+		when(user.getId()).thenReturn(91L);
+
+		when(boardRepository.findById(anyLong())).thenReturn(Optional.of(TestDataFactory.board()));
+
+		Assertions.assertThrows(CustomException.class,
+			() -> boardService.getBoard(user, TestDataFactory.board().getId()));
+
+		verify(boardRepository).findById(anyLong());
+	}
 }
