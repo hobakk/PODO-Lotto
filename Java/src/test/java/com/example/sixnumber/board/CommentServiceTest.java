@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,7 @@ import com.example.sixnumber.board.service.CommentService;
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.TestUtil;
 import com.example.sixnumber.global.dto.UnifiedResponse;
+import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.user.entity.User;
 
@@ -87,5 +89,20 @@ public class CommentServiceTest {
 		assertEquals(comment.getMessage(), commentRequest.getMessage());
 		verify(commentRepository).findById(anyLong());
 		TestUtil.UnifiedResponseEquals(response, 200, "댓글 수정 성공");
+	}
+
+	@Test
+	void fixComment_fail() {
+		User user = mock(User.class);
+		when(user.getId()).thenReturn(91L);
+		when(user.getEmail()).thenReturn("test");
+		Comment comment = TestDataFactory.comment();
+
+		when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment));
+
+		Assertions.assertThrows(CustomException.class,
+			() -> commentService.fixComment(user, commentRequest));
+
+		verify(commentRepository).findById(anyLong());
 	}
 }
