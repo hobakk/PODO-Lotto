@@ -65,3 +65,16 @@ export const fixBoard = async (boardId: number, boardRequest: BoardRequest): Pro
         throw error.data;
     }
 }
+
+export const getAllBoardsByStatus = async (status: string): Promise<UnifiedResponse<BoardResponse>> => {
+    try {
+        const { data } = await api.get("/board/admin", {
+            params: {
+                status,
+            }
+        });
+        return data;  
+    } catch (error: any) {
+        throw error.data;
+    }
+}
