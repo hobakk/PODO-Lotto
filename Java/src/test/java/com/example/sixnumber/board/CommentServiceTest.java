@@ -115,4 +115,18 @@ public class CommentServiceTest {
 		verify(commentRepository).delete(any(Comment.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "삭제 완료");
 	}
+
+	@Test
+	void deleteComment_fail() {
+		User user = mock(User.class);
+		when(user.getId()).thenReturn(91L);
+		when(user.getEmail()).thenReturn("test");
+
+		when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment));
+
+		Assertions.assertThrows(CustomException.class,
+			() -> commentService.deleteComment(user, commentRequest));
+
+		verify(commentRepository).findById(anyLong());
+	}
 }
