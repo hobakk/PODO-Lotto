@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.sixnumber.board.dto.CommentRequest;
-import com.example.sixnumber.board.entity.Board;
 import com.example.sixnumber.board.entity.Comment;
 import com.example.sixnumber.board.repository.BoardRepository;
 import com.example.sixnumber.board.repository.CommentRepository;
@@ -41,11 +40,13 @@ public class CommentServiceTest {
 	@Mock
 	private Manager manager;
 	private User saveUser;
+	private Comment comment;
 	private CommentRequest commentRequest;
 
 	@BeforeEach
 	public void setup() {
 		saveUser = TestDataFactory.user();
+		comment = TestDataFactory.comment();
 		commentRequest = TestDataFactory.commentRequest();
 	}
 
@@ -80,8 +81,6 @@ public class CommentServiceTest {
 
 	@Test
 	void fixComment_success() {
-		Comment comment = TestDataFactory.comment();
-
 		when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment));
 
 		UnifiedResponse<?> response = commentService.fixComment(saveUser, commentRequest);
@@ -96,7 +95,6 @@ public class CommentServiceTest {
 		User user = mock(User.class);
 		when(user.getId()).thenReturn(91L);
 		when(user.getEmail()).thenReturn("test");
-		Comment comment = TestDataFactory.comment();
 
 		when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment));
 
