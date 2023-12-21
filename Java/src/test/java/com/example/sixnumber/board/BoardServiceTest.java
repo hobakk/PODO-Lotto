@@ -39,16 +39,18 @@ public class BoardServiceTest {
 	@Mock
 	private Manager manager;
 	private User saveUser;
+	private Board board;
 
 	@BeforeEach
 	public void setup() {
 		saveUser = TestDataFactory.user();
+		board = TestDataFactory.board();
 	}
 
 	@Test
 	void setBoard_success() {
 		when(boardRepository.findAllByUserIdAndStatus(anyLong(), any(BoardStatus.class)))
-			.thenReturn(List.of(TestDataFactory.board()));
+			.thenReturn(List.of(board));
 
 		UnifiedResponse<?> response = boardService.setBoard(TestDataFactory.boardRequest(), saveUser);
 
@@ -60,7 +62,7 @@ public class BoardServiceTest {
 	@Test
 	void setBoard_fail() {
 		List<Board> boardList = new ArrayList<>();
-		for (int i = 0; i < 4; i++) boardList.add(TestDataFactory.board());
+		for (int i = 0; i < 4; i++) boardList.add(board);
 
 		when(boardRepository.findAllByUserIdAndStatus(anyLong(), any(BoardStatus.class))).thenReturn(boardList);
 
@@ -73,7 +75,7 @@ public class BoardServiceTest {
 	@Test
 	void getBoardsByStatus() {
 		when(boardRepository.findAllByUserIdAndStatus(anyLong(), any(BoardStatus.class)))
-			.thenReturn(List.of(TestDataFactory.board()));
+			.thenReturn(List.of(board));
 
 		UnifiedResponse<List<BoardResponse>> response = boardService
 			.getBoardsByStatus(saveUser.getId(), BoardStatus.UNPROCESSED);
@@ -84,9 +86,9 @@ public class BoardServiceTest {
 
 	@Test
 	void getBoard_success() {
-		when(boardRepository.findById(anyLong())).thenReturn(Optional.of(TestDataFactory.board()));
+		when(boardRepository.findById(anyLong())).thenReturn(Optional.of(board));
 
-		UnifiedResponse<BoardResponse> response = boardService.getBoard(saveUser, TestDataFactory.board().getId());
+		UnifiedResponse<BoardResponse> response = boardService.getBoard(saveUser, board.getId());
 
 		verify(boardRepository).findById(anyLong());
 		TestUtil.UnifiedResponseEquals(response, 200, "조회 성공");
@@ -97,10 +99,10 @@ public class BoardServiceTest {
 		User user = mock(User.class);
 		when(user.getId()).thenReturn(91L);
 
-		when(boardRepository.findById(anyLong())).thenReturn(Optional.of(TestDataFactory.board()));
+		when(boardRepository.findById(anyLong())).thenReturn(Optional.of(board));
 
 		Assertions.assertThrows(CustomException.class,
-			() -> boardService.getBoard(user, TestDataFactory.board().getId()));
+			() -> boardService.getBoard(user, board.getId()));
 
 		verify(boardRepository).findById(anyLong());
 	}
@@ -110,9 +112,9 @@ public class BoardServiceTest {
 		User admin = TestDataFactory.Admin();
 
 		when(manager.isAdmin(any(User.class))).thenReturn(true);
-		when(boardRepository.findById(anyLong())).thenReturn(Optional.of(TestDataFactory.board()));
+		when(boardRepository.findById(anyLong())).thenReturn(Optional.of(board));
 
-		UnifiedResponse<?> response = boardService.deleteBoard(admin, TestDataFactory.board().getId());
+		UnifiedResponse<?> response = boardService.deleteBoard(admin, board.getId());
 
 		verify(manager).isAdmin(any(User.class));
 		verify(boardRepository).findById(anyLong());
@@ -124,9 +126,9 @@ public class BoardServiceTest {
 	void deleteBoard_isNotAdmin() {
 		when(manager.isAdmin(any(User.class))).thenReturn(false);
 		when(boardRepository.findByIdAndUserAndCommentList_Empty(anyLong(), any(User.class)))
-			.thenReturn(Optional.of(TestDataFactory.board()));
+			.thenReturn(Optional.of(board));
 
-		UnifiedResponse<?> response = boardService.deleteBoard(saveUser, TestDataFactory.board().getId());
+		UnifiedResponse<?> response = boardService.deleteBoard(saveUser, board.getId());
 
 		verify(manager).isAdmin(any(User.class));
 		verify(boardRepository).findByIdAndUserAndCommentList_Empty(anyLong(), any(User.class));
@@ -137,10 +139,10 @@ public class BoardServiceTest {
 	@Test
 	void fixBoard_success() {
 		when(boardRepository.findByIdAndUser(anyLong(), any(User.class)))
-			.thenReturn(Optional.of(TestDataFactory.board()));
+			.thenReturn(Optional.of(board));
 
 		UnifiedResponse<?> response = boardService
-			.fixBoard(saveUser, TestDataFactory.board().getId(), TestDataFactory.boardRequest());
+			.fixBoard(saveUser, board.getId(), TestDataFactory.boardRequest());
 
 		verify(boardRepository).findByIdAndUser(anyLong(), any(User.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "수정 성공");
@@ -155,14 +157,14 @@ public class BoardServiceTest {
 		when(boardRepository.findByIdAndUser(anyLong(), any(User.class))).thenReturn(Optional.empty());
 
 		Assertions.assertThrows(CustomException.class,
-			() -> boardService.fixBoard(user, TestDataFactory.board().getId(), TestDataFactory.boardRequest()));
+			() -> boardService.fixBoard(user, board.getId(), TestDataFactory.boardRequest()));
 
 		verify(boardRepository).findByIdAndUser(anyLong(), any(User.class));
 	}
 
 	@Test
 	void getAllBoardsByStatus() {
-		when(boardRepository.findAllByStatus(any(BoardStatus.class))).thenReturn(List.of(TestDataFactory.board()));
+		when(boardRepository.findAllByStatus(any(BoardStatus.class))).thenReturn(List.of(board));
 
 		UnifiedResponse<List<BoardResponse>> responses = boardService
 			.getAllBoardsByStatus(BoardStatus.UNPROCESSED);
