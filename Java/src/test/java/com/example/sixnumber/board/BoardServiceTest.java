@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.sixnumber.board.dto.BoardRequest;
 import com.example.sixnumber.board.dto.BoardResponse;
 import com.example.sixnumber.board.entity.Board;
 import com.example.sixnumber.board.repository.BoardRepository;
@@ -138,12 +139,17 @@ public class BoardServiceTest {
 
 	@Test
 	void fixBoard_success() {
+		BoardRequest request = TestDataFactory.boardRequest();
+
 		when(boardRepository.findByIdAndUser(anyLong(), any(User.class)))
 			.thenReturn(Optional.of(board));
 
 		UnifiedResponse<?> response = boardService
-			.fixBoard(saveUser, board.getId(), TestDataFactory.boardRequest());
+			.fixBoard(saveUser, board.getId(), request);
 
+		assertEquals(board.getSubject(), request.getSubject());
+		assertEquals(board.getContents(), request.getContents());
+		assertNotNull(board.getCorrectionDate());
 		verify(boardRepository).findByIdAndUser(anyLong(), any(User.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "수정 성공");
 	}
