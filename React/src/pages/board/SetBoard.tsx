@@ -3,9 +3,11 @@ import { CommonStyle, InputBox, TitleStyle, MsgAndInput, ButtonDiv, ButtonStyle 
 import { useMutation } from 'react-query'
 import { Err, UnifiedResponse } from '../../shared/TypeMenu'
 import { BoardRequest, setBoard } from '../../api/boardApi'
+import { useNavigate } from 'react-router-dom'
 
 function SetBoard() {
     const subjectRef = useRef<HTMLInputElement>(null);
+    const navigate = useNavigate();
     const [inputValue, setInputValue] = useState<BoardRequest>({
         subject: "",
         contents: ""
@@ -15,6 +17,7 @@ function SetBoard() {
         onSuccess: (res)=>{
             if (res.code === 200) {
                 alert(res.msg);
+                navigate("/");
             } 
         },
         onError: (err) => {
@@ -63,7 +66,7 @@ function SetBoard() {
         />
 
         <div style={{ ...ButtonDiv, marginTop:"1cm"}}>
-            <button style={ButtonStyle}>조회하기</button>
+            <button style={ButtonStyle}>제출하기</button>
         </div>
     </form>
   )
