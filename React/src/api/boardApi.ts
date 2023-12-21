@@ -47,3 +47,12 @@ export const getBoard = async (boardId: number): Promise<UnifiedResponse<BoardRe
         throw error.data;
     }
 }
+
+export const deleteBoard = async (boardId: number): Promise<UnifiedResponse<undefined>> => {
+    try {
+        const { data } = await api.delete(`/board/${boardId}`);
+        return data;  
+    } catch (error: any) {
+        throw error.data;
+    }
+}
