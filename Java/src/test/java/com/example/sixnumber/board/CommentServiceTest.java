@@ -59,4 +59,19 @@ public class CommentServiceTest {
 		verify(commentRepository).save(any(Comment.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "댓글 작성 완료");
 	}
+
+	@Test
+	void setComment_isAdmin() {
+		User admin = TestDataFactory.Admin();
+
+		when(manager.isAdmin(any(User.class))).thenReturn(true);
+		when(boardRepository.findById(anyLong())).thenReturn(Optional.of(TestDataFactory.board()));
+
+		UnifiedResponse<?> response = commentService.setComment(admin, commentRequest);
+
+		verify(manager).isAdmin(any(User.class));
+		verify(boardRepository).findById(anyLong());
+		verify(commentRepository).save(any(Comment.class));
+		TestUtil.UnifiedResponseEquals(response, 200, "댓글 작성 완료");
+	}
 }
