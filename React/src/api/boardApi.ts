@@ -56,3 +56,12 @@ export const deleteBoard = async (boardId: number): Promise<UnifiedResponse<unde
         throw error.data;
     }
 }
+
+export const fixBoard = async (boardId: number, boardRequest: BoardRequest): Promise<UnifiedResponse<undefined>> => {
+    try {
+        const { data } = await api.patch(`/board/${boardId}`, boardRequest);
+        return data;  
+    } catch (error: any) {
+        throw error.data;
+    }
+}
