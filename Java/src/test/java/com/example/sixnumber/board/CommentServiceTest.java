@@ -103,4 +103,16 @@ public class CommentServiceTest {
 
 		verify(commentRepository).findById(anyLong());
 	}
+
+	@Test
+	void deleteComment_success() {
+		when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment));
+
+		UnifiedResponse<?> response = commentService.deleteComment(saveUser, commentRequest);
+
+		assertTrue(comment.getBoard().isCommentEnabled());
+		verify(commentRepository).findById(anyLong());
+		verify(commentRepository).delete(any(Comment.class));
+		TestUtil.UnifiedResponseEquals(response, 200, "삭제 완료");
+	}
 }
