@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { CommonLink, LogoutStyle} from './Styles';
 import LogoutMutation from '../hooks/useLogoutMutation';
 import MenuContainer from '../components/MenuContainer';
-import { AdminMenuValue, LottoMenuValue, StatsMenuValue, UserMenuValue } from './MenuValue';
+import { AdminMenuValue, BoardMenuValue, LottoMenuValue, StatsMenuValue, UserMenuValue } from './MenuValue';
 import { RootState } from '../config/configStore';
 import useAxiosResponseInterceptor from '../hooks/UseAxiosInterceptor';
 
@@ -79,6 +79,7 @@ function Header() {
         <MenuContainer MenuValue={LottoMenuValue} />
         <MenuContainer MenuValue={StatsMenuValue} />
         <MenuContainer MenuValue={UserMenuValue} />
+        <MenuContainer MenuValue={BoardMenuValue} />
         {userIf.role === "ROLE_ADMIN" && <MenuContainer MenuValue={AdminMenuValue}/> }
       </div>
       <div style={{ display: "flex", justifyContent: "flex-end", width: "30%", marginRight: "15px" }}>

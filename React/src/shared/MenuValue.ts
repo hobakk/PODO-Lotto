@@ -16,6 +16,13 @@ export const AdminMenuValue: MenuType = {
     ]
 }
 
+export const BoardMenuValue: MenuType = {
+    title: "고객센터",
+    content: [
+        ["문의 하기", "/board/set"], 
+    ]
+}
+
 export const UserMenuValue: MenuType = {
     title: "내정보",
     content: [
