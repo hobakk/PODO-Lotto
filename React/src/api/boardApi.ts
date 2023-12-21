@@ -38,3 +38,12 @@ export const getBoardsByStatus = async (status: string): Promise<UnifiedResponse
         throw error.data;
     }
 }
+
+export const getBoard = async (boardId: number): Promise<UnifiedResponse<BoardResponse>> => {
+    try {
+        const { data } = await api.get(`/board/${boardId}`);
+        return data;  
+    } catch (error: any) {
+        throw error.data;
+    }
+}
