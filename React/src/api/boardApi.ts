@@ -7,10 +7,33 @@ export type BoardRequest = {
     contents: string
 }
 
+export type BoardResponse = {
+    boardId: number,
+    userName: string,
+    subject: string,
+    contents: string,
+    status: string,
+    commentList: CommentResponse[],
+    correctionDate: string
+}
+
 export const setBoard = async (value: BoardRequest): Promise<UnifiedResponse<undefined>> => {
     try {
         const { data } = await api.post("/board", value);
         return data;  
+    } catch (error: any) {
+        throw error.data;
+    }
+}
+
+export const getBoardsByStatus = async (status: string): Promise<UnifiedResponse<BoardResponse[]>> => {
+    try {
+        const { data } = await api.get("/board", {
+            params: {
+                status,
+            }
+        });
+        return data;   
     } catch (error: any) {
         throw error.data;
     }
