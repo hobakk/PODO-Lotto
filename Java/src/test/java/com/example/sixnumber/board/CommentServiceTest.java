@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.sixnumber.board.dto.CommentRequest;
+import com.example.sixnumber.board.entity.Board;
 import com.example.sixnumber.board.entity.Comment;
 import com.example.sixnumber.board.repository.BoardRepository;
 import com.example.sixnumber.board.repository.CommentRepository;
@@ -73,5 +74,18 @@ public class CommentServiceTest {
 		verify(boardRepository).findById(anyLong());
 		verify(commentRepository).save(any(Comment.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "댓글 작성 완료");
+	}
+
+	@Test
+	void fixComment_success() {
+		Comment comment = TestDataFactory.comment();
+
+		when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment));
+
+		UnifiedResponse<?> response = commentService.fixComment(saveUser, commentRequest);
+
+		assertEquals(comment.getMessage(), commentRequest.getMessage());
+		verify(commentRepository).findById(anyLong());
+		TestUtil.UnifiedResponseEquals(response, 200, "댓글 수정 성공");
 	}
 }
