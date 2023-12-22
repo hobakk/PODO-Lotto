@@ -1,5 +1,7 @@
 package com.example.sixnumber.board.service;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import com.example.sixnumber.board.dto.CommentRequest;
@@ -55,6 +57,7 @@ public class CommentService {
 		return UnifiedResponse.ok("댓글 수정 성공");
 	}
 
+	@Transactional
 	public UnifiedResponse<?> deleteComment(User user, Long commentId) {
 		Comment comment = commentRepository.findById(commentId)
 			.filter(c -> c.getUser().equals(user) || user.getRole().equals(UserRole.ROLE_ADMIN))

@@ -3,11 +3,11 @@ import { BoardResponse, getBoard } from '../api/boardApi';
 import { Err, UnifiedResponse } from '../shared/TypeMenu';
 import { useMutation } from 'react-query';
 import { CommonStyle, CommentStyle } from '../shared/Styles';
-import { CommentRequest, fixComment, setComment } from '../api/commentApi';
+import { CommentRequest, deleteComment, fixComment, setComment } from '../api/commentApi';
 
 export const GetBoard = ({boardId}: {boardId: number}) => {
     const [msg, setMsg] = useState<string>("");
-    const [click, isClick] = useState<{[key: number]: boolean}>({});
+    const [click, isClick] = useState<{[key: string]: boolean}>({});
     const [fixMsg, setFixMsg] = useState<{[key: string]: string}>({});
     const [value, setValue] = useState<BoardResponse>({
         boardId: -1,
@@ -46,6 +46,15 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
         }
     });
 
+    const deleteCommentMutation = useMutation<UnifiedResponse<undefined>, Err, number>(deleteComment, {
+        onSuccess: (res)=>{
+            if (res.code === 200 ) getBoardMutation.mutate(boardId);
+        },
+        onError: (err)=>{
+            alert(err.msg);
+        }
+    });
+
     useEffect(()=>{
         if (boardId >= 0) getBoardMutation.mutate(boardId);
     }, [boardId])
@@ -69,13 +78,17 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
         else setCommentMutation.mutate({id: value.boardId, message: msg});
     }
 
-    const onClickHandler = (index: number, commentId: number) => {
+    const onClickHandler = (index: string, commentId: number) => {
         isClick({
             ...click,
             [index]: click[index] === null ? (false):(!click[index])
         });
 
-        if (click[index]) fixCommentMutation.mutate({id: commentId, message: fixMsg[`msg${index}`]})
+        if (index.startsWith("fix") && click[index]) {
+            fixCommentMutation.mutate({id: commentId, message: fixMsg[index]});
+        } else if (index.startsWith("delete") && click[index]) {
+            deleteCommentMutation.mutate(commentId);
+        }
     }
 
     return (
@@ -114,16 +127,21 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
                                             <span style={{ marginLeft:"10px"}}>{item.nickname}</span>
                                             <button 
                                                 style={{ marginLeft:"auto"}}
-                                                onClick={()=>onClickHandler(index, item.commentId)}
+                                                onClick={()=>onClickHandler(`fix${index}`, item.commentId)}
                                             >
-                                                {click[index] ? ("완료"):("수정")}
+                                                {click[`fix${index}`] ? ("완료"):("수정")}
+                                            </button>
+                                            <button 
+                                                onClick={()=>onClickHandler(`delete${index}`, item.commentId)}
+                                            >
+                                                {click[`delete${index}`] ? ("확인"):("삭제")}
                                             </button>
                                         </div>
-                                        {click[index] ? (
+                                        {click[`fix${index}`] ? (
                                             <input 
                                                 value={fixMsg[index]}
                                                 type='text'
-                                                name={`msg${index}`}
+                                                name={`fix${index}`}
                                                 onChange={fixMsgHandler}
                                             />
                                         ):(
