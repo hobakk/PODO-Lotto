@@ -28,3 +28,12 @@ export const fixComment = async (req: CommentRequest): Promise<UnifiedResponse<u
         throw error.data;
     }
 }
+
+export const deleteComment = async (req: CommentRequest): Promise<UnifiedResponse<undefined>> => {
+    try {
+        const { data } = await api.delete("/comment", req);
+        return data;  
+    } catch (error: any) {
+        throw error.data;
+    }
+}
