@@ -3,10 +3,13 @@ import { BoardResponse, getBoard } from '../api/boardApi';
 import { Err, UnifiedResponse } from '../shared/TypeMenu';
 import { useMutation } from 'react-query';
 import { CommonStyle, CommentStyle } from '../shared/Styles';
-import { CommentRequest, setComment } from '../api/commentApi';
+import { CommentRequest, fixComment, setComment } from '../api/commentApi';
+import { parseArgs } from 'util';
 
 export const GetBoard = ({boardId}: {boardId: number}) => {
     const [msg, setMsg] = useState<string>("");
+    const [click, isClick] = useState<{[key: number]: boolean}>({});
+    const [fixMsg, setFixMsg] = useState<{[key: string]: string}>({});
     const [value, setValue] = useState<BoardResponse>({
         boardId: -1,
         userName: "",
@@ -35,6 +38,15 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
         }
     });
 
+    const fixCommentMutation = useMutation<UnifiedResponse<undefined>, Err, CommentRequest>(fixComment, {
+        onSuccess: (res)=>{
+            if (res.code === 200 ) getBoardMutation.mutate(boardId);
+        },
+        onError: (err)=>{
+            alert(err.msg);
+        }
+    });
+
     useEffect(()=>{
         if (boardId >= 0) getBoardMutation.mutate(boardId);
     }, [boardId])
@@ -43,10 +55,28 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
         setMsg(e.target.value);
     }
 
+    const fixMsgHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {name, value} = e.target;
+
+        setFixMsg({
+            ...fixMsg,
+            [name]: value
+        });
+    }
+
     const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (msg === "" && value.boardId < 0) alert("댓글을 남길 수 없습니다.");
         else setCommentMutation.mutate({id: value.boardId, message: msg});
+    }
+
+    const onClickHandler = (index: number) => {
+        isClick({
+            ...click,
+            [index]: click[index] === null ? (false):(!click[index])
+        });
+
+        if (click[index]) fixCommentMutation.mutate({id: value.boardId, message: fixMsg[`msg${index}`]})
     }
 
     return (
@@ -73,21 +103,33 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
                     </div>
 
                     {value.commentList.length !== 0 && (
-                        value.commentList.map(item=>{
+                        value.commentList.map((item, index)=>{
                             return (
                                 item.nickname === value.userName ? (
-                                    <div style={{ marginLeft:"auto", ...CommentStyle, backgroundColor:"yellow"}}>
+                                    <div
+                                        key={`${item.nickname}-${index}`}
+                                        style={{ marginLeft:"auto", ...CommentStyle, backgroundColor:"yellow"}}
+                                    >
                                         <div style={{ display:"flex" }}>
                                             <span>작성자:</span>
                                             <span style={{ marginLeft:"10px"}}>{item.nickname}</span>
                                             <button 
                                                 style={{ marginLeft:"auto"}}
-                                                // onClick={}
+                                                onClick={()=>onClickHandler(index)}
                                             >
-                                                수정
+                                                {click[index] ? ("완료"):("수정")}
                                             </button>
                                         </div>
-                                        <span>{item.message}</span>
+                                        {click[index] ? (
+                                            <input 
+                                                value={fixMsg[index]}
+                                                type='text'
+                                                name={`msg${index}`}
+                                                onChange={fixMsgHandler}
+                                            />
+                                        ):(
+                                            <span>{item.message}</span>
+                                        )}
                                     </div>
                                 ):(
                                     <div style={{ marginLeft:"auto", ...CommentStyle, backgroundColor:"gray", color:"white"}}>
