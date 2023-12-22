@@ -17,6 +17,6 @@ public class BoardsResponse {
 	}
 
 	public String setValue(String word) {
-		return word.length() > 13 ? word.substring(10) + "..." : word;
+		return word.length() > 26 ? word.substring(0, 23) + "..." : word;
 	}
 }
