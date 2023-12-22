@@ -3,7 +3,6 @@ package com.example.sixnumber.board.service;
 import org.springframework.stereotype.Service;
 
 import com.example.sixnumber.board.dto.CommentRequest;
-import com.example.sixnumber.board.entity.Board;
 import com.example.sixnumber.board.entity.Comment;
 import com.example.sixnumber.board.repository.BoardRepository;
 import com.example.sixnumber.board.repository.CommentRepository;
@@ -55,8 +54,8 @@ public class CommentService {
 		return UnifiedResponse.ok("댓글 수정 성공");
 	}
 
-	public UnifiedResponse<?> deleteComment(User user, CommentRequest request) {
-		Comment comment = commentRepository.findById(request.getId())
+	public UnifiedResponse<?> deleteComment(User user, Long commentId) {
+		Comment comment = commentRepository.findById(commentId)
 			.filter(c -> c.getUser().equals(user) || user.getRole().equals(UserRole.ROLE_ADMIN))
 			.orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
 

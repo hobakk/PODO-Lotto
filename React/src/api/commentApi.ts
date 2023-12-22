@@ -29,9 +29,9 @@ export const fixComment = async (req: CommentRequest): Promise<UnifiedResponse<u
     }
 }
 
-export const deleteComment = async (req: CommentRequest): Promise<UnifiedResponse<undefined>> => {
+export const deleteComment = async (id: number): Promise<UnifiedResponse<undefined>> => {
     try {
-        const { data } = await api.delete("/comment", req);
+        const { data } = await api.delete(`/comment/${id}`);
         return data;  
     } catch (error: any) {
         throw error.data;
