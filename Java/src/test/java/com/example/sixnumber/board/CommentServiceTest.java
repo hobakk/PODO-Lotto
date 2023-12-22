@@ -87,6 +87,7 @@ public class CommentServiceTest {
 
 		assertEquals(comment.getMessage(), commentRequest.getMessage());
 		verify(commentRepository).findById(anyLong());
+		verify(commentRepository).save(any(Comment.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "댓글 수정 성공");
 	}
 
