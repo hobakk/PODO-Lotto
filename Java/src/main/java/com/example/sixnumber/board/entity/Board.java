@@ -66,30 +66,11 @@ public class Board {
 		this.correctionDate = null;
 	}
 
-	public Board(String subject, String contents) {
-		this.id = this.getId();
-		this.user = this.getUser();
-		this.subject = subject;
-		this.contents = contents;
-		this.status = this.getStatus();
-		this.commentList = null;
-		this.commentEnabled = true;
-		this.correctionDate = null;
-	}
-
 	public Board update(BoardRequest request) {
 		this.subject = request.getSubject().isEmpty() ? this.subject : request.getSubject();
 		this.contents = request.getContents().isEmpty() ? this.contents : request.getContents();
 		this.correctionDate = LocalDate.now();
 		return this;
-	}
-
-	public Board getResult() {
-		return new Board(setValue(this.subject), setValue(this.contents));
-	}
-
-	public String setValue(String target) {
-		return target.length() > 13 ? target.substring(10) + "..." : target;
 	}
 
 	public void setComment() {

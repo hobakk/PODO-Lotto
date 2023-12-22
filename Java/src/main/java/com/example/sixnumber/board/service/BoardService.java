@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.sixnumber.board.dto.BoardRequest;
 import com.example.sixnumber.board.dto.BoardResponse;
+import com.example.sixnumber.board.dto.BoardsResponse;
 import com.example.sixnumber.board.entity.Board;
 import com.example.sixnumber.board.repository.BoardRepository;
 import com.example.sixnumber.board.type.BoardStatus;
@@ -34,10 +35,10 @@ public class BoardService {
 		return UnifiedResponse.ok("생성 완료");
 	}
 
-	public UnifiedResponse<List<BoardResponse>> getBoardsByStatus(Long userId, BoardStatus status) {
-		List<BoardResponse> responses = boardRepository
+	public UnifiedResponse<List<BoardsResponse>> getBoardsByStatus(Long userId, BoardStatus status) {
+		List<BoardsResponse> responses = boardRepository
 			.findAllByUserIdAndStatus(userId, status).stream()
-			.map(board -> new BoardResponse(board.getResult()))
+			.map(BoardsResponse::new)
 			.collect(Collectors.toList());
 
 		if (responses.isEmpty()) throw new CustomException(ErrorCode.NOT_FOUND);
@@ -76,9 +77,9 @@ public class BoardService {
 		return UnifiedResponse.ok("수정 성공");
 	}
 
-	public UnifiedResponse<List<BoardResponse>> getAllBoardsByStatus(BoardStatus status) {
-		List<BoardResponse> responses = boardRepository.findAllByStatus(status).stream()
-			.map(board -> new BoardResponse(board.getResult()))
+	public UnifiedResponse<List<BoardsResponse>> getAllBoardsByStatus(BoardStatus status) {
+		List<BoardsResponse> responses = boardRepository.findAllByStatus(status).stream()
+			.map(BoardsResponse::new)
 			.collect(Collectors.toList());
 
 		if (responses.isEmpty()) throw new CustomException(ErrorCode.NOT_FOUND);

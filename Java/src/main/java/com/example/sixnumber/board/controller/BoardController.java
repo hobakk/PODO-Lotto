@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sixnumber.board.dto.BoardRequest;
 import com.example.sixnumber.board.dto.BoardResponse;
+import com.example.sixnumber.board.dto.BoardsResponse;
 import com.example.sixnumber.board.service.BoardService;
 import com.example.sixnumber.board.type.BoardStatus;
 import com.example.sixnumber.global.dto.UnifiedResponse;
@@ -39,7 +40,7 @@ public class BoardController {
 	}
 
 	@GetMapping("")
-	public ResponseEntity<UnifiedResponse<List<BoardResponse>>> getBoardsByStatus(
+	public ResponseEntity<UnifiedResponse<List<BoardsResponse>>> getBoardsByStatus(
 		@RequestParam BoardStatus status,
 		@AuthenticationPrincipal User user
 	) {
@@ -72,7 +73,7 @@ public class BoardController {
 	}
 
 	@GetMapping("/admin")
-	public ResponseEntity<UnifiedResponse<List<BoardResponse>>> getAllBoardsByStatus(
+	public ResponseEntity<UnifiedResponse<List<BoardsResponse>>> getAllBoardsByStatus(
 		@RequestParam BoardStatus status
 	) {
 		return ResponseEntity.ok(boardService.getAllBoardsByStatus(status));
