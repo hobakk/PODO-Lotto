@@ -4,7 +4,6 @@ import { Err, UnifiedResponse } from '../shared/TypeMenu';
 import { useMutation } from 'react-query';
 import { CommonStyle, CommentStyle } from '../shared/Styles';
 import { CommentRequest, fixComment, setComment } from '../api/commentApi';
-import { parseArgs } from 'util';
 
 export const GetBoard = ({boardId}: {boardId: number}) => {
     const [msg, setMsg] = useState<string>("");
@@ -70,13 +69,13 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
         else setCommentMutation.mutate({id: value.boardId, message: msg});
     }
 
-    const onClickHandler = (index: number) => {
+    const onClickHandler = (index: number, commentId: number) => {
         isClick({
             ...click,
             [index]: click[index] === null ? (false):(!click[index])
         });
 
-        if (click[index]) fixCommentMutation.mutate({id: value.boardId, message: fixMsg[`msg${index}`]})
+        if (click[index]) fixCommentMutation.mutate({id: commentId, message: fixMsg[`msg${index}`]})
     }
 
     return (
@@ -115,7 +114,7 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
                                             <span style={{ marginLeft:"10px"}}>{item.nickname}</span>
                                             <button 
                                                 style={{ marginLeft:"auto"}}
-                                                onClick={()=>onClickHandler(index)}
+                                                onClick={()=>onClickHandler(index, item.commentId)}
                                             >
                                                 {click[index] ? ("완료"):("수정")}
                                             </button>

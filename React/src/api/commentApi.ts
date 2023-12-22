@@ -2,6 +2,7 @@ import { UnifiedResponse } from "../shared/TypeMenu";
 import { api } from "./config";
 
 export type CommentResponse = {
+    commentId: number,
     nickname: string,
     message: string
 }
