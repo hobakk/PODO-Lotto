@@ -17,6 +17,12 @@ export type BoardResponse = {
     correctionDate: string
 }
 
+export type BoardsResponse = {
+    boardId: number,
+    subject: string,
+    contents: string
+}
+
 export const setBoard = async (value: BoardRequest): Promise<UnifiedResponse<undefined>> => {
     try {
         const { data } = await api.post("/board", value);
@@ -26,7 +32,7 @@ export const setBoard = async (value: BoardRequest): Promise<UnifiedResponse<und
     }
 }
 
-export const getBoardsByStatus = async (status: string): Promise<UnifiedResponse<BoardResponse[]>> => {
+export const getBoardsByStatus = async (status: string): Promise<UnifiedResponse<BoardsResponse[]>> => {
     try {
         const { data } = await api.get("/board", {
             params: {
@@ -66,7 +72,7 @@ export const fixBoard = async (boardId: number, boardRequest: BoardRequest): Pro
     }
 }
 
-export const getAllBoardsByStatus = async (status: string): Promise<UnifiedResponse<BoardResponse>> => {
+export const getAllBoardsByStatus = async (status: string): Promise<UnifiedResponse<BoardsResponse[]>> => {
     try {
         const { data } = await api.get("/board/admin", {
             params: {
