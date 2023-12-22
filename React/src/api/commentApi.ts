@@ -19,3 +19,12 @@ export const setComment = async (req: CommentRequest): Promise<UnifiedResponse<u
         throw error.data;
     }
 }
+
+export const fixComment = async (req: CommentRequest): Promise<UnifiedResponse<undefined>> => {
+    try {
+        const { data } = await api.patch("/comment", req);
+        return data;  
+    } catch (error: any) {
+        throw error.data;
+    }
+}
