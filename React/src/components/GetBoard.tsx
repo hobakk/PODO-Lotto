@@ -26,9 +26,28 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
         }
     });
 
+    const setCommentMutation = useMutation<UnifiedResponse<undefined>, Err, CommentRequest>(setComment, {
+        onSuccess: (res)=>{
+            if (res.code === 200 ) getBoardMutation.mutate(boardId);
+        },
+        onError: (err)=>{
+            alert(err.msg);
+        }
+    });
+
     useEffect(()=>{
         if (boardId >= 0) getBoardMutation.mutate(boardId);
     }, [boardId])
+
+    const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setMsg(e.target.value);
+    }
+
+    const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (msg === "" && value.boardId < 0) alert("댓글을 남길 수 없습니다.");
+        else setCommentMutation.mutate({id: value.boardId, message: msg});
+    }
 
     return (
         <div style={CommonStyle}>
@@ -79,6 +98,19 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
                             )
                         })
                     )}
+                    
+                    <form 
+                        onSubmit={onSubmitHandler}
+                        style={{ display:"flex", marginTop:"2cm", justifyContent: "center", alignItems: "center"}}
+                    >
+                        <input 
+                            style={{ width:"14cm", height:"2cm", padding:"5px", marginTop:"0.7cm"}}
+                            value={msg}
+                            type="text"
+                            onChange={onChangeHandler}
+                        />
+                        <button style={{ width:"1.7cm", height:"1.6cm"}}>남기기</button>
+                    </form>
                 </div>
             )}
         </div>

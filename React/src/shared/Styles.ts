@@ -52,6 +52,14 @@ export const BoardStyle: React.CSSProperties = {
   backgroundColor:"#D4F0F0"
 }
 
+export const CommentStyle: React.CSSProperties = {
+  borderRadius:"20px",
+  marginTop:"2cm",
+  width:"8cm",
+  marginBottom:"15px",
+  padding:"20px"
+}
+
 type UlBoxProps = { 
   width?: string;
   height?: string;
