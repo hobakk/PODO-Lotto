@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.sixnumber.board.dto.BoardRequest;
 import com.example.sixnumber.board.dto.BoardResponse;
+import com.example.sixnumber.board.dto.BoardsResponse;
 import com.example.sixnumber.board.entity.Board;
 import com.example.sixnumber.board.repository.BoardRepository;
 import com.example.sixnumber.board.service.BoardService;
@@ -78,7 +79,7 @@ public class BoardServiceTest {
 		when(boardRepository.findAllByUserIdAndStatus(anyLong(), any(BoardStatus.class)))
 			.thenReturn(List.of(board));
 
-		UnifiedResponse<List<BoardResponse>> response = boardService
+		UnifiedResponse<List<BoardsResponse>> response = boardService
 			.getBoardsByStatus(saveUser.getId(), BoardStatus.UNPROCESSED);
 
 		verify(boardRepository).findAllByUserIdAndStatus(anyLong(), any(BoardStatus.class));
@@ -172,7 +173,7 @@ public class BoardServiceTest {
 	void getAllBoardsByStatus() {
 		when(boardRepository.findAllByStatus(any(BoardStatus.class))).thenReturn(List.of(board));
 
-		UnifiedResponse<List<BoardResponse>> responses = boardService
+		UnifiedResponse<List<BoardsResponse>> responses = boardService
 			.getAllBoardsByStatus(BoardStatus.UNPROCESSED);
 
 		verify(boardRepository).findAllByStatus(any(BoardStatus.class));

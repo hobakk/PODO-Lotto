@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.sixnumber.board.dto.BoardRequest;
 import com.example.sixnumber.board.dto.BoardResponse;
+import com.example.sixnumber.board.dto.BoardsResponse;
 import com.example.sixnumber.board.service.BoardService;
 import com.example.sixnumber.board.type.BoardStatus;
 import com.example.sixnumber.fixture.TestDataFactory;
@@ -59,7 +60,7 @@ public class BoardControllerTest {
 	@WithCustomMockUser
 	public void getBoardsByStatus() throws Exception {
 		when(boardService.getBoardsByStatus(anyLong(), any(BoardStatus.class)))
-			.thenReturn(UnifiedResponse.ok("조회 성공", List.of(new BoardResponse(TestDataFactory.board()))));
+			.thenReturn(UnifiedResponse.ok("조회 성공", List.of(new BoardsResponse(TestDataFactory.board()))));
 
 		mockMvc.perform(get("/api/board").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
@@ -110,7 +111,7 @@ public class BoardControllerTest {
 	@WithCustomMockUser(username = "testAdmin", role = UserRole.ROLE_ADMIN)
 	public void getAllBoardsByStatus() throws Exception {
 		when(boardService.getAllBoardsByStatus(any(BoardStatus.class)))
-			.thenReturn(UnifiedResponse.ok("조회 성공", List.of(new BoardResponse(TestDataFactory.board()))));
+			.thenReturn(UnifiedResponse.ok("조회 성공", List.of(new BoardsResponse(TestDataFactory.board()))));
 
 		mockMvc.perform(patch("/api/board/1").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
