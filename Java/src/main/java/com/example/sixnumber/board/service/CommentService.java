@@ -46,11 +46,12 @@ public class CommentService {
 	}
 
 	public UnifiedResponse<?> fixComment(User user, CommentRequest request) {
-		commentRepository.findById(request.getId())
+		Comment updateComment = commentRepository.findById(request.getId())
 			.filter(comment -> comment.getUser().equals(user) || user.getRole().equals(UserRole.ROLE_ADMIN))
 			.map(comment -> comment.update(request.getMessage()))
 			.orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
 
+		commentRepository.save(updateComment);
 		return UnifiedResponse.ok("댓글 수정 성공");
 	}
 
