@@ -48,8 +48,8 @@ function SetBoard() {
         <h1 style={ TitleStyle }>문의 하기</h1>
         <div style={MsgAndInput}>
             <span>주제:</span>
-            <InputBox 
-                style={{ width:"11cm"}}
+            <input 
+                style={{ width:"11cm", height:"25px", marginLeft:"auto", padding:"5px"}}
                 name="subject"
                 value={inputValue.subject}
                 type="text"
@@ -57,8 +57,8 @@ function SetBoard() {
                 onChange={onChangeHandler}
             />
         </div>
-        <InputBox 
-            style={{ width:"14cm", height:"14cm", marginTop:"1cm"}}
+        <input 
+            style={{ width:"14cm", height:"14cm", marginLeft:"auto", padding:"5px", marginTop:"0.7cm"}}
             name="contents"
             value={inputValue.contents}
             type="text"
