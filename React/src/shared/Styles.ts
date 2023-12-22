@@ -42,6 +42,16 @@ export const TitleStyle: React.CSSProperties = {
   marginBottom: "2cm",
 }
 
+export const BoardStyle: React.CSSProperties = {
+  fontSize: "18px",
+  width: "18cm",
+  height:"1.8cm", 
+  border:"2px solid black", 
+  marginBottom:"15px",
+  padding:"20px",
+  backgroundColor:"#D4F0F0"
+}
+
 type UlBoxProps = { 
   width?: string;
   height?: string;

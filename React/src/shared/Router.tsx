@@ -25,6 +25,7 @@ import GetBuySixNumberList from '../pages/users/GetBuySixNumberList'
 import Oauth2Redirect from '../pages/users/Oauth2Redirect'
 import FindPassword from '../pages/users/FindPassword'
 import SetBoard from '../pages/board/SetBoard'
+import GetBoardsByStatus from '../pages/board/GetBoardsByStatus'
 
 const Router = () => {
   return (
@@ -55,6 +56,7 @@ const Router = () => {
                 <Route path='/user/oauth2' element={<Oauth2Redirect />} />
                 <Route path='/find-password' element={<FindPassword />} />
                 <Route path='/board/set' element={<SetBoard />} />
+                <Route path='/boards/status' element={<GetBoardsByStatus />} />
             </Routes>
         </Layout>
     </BrowserRouter>

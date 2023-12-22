@@ -20,6 +20,8 @@ export const BoardMenuValue: MenuType = {
     title: "고객센터",
     content: [
         ["문의 하기", "/board/set"], 
+        ["내 문의 확인", "/boards/status"],
+        
     ]
 }
 
