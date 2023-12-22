@@ -108,7 +108,7 @@ public class CommentServiceTest {
 	void deleteComment_success() {
 		when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment));
 
-		UnifiedResponse<?> response = commentService.deleteComment(saveUser, commentRequest);
+		UnifiedResponse<?> response = commentService.deleteComment(saveUser, commentRequest.getId());
 
 		assertTrue(comment.getBoard().isCommentEnabled());
 		verify(commentRepository).findById(anyLong());
@@ -125,7 +125,7 @@ public class CommentServiceTest {
 		when(commentRepository.findById(anyLong())).thenReturn(Optional.of(comment));
 
 		Assertions.assertThrows(CustomException.class,
-			() -> commentService.deleteComment(user, commentRequest));
+			() -> commentService.deleteComment(user, 14L));
 
 		verify(commentRepository).findById(anyLong());
 	}

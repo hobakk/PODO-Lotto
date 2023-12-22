@@ -73,7 +73,7 @@ public class CommentControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void deleteComment() throws Exception {
-		when(commentService.deleteComment(any(User.class), any(CommentRequest.class)))
+		when(commentService.deleteComment(any(User.class), anyLong()))
 			.thenReturn(UnifiedResponse.ok("삭제 완료"));
 
 		mockMvc.perform(delete("/api/comment").with(csrf())
