@@ -1,5 +1,7 @@
 package com.example.sixnumber.board.entity;
 
+import java.time.LocalDate;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,15 +37,18 @@ public class Comment {
 
 	@Column(nullable = false)
 	private String message;
+	private LocalDate correctionDate;
 
 	public Comment(User user, Board board, String message) {
 		this.user = user;
 		this.board = board;
 		this.message = message;
+		this.correctionDate = null;
 	}
 
-	public Comment setMessage(String newMessage) {
-		this.message = newMessage;
+	public Comment update(String newMsg) {
+		this.message = newMsg;
+		this.correctionDate = LocalDate.now();
 		return this;
 	}
 }
