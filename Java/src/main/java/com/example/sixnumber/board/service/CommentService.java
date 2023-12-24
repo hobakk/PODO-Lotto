@@ -1,10 +1,12 @@
 package com.example.sixnumber.board.service;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
 import com.example.sixnumber.board.dto.CommentRequest;
+import com.example.sixnumber.board.entity.Board;
 import com.example.sixnumber.board.entity.Comment;
 import com.example.sixnumber.board.repository.BoardRepository;
 import com.example.sixnumber.board.repository.CommentRepository;
@@ -63,7 +65,18 @@ public class CommentService {
 			.filter(c -> c.getUser().equals(user) || user.getRole().equals(UserRole.ROLE_ADMIN))
 			.orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
 
-		comment.getBoard().setCommentEnabled();
+		Board board = comment.getBoard();
+		board.setCommentEnabled();
+		int target = 0;
+		for (int i = 0; i < board.getCommentList().size(); i++) {
+			if (board.getCommentList().get(i).getId().equals(commentId)) {
+				target = i;
+				break;
+			}
+		}
+
+		board.getCommentList().remove(target);
+		boardRepository.save(board);
 		commentRepository.delete(comment);
 		return UnifiedResponse.ok("삭제 완료");
 	}
