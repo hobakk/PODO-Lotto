@@ -52,4 +52,28 @@ public class WinNumber {
 		this.topNumberList = topNumberList;
 		this.bonus = bonusInclude.subList(bonusInclude.size()-1, bonusInclude.size()).get(0);
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (!(o instanceof WinNumber))
+			return false;
+
+		WinNumber winNumber = (WinNumber)o;
+
+		if (bonus != winNumber.bonus)
+			return false;
+		if (!id.equals(winNumber.id))
+			return false;
+		return topNumberList.equals(winNumber.topNumberList);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = id.hashCode();
+		result = 31 * result + topNumberList.hashCode();
+		result = 31 * result + bonus;
+		return result;
+	}
 }

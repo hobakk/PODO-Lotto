@@ -1,7 +1,9 @@
 package com.example.sixnumber.lotto.service;
 
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CachePut;
@@ -44,15 +46,15 @@ public class WinNumberService {
 		return transform(getWinNumberList());
 	}
 
-	private List<WinNumber> findAllAfterCheckIsEmpty() {
+	private Set<WinNumber> findDistinctWinNumbers() {
 		List<WinNumber> winNumberList = winNumberRepository.findAll();
 		if (winNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
 
-		return winNumberList;
+		return new HashSet<>(winNumberList);
 	}
 
 	private List<WinNumber> getWinNumberList() {
-		List<WinNumber> winNumberList = findAllAfterCheckIsEmpty().stream()
+		List<WinNumber> winNumberList = findDistinctWinNumbers().stream()
 			.sorted(Comparator.comparing(WinNumber::getTime).reversed())
 			.collect(Collectors.toList());
 
