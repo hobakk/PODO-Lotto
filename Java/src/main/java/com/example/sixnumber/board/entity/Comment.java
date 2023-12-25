@@ -51,4 +51,8 @@ public class Comment {
 		this.correctionDate = LocalDate.now();
 		return this;
 	}
+
+	public void deleteFromBoard() {
+		this.board.getCommentList().remove(this);
+	}
 }

@@ -63,21 +63,14 @@ public class CommentService {
 	public UnifiedResponse<?> deleteComment(User user, Long commentId) {
 		Comment comment = commentRepository.findById(commentId)
 			.filter(c -> c.getUser().equals(user) || user.getRole().equals(UserRole.ROLE_ADMIN))
+			.map(c -> {
+				c.getBoard().setCommentEnabled();
+				c.deleteFromBoard();
+				return c;
+			})
 			.orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
 
-		Board board = comment.getBoard();
-		board.setCommentEnabled();
-		int target = 0;
-		for (int i = 0; i < board.getCommentList().size(); i++) {
-			if (board.getCommentList().get(i).getId().equals(commentId)) {
-				target = i;
-				break;
-			}
-		}
-
-		board.getCommentList().remove(target);
-		boardRepository.save(board);
-		commentRepository.delete(comment);
+		boardRepository.save(comment.getBoard());
 		return UnifiedResponse.ok("삭제 완료");
 	}
 }
