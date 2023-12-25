@@ -103,17 +103,18 @@ public class GlobalScheduler {
 	@Scheduled(cron = "0 0 6 ? * SUN")
 	public void updateLottoResultsOnSunday() {
 		Pageable pageable = PageRequest.of(0, 1);
-		int target = winNumberRepository.findTopByTime(pageable).stream()
+		int newRound = winNumberRepository.findTopByTime(pageable).stream()
 			.findFirst()
 			.map(winNumber -> winNumber.getTime() + 1)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 
-		if (!winNumberRepository.existsWinNumberByTime(target)) {
-			WinNumber winNumber = manager.retrieveLottoResult(target)
-				.map(WinNumber::new)
-				.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
+		if (winNumberRepository.existsWinNumberByTime(newRound))
+			throw new OverlapException("이미 등록된 당첨 결과 입니다");
+		
+		WinNumber winNumber = manager.retrieveLottoResult(newRound)
+			.map(WinNumber::new)
+			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
 
-			winNumberRepository.save(winNumber);
-		}
+		winNumberRepository.save(winNumber);
 	}
 }
