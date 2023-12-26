@@ -61,12 +61,9 @@ public class WinNumber {
 			return false;
 
 		WinNumber winNumber = (WinNumber)o;
-
-		if (bonus != winNumber.bonus)
-			return false;
-		if (!id.equals(winNumber.id))
-			return false;
-		return topNumberList.equals(winNumber.topNumberList);
+		return id.equals(winNumber.id)
+			&& topNumberList.equals(winNumber.topNumberList)
+			&& bonus == winNumber.bonus;
 	}
 
 	@Override
