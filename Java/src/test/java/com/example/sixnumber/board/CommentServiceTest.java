@@ -51,7 +51,7 @@ public class CommentServiceTest {
 	}
 
 	@Test
-	void setComment_isNotAdmin() {
+	void setComment_isNotAdmin_success() {
 		when(manager.isAdmin(any(User.class))).thenReturn(false);
 		when(boardRepository.findByIdAndCommentEnabled(anyLong(), anyBoolean()))
 			.thenReturn(Optional.of(TestDataFactory.board()));
@@ -62,6 +62,21 @@ public class CommentServiceTest {
 		verify(boardRepository).findByIdAndCommentEnabled(anyLong(), anyBoolean());
 		verify(commentRepository).save(any(Comment.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "댓글 작성 완료");
+	}
+
+	@Test
+	void setComment_isNotAdmin_fail() {
+		User admin = TestDataFactory.Admin();
+
+		when(manager.isAdmin(any(User.class))).thenReturn(false);
+		when(boardRepository.findByIdAndCommentEnabled(anyLong(), anyBoolean()))
+			.thenReturn(Optional.empty());
+
+		Assertions.assertThrows(CustomException.class,
+			() -> commentService.setComment(admin, commentRequest));
+
+		verify(manager).isAdmin(any(User.class));
+		verify(boardRepository).findByIdAndCommentEnabled(anyLong(), anyBoolean());
 	}
 
 	@Test
