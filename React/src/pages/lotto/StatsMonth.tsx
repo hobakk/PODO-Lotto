@@ -10,7 +10,7 @@ function StatsMonth() {
     const [yMList, setYMList] = useState<string[]>([]);
     const [yearMonth, setYearMonth] = useState<string>("");
     const [value, setValue] = useState<LottoResponse>({countList: [], value: ""});
-    const [render, setRender] = useState<boolean>(true);
+    const [show, setShow] = useState<boolean>(false);
 
     const allMonthStatsMutation = useMutation<UnifiedResponse<AllMonthProps>, any>(getAllMonthStats, {
         onSuccess: (res)=>{
@@ -42,17 +42,13 @@ function StatsMonth() {
         }
     }, [yearMonth])
 
-    useEffect(()=>{
-        setRender(!render);
-    }, [value])
-
   return (
     <div style={ CommonStyle }>
         <h1 style={{ fontSize: "40px", marginBottom: "1cm" }}>월별 통계</h1>
-        {value.value !== "" ? (
+        {show ? (
             <>
                 <button 
-                    onClick={()=>{setValue({countList: [], value: ""});}} 
+                    onClick={()=>{setShow(!show);}} 
                     style={{ width: "4cm", height: "1,5cm", marginTop: "1cm", marginBottom: "2cm"}}
                 >
                     이전으로 돌아가기
@@ -73,7 +69,10 @@ function StatsMonth() {
                         return (
                             <div key={`buttons${index}`}>
                                 <button 
-                                    onClick={()=>setYearMonth(str)} 
+                                    onClick={()=>{
+                                        setYearMonth(str);
+                                        setShow(!show);
+                                    }} 
                                     style={{ width: "3cm", height: "1cm", fontSize: "20px" }} 
                                 >
                                     {str}
