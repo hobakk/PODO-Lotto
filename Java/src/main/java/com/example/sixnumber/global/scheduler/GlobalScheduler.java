@@ -34,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-@Transactional
 public class GlobalScheduler {
 
 	private final UserRepository userRepository;
