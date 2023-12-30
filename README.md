@@ -81,10 +81,23 @@ Redis Cache 사용해서 속도 개선
 ### 2. 당첨번호 등록
 - @CachePut 을 적용하여 저장되어 있는 RedisCache 를 갱신
 - openApi 파싱해 값을 가져옴
-
-### 2. BlackList
+### 3. BlackList
 accessToken 의 유효시간이 5분이라 로그아웃 이후 만료 전 탈취 당했을 상황에 대처할 목적
 - accessToken 을 Redis 에서 BlackList 로 관리
+
+<br/><br/><h2>BoardService [Service](https://github.com/hobakk/PODO-Lotto/blob/89e83ab9b095fed194ee9357936bc0cdecdbd906/Java/src/main/java/com/example/sixnumber/board/service/BoardService.java#L24)</h2>
+
+### 문의 CRUD
+- 처리되지 않는 문의는 최대 3개까지 등록이 가능하며
+- 본인이 작성한 문의일 경우 조회, 수정, 삭제 가능
+- 관리자의 경우 모두 허용
+
+<br/><br/><h2>CommentService [Service](https://github.com/hobakk/PODO-Lotto/blob/89e83ab9b095fed194ee9357936bc0cdecdbd906/Java/src/main/java/com/example/sixnumber/board/service/CommentService.java#L24)</h2>
+
+### 댓글 CRUD
+- 문의 특성상 많은 댓글이 필요하지 않아 관리자의 답변 한번당 댓글 한번 달 수 있도록 제한을 둠
+- 본인이 작성한 문의일 경우 조회, 수정, 삭제 가능
+- 관리자의 경우 모두 허용
 
 <br/><br/><h2>Scheduler [Service](https://github.com/hobakk/PODO-Lotto/blob/694e68dd9c749b2edfefc4114dab18e3fa30ef5c/Java/src/main/java/com/example/sixnumber/global/scheduler/GlobalScheduler.java#L30)</h2>
 
