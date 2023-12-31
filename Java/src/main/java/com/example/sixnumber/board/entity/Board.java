@@ -62,7 +62,7 @@ public class Board {
 		this.contents = request.getContents();
 		this.status = BoardStatus.UNPROCESSED;
 		this.commentList = new ArrayList<>();
-		this.commentEnabled = true;
+		this.commentEnabled = false;
 		this.correctionDate = null;
 	}
 
