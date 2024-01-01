@@ -1,9 +1,7 @@
 package com.example.sixnumber.lotto.service;
 
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CachePut;
@@ -29,7 +27,7 @@ public class WinNumberService {
 
 	@Cacheable(value = "WinNumbers", key = "'all'")
 	public WinNumberResponse getWinNumbers() {
-		return transform(getWinNumberList());
+		return transform(getLatestWinNumbers());
 	}
 
 	@CachePut(value = "WinNumbers", key = "'all'")
@@ -43,21 +41,14 @@ public class WinNumberService {
 			throw new OverlapException("이미 등록된 당첨 결과 입니다");
 
 		winNumberRepository.save(winNumber);
-		return transform(getWinNumberList());
+		return transform(getLatestWinNumbers());
 	}
 
-	private Set<WinNumber> findDistinctWinNumbers() {
+	private List<WinNumber> getLatestWinNumbers() {
 		List<WinNumber> winNumberList = winNumberRepository.findAll();
 		if (winNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
 
-		return new HashSet<>(winNumberList);
-	}
-
-	private List<WinNumber> getWinNumberList() {
-		List<WinNumber> winNumberList = findDistinctWinNumbers().stream()
-			.sorted(Comparator.comparing(WinNumber::getTime).reversed())
-			.collect(Collectors.toList());
-
+		winNumberList.sort(Comparator.comparing(WinNumber::getTime).reversed());
 		if (winNumberList.size() > 5) winNumberList = winNumberList.subList(0, 5);
 
 		return winNumberList;
