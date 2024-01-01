@@ -26,6 +26,9 @@ spring:
   jwt:
     secret-key: ${SECRET_KEY}
 
+  scheduler:
+    enabled: ${SCHEDULER_ENABLED}
+
   admin:
     set-admin-key: ${ADMIN_KEY}
 
