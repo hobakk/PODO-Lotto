@@ -132,13 +132,11 @@ public class GlobalSchedulerTest {
 	@Test
 	void updateLottoResultsOnSunday_success() {
 		when(winNumberRepository.findTopByTime(any(Pageable.class))).thenReturn(List.of(TestDataFactory.winNumber()));
-		when(winNumberRepository.existsWinNumberByTime(anyInt())).thenReturn(false);
 		when(manager.retrieveLottoResult(1075)).thenReturn(Optional.of(TestDataFactory.winNumberRequest()));
 
 		globalScheduler.updateLottoResultsOnSunday();
 
 		verify(winNumberRepository).findTopByTime(any(Pageable.class));
-		verify(winNumberRepository).existsWinNumberByTime(anyInt());
 		verify(manager).retrieveLottoResult(anyInt());
 		verify(winNumberRepository).save(any(WinNumber.class));
 	}
