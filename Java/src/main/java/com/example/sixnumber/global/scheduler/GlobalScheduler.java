@@ -107,9 +107,6 @@ public class GlobalScheduler {
 			.findFirst()
 			.map(winNumber -> winNumber.getTime() + 1)
 			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
-
-		if (winNumberRepository.existsWinNumberByTime(newRound))
-			throw new OverlapException("이미 등록된 당첨 결과 입니다");
 		
 		WinNumber winNumber = manager.retrieveLottoResult(newRound)
 			.map(WinNumber::new)
