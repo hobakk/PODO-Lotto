@@ -25,6 +25,7 @@ import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.lotto.repository.WinNumberRepository;
+import com.example.sixnumber.lotto.service.WinNumberService;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -41,6 +42,7 @@ public class GlobalScheduler {
 	private final LottoRepository lottoRepository;
 	private final SixNumberRepository sixNumberRepository;
 	private final WinNumberRepository winNumberRepository;
+	private final WinNumberService winNumberService;
 	private final RedisTemplate<String, String> redisTemplate;
 	private final Manager manager;
 
@@ -113,6 +115,7 @@ public class GlobalScheduler {
 			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
 
 		winNumberRepository.save(winNumber);
+		winNumberService.updateCache(adjustWinNumbers());
 	}
 
 	private List<WinNumber> adjustWinNumbers() {

@@ -44,12 +44,14 @@ public class WinNumberService {
 		return transform(getLatestWinNumbers());
 	}
 
+	@CachePut(value = "WinNumbers", key = "'all'")
+	public WinNumberResponse updateCache(List<WinNumber> winNumberList) {
+		return transform(winNumberList);
+	}
+
 	private List<WinNumber> getLatestWinNumbers() {
 		List<WinNumber> winNumberList = winNumberRepository.findAll();
 		if (winNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
-
-		winNumberList.sort(Comparator.comparing(WinNumber::getTime).reversed());
-		if (winNumberList.size() > 5) winNumberList = winNumberList.subList(0, 5);
 
 		return winNumberList;
 	}
