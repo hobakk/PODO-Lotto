@@ -104,13 +104,8 @@ public class GlobalScheduler {
 
 	@Scheduled(cron = "0 0 6 ? * SUN")
 	public void updateLottoResultsOnSunday() {
-		Pageable pageable = PageRequest.of(0, 1);
-		int newRound = winNumberRepository.findTopByTime(pageable).stream()
-			.findFirst()
-			.map(winNumber -> winNumber.getTime() + 1)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
-		
-		WinNumber winNumber = manager.retrieveLottoResult(newRound)
+		int nextRound = winNumberService.getTopRound() + 1;
+		WinNumber winNumber = manager.retrieveLottoResult(nextRound)
 			.map(WinNumber::new)
 			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
 
@@ -122,8 +117,8 @@ public class GlobalScheduler {
 		List<WinNumber> winNumberList = winNumberRepository.findAll();
 		if (winNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
 
+		winNumberList.sort(Comparator.comparing(WinNumber::getTime).reversed());
 		if (winNumberList.size() > 5) {
-			winNumberList.sort(Comparator.comparing(WinNumber::getTime).reversed());
 			List<WinNumber> remainingList = winNumberList.subList(5, winNumberList.size());
 			winNumberRepository.deleteAll(remainingList);
 			return winNumberList.subList(0, 5);

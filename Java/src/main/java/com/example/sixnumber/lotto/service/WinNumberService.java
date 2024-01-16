@@ -6,9 +6,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.TransformResponse;
@@ -27,7 +31,7 @@ public class WinNumberService {
 
 	@Cacheable(value = "WinNumbers", key = "'all'")
 	public WinNumberResponse getWinNumbers() {
-		return transform(getLatestWinNumbers());
+		return transform(getSortingWinNumbers());
 	}
 
 	@CachePut(value = "WinNumbers", key = "'all'")
@@ -37,11 +41,11 @@ public class WinNumberService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
 
 		int time = winNumber.getTime();
-		if (winNumberRepository.existsWinNumberByTime(time))
-			throw new OverlapException("이미 등록된 당첨 결과 입니다");
+		if (time >= getTopRound() - 5 && winNumberRepository.existsWinNumberByTime(time))
+			throw new OverlapException("등록된 당첨 결과 이거나 범위를 벗어났습니다");
 
 		winNumberRepository.save(winNumber);
-		return transform(getLatestWinNumbers());
+		return transform(getSortingWinNumbers());
 	}
 
 	@CachePut(value = "WinNumbers", key = "'all'")
@@ -49,10 +53,19 @@ public class WinNumberService {
 		return transform(winNumberList);
 	}
 
-	private List<WinNumber> getLatestWinNumbers() {
+	public int getTopRound() {
+		Pageable pageable = PageRequest.of(0, 1);
+		return winNumberRepository.findTopByTime(pageable).stream()
+			.findFirst()
+			.map(WinNumber::getTime)
+			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+	}
+
+	private List<WinNumber> getSortingWinNumbers() {
 		List<WinNumber> winNumberList = winNumberRepository.findAll();
 		if (winNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
 
+		winNumberList.sort(Comparator.comparing(WinNumber::getTime).reversed());
 		return winNumberList;
 	}
 
