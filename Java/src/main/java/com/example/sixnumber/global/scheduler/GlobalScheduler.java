@@ -2,6 +2,7 @@ package com.example.sixnumber.global.scheduler;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.ErrorCode;
-import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.entity.WinNumber;
@@ -113,5 +113,17 @@ public class GlobalScheduler {
 			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
 
 		winNumberRepository.save(winNumber);
+	}
+
+	private List<WinNumber> adjustWinNumbers() {
+		List<WinNumber> winNumberList = winNumberRepository.findAll();
+		if (winNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
+
+		if (winNumberList.size() > 5) {
+			winNumberList.sort(Comparator.comparing(WinNumber::getTime).reversed());
+			List<WinNumber> remainingList = winNumberList.subList(5, winNumberList.size());
+			winNumberRepository.deleteAll(remainingList);
+			return winNumberList.subList(0, 5);
+		} else return winNumberList;
 	}
 }
