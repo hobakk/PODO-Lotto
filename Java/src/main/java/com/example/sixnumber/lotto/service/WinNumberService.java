@@ -41,7 +41,8 @@ public class WinNumberService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
 
 		int time = winNumber.getTime();
-		if (time < getTopRound() - 5 || winNumberRepository.existsWinNumberByTime(time))
+		int topRound = getTopRound();
+		if (topRound > 0 && time < topRound - 5 || winNumberRepository.existsWinNumberByTime(time))
 			throw new OverlapException("등록된 당첨 결과 이거나 범위를 벗어났습니다");
 
 		winNumberRepository.save(winNumber);
@@ -55,10 +56,9 @@ public class WinNumberService {
 
 	public int getTopRound() {
 		Pageable pageable = PageRequest.of(0, 1);
-		return winNumberRepository.findTopByTime(pageable).stream()
-			.findFirst()
-			.map(WinNumber::getTime)
-			.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+		List<WinNumber> winNumberList = winNumberRepository.findTopByTime(pageable);
+		if (winNumberList.isEmpty()) return 0;
+		else return winNumberList.get(0).getTime();
 	}
 
 	private List<WinNumber> getSortingWinNumbers() {
