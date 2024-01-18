@@ -69,11 +69,12 @@ public class BoardService {
 		return UnifiedResponse.ok("삭제 성공");
 	}
 
-	public UnifiedResponse<?> fixBoard(User user, Long boardId, BoardRequest request) {
-		boardRepository.findByIdAndUser(boardId, user)
-			.map(board -> board.update(request))
+	public UnifiedResponse<?> updateBoard(User user, Long boardId, BoardRequest request) {
+		Board board = boardRepository.findByIdAndUser(boardId, user)
+			.map(b -> b.update(request))
 			.orElseThrow(() -> new CustomException(ErrorCode.ACCESS_DENIED));
 
+		boardRepository.save(board);
 		return UnifiedResponse.ok("수정 성공");
 	}
 

@@ -69,7 +69,7 @@ public class BoardController {
 		@RequestBody BoardRequest request,
 		@AuthenticationPrincipal User user
 	) {
-		return	ResponseEntity.ok(boardService.fixBoard(user, boardId, request));
+		return	ResponseEntity.ok(boardService.updateBoard(user, boardId, request));
 	}
 
 	@GetMapping("/admin")
