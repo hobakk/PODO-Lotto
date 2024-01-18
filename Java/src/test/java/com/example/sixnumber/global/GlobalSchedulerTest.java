@@ -29,6 +29,7 @@ import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.lotto.repository.LottoRepository;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.lotto.repository.WinNumberRepository;
+import com.example.sixnumber.lotto.service.WinNumberService;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.UserRepository;
 import com.example.sixnumber.user.type.Status;
@@ -47,6 +48,8 @@ public class GlobalSchedulerTest {
 	private SixNumberRepository sixNumberRepository;
 	@Mock
 	private WinNumberRepository winNumberRepository;
+	@Mock
+	private WinNumberService winNumberService;
 	@Mock
 	private RedisTemplate<String, String> redisTemplate;
 	@Mock
@@ -131,13 +134,14 @@ public class GlobalSchedulerTest {
 
 	@Test
 	void updateLottoResultsOnSunday_success() {
-		when(winNumberRepository.findTopByTime(any(Pageable.class))).thenReturn(List.of(TestDataFactory.winNumber()));
+		when(winNumberService.getTopRound()).thenReturn(1075);
 		when(manager.retrieveLottoResult(1075)).thenReturn(Optional.of(TestDataFactory.winNumberRequest()));
 
 		globalScheduler.updateLottoResultsOnSunday();
 
-		verify(winNumberRepository).findTopByTime(any(Pageable.class));
+		verify(winNumberService).getTopRound();
 		verify(manager).retrieveLottoResult(anyInt());
 		verify(winNumberRepository).save(any(WinNumber.class));
+		verify(winNumberService).updateCache(anyList());
 	}
 }
