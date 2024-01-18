@@ -97,7 +97,7 @@ public class BoardControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void fixBoard() throws Exception {
-		when(boardService.fixBoard(any(User.class), anyLong(), any(BoardRequest.class)))
+		when(boardService.updateBoard(any(User.class), anyLong(), any(BoardRequest.class)))
 			.thenReturn(UnifiedResponse.ok("수정 성공"));
 
 		mockMvc.perform(patch("/api/board/1").with(csrf())

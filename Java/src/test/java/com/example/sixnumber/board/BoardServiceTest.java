@@ -139,24 +139,25 @@ public class BoardServiceTest {
 	}
 
 	@Test
-	void fixBoard_success() {
+	void updateBoard_success() {
 		BoardRequest request = TestDataFactory.boardRequest();
 
 		when(boardRepository.findByIdAndUser(anyLong(), any(User.class)))
 			.thenReturn(Optional.of(board));
 
 		UnifiedResponse<?> response = boardService
-			.fixBoard(saveUser, board.getId(), request);
+			.updateBoard(saveUser, board.getId(), request);
 
 		assertEquals(board.getSubject(), request.getSubject());
 		assertEquals(board.getContents(), request.getContents());
 		assertNotNull(board.getCorrectionDate());
 		verify(boardRepository).findByIdAndUser(anyLong(), any(User.class));
+		verify(boardRepository).save(any(Board.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "수정 성공");
 	}
 
 	@Test
-	void fixBoard_fail() {
+	void updateBoard_fail() {
 		User user = mock(User.class);
 		when(user.getId()).thenReturn(91L);
 		when(user.getEmail()).thenReturn("test");
@@ -164,7 +165,7 @@ public class BoardServiceTest {
 		when(boardRepository.findByIdAndUser(anyLong(), any(User.class))).thenReturn(Optional.empty());
 
 		Assertions.assertThrows(CustomException.class,
-			() -> boardService.fixBoard(user, board.getId(), TestDataFactory.boardRequest()));
+			() -> boardService.updateBoard(user, board.getId(), TestDataFactory.boardRequest()));
 
 		verify(boardRepository).findByIdAndUser(anyLong(), any(User.class));
 	}
