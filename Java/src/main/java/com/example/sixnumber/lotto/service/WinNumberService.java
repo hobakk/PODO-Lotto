@@ -42,7 +42,7 @@ public class WinNumberService {
 
 		int time = winNumber.getTime();
 		int topRound = getTopRound();
-		if (topRound > 0 && time < topRound - 5 || winNumberRepository.existsWinNumberByTime(time))
+		if (topRound > 0 && time <= topRound - 5 || winNumberRepository.existsWinNumberByTime(time))
 			throw new OverlapException("등록된 당첨 결과 이거나 범위를 벗어났습니다");
 
 		winNumberRepository.save(winNumber);
