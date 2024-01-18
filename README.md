@@ -73,7 +73,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 - 주어진 조건에 따라 무작위로 숫자를 생성하고, 그 중에서 가장 자주 등장하는 숫자를 찾아 리스트로 반환
 ### 3. 이전 구매번호 조회
 
-<br/><br/><h2>WinNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/e0f1c6300dcb07b7e6995c09a0f6f0bbf5ca257c/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L30)</h2>
+<br/><br/><h2>WinNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/d95c994a0d2a1d4590f8981960fcd530c0787986/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L28)</h2>
 
 Redis Cache 사용해서 속도 개선
 ### 1. 당첨번호 조회
@@ -81,25 +81,23 @@ Redis Cache 사용해서 속도 개선
 ### 2. 당첨번호 등록
 - @CachePut 을 적용하여 저장되어 있는 RedisCache 를 갱신
 - openApi 파싱해 값을 가져옴
-### 3. BlackList
-accessToken 의 유효시간이 5분이라 로그아웃 이후 만료 전 탈취 당했을 상황에 대처할 목적
-- accessToken 을 Redis 에서 BlackList 로 관리
+### 3. 캐시 업데이트
 
-<br/><br/><h2>BoardService [Service](https://github.com/hobakk/PODO-Lotto/blob/89e83ab9b095fed194ee9357936bc0cdecdbd906/Java/src/main/java/com/example/sixnumber/board/service/BoardService.java#L24)</h2>
+<br/><br/><h2>BoardService [Service](https://github.com/hobakk/PODO-Lotto/blob/d95c994a0d2a1d4590f8981960fcd530c0787986/Java/src/main/java/com/example/sixnumber/board/service/BoardService.java#L24)</h2>
 
 ### 문의 CRUD
 - 처리되지 않는 문의는 최대 3개까지 등록이 가능하며
 - 본인이 작성한 문의일 경우 조회, 수정, 삭제 가능
 - 관리자의 경우 모두 허용
 
-<br/><br/><h2>CommentService [Service](https://github.com/hobakk/PODO-Lotto/blob/89e83ab9b095fed194ee9357936bc0cdecdbd906/Java/src/main/java/com/example/sixnumber/board/service/CommentService.java#L24)</h2>
+<br/><br/><h2>CommentService [Service](https://github.com/hobakk/PODO-Lotto/blob/d95c994a0d2a1d4590f8981960fcd530c0787986/Java/src/main/java/com/example/sixnumber/board/service/CommentService.java#L24)</h2>
 
 ### 댓글 CRUD
 - 문의 특성상 많은 댓글이 필요하지 않아 관리자의 답변 한번당 댓글 한번 달 수 있도록 제한을 둠
 - 본인이 작성한 문의일 경우 조회, 수정, 삭제 가능
 - 관리자의 경우 모두 허용
 
-<br/><br/><h2>Scheduler [Service](https://github.com/hobakk/PODO-Lotto/blob/694e68dd9c749b2edfefc4114dab18e3fa30ef5c/Java/src/main/java/com/example/sixnumber/global/scheduler/GlobalScheduler.java#L30)</h2>
+<br/><br/><h2>Scheduler [Service](https://github.com/hobakk/PODO-Lotto/blob/d95c994a0d2a1d4590f8981960fcd530c0787986/Java/src/main/java/com/example/sixnumber/global/scheduler/GlobalScheduler.java#L35)</h2>
 
 ### 1. 월 통계 생성
 - 현재 기준 저번달 통계가 존재하지 않을 때 통계를 생성 및 저장
@@ -110,5 +108,6 @@ accessToken 의 유효시간이 5분이라 로그아웃 이후 만료 전 탈취
 - 탈퇴 이후 1달이 경과된 유저 전부를 삭제
 ### 4. 이용정지
 - 충전 요청 미처리 횟수 초과시 상태 변경
-
+### 5. 매주 당첨번호 업데이트
+- 동행복권 OpenAPI를 파싱해 매주 일요일 6시에 저장
 <br/>
