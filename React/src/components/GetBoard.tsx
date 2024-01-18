@@ -4,8 +4,10 @@ import { Err, UnifiedResponse } from '../shared/TypeMenu';
 import { useMutation } from 'react-query';
 import { CommonStyle, CommentStyle } from '../shared/Styles';
 import { CommentRequest, deleteComment, fixComment, setComment } from '../api/commentApi';
+import { useNavigate } from 'react-router-dom';
 
 export const GetBoard = ({boardId}: {boardId: number}) => {
+    const navigate = useNavigate();
     const [msg, setMsg] = useState<string>("");
     const [click, isClick] = useState<{[key: string]: boolean}>({});
     const [fixMsg, setFixMsg] = useState<{[key: string]: string}>({});
@@ -138,6 +140,7 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
             {value.boardId >= 0 && (
                 <div style={{ width: "20cm" }}>
                     <div style={{ display:"flex", marginTop:"20px", marginBottom:"10px" }}>
+                        <button onClick={()=>{navigate("/boards/status")}}>뒤로가기</button>
                         <button 
                             style={{ marginLeft:"auto"}}
                             onClick={fixBoardHandler}
