@@ -41,7 +41,7 @@ public class WinNumberService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
 
 		int time = winNumber.getTime();
-		if (time >= getTopRound() - 5 || winNumberRepository.existsWinNumberByTime(time))
+		if (time < getTopRound() - 5 || winNumberRepository.existsWinNumberByTime(time))
 			throw new OverlapException("등록된 당첨 결과 이거나 범위를 벗어났습니다");
 
 		winNumberRepository.save(winNumber);
