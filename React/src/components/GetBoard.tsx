@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { BoardResponse, getBoard } from '../api/boardApi';
+import { BoardResponse, getBoard, FixBoardRequest, fixBoard, BoardRequest } from '../api/boardApi';
 import { Err, UnifiedResponse } from '../shared/TypeMenu';
 import { useMutation } from 'react-query';
 import { CommonStyle, CommentStyle } from '../shared/Styles';
@@ -9,6 +9,7 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
     const [msg, setMsg] = useState<string>("");
     const [click, isClick] = useState<{[key: string]: boolean}>({});
     const [fixMsg, setFixMsg] = useState<{[key: string]: string}>({});
+    const [isFixBoard, setFixBoard] = useState<boolean>(false);
     const [value, setValue] = useState<BoardResponse>({
         boardId: -1,
         userName: "",
@@ -18,10 +19,16 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
         commentList: [],
         correctionDate: ""
     });
+    const [boardReq, setBoardReq] = useState<BoardRequest>({
+        subject: value.subject,
+        contents: value.contents
+    });
 
     const getBoardMutation = useMutation<UnifiedResponse<BoardResponse>, Err, number>(getBoard, {
         onSuccess: (res)=>{
-            if (res.code === 200 && res.data) setValue(res.data);
+            if (res.code === 200 && res.data) {
+                setValue(res.data);
+            } 
         },
         onError: (err)=>{
             alert(err.msg);
@@ -55,6 +62,15 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
         }
     });
 
+    const fixBoardMutation = useMutation<UnifiedResponse<undefined>, Err, FixBoardRequest>(fixBoard, {
+        onSuccess: (res)=>{
+            if (res.code === 200 ) getBoardMutation.mutate(boardId);
+        },
+        onError: (err)=>{
+            alert(err.msg);
+        }
+    })
+
     useEffect(()=>{
         if (boardId >= 0) getBoardMutation.mutate(boardId);
     }, [boardId])
@@ -68,6 +84,15 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
 
         setFixMsg({
             ...fixMsg,
+            [name]: value
+        });
+    }
+
+    const boardRequestHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const {name, value} = e.target;
+
+        setBoardReq({
+            ...boardReq,
             [name]: value
         });
     }
@@ -91,27 +116,71 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
         }
     }
 
+    const fixBoardHandler = () => {
+        if (isFixBoard) {
+            if (boardReq.subject === "" && boardReq.contents === "") {
+                alert("변경된 주제, 내용이 없습니다.");
+            } else {
+                const req: FixBoardRequest = {
+                    id: value.boardId,
+                    request: boardReq
+                }
+
+                fixBoardMutation.mutate(req);
+            }
+        }
+
+        setFixBoard(!isFixBoard);
+    }
+
     return (
         <div style={CommonStyle}>
             {value.boardId >= 0 && (
-                <div style={{ width: "20cm"}}>
-                    <div style={{ display:"flex" }}>
-                        <div>
-                            <span>주제:</span>
-                            <span style={{ marginLeft:"10px"}} >{value.subject}</span>
-                        </div>
-                        <div style={{ marginLeft:"auto"}}>
-                            <span>작성자:</span>
-                            <span style={{ marginLeft:"10px"}} >{value.userName}</span>
-                        </div>
+                <div style={{ width: "20cm" }}>
+                    <div style={{ display:"flex", marginTop:"20px", marginBottom:"10px" }}>
+                        <button 
+                            style={{ marginLeft:"auto"}}
+                            onClick={fixBoardHandler}
+                        >
+                            {isFixBoard ? ("문의 수정완료"):("문의 수정하기")}
+                        </button>
+                    </div>
+                    
+                    <div style={{ display:"flex", border: "2px solid black", backgroundColor:"#D4F0F0", borderBottom:"0px" }}>
+                        {isFixBoard ? (
+                            <input 
+                                value={boardReq.subject}
+                                type='text'
+                                name="subject"
+                                onChange={boardRequestHandler}
+                            />
+                        ):(
+                            <h3>
+                                <span style={{ marginLeft:"10px"}}>주제:</span>
+                                <span style={{ marginLeft:"10px"}} >{value.subject}</span>
+                            </h3>
+                        )}
                     </div>
 
-                    <div style={{ display:"flex", marginTop:"20px" }}>
-                        <span style={{ marginLeft:"auto", color:"red"}} >{value.status}</span>
-                    </div>
+                    <div style={{ border: "2px solid black" }}>
+                        <div style={{ display:"flex", marginTop:"20px" }}>
+                            <span style={{ marginLeft:"10px"}}>작성자:</span>
+                            <span>{value.userName}</span>
+                            <span style={{ marginLeft:"auto", color:"red", marginRight:"10px"}} >{value.status}</span>
+                        </div>
 
-                    <div style={{ display:"flex", marginTop:"1cm" }}>
-                        <span>{value.contents}</span>
+                        <div style={{ display:"flex", marginTop:"1cm", minHeight:"20vh", padding:"10px" }}>
+                            {isFixBoard ? (
+                                <input 
+                                value={boardReq.contents}
+                                type='text'
+                                name="contents"
+                                onChange={boardRequestHandler}
+                            />
+                            ):(
+                                <span>{value.contents}</span>
+                            )}
+                        </div>
                     </div>
 
                     {value.commentList.length !== 0 && (
@@ -166,6 +235,7 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
                             style={{ width:"14cm", height:"2cm", padding:"5px", marginTop:"0.7cm"}}
                             value={msg}
                             type="text"
+                            name="comment"
                             onChange={onChangeHandler}
                         />
                         <button style={{ width:"1.7cm", height:"1.6cm"}}>남기기</button>

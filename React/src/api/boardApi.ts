@@ -2,6 +2,11 @@ import { UnifiedResponse } from "../shared/TypeMenu";
 import { CommentResponse } from "./commentApi";
 import { api } from "./config";
 
+export type FixBoardRequest = {
+    id: number,
+    request: BoardRequest
+}
+
 export type BoardRequest = {
     subject: string,
     contents: string
@@ -63,9 +68,9 @@ export const deleteBoard = async (boardId: number): Promise<UnifiedResponse<unde
     }
 }
 
-export const fixBoard = async (boardId: number, boardRequest: BoardRequest): Promise<UnifiedResponse<undefined>> => {
+export const fixBoard = async (req: FixBoardRequest): Promise<UnifiedResponse<undefined>> => {
     try {
-        const { data } = await api.patch(`/board/${boardId}`, boardRequest);
+        const { data } = await api.patch(`/board/${req.id}`, req.request);
         return data;  
     } catch (error: any) {
         throw error.data;
