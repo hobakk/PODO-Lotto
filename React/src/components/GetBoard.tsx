@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { BoardResponse, getBoard, FixBoardRequest, fixBoard, BoardRequest } from '../api/boardApi';
+import { BoardResponse, getBoard, FixBoardRequest, fixBoard, BoardRequest, deleteBoard } from '../api/boardApi';
 import { Err, UnifiedResponse } from '../shared/TypeMenu';
 import { useMutation } from 'react-query';
 import { CommonStyle, CommentStyle } from '../shared/Styles';
@@ -12,6 +12,7 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
     const [click, isClick] = useState<{[key: string]: boolean}>({});
     const [fixMsg, setFixMsg] = useState<{[key: string]: string}>({});
     const [isFixBoard, setFixBoard] = useState<boolean>(false);
+    const [delBoard, setDelBoard] = useState<boolean>(false);
     const [value, setValue] = useState<BoardResponse>({
         boardId: -1,
         userName: "",
@@ -72,6 +73,18 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
             alert(err.msg);
         }
     })
+
+    const deleteBoardMuatation = useMutation<UnifiedResponse<undefined>, Err, number>(deleteBoard, {
+        onSuccess: (res)=>{
+            if (res.code === 200 ) {
+                alert(res.msg);
+                navigate("/");
+            }
+        },
+        onError: (err)=>{
+            alert(err.msg);
+        }
+    });
 
     useEffect(()=>{
         if (boardId >= 0) getBoardMutation.mutate(boardId);
@@ -135,6 +148,12 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
         setFixBoard(!isFixBoard);
     }
 
+    const delBoardHandler = () => {
+        if (delBoard) deleteBoardMuatation.mutate(value.boardId);
+
+        setDelBoard(!delBoard);
+    }
+
     return (
         <div style={CommonStyle}>
             {value.boardId >= 0 && (
@@ -143,6 +162,12 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
                         <button onClick={()=>{navigate("/boards/status")}}>뒤로가기</button>
                         <button 
                             style={{ marginLeft:"auto"}}
+                            onClick={delBoardHandler}
+                        >
+                            {delBoard ? ("삭제 완료"):("문의 삭제")}
+                        </button>
+                        <button 
+                            style={{ marginLeft:"5px"}}
                             onClick={fixBoardHandler}
                         >
                             {isFixBoard ? ("문의 수정완료"):("문의 수정하기")}
