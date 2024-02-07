@@ -8,10 +8,8 @@ import { useNavigate } from 'react-router-dom'
 function SetBoard() {
     const subjectRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
-    const [inputValue, setInputValue] = useState<BoardRequest>({
-        subject: "",
-        contents: ""
-    });
+    const [subject, setSubject] = useState<string>("");
+    const [text, setText] = useState<string>("");
 
     const setBoardMutation = useMutation<UnifiedResponse<undefined>, Err, BoardRequest>(setBoard, {
         onSuccess: (res)=>{
@@ -25,22 +23,15 @@ function SetBoard() {
         }
     });
 
-    const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value }: any = e.target;
-
-        setInputValue({
-            ...inputValue,
-            [name]: value,
-        })
-    }
-
     const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const { subject, contents } = inputValue;
 
-        if (subject === "" || contents === "") {
+        if (subject === "" || text === "") {
             alert("주제와 내용을 모두 입력해주세요");
-        } else setBoardMutation.mutate(inputValue);
+        } else {
+            const boardReq = { subject: subject, contents: text };
+            setBoardMutation.mutate(boardReq);
+        }
     }
 
   return (
@@ -50,19 +41,16 @@ function SetBoard() {
             <span>주제:</span>
             <input 
                 style={{ width:"11cm", height:"25px", marginLeft:"auto", padding:"5px"}}
-                name="subject"
-                value={inputValue.subject}
+                value={subject}
                 type="text"
                 ref={subjectRef} 
-                onChange={onChangeHandler}
+                onChange={(e)=>{setSubject(e.target.value)}}
             />
         </div>
-        <input 
+        <textarea 
             style={{ width:"14cm", height:"14cm", marginLeft:"auto", padding:"5px", marginTop:"0.7cm"}}
-            name="contents"
-            value={inputValue.contents}
-            type="text"
-            onChange={onChangeHandler}
+            value={text}
+            onChange={(e)=>{setText(e.target.value)}}
         />
 
         <div style={{ ...ButtonDiv, marginTop:"1cm"}}>
