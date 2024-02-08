@@ -133,9 +133,7 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
 
     const fixBoardHandler = () => {
         if (isFixBoard) {
-            if (boardReq.subject === "" && boardReq.contents === "") {
-                alert("변경된 주제, 내용이 없습니다.");
-            } else {
+            if (boardReq.subject !== "" || boardReq.contents !== "") {
                 const req: FixBoardRequest = {
                     id: value.boardId,
                     request: boardReq
@@ -199,12 +197,12 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
 
                         <div style={{ display:"flex", marginTop:"1cm", minHeight:"20vh", padding:"10px" }}>
                             {isFixBoard ? (
-                                <input 
-                                value={boardReq.contents}
-                                type='text'
-                                name="contents"
-                                onChange={boardRequestHandler}
-                            />
+                                <textarea 
+                                    style={{ width:"100%", height:"100px"}}
+                                    value={boardReq.contents}
+                                    name="contents"
+                                    onChange={(e)=>{setBoardReq({ ...boardReq, [e.target.name]: e.target.value})}}
+                                />
                             ):(
                                 <span>{value.contents}</span>
                             )}
