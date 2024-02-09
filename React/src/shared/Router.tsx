@@ -26,6 +26,7 @@ import Oauth2Redirect from '../pages/users/Oauth2Redirect'
 import FindPassword from '../pages/users/FindPassword'
 import SetBoard from '../pages/board/SetBoard'
 import GetBoardsByStatus from '../pages/board/GetBoardsByStatus'
+import GetBoard from '../pages/admin/GetBoards'
 
 const Router = () => {
   return (
@@ -57,6 +58,7 @@ const Router = () => {
                 <Route path='/find-password' element={<FindPassword />} />
                 <Route path='/board/set' element={<SetBoard />} />
                 <Route path='/boards/status' element={<GetBoardsByStatus />} />
+                <Route path='/admin/boards' element={<GetBoard />} />
             </Routes>
         </Layout>
     </BrowserRouter>
