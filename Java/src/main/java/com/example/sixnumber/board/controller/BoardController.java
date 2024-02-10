@@ -2,6 +2,7 @@ package com.example.sixnumber.board.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -73,7 +74,7 @@ public class BoardController {
 	}
 
 	@GetMapping("/admin")
-	public ResponseEntity<UnifiedResponse<List<BoardsResponse>>> getAllBoardsByStatus(
+	public ResponseEntity<UnifiedResponse<Page<BoardsResponse>>> getAllBoardsByStatus(
 		@RequestParam BoardStatus status
 	) {
 		return ResponseEntity.ok(boardService.getAllBoardsByStatus(status));

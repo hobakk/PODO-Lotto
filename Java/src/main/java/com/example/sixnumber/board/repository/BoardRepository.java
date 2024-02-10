@@ -3,6 +3,8 @@ package com.example.sixnumber.board.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.sixnumber.board.entity.Board;
@@ -18,5 +20,5 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
 	Optional<Board> findByIdAndUser(Long boardId, User user);
 
-	List<Board> findAllByStatus(BoardStatus status);
+	Page<Board> findAllByStatus(BoardStatus status, Pageable pageable);
 }

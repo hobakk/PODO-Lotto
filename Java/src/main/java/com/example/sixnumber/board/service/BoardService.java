@@ -3,6 +3,9 @@ package com.example.sixnumber.board.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.sixnumber.board.dto.BoardRequest;
@@ -78,10 +81,10 @@ public class BoardService {
 		return UnifiedResponse.ok("수정 성공");
 	}
 
-	public UnifiedResponse<List<BoardsResponse>> getAllBoardsByStatus(BoardStatus status) {
-		List<BoardsResponse> responses = boardRepository.findAllByStatus(status).stream()
-			.map(BoardsResponse::new)
-			.collect(Collectors.toList());
+	public UnifiedResponse<Page<BoardsResponse>> getAllBoardsByStatus(BoardStatus status) {
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<BoardsResponse> responses = boardRepository.findAllByStatus(status, pageable)
+			.map(BoardsResponse::new);
 
 		if (responses.isEmpty()) throw new CustomException(ErrorCode.NOT_FOUND);
 
