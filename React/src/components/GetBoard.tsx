@@ -5,6 +5,7 @@ import { useMutation } from 'react-query';
 import { CommonStyle, CommentStyle } from '../shared/Styles';
 import { CommentRequest, deleteComment, fixComment, setComment } from '../api/commentApi';
 import { useNavigate } from 'react-router-dom';
+import useTextareaWithShiftEnter from '../hooks/useTextareaWithShiftEnter';
 
 export const GetBoard = ({boardId}: {boardId: number}) => {
     const navigate = useNavigate();
@@ -22,10 +23,8 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
         commentList: [],
         correctionDate: ""
     });
-    const [boardReq, setBoardReq] = useState<BoardRequest>({
-        subject: value.subject,
-        contents: value.contents
-    });
+    const [subject, setSubject] = useState<string>('');
+    const { textValue, setTextValue, handleKeyDown } = useTextareaWithShiftEnter();
 
     const getBoardMutation = useMutation<UnifiedResponse<BoardResponse>, Err, number>(getBoard, {
         onSuccess: (res)=>{
@@ -103,15 +102,6 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
         });
     }
 
-    const boardRequestHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = e.target;
-
-        setBoardReq({
-            ...boardReq,
-            [name]: value
-        });
-    }
-
     const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (msg === "" && value.boardId < 0) alert("댓글을 남길 수 없습니다.");
@@ -133,10 +123,10 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
 
     const fixBoardHandler = () => {
         if (isFixBoard) {
-            if (boardReq.subject !== "" || boardReq.contents !== "") {
+            if (subject !== "" || textValue !== "") {
                 const req: FixBoardRequest = {
                     id: value.boardId,
-                    request: boardReq
+                    request: {subject: subject, contents: textValue}
                 }
 
                 fixBoardMutation.mutate(req);
@@ -175,10 +165,9 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
                     <div style={{ display:"flex", border: "2px solid black", backgroundColor:"#D4F0F0", borderBottom:"0px" }}>
                         {isFixBoard ? (
                             <input 
-                                value={boardReq.subject}
+                                value={subject}
                                 type='text'
-                                name="subject"
-                                onChange={boardRequestHandler}
+                                onChange={(e)=>{setSubject(e.target.value)}}
                             />
                         ):(
                             <h3>
@@ -199,12 +188,12 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
                             {isFixBoard ? (
                                 <textarea 
                                     style={{ width:"100%", height:"100px"}}
-                                    value={boardReq.contents}
-                                    name="contents"
-                                    onChange={(e)=>{setBoardReq({ ...boardReq, [e.target.name]: e.target.value})}}
+                                    value={textValue}
+                                    onChange={(e)=>{setTextValue(e.target.value)}}
+                                    onKeyDown={handleKeyDown}
                                 />
                             ):(
-                                <span>{value.contents}</span>
+                                <span white-space="pre-wrap">{value.contents}</span>
                             )}
                         </div>
                     </div>
