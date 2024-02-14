@@ -184,7 +184,7 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
                             <span style={{ marginLeft:"auto", color:"red", marginRight:"10px"}} >{value.status}</span>
                         </div>
 
-                        <div style={{ display:"flex", marginTop:"1cm", minHeight:"20vh", padding:"10px" }}>
+                        <div style={{ display:"flex", marginTop:"1cm", minHeight:"20vh", padding:"10px", whiteSpace: "pre-wrap" }}>
                             {isFixBoard ? (
                                 <textarea 
                                     style={{ width:"100%", height:"100px"}}
@@ -193,7 +193,7 @@ export const GetBoard = ({boardId}: {boardId: number}) => {
                                     onKeyDown={handleKeyDown}
                                 />
                             ):(
-                                <span white-space="pre-wrap">{value.contents}</span>
+                                <span>{value.contents}</span>
                             )}
                         </div>
                     </div>
