@@ -4,12 +4,13 @@ import { useMutation } from 'react-query'
 import { Err, UnifiedResponse } from '../../shared/TypeMenu'
 import { BoardRequest, setBoard } from '../../api/boardApi'
 import { useNavigate } from 'react-router-dom'
+import useTextareaWithShiftEnter from '../../hooks/useTextareaWithShiftEnter'
 
 function SetBoard() {
     const subjectRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
     const [subject, setSubject] = useState<string>("");
-    const [text, setText] = useState<string>("");
+    const { textValue, setTextValue, handleKeyDown } = useTextareaWithShiftEnter();
 
     const setBoardMutation = useMutation<UnifiedResponse<undefined>, Err, BoardRequest>(setBoard, {
         onSuccess: (res)=>{
@@ -26,10 +27,10 @@ function SetBoard() {
     const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (subject === "" || text === "") {
+        if (subject === "" || textValue === "") {
             alert("주제와 내용을 모두 입력해주세요");
         } else {
-            const boardReq = { subject: subject, contents: text };
+            const boardReq = { subject: subject, contents: textValue };
             setBoardMutation.mutate(boardReq);
         }
     }
@@ -49,8 +50,9 @@ function SetBoard() {
         </div>
         <textarea 
             style={{ width:"14cm", height:"14cm", marginLeft:"auto", padding:"5px", marginTop:"0.7cm"}}
-            value={text}
-            onChange={(e)=>{setText(e.target.value)}}
+            value={textValue}
+            onChange={(e)=>{setTextValue(e.target.value)}}
+            onKeyDown={handleKeyDown}
         />
 
         <div style={{ ...ButtonDiv, marginTop:"1cm"}}>
