@@ -34,26 +34,36 @@ function SetBoard() {
             setBoardMutation.mutate(boardReq);
         }
     }
+    
+    const SetBoardStyle : React.CSSProperties = {
+        padding:"20px",
+        border: "2px solid black"
+    }
 
   return (
     <form onSubmit={onSubmitHandler} style={ CommonStyle }>
-        <h1 style={ TitleStyle }>문의 하기</h1>
-        <div style={MsgAndInput}>
-            <span>주제:</span>
-            <input 
-                style={{ width:"11cm", height:"25px", marginLeft:"auto", padding:"5px"}}
-                value={subject}
-                type="text"
-                ref={subjectRef} 
-                onChange={(e)=>{setSubject(e.target.value)}}
-            />
+        <h1 style={{ ...TitleStyle, marginBottom:"30px" }}>문의 하기</h1>
+        <div style={{ display:"flex", flexDirection: "column", justifyContent: "center", alignItems:"center" }}>
+            <div style={{ ...SetBoardStyle, ...MsgAndInput, backgroundColor:"#D4F0F0", marginBottom:"0px", borderBottom:"0px"}}>
+                <span>주제:</span>
+                <input 
+                    style={{ width:"11cm", height:"25px", marginLeft:"auto"}}
+                    value={subject}
+                    type="text"
+                    ref={subjectRef} 
+                    onChange={(e)=>{setSubject(e.target.value)}}
+                />
+            </div>
+
+            <div style={SetBoardStyle}>
+                <textarea 
+                    style={{ width:"13.7cm", height:"14cm", marginLeft:"auto", padding:"5px", marginTop:"0.3cm"}}
+                    value={textValue}
+                    onChange={(e)=>{setTextValue(e.target.value)}}
+                    onKeyDown={handleKeyDown}
+                />
+            </div>
         </div>
-        <textarea 
-            style={{ width:"14cm", height:"14cm", marginLeft:"auto", padding:"5px", marginTop:"0.7cm"}}
-            value={textValue}
-            onChange={(e)=>{setTextValue(e.target.value)}}
-            onKeyDown={handleKeyDown}
-        />
 
         <div style={{ ...ButtonDiv, marginTop:"1cm"}}>
             <button style={ButtonStyle}>제출하기</button>
