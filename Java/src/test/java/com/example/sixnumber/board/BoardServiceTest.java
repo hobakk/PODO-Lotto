@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 import com.example.sixnumber.board.dto.BoardRequest;
 import com.example.sixnumber.board.dto.BoardResponse;
@@ -172,12 +176,13 @@ public class BoardServiceTest {
 
 	@Test
 	void getAllBoardsByStatus() {
-		when(boardRepository.findAllByStatus(any(BoardStatus.class))).thenReturn(List.of(board));
+		Page<Board> mockPage = new PageImpl<>(List.of(TestDataFactory.board()));
+		when(boardRepository.findAllByStatus(any(BoardStatus.class), any(Pageable.class))).thenReturn(mockPage);
 
-		UnifiedResponse<List<BoardsResponse>> responses = boardService
+		UnifiedResponse<Page<BoardsResponse>> responses = boardService
 			.getAllBoardsByStatus(BoardStatus.UNPROCESSED);
 
-		verify(boardRepository).findAllByStatus(any(BoardStatus.class));
-		TestUtil.UnifiedResponseListEquals(responses, 200, "조회 성공");
+		verify(boardRepository).findAllByStatus(any(BoardStatus.class), any(Pageable.class));
+		TestUtil.UnifiedResponsePageEquals(responses, 200, "조회 성공");
 	}
 }

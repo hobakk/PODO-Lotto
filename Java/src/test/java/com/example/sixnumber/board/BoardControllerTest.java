@@ -14,12 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.sixnumber.board.dto.BoardRequest;
 import com.example.sixnumber.board.dto.BoardResponse;
 import com.example.sixnumber.board.dto.BoardsResponse;
+import com.example.sixnumber.board.entity.Board;
 import com.example.sixnumber.board.service.BoardService;
 import com.example.sixnumber.board.type.BoardStatus;
 import com.example.sixnumber.fixture.TestDataFactory;
@@ -110,8 +113,9 @@ public class BoardControllerTest {
 	@Test
 	@WithCustomMockUser(username = "testAdmin", role = UserRole.ROLE_ADMIN)
 	public void getAllBoardsByStatus() throws Exception {
+		Page<BoardsResponse> mockPage = new PageImpl<>(List.of(TestDataFactory.boardsResponse()));
 		when(boardService.getAllBoardsByStatus(any(BoardStatus.class)))
-			.thenReturn(UnifiedResponse.ok("조회 성공", List.of(new BoardsResponse(TestDataFactory.board()))));
+			.thenReturn(UnifiedResponse.ok("조회 성공", mockPage));
 
 		mockMvc.perform(patch("/api/board/1").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
