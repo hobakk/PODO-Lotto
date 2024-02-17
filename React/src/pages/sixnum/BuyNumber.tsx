@@ -19,8 +19,7 @@ function BuyNumber() {
     }
     
     useEffect(()=>{ 
-        if (numRef.current)
-            numRef.current.focus();
+        if (numRef.current) numRef.current.focus();
     }, [])
 
     const buyNumberMutation = useMutation<UnifiedResponse<string[]>, unknown, number>(buyNumber, {
@@ -42,11 +41,11 @@ function BuyNumber() {
     }
 
     const buyHandler = () => {
-        if (num > 0) {
-            buyNumberMutation.mutate(num); 
-        } else {
-            alert("수량을 입력해주세요");
-        }
+        if (num > 0 && num < 25) buyNumberMutation.mutate(num); 
+        else if (num > 24) {
+            alert("최대 24번까지 발급 가능합니다");
+            setNum(24);
+        } else alert("수량을 입력해주세요");
     }
 
     const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {

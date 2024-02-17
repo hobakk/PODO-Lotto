@@ -59,8 +59,14 @@ function StatisticalNumber() {
     }
 
     const finalBuyHandler = () => {
-        if (inputNum["value"] > 0 && inputNum["repetition"] > 0) {
+        if (inputNum["value"] > 0 && inputNum["repetition"] > 0 && inputNum["value"] < 25) {
             buyNumberMutation.mutate(inputNum); 
+        } else if (inputNum["value"] > 24) {
+            alert("최대 24번까지 발급 가능합니다");
+            setInputNum({
+                ...inputNum,
+                ["value"]: 24,
+            });
         } else {
             alert("반복횟수 및 발급횟수를 입력해주세요");
         }
