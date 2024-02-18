@@ -17,11 +17,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.sixnumber.fixture.TestDataFactory;
+import com.example.sixnumber.fixture.TestUtil;
+import com.example.sixnumber.global.dto.UnifiedResponse;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.LottoResponse;
 import com.example.sixnumber.lotto.dto.YearMonthResponse;
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.example.sixnumber.lotto.repository.LottoRepository;
+import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.lotto.service.LottoService;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +34,8 @@ public class LottoServiceTest {
 
 	@Mock
 	private LottoRepository lottoRepository;
+	@Mock
+	private SixNumberRepository sixNumberRepository;
 	@Mock
 	private Manager manager;
 
@@ -101,5 +106,19 @@ public class LottoServiceTest {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> lottoService.getAllMonthStats());
 
 		verify(lottoRepository).findAllByMonthStats();
+	}
+
+	@Test
+	void createMonthlyReport_success() {
+		when(lottoRepository.existsLottoByCreationDate(any(YearMonth.class))).thenReturn(false);
+		when(sixNumberRepository.findAllByBuyDate(anyInt(), anyInt()))
+			.thenReturn(List.of(TestDataFactory.sixNumber()));
+
+		UnifiedResponse<?> response = lottoService.createMonthlyReport(2024, 1);
+
+		verify(lottoRepository).existsLottoByCreationDate(any(YearMonth.class));
+		verify(sixNumberRepository).findAllByBuyDate(anyInt(), anyInt());
+		verify(lottoRepository).save(any(Lotto.class));
+		TestUtil.UnifiedResponseEquals(response, 200, "월별 통계 생성완료");
 	}
 }
