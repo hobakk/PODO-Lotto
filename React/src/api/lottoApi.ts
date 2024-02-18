@@ -40,3 +40,17 @@ export const getAllMonthStats = async (): Promise<UnifiedResponse<AllMonthProps>
         throw error.data;
     }
 }
+
+export type MonthlyStatsReq = {
+    year: number,
+    month: number
+}
+
+export const createMonthlyStats = async (value: MonthlyStatsReq): Promise<UnifiedResponse<undefined>> => {
+    try {
+        const { data } = await api.post(`/lotto/stats/${value.year}/${value.month}`);
+        return data;   
+    } catch (error: any) {
+        throw error.data;
+    }
+}

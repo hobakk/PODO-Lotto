@@ -27,6 +27,7 @@ import FindPassword from '../pages/users/FindPassword'
 import SetBoard from '../pages/board/SetBoard'
 import GetBoardsByStatus from '../pages/board/GetBoardsByStatus'
 import GetBoard from '../pages/admin/GetBoards'
+import CreateMonthlyStats from '../pages/lotto/CreateMonthlyStats'
 
 const Router = () => {
   return (
@@ -59,6 +60,7 @@ const Router = () => {
                 <Route path='/board/set' element={<SetBoard />} />
                 <Route path='/boards/status' element={<GetBoardsByStatus />} />
                 <Route path='/admin/boards' element={<GetBoard />} />
+                <Route path='/admin/monthlystats' element={<CreateMonthlyStats />} />
             </Routes>
         </Layout>
     </BrowserRouter>
