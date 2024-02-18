@@ -121,4 +121,14 @@ public class LottoServiceTest {
 		verify(lottoRepository).save(any(Lotto.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "월별 통계 생성완료");
 	}
+
+	@Test
+	void createMonthlyReport_fail_overLap() {
+		when(lottoRepository.existsLottoByCreationDate(any(YearMonth.class))).thenReturn(true);
+
+		Assertions.assertThrows(IllegalArgumentException.class,
+			() -> lottoService.createMonthlyReport(2024, 2));
+
+		verify(lottoRepository).existsLottoByCreationDate(any(YearMonth.class));
+	}
 }
