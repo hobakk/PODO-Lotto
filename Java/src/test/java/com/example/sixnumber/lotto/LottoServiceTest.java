@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.TestUtil;
 import com.example.sixnumber.global.dto.UnifiedResponse;
+import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.LottoResponse;
 import com.example.sixnumber.lotto.dto.YearMonthResponse;
@@ -130,5 +131,18 @@ public class LottoServiceTest {
 			() -> lottoService.createMonthlyReport(2024, 2));
 
 		verify(lottoRepository).existsLottoByCreationDate(any(YearMonth.class));
+	}
+
+	@Test
+	void createMonthlyReport_fail_isEmpty() {
+		when(lottoRepository.existsLottoByCreationDate(any(YearMonth.class))).thenReturn(false);
+		when(sixNumberRepository.findAllByBuyDate(anyInt(), anyInt()))
+			.thenReturn(new ArrayList<>());
+
+		Assertions.assertThrows(CustomException.class,
+			() -> lottoService.createMonthlyReport(2024, 1));
+
+		verify(lottoRepository).existsLottoByCreationDate(any(YearMonth.class));
+		verify(sixNumberRepository).findAllByBuyDate(anyInt(), anyInt());
 	}
 }
