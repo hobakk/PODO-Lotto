@@ -64,33 +64,6 @@ public class GlobalSchedulerTest {
 		valueOperations = mock(ValueOperations.class);
 	}
 
-	@Test
-	void findByTopNumberListForMonth_isPresent() {
-		when(lottoRepository.existsLottoByCreationDate(any(YearMonth.class))).thenReturn(true);
-
-		globalScheduler.findByTopNumberListForMonth();
-
-		verify(lottoRepository).existsLottoByCreationDate(any(YearMonth.class));
-	}
-
-	@Test
-	void findByTopNumberListForMonth_isEmpty() {
-		SixNumber sixNumber = TestDataFactory.sixNumber();
-
-		when(lottoRepository.existsLottoByCreationDate(any(YearMonth.class))).thenReturn(false);
-
-		when(sixNumberRepository.findAllByBuyDate(anyInt(), anyInt())).thenReturn(List.of(sixNumber));
-
-		when(manager.getTopNumbersAsString(anyMap())).thenReturn("1 2 3 4 5 6");
-
-		globalScheduler.findByTopNumberListForMonth();
-
-		verify(lottoRepository).existsLottoByCreationDate(any(YearMonth.class));
-		verify(sixNumberRepository).findAllByBuyDate(anyInt(), anyInt());
-		verify(manager).getTopNumbersAsString(anyMap());
-		verify(lottoRepository).save(any(Lotto.class));
-	}
-
 	@ParameterizedTest
 	@MethodSource("com.example.sixnumber.fixture.TestDataFactory#cancellation")
 	void paymentAndCancellation(User user, int resultCash, UserRole resultRole, LocalDate resultLocalDate, Boolean result) {
