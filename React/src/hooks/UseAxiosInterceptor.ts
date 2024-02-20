@@ -4,7 +4,7 @@ import { api } from "../api/config"
 import { useNavigate } from "react-router-dom";
 import { persistor } from "../config/configStore";
 
-const useAxiosResponseInterceptor = () => {
+const useAxiosInterceptor = () => {
     const navigate = useNavigate();
     const purge = async () => { await persistor.purge(); }
 
@@ -61,4 +61,4 @@ const useAxiosResponseInterceptor = () => {
     return null;
 };
 
-export default useAxiosResponseInterceptor;
+export default useAxiosInterceptor;
