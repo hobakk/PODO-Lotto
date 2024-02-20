@@ -22,7 +22,6 @@ const useAxiosResponseInterceptor = () => {
             const { exceptionType, msg } = error.response.data;
             if (exceptionType === "RE_ISSUANCE") {
                 const newConfig = error.response.config;
-            
                 return await axios.request(newConfig)
             } else if (exceptionType === "DONT_LOGIN") {
                 purge();
@@ -35,7 +34,7 @@ const useAxiosResponseInterceptor = () => {
                 navigate("/");
             } else if (exceptionType === "REFRESH_ISNULL") {
                 alert("토큰이 만료되어 로그아웃 됩니다");
-                await persistor.purge();
+                purge();
             }
 
             return Promise.reject(error.response);

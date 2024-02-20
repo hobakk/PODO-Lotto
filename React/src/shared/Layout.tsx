@@ -55,11 +55,6 @@ function Header() {
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [isHover, setIsHover] = useState<boolean>(false);
 
-  const logoutHandler = () => {
-    // setIsLogin(false);
-    logoutMutation.mutate();
-  }
-
   useEffect(()=>{ 
     if (nickname !== "" && role !== "") setIsLogin(true);
     else setIsLogin(false);
@@ -95,7 +90,7 @@ function Header() {
             <CommonLink to={"/my-page"} color={"#F29135"}>{nickname}</CommonLink> 님 반갑습니다
             <span 
               style={{ ...LogoutStyle, color: isHover ? "blue" : "black"}} 
-              onClick={logoutHandler} 
+              onClick={()=>logoutMutation.mutate()} 
               onMouseEnter={()=>setIsHover(true)}
               onMouseLeave={()=>setIsHover(false)}
             >
