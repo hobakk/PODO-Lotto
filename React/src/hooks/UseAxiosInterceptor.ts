@@ -24,6 +24,7 @@ const useAxiosResponseInterceptor = () => {
                 const newConfig = error.response.config;
                 return await axios.request(newConfig)
             } else if (exceptionType === "DONT_LOGIN") {
+                alert(msg);
                 purge();
                 navigate("/signin");
             } else if (exceptionType === "ACCESS_DENIED") {
