@@ -234,8 +234,11 @@ public class UserService {
 
 		for (int i = 0; i < userData.size(); i++) {
 			switch (i) {
-				case 0: if (userRepository.existsUserByEmail(inputData.get(i)))
-					throw new OverlapException("중복된 이메일입니다"); break;
+				case 0: {
+					if (user.getEmail().equals(inputData.get(0))) continue;
+					else if (userRepository.existsUserByEmail(inputData.get(i)))
+						throw new OverlapException("중복된 이메일입니다"); break;
+				}
 				case 1: if (passwordEncoder.matches(inputData.get(i), userData.get(i))) break;
 					else inputData.set(i, passwordEncoder.encode(inputData.get(i))); continue;
 				case 2: if (userRepository.existsUserByNickname(inputData.get(i)))
