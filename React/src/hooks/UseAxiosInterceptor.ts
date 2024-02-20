@@ -6,6 +6,7 @@ import { persistor } from "../config/configStore";
 
 const useAxiosResponseInterceptor = () => {
     const navigate = useNavigate();
+    const purge = async () => { await persistor.purge(); }
 
     const requestHandler = (request: InternalAxiosRequestConfig<any>) => {
         request.headers['Content-Type'] = 'application/json';
@@ -24,7 +25,7 @@ const useAxiosResponseInterceptor = () => {
             
                 return await axios.request(newConfig)
             } else if (exceptionType === "DONT_LOGIN") {
-                alert(msg);
+                purge();
                 navigate("/signin");
             } else if (exceptionType === "ACCESS_DENIED") {
                 alert(msg);
