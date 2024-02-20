@@ -5,7 +5,10 @@ import { Err, UnifiedResponse } from '../../shared/TypeMenu';
 import { MonthlyStatsReq, createMonthlyStats } from '../../api/lottoApi';
 
 function CreateMonthlyStats() {
-    const [currentYear, setCurrentYear] = useState<number>(0);
+    const [current, setCurrent] = useState<{year: number, month:number}>({
+      year: 0,
+      month: 0
+    });
     const [selectedYear, setSelectedYear] = useState<number>(0);
     const [selectedMonth, setSelectedMonth] = useState<number>(0);
 
@@ -22,19 +25,23 @@ function CreateMonthlyStats() {
 
     const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      const req: MonthlyStatsReq = {
-        year: selectedYear,
-        month: selectedMonth
-      }
+      if ( current.year === selectedYear && current.month <= selectedMonth) {
+        alert("당월 이전의 날짜만 서비스를 이용할 수 있습니다");
+      } else {
+        const req: MonthlyStatsReq = {
+          year: selectedYear,
+          month: selectedMonth
+        }
 
-      CreateMonthlyStatsMutation.mutate(req);
+        CreateMonthlyStatsMutation.mutate(req);
+      }
     }
 
     const range = (start: number, end: number): number[] => {
       return Array.from({ length: end - start + 1 }, (_, i) => start + i);
     };
 
-    const years: number[] = range(currentYear - 1, currentYear);
+    const years: number[] = range(current.year - 1, current.year);
     const months: number[] = range(1, 12);
 
     const FormStlye : React.CSSProperties = {
@@ -48,8 +55,10 @@ function CreateMonthlyStats() {
     }
 
     useEffect(()=>{ 
-        const currentYear = new Date().getFullYear();
-        setCurrentYear(currentYear);
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+        setCurrent({ year: currentYear, month: currentMonth + 1 });
     }, [])
 
   return (
