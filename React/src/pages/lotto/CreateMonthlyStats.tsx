@@ -44,17 +44,30 @@ function CreateMonthlyStats() {
       }
     }
 
+    const FormStlye : React.CSSProperties = {
+      display:"flex",
+      justifyContent: "center",
+      alignItems:"center",
+      backgroundColor:"#D4F0F0",
+      width:"17cm",
+      height:"2cm",
+      border:"2px solid black"
+    }
+
     useEffect(()=>{ 
-        
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth();
+        setYearMonth({ year: currentYear, month: currentMonth + 1 })
     }, [])
 
   return (
     <div style={ CommonStyle }>
       <h1 style={TitleStyle}>월별 통계 생성</h1>
-      <form onSubmit={onSubmitHandler} style={{ display:"flex" }}>
+      <form onSubmit={onSubmitHandler} style={FormStlye}>
         <InputBox value={yearMonth.year} name="year" onChange={onChangeHandler}/>
         <InputBox value={yearMonth.month} name="month" onChange={onChangeHandler} style={{ marginLeft:"auto" }}/>
-        <button>생성하기</button>
+        <button style={{ marginLeft:"20px", marginRight:"20px", height:"30px"}}>생성하기</button>
       </form>
     </div>
   )
