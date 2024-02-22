@@ -11,6 +11,9 @@ function useAttendance() {
             getCashAndNickname.mutate();
             alert(res.msg);
         },
+        onError: (err)=>{
+            alert (err);
+        }
     })
 
   return attendanceMutation;
