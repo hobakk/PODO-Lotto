@@ -92,21 +92,21 @@ public class LottoServiceTest {
 
 	@Test
 	void getAllMonthStats_success() {
-		when(lottoRepository.findAllByMonthStats()).thenReturn(List.of(lotto));
+		when(lottoRepository.findAllBySubject(anyString())).thenReturn(List.of(lotto));
 
 		YearMonthResponse response = lottoService.getAllMonthStats();
 
-		verify(lottoRepository).findAllByMonthStats();
+		verify(lottoRepository).findAllBySubject(anyString());
 		assertEquals(response.getYearMonthList(), List.of(lotto.getCreationDate().toString()));
 	}
 
 	@Test
 	void getAllMonthStats_fail_isEmpty() {
-		when(lottoRepository.findAllByMonthStats()).thenReturn(new ArrayList<>());
+		when(lottoRepository.findAllBySubject(anyString())).thenReturn(new ArrayList<>());
 
 		Assertions.assertThrows(IllegalArgumentException.class, () -> lottoService.getAllMonthStats());
 
-		verify(lottoRepository).findAllByMonthStats();
+		verify(lottoRepository).findAllBySubject(anyString());
 	}
 
 	@Test
