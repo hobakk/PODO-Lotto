@@ -102,6 +102,7 @@ public class LottoService {
 	private List<String> getAllMonthIndex() {
 		List<String> yearMonthList = lottoRepository.findAllBySubject("Stats").stream()
 			.map(lotto -> lotto.getCreationDate().toString())
+			.sorted()
 			.collect(Collectors.toList());
 
 		if (yearMonthList.isEmpty()) throw new IllegalArgumentException("해당 정보를 찾을 수 없습니다");
