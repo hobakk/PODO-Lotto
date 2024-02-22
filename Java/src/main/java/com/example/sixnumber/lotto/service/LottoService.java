@@ -50,19 +50,19 @@ public class LottoService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
 	}
 
-	@Cacheable(value = "MonthStats", key = "#yearMonth")
+	@Cacheable(value = "MonthlyStats", key = "#yearMonth")
 	public LottoResponse getTopNumberForMonth(YearMonth yearMonth) {
 		return lottoRepository.findByTopNumbersForMonth(yearMonth)
 			.map(lotto -> new LottoResponse(lotto.getCountList(), lotto.getTopNumber()))
 			.orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
 	}
 
-	@Cacheable(value = "MonthStats", key = "'all'")
+	@Cacheable(cacheNames = "MonthlyStatsIndex", key = "'all'")
 	public YearMonthResponse getAllMonthStats() {
 		return new YearMonthResponse(getAllMonthIndex());
 	}
 
-	@CachePut(value = "MonthStats", key = "'all'")
+	@CachePut(cacheNames = "MonthlyStatsIndex", key = "'all'")
 	public YearMonthResponse updateCacheWithAllMonthlyStatsIndex() {
 		return new YearMonthResponse(getAllMonthIndex());
 	}
