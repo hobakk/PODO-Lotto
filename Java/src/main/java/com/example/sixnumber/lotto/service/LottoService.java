@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,13 +59,12 @@ public class LottoService {
 
 	@Cacheable(value = "MonthStats", key = "'all'")
 	public YearMonthResponse getAllMonthStats() {
-		List<String> yearMonthList = lottoRepository.findAllBySubject("Stats").stream()
-			.map(lotto -> lotto.getCreationDate().toString())
-			.collect(Collectors.toList());
+		return new YearMonthResponse(getAllMonthIndex());
+	}
 
-		if (yearMonthList.isEmpty()) throw new IllegalArgumentException("해당 정보를 찾을 수 없습니다");
-
-		return new YearMonthResponse(yearMonthList);
+	@CachePut(value = "MonthStats", key = "'all'")
+	public YearMonthResponse updateCacheWithAllMonthlyStatsIndex() {
+		return new YearMonthResponse(getAllMonthIndex());
 	}
 
 	public UnifiedResponse<?> createMonthlyReport(int year, int month) {
@@ -95,6 +95,17 @@ public class LottoService {
 
 		Lotto lotto = new Lotto("Stats", "Scheduler", yearMonth, countList, result);
 		lottoRepository.save(lotto);
+		updateCacheWithAllMonthlyStatsIndex();
 		return UnifiedResponse.ok("월별 통계 생성완료");
+	}
+
+	private List<String> getAllMonthIndex() {
+		List<String> yearMonthList = lottoRepository.findAllBySubject("Stats").stream()
+			.map(lotto -> lotto.getCreationDate().toString())
+			.collect(Collectors.toList());
+
+		if (yearMonthList.isEmpty()) throw new IllegalArgumentException("해당 정보를 찾을 수 없습니다");
+
+		return yearMonthList;
 	}
 }
