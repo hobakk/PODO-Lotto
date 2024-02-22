@@ -1,7 +1,6 @@
 package com.example.sixnumber.lotto.service;
 
 import java.time.YearMonth;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,11 +58,11 @@ public class LottoService {
 
 	@Cacheable(value = "MonthStats", key = "'all'")
 	public YearMonthResponse getAllMonthStats() {
-		List<String> yearMonthList = new ArrayList<>();
-		lottoRepository.findAllByMonthStats().stream()
-			.findAny()
-			.map(lotto -> yearMonthList.add((lotto.getCreationDate()).toString()))
-			.orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
+		List<String> yearMonthList = lottoRepository.findAllBySubject("Stats").stream()
+			.map(lotto -> lotto.getCreationDate().toString())
+			.collect(Collectors.toList());
+
+		if (yearMonthList.isEmpty()) throw new IllegalArgumentException("해당 정보를 찾을 수 없습니다");
 
 		return new YearMonthResponse(yearMonthList);
 	}
