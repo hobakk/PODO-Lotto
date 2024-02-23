@@ -29,12 +29,12 @@ public class WinNumberService {
 	private final WinNumberRepository winNumberRepository;
 	private final Manager manager;
 
-	@Cacheable(value = "WinNumbers", key = "'all'")
+	@Cacheable(cacheNames = "WinNumbers", key = "'all'")
 	public WinNumberResponse getWinNumbers() {
 		return transform(getSortingWinNumbers());
 	}
 
-	@CachePut(value = "WinNumbers", key = "'all'")
+	@CachePut(cacheNames = "WinNumbers", key = "'all'")
 	public WinNumberResponse setWinNumbers(int round) {
 		WinNumber winNumber = manager.retrieveLottoResult(round)
 			.map(WinNumber::new)
@@ -49,7 +49,7 @@ public class WinNumberService {
 		return transform(getSortingWinNumbers());
 	}
 
-	@CachePut(value = "WinNumbers", key = "'all'")
+	@CachePut(cacheNames = "WinNumbers", key = "'all'")
 	public WinNumberResponse updateCache(List<WinNumber> winNumberList) {
 		return transform(winNumberList);
 	}

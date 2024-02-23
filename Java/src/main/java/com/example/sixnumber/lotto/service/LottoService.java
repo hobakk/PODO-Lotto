@@ -35,7 +35,7 @@ public class LottoService {
 	private final SixNumberRepository sixNumberRepository;
 	private final Manager manager;
 
-	@Cacheable(cacheNames = "MainStats", key = "'all'")
+	@Cacheable(value = "MainStats", key = "'all'")
 	public LottoResponse mainTopNumbers() {
 		return lottoRepository.findByMain()
 			.map(lotto -> {
@@ -50,7 +50,7 @@ public class LottoService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
 	}
 
-	@Cacheable(value = "MonthlyStats", key = "#yearMonth")
+	@Cacheable(cacheNames = "MonthlyStats", key = "#yearMonth")
 	public LottoResponse getTopNumberForMonth(YearMonth yearMonth) {
 		return lottoRepository.findByTopNumbersForMonth(yearMonth)
 			.map(lotto -> new LottoResponse(lotto.getCountList(), lotto.getTopNumber()))

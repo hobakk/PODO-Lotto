@@ -44,7 +44,7 @@ public class RedisConfig {
 	@Bean
 	public RedisCacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
 		RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-			.entryTtl(Duration.ZERO)
+			.entryTtl(Duration.ofMinutes(15))
 			.disableCachingNullValues()
 			.serializeKeysWith(RedisSerializationContext
 				.SerializationPair
@@ -54,8 +54,9 @@ public class RedisConfig {
 				.fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
 		Map<String, RedisCacheConfiguration> cacheConfigurationMap = new HashMap<>();
-		cacheConfigurationMap.put("MainStats", redisCacheConfiguration.entryTtl(Duration.ofMinutes(15)));
+		cacheConfigurationMap.put("MonthlyStats", redisCacheConfiguration.entryTtl(Duration.ZERO));
 		cacheConfigurationMap.put("MonthlyStatsIndex", redisCacheConfiguration.entryTtl(Duration.ofDays(3)));
+		cacheConfigurationMap.put("WinNumbers", redisCacheConfiguration.entryTtl(Duration.ZERO));
 
 		return RedisCacheManager
 			.RedisCacheManagerBuilder
