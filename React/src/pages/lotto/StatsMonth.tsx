@@ -11,6 +11,11 @@ function StatsMonth() {
     const [yearMonth, setYearMonth] = useState<string>("");
     const [value, setValue] = useState<LottoResponse>({countList: [], value: ""});
     const [show, setShow] = useState<boolean>(false);
+    const [selectedYear, setSelectedYear] = useState<string>('');
+    const [yearRange, setYearRange] = useState<{minYear: number, maxYear:number}>({
+        minYear: 0,
+        maxYear: 0
+    });
 
     const allMonthStatsMutation = useMutation<UnifiedResponse<AllMonthProps>, any>(getAllMonthStats, {
         onSuccess: (res)=>{
@@ -37,10 +42,34 @@ function StatsMonth() {
     }, [])
 
     useEffect(()=>{
+        if (yMList.length !== 0) {
+            const min = yMList[0].split("-")[0];
+            const max = yMList[yMList.length -1].split("-")[0];
+            setYearRange({
+                minYear: parseInt(min) +1,
+                maxYear: parseInt(max) +1
+            });
+        }
+    }, [yMList])
+
+    useEffect(()=>{
         if (yearMonth !== "") {
             getMonthStatsMutation.mutate(yearMonth);
         }
     }, [yearMonth])
+
+    const range = (start: number, end: number): number[] => {
+        return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    };
+
+    const years: number[] = range(yearRange.minYear - 1, yearRange.maxYear);
+
+    const DivStlye : React.CSSProperties = {
+        display:"flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems:"center",
+    }
 
   return (
     <div style={ CommonStyle }>
@@ -63,22 +92,41 @@ function StatsMonth() {
                 )}
             </>
         ):(
-            <div style={{ marginTop: "2cm"}}>
+            <div style={DivStlye}>
+                <div style={{ ...DivStlye, width:"6cm", height:"2cm", border:"2px solid black",
+                    backgroundColor:"#D4F0F0", marginBottom:"30px" }}
+                >
+                    <select 
+                        value={selectedYear} 
+                        onChange={(e)=>{setSelectedYear(e.target.value)}}
+                        style={{ width:"3cm", height:"0.7cm", textAlign:"center", fontSize:"16px" }}
+                    >
+                        <option value="">년도 선택</option>
+                        {years.map((year: number) => (
+                            <option key={year} value={year}>
+                                {year}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
                 {yMList.length !== 0 ? (
                     yMList.map((str, index)=>{
-                        return (
-                            <div key={`buttons${index}`}>
-                                <button 
-                                    onClick={()=>{
-                                        setYearMonth(str);
-                                        setShow(!show);
-                                    }} 
-                                    style={{ width: "3cm", height: "1cm", fontSize: "20px" }} 
-                                >
-                                    {str}
-                                </button>
-                            </div>
-                        )
+                        if (str.split("-")[0] === selectedYear) {
+                            return (
+                                <div key={`buttons${index}`}>
+                                    <button 
+                                        onClick={()=>{
+                                            setYearMonth(str);
+                                            setShow(!show);
+                                        }} 
+                                        style={{ width: "3cm", height: "1cm", fontSize: "20px", marginBottom:"5px" }} 
+                                    >
+                                        {str}
+                                    </button>
+                                </div>
+                            )  
+                        }
                     })
                 ):(<div>월 통계가 존재하지 않습니다</div>)}
             </div>
