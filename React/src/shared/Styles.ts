@@ -60,6 +60,13 @@ export const CommentStyle: React.CSSProperties = {
   padding:"20px"
 }
 
+export const SelectStyle: React.CSSProperties = {
+  width:"3cm",
+  height:"0.7cm", 
+  textAlign:"center", 
+  fontSize:"16px"
+}
+
 type UlBoxProps = { 
   width?: string;
   height?: string;

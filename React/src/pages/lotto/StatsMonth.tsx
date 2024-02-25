@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CommonStyle } from '../../shared/Styles'
+import { CommonStyle, SelectStyle } from '../../shared/Styles'
 import { useMutation } from 'react-query';
 import { AllMonthProps, LottoResponse, getAllMonthStats, getTopNumberForMonth } from '../../api/lottoApi';
 import { NumSentenceResult } from '../../components/Manufacturing';
@@ -99,7 +99,7 @@ function StatsMonth() {
                     <select 
                         value={selectedYear} 
                         onChange={(e)=>{setSelectedYear(e.target.value)}}
-                        style={{ width:"3cm", height:"0.7cm", textAlign:"center", fontSize:"16px" }}
+                        style={SelectStyle}
                     >
                         <option value="">년도 선택</option>
                         {years.map((year: number) => (

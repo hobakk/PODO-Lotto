@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CommonStyle, InputBox, TitleStyle } from '../../shared/Styles'
+import { CommonStyle, InputBox, SelectStyle, TitleStyle } from '../../shared/Styles'
 import { useMutation } from 'react-query';
 import { Err, UnifiedResponse } from '../../shared/TypeMenu';
 import { MonthlyStatsReq, createMonthlyStats } from '../../api/lottoApi';
@@ -65,23 +65,31 @@ function CreateMonthlyStats() {
     <div style={ CommonStyle }>
       <h1 style={TitleStyle}>월별 통계 생성</h1>
       <form onSubmit={onSubmitHandler} style={FormStlye}>
-        <select value={selectedYear} onChange={(e)=>{setSelectedYear(parseInt(e.target.value))}}>
+        <select 
+          value={selectedYear} 
+          onChange={(e)=>{setSelectedYear(parseInt(e.target.value))}}
+          style={SelectStyle}
+        >
+          <option value="">년도 선택</option>
           {years.map((year: number) => (
             <option key={year} value={year}>
               {year}
             </option>
           ))}
         </select>
-        <span style={{ marginLeft:"5px", marginRight:"10px" }}>년</span>
-        <select value={selectedMonth} onChange={(e)=>{setSelectedMonth(parseInt(e.target.value))}}>
+        <select 
+          value={selectedMonth} 
+          onChange={(e)=>{setSelectedMonth(parseInt(e.target.value))}}
+          style={{ ...SelectStyle, marginLeft:"20px"}}
+        >
+          <option value="">월 선택</option>
           {months.map((month: number) => (
             <option key={month} value={String(month)}>
               {month}
             </option>
           ))}
         </select>
-        <span style={{ marginLeft:"5px", marginRight:"10px" }}>월</span>
-        <button style={{ marginLeft:"20px", marginRight:"20px", height:"20px"}}>생성하기</button>
+        <button style={{ marginLeft:"20px", marginRight:"20px", ...SelectStyle}}>생성하기</button>
       </form>
     </div>
   )
