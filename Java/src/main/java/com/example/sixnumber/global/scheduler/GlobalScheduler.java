@@ -1,7 +1,6 @@
 package com.example.sixnumber.global.scheduler;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.Comparator;
 import java.util.List;
 
@@ -34,10 +33,11 @@ public class GlobalScheduler {
 	private final RedisTemplate<String, String> redisTemplate;
 	private final Manager manager;
 
-	@Scheduled(cron = "0 0 11 ? * SUN")
-	public void findByTopNumberListForMonth() {
-		YearMonth lastMonth = YearMonth.now().minusMonths(1);
-		lottoService.createMonthlyReport(lastMonth.getYear(), lastMonth.getMonthValue());
+	@Scheduled(cron = "0 0 11 ? * *")
+	public void createMonthlyReportForPreviousMonth() {
+		LocalDate currentDate = LocalDate.now();
+		if (currentDate.getDayOfMonth() == 1)
+			lottoService.createMonthlyReport(currentDate.getYear(), currentDate.getMonthValue() - 1);
 	}
 
 	@Scheduled(cron = "0 0 9 * * *")
