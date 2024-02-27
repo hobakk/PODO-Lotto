@@ -43,11 +43,13 @@ function StatsMonth() {
 
     useEffect(()=>{
         if (yMList.length !== 0) {
-            const min = yMList[0].split("-")[0];
-            const max = yMList[yMList.length -1].split("-")[0];
+            let min = parseInt(yMList[0].split("-")[0]);
+            const max = parseInt(yMList[yMList.length -1].split("-")[0]);
+            if (min === max) min--;
+
             setYearRange({
-                minYear: parseInt(min) +1,
-                maxYear: parseInt(max) +1
+                minYear: min,
+                maxYear: max
             });
         }
     }, [yMList])
@@ -62,7 +64,7 @@ function StatsMonth() {
         return Array.from({ length: end - start + 1 }, (_, i) => start + i);
     };
 
-    const years: number[] = range(yearRange.minYear - 1, yearRange.maxYear);
+    const years: number[] = range(yearRange.minYear, yearRange.maxYear);
 
     const DivStlye : React.CSSProperties = {
         display:"flex",
