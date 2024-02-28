@@ -63,44 +63,58 @@ function MyPage() {
         setWithdrawMsg(e.target.value);
     }
 
+    const BoardStyle: React.CSSProperties = {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        border:"2px solid black", 
+        width:"20cm",
+        padding:"20px",
+        backgroundColor:"#D4F0F0",
+      }
+
   return (
-    <div style={ CommonStyle }>
-        <h1 style={ TitleStyle }>내정보</h1>
-        <div style={ MsgAndInput }>
-            <span style={{ width:"30%" }}>Email:</span>
-            <span style={ InputBoxStyle }>{userIf.email}</span>
-        </div>
-        <div style={ MsgAndInput }>
-            <span style={{ width:"30%" }}>Nickname:</span>
-            <span style={ InputBoxStyle }>{userIf.nickname}</span>
-        </div>
-        <div style={ MsgAndInput }>
-            <span style={{ width:"30%" }}>Cash:</span>
-            <span style={ InputBoxStyle }>{userIf.cash}</span>
-        </div>
-        <div style={ MsgAndInput }>
-            <span style={{ width:"30%" }}>Role:</span>
-            <span style={ InputBoxStyle }>{role}</span>
-        </div>
-        <button 
-            style={ ButtonStlye }
-            onClick={()=>(navigate("/my-page/update"))}
-        >
-            내정보 수정하기
-        </button>
-        
-        {role !== "관리자" && (
-            <div style={{ marginTop: '3cm', }}>
-                <form id='form' onSubmit={sunmitHandler} style={ MsgAndInput }>
-                    <InputBox 
-                        onChange={onChangeHandler} 
-                        type='text' 
-                        placeholder='회원탈퇴 입력'
-                    />
-                    <button style={{ width:"3cm", height:"31px" }}>회원탈퇴</button>
-                </form>
+    <div style={{ minHeight:"80vh" }}>
+        <div style={ BoardStyle }>
+            <h1 style={{ fontSize: "40px", marginBottom: "1cm" }}>내정보</h1>
+            <div style={{ backgroundColor:"white", padding:"50px", border:"2px solid black" }}>
+                <div style={ MsgAndInput }>
+                    <span style={{ width:"30%" }}>Email:</span>
+                    <span style={ InputBoxStyle }>{userIf.email}</span>
+                </div>
+                <div style={ MsgAndInput }>
+                    <span style={{ width:"30%" }}>Nickname:</span>
+                    <span style={ InputBoxStyle }>{userIf.nickname}</span>
+                </div>
+                <div style={ MsgAndInput }>
+                    <span style={{ width:"30%" }}>Cash:</span>
+                    <span style={ InputBoxStyle }>{userIf.cash}</span>
+                </div>
+                <div style={ MsgAndInput }>
+                    <span style={{ width:"30%" }}>Role:</span>
+                    <span style={ InputBoxStyle }>{role}</span>
+                </div>
             </div>
-        )}
+            <button 
+                style={ ButtonStlye }
+                onClick={()=>(navigate("/my-page/update"))}
+            >
+                내정보 수정하기
+            </button>
+            
+            {role !== "관리자" && (
+                <div style={{ marginTop: '3cm', }}>
+                    <form id='form' onSubmit={sunmitHandler} style={ MsgAndInput }>
+                        <InputBox 
+                            onChange={onChangeHandler} 
+                            type='text' 
+                            placeholder='회원탈퇴 입력'
+                        />
+                        <button style={{ width:"3cm", height:"31px" }}>회원탈퇴</button>
+                    </form>
+                </div>
+            )}
+        </div>
     </div>
   )
 }
