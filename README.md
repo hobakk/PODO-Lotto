@@ -22,7 +22,7 @@
 https://github.com/hobakk/PODO-Lotto/blob/main/podo_erd.png</br>
 https://podo-lotto.site/
 
-<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/1d7719faf81ee4a3677f3fb16e8fe4676965d272/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L61)</h2>
+<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/48f5d9bb5df96a9cf2e6619159a55f1238e41d7f/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L61)</h2>
 
 ### 1. 회원가입
 sendAuthCodeToEmail, compareAuthCode, signUp
@@ -47,7 +47,7 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 - 조회: 닉네임과 캐쉬, 충전요청, 거래명세, 회원 정보, 비밀번호 재확인, 최근 구매한 번호 리스트
 - 수정: 회원정보, 비밀번호 찾기, 출석 체크
 
-<br/><br/><h2>Admin [Service](https://github.com/hobakk/PODO-Lotto/blob/694e68dd9c749b2edfefc4114dab18e3fa30ef5c/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L35)</h2>
+<br/><br/><h2>Admin [Service](https://github.com/hobakk/PODO-Lotto/blob/main/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L35)</h2>
 
 ### 1. 모든 유저 조회, 모든 충전요청 조회
 - FE: 조회된 정보들을 Nickname, cash 값으로 필터링
@@ -56,7 +56,7 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 - 조회: 충전요청 검색
 - 수정: 관리자 등록, 충전, 차감, 상태 수정, 권한 수정
 
-<br/><br/><h2>Lotto [Service](https://github.com/hobakk/PODO-Lotto/blob/bfb80e761d2bb514c7d2b88cc0a6abacd2aa53d5/Java/src/main/java/com/example/sixnumber/lotto/service/LottoService.java#L21)</h2>
+<br/><br/><h2>Lotto [Service](https://github.com/hobakk/PODO-Lotto/blob/48f5d9bb5df96a9cf2e6619159a55f1238e41d7f/Java/src/main/java/com/example/sixnumber/lotto/service/LottoService.java#L32)</h2>
 
 Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.tistory.com/131)
 ### 1. 메인 로또 통계
@@ -64,7 +64,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 ### 2. 월 통계, 저장된 월 통계 YearMonth(index)
 - entryTtl 제한을 두지 않음
 
-<br/><br/><h2>SixNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/8c45bd1c971c3d5b876bb653ed916aa44af50ec2/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L44)</h2>
+<br/><br/><h2>SixNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/48f5d9bb5df96a9cf2e6619159a55f1238e41d7f/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L45)</h2>
 
 ### 1. 랜덤 번호 추천
 ### 2. 반복 연산된 번호 추천
@@ -73,7 +73,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 - 주어진 조건에 따라 무작위로 숫자를 생성하고, 그 중에서 가장 자주 등장하는 숫자를 찾아 리스트로 반환
 ### 3. 이전 구매번호 조회
 
-<br/><br/><h2>WinNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/d95c994a0d2a1d4590f8981960fcd530c0787986/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L28)</h2>
+<br/><br/><h2>WinNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/48f5d9bb5df96a9cf2e6619159a55f1238e41d7f/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L28)</h2>
 
 Redis Cache 사용해서 속도 개선
 ### 1. 당첨번호 조회
@@ -83,25 +83,25 @@ Redis Cache 사용해서 속도 개선
 - openApi 파싱해 값을 가져옴
 ### 3. 캐시 업데이트
 
-<br/><br/><h2>BoardService [Service](https://github.com/hobakk/PODO-Lotto/blob/d95c994a0d2a1d4590f8981960fcd530c0787986/Java/src/main/java/com/example/sixnumber/board/service/BoardService.java#L24)</h2>
+<br/><br/><h2>Board [Service](https://github.com/hobakk/PODO-Lotto/blob/48f5d9bb5df96a9cf2e6619159a55f1238e41d7f/Java/src/main/java/com/example/sixnumber/board/service/BoardService.java#L27)</h2>
 
 ### 문의 CRUD
 - 처리되지 않는 문의는 최대 3개까지 등록이 가능하며
 - 본인이 작성한 문의일 경우 조회, 수정, 삭제 가능
 - 관리자의 경우 모두 허용
 
-<br/><br/><h2>CommentService [Service](https://github.com/hobakk/PODO-Lotto/blob/d95c994a0d2a1d4590f8981960fcd530c0787986/Java/src/main/java/com/example/sixnumber/board/service/CommentService.java#L24)</h2>
+<br/><br/><h2>Comment [Service](https://github.com/hobakk/PODO-Lotto/blob/48f5d9bb5df96a9cf2e6619159a55f1238e41d7f/Java/src/main/java/com/example/sixnumber/board/service/CommentService.java#L24)</h2>
 
 ### 댓글 CRUD
 - 문의 특성상 많은 댓글이 필요하지 않아 관리자의 답변 한번당 댓글 한번 달 수 있도록 제한을 둠
 - 본인이 작성한 문의일 경우 조회, 수정, 삭제 가능
 - 관리자의 경우 모두 허용
 
-<br/><br/><h2>Scheduler [Service](https://github.com/hobakk/PODO-Lotto/blob/d95c994a0d2a1d4590f8981960fcd530c0787986/Java/src/main/java/com/example/sixnumber/global/scheduler/GlobalScheduler.java#L35)</h2>
+<br/><br/><h2>Scheduler [Service](https://github.com/hobakk/PODO-Lotto/blob/48f5d9bb5df96a9cf2e6619159a55f1238e41d7f/Java/src/main/java/com/example/sixnumber/global/scheduler/GlobalScheduler.java#L27)</h2>
 
 ### 1. 월 통계 생성
-- 현재 기준 저번달 통계가 존재하지 않을 때 통계를 생성 및 저장
-### 2. 프리미엄 등록 또는 해제
+- 매일 오전 11시에 동작되며, 매월 1일에 이전 달 통계를 생성
+### 2. 프리미엄 연 또는 해제
 - 프리미엄 등록 이후 31일 경과시 5000원 차감
 - 조건에 부합하지 않다면 프리미엄 해제
 ### 3. 탈퇴한 유저 정보 일괄 삭제
