@@ -36,6 +36,7 @@ import com.example.sixnumber.user.dto.StatementModifyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
+import com.example.sixnumber.user.dto.WinningNumberResponse;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.service.UserService;
 
@@ -193,5 +194,12 @@ public class UserController {
 		UnifiedResponse<?> response = userService.attendance(user);
 		if (response.getCode() == 200) return ResponseEntity.ok(response);
 		else return ResponseEntity.badRequest().body(response);
+	}
+
+	@GetMapping("/check-lastweek-lotto")
+	public ResponseEntity<UnifiedResponse<List<WinningNumberResponse>>> checkLottoWinLastWeek(
+		@AuthenticationPrincipal User user
+	) {
+		return ResponseEntity.ok(userService.checkLottoWinLastWeek(user.getId()));
 	}
 }
