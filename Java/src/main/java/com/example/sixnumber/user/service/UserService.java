@@ -5,6 +5,7 @@ import static com.example.sixnumber.global.exception.ErrorCode.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,6 +35,9 @@ import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
 import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.lotto.entity.SixNumber;
+import com.example.sixnumber.lotto.entity.WinNumber;
+import com.example.sixnumber.lotto.repository.SixNumberRepository;
+import com.example.sixnumber.lotto.service.WinNumberService;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
@@ -46,6 +50,7 @@ import com.example.sixnumber.user.dto.SignupRequest;
 import com.example.sixnumber.user.dto.StatementModifyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.dto.UserResponse;
+import com.example.sixnumber.user.dto.WinningNumberResponse;
 import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.StatementRepository;
@@ -61,6 +66,8 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final SixNumberRepository sixNumberRepository;
+	private final WinNumberService winNumberService;
 	private final StatementRepository statementRepository;
 	private final JwtProvider jwtProvider;
 	private final PasswordEncoder passwordEncoder;
@@ -339,6 +346,38 @@ public class UserService {
 			});
 	}
 
+	public UnifiedResponse<List<WinningNumberResponse>> checkLottoWinLastWeek() {
+		WinNumber lastWeekWinNumber = winNumberService.getFirstWinNumber();
+		String[] splitYearMonthString = lastWeekWinNumber.getData().split("-");
+		int year = Integer.parseInt(splitYearMonthString[0]);
+		int month = Integer.parseInt(splitYearMonthString[1]);
+		int day = Integer.parseInt(splitYearMonthString[2]);
+		
+		LocalDateTime winningDate = LocalDateTime.of(year, month, day, 22, 0);
+		LocalDateTime startDate = winningDate.minusDays(6).minusHours(14);
+		List<WinningNumberResponse> winningNumberResponses =
+			sixNumberRepository.findAllByBuyDateAfterAndBuyDateBefore(startDate, winningDate).stream()
+				.findAny()
+				.map(sixNumber -> sixNumber.getNumberList().stream()
+					.filter(sentence ->  getWinningNumbers(lastWeekWinNumber, sentence) >= 3)
+					.map(sentence -> {
+						int numberOfWins = getWinningNumbers(lastWeekWinNumber, sentence);
+						if (numberOfWins == 5) {
+							String replaceValue = sentence
+								.replaceFirst(String.valueOf(lastWeekWinNumber.getBonus()), "");
+							if (sentence.length() != replaceValue.length()) numberOfWins = 7;
+						}
+
+						return new WinningNumberResponse(sentence, numberOfWins);
+					})
+					.collect(Collectors.toList()))
+				.orElseThrow(()-> new CustomException(NOT_FOUND));
+
+		if (winningNumberResponses.isEmpty()) throw new IllegalArgumentException("아쉽지만 당첨되지 않으셨습니다");
+
+		return UnifiedResponse.ok("당첨 이력 조회 성공", winningNumberResponses);
+	}
+
 	private int generateRandomNumber(int range) {
 		Random random = new Random();
 		return random.nextInt(range);
@@ -373,5 +412,19 @@ public class UserService {
 		else point = 100;
 
 		return point;
+	}
+
+	private int getWinningNumbers(WinNumber lastWeekWinNumber, String sentence) {
+		int count = 0;
+		for (String numberStr : sentence.split(" ")) {
+			for (int winningNumber : lastWeekWinNumber.getTopNumberList()) {
+				if (Integer.parseInt(numberStr) == winningNumber) {
+					count++;
+					break;
+				}
+			}
+		}
+
+		return count;
 	}
 }
