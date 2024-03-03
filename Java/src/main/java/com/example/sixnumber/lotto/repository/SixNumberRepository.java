@@ -18,5 +18,5 @@ public interface SixNumberRepository extends JpaRepository<SixNumber, Long> {
 	@Query("SELECT s FROM SixNumber s WHERE YEAR(s.buyDate) = :year AND MONTH(s.buyDate) = :month")
 	List<SixNumber> findAllByBuyDate(@Param("year") int year, @Param("month") int month);
 
-	List<SixNumber> findAllByBuyDateAfterAndBuyDateBefore(LocalDateTime startDate, LocalDateTime lastDate);
+	List<SixNumber> findAllByUserIdAndBuyDateAfterAndBuyDateBefore(Long userId, LocalDateTime startDate, LocalDateTime lastDate);
 }

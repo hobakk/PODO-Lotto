@@ -346,7 +346,7 @@ public class UserService {
 			});
 	}
 
-	public UnifiedResponse<List<WinningNumberResponse>> checkLottoWinLastWeek() {
+	public UnifiedResponse<List<WinningNumberResponse>> checkLottoWinLastWeek(Long userId) {
 		WinNumber lastWeekWinNumber = winNumberService.getFirstWinNumber();
 		String[] splitYearMonthString = lastWeekWinNumber.getData().split("-");
 		int year = Integer.parseInt(splitYearMonthString[0]);
@@ -356,7 +356,7 @@ public class UserService {
 		LocalDateTime winningDate = LocalDateTime.of(year, month, day, 22, 0);
 		LocalDateTime startDate = winningDate.minusDays(6).minusHours(14);
 		List<WinningNumberResponse> winningNumberResponses =
-			sixNumberRepository.findAllByBuyDateAfterAndBuyDateBefore(startDate, winningDate).stream()
+			sixNumberRepository.findAllByUserIdAndBuyDateAfterAndBuyDateBefore(userId, startDate, winningDate).stream()
 				.findAny()
 				.map(sixNumber -> sixNumber.getNumberList().stream()
 					.filter(sentence ->  getWinningNumbers(lastWeekWinNumber, sentence) >= 3)
