@@ -107,12 +107,12 @@ public class GlobalSchedulerTest {
 
 	@Test
 	void updateLottoResultsOnSunday_success() {
-		when(winNumberService.getTopRound()).thenReturn(1075);
+		when(winNumberService.getFirstWinNumber()).thenReturn(TestDataFactory.winNumber());
 		when(manager.retrieveLottoResult(1075)).thenReturn(Optional.of(TestDataFactory.winNumberRequest()));
 
 		globalScheduler.updateLottoResultsOnSunday();
 
-		verify(winNumberService).getTopRound();
+		verify(winNumberService).getFirstWinNumber();
 		verify(manager).retrieveLottoResult(anyInt());
 		verify(winNumberRepository).save(any(WinNumber.class));
 		verify(winNumberService).updateCache(anyList());
