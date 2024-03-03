@@ -72,7 +72,7 @@ public class GlobalScheduler {
 
 	@Scheduled(cron = "0 0 6 ? * SUN")
 	public void updateLottoResultsOnSunday() {
-		int nextRound = winNumberService.getTopRound() + 1;
+		int nextRound = winNumberService.getFirstWinNumber().getTime() + 1;
 		WinNumber winNumber = manager.retrieveLottoResult(nextRound)
 			.map(WinNumber::new)
 			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
