@@ -165,3 +165,17 @@ export const attendance = async (): Promise<UnifiedResponse<undefined>> => {
         throw error.data.msg;
     }
 }
+
+export type WinningNumberRes = {
+    numberList: number[],
+    rank: number,
+}
+
+export const checkLottoWinLastWeek = async (): Promise<UnifiedResponse<WinningNumberRes[]>> => {
+    try {
+        const { data } = await api.get("/users/check-lastweek-lotto");
+        return data;
+    } catch (error: any) {
+        throw error.data.msg;
+    }
+}
