@@ -630,4 +630,20 @@ public class UserServiceTest {
 		);
 		TestUtil.UnifiedResponseListEquals(response, 200, "당첨 이력 조회 성공");
 	}
+
+	@Test
+	void checkLottoWinLastWeek_NotFound() {
+		when(winNumberService.getFirstWinNumber()).thenReturn(TestDataFactory.winNumber());
+		when(sixNumberRepository.findAllByUserIdAndBuyDateAfterAndBuyDateBefore(
+			anyLong(), any(LocalDateTime.class), any(LocalDateTime.class)
+		)).thenReturn(new ArrayList<>());
+
+		Assertions.assertThrows(CustomException.class,
+			()->userService.checkLottoWinLastWeek(saveUser.getId()));
+
+		verify(winNumberService).getFirstWinNumber();
+		verify(sixNumberRepository).findAllByUserIdAndBuyDateAfterAndBuyDateBefore(
+			anyLong(), any(LocalDateTime.class), any(LocalDateTime.class)
+		);
+	}
 }
