@@ -167,7 +167,7 @@ export const attendance = async (): Promise<UnifiedResponse<undefined>> => {
 }
 
 export type WinningNumberRes = {
-    numberList: number[],
+    numberSentence: string,
     rank: number,
 }
 
