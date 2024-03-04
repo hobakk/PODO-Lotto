@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +37,8 @@ import com.example.sixnumber.global.util.JwtProvider;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
 import com.example.sixnumber.lotto.dto.SixNumberResponse;
+import com.example.sixnumber.lotto.repository.SixNumberRepository;
+import com.example.sixnumber.lotto.service.WinNumberService;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
 import com.example.sixnumber.user.dto.ChargingRequest;
 import com.example.sixnumber.user.dto.ChargingResponse;
@@ -49,6 +52,7 @@ import com.example.sixnumber.user.dto.StatementModifyMsgRequest;
 import com.example.sixnumber.user.dto.StatementResponse;
 import com.example.sixnumber.user.dto.UserResponse;
 import com.example.sixnumber.user.dto.UserResponseAndEncodedRefreshDto;
+import com.example.sixnumber.user.dto.WinningNumberResponse;
 import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.StatementRepository;
@@ -66,6 +70,10 @@ public class UserServiceTest {
 	private UserRepository userRepository;
 	@Mock
 	private StatementRepository statementRepository;
+	@Mock
+	private SixNumberRepository sixNumberRepository;
+	@Mock
+	private WinNumberService winNumberService;
 	@Mock
 	private JwtProvider jwtProvider;
 	@Mock
@@ -605,5 +613,21 @@ public class UserServiceTest {
 		verify(userRepository).save(any(User.class));
 		assertEquals(response.getCode(), 200);
 		assertNotNull(response.getMsg());
+	}
+
+	@Test
+	void checkLottoWinLastWeek_success() {
+		when(winNumberService.getFirstWinNumber()).thenReturn(TestDataFactory.winNumber());
+		when(sixNumberRepository.findAllByUserIdAndBuyDateAfterAndBuyDateBefore(
+			anyLong(), any(LocalDateTime.class), any(LocalDateTime.class)
+		)).thenReturn(List.of(TestDataFactory.sixNumber()));
+
+		UnifiedResponse<List<WinningNumberResponse>> response = userService.checkLottoWinLastWeek(saveUser.getId());
+
+		verify(winNumberService).getFirstWinNumber();
+		verify(sixNumberRepository).findAllByUserIdAndBuyDateAfterAndBuyDateBefore(
+			anyLong(), any(LocalDateTime.class), any(LocalDateTime.class)
+		);
+		TestUtil.UnifiedResponseListEquals(response, 200, "당첨 이력 조회 성공");
 	}
 }
