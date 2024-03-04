@@ -36,6 +36,7 @@ export const UserMenuValue: MenuType = {
         ["프리미엄", "/premium"],
         ["거래 내역", "/statement"],
         ["최근 구매 조회", "/sixnumber-list"],
+        ["지난주 당첨 확인", "/check-lotto/last-week"],
     ]
 }
 

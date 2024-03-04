@@ -28,6 +28,7 @@ import SetBoard from '../pages/board/SetBoard'
 import GetBoardsByStatus from '../pages/board/GetBoardsByStatus'
 import GetBoard from '../pages/admin/GetBoards'
 import CreateMonthlyStats from '../pages/lotto/CreateMonthlyStats'
+import CheckLottoWinLastWeek from '../pages/users/CheckLottoWinLastWeek'
 
 const Router = () => {
   return (
@@ -61,6 +62,7 @@ const Router = () => {
                 <Route path='/boards/status' element={<GetBoardsByStatus />} />
                 <Route path='/admin/boards' element={<GetBoard />} />
                 <Route path='/admin/monthlystats' element={<CreateMonthlyStats />} />
+                <Route path='/check-lotto/last-week' element={<CheckLottoWinLastWeek />} />
             </Routes>
         </Layout>
     </BrowserRouter>
