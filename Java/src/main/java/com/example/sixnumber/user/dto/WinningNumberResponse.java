@@ -28,6 +28,6 @@ public class WinningNumberResponse {
 			.mapToInt(Integer::parseInt)
 			.boxed()
 			.collect(Collectors.toList());
-		this.rank = rankMap.get(numberOfWins);
+		this.rank = rankMap.getOrDefault(numberOfWins, -1);
 	}
 }
