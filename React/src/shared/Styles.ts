@@ -90,11 +90,18 @@ export const UlBox =styled.ul<UlBoxProps>`
   font-size: 20px;
 `
 
-export const DividingLine =styled.div`
-  border-bottom: 1px solid gray;
+export const TopDividingLine =styled.div<{width: string | undefined}>`
+  border-top: 2px solid black;
   margin: auto;
   margin-bottom: 20px;
-  width: 4cm;
+  width: ${(props) => props.width};
+`
+
+export const BottomDividingLine =styled.div<{width: string | undefined}>`
+  border-bottom: 2px solid black;
+  margin: auto;
+  margin-top: 20px;
+  width: ${(props) => props.width};
 `
 
 export const CommonP =styled.p`
