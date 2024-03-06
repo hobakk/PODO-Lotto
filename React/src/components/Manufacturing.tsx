@@ -19,8 +19,8 @@ export const ChangingNumStyle = ({ num, index }: {num: number, index: number}) =
 
 export const NumSentenceResult = ({ numSentence }: { numSentence: string }) => {
   return (
-      <div key={`sentence-${numSentence}`} style={{ marginTop: "30px" }}>
-          <div style={{ display: "flex"}}>
+      <div key={`sentence-${numSentence}`}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems:"center"}}>
             {numSentence.split(" ").map((num, index)=>(
               <ChangingNumStyle key={`num-${index}`} num={parseInt(num)} index={index} />
             ))}
