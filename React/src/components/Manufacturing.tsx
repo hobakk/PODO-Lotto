@@ -45,7 +45,8 @@ export const ResultContainer = ({numSentenceList}: {numSentenceList: string[]}) 
   const LineStyle = ({line}: {line: string[]}) => {
     const Style: React.CSSProperties = {
       display: "flex",
-      flexWrap: "wrap"
+      flexWrap: "wrap",
+      marginTop: "15px"
     }
 
     return (
