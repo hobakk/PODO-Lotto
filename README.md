@@ -22,7 +22,7 @@
 https://github.com/hobakk/PODO-Lotto/blob/main/podo_erd.png</br>
 https://podo-lotto.site/
 
-<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/48f5d9bb5df96a9cf2e6619159a55f1238e41d7f/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L61)</h2>
+<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/fe3d9d980aa116bf2a837f122d65957e3901d9fd/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L66)</h2>
 
 ### 1. 회원가입
 sendAuthCodeToEmail, compareAuthCode, signUp
@@ -44,7 +44,7 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 ### 5. 프리미엄
 - Req 값에 따라 권한을 수정
 ### 6. 기타
-- 조회: 닉네임과 캐쉬, 충전요청, 거래명세, 회원 정보, 비밀번호 재확인, 최근 구매한 번호 리스트
+- 조회: 닉네임과 캐쉬, 충전요청, 거래명세, 회원 정보, 비밀번호 재확인, 최근 구매한 번호 리스트, 지난주 발급번호 당첨 확인
 - 수정: 회원정보, 비밀번호 찾기, 출석 체크
 
 <br/><br/><h2>Admin [Service](https://github.com/hobakk/PODO-Lotto/blob/main/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L35)</h2>
