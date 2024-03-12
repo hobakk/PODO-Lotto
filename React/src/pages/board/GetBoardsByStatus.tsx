@@ -4,24 +4,29 @@ import { useMutation } from 'react-query'
 import { Err, UnifiedResponse } from '../../shared/TypeMenu'
 import { BoardsResponse, getBoardsByStatus } from '../../api/boardApi';
 import GetBoard from '../../components/GetBoard';
+import SelectStatus from '../../components/SelectStatus';
 
 function GetBoardsByStatus() {
     const [values, setValues] = useState<BoardsResponse[]>([]);
-    const [status, setStatus] = useState<string>("");
     const [boardId, setBoardId] = useState<number>(-1);
+    const [selectedStatus, setSelectedStatus] = useState<string>("");
+
+    const handleStatusChange = (status: string) => {
+        setSelectedStatus(status);
+    };
 
     const getBoardsByStatusMutation = useMutation<UnifiedResponse<BoardsResponse[]>, Err, string>(getBoardsByStatus, {
         onSuccess: (res)=>{
             if (res.code === 200 && res.data) setValues(res.data);
         },
         onError: (err)=>{
-            alert(err.msg);
+            setValues([]);
         }
     });
 
     useEffect(()=>{
-        if (status !== "") getBoardsByStatusMutation.mutate(status);
-    }, [status])
+        if (selectedStatus !== "") getBoardsByStatusMutation.mutate(selectedStatus);
+    }, [selectedStatus])
 
     const onClickHandler = (id: number) => {
         if (id >= 0) setBoardId(id);
@@ -33,17 +38,7 @@ function GetBoardsByStatus() {
         ):(
             <div style={CommonStyle}>
                 <h1 style={ TitleStyle }>내 문의 확인</h1>
-
-                <select 
-                    value={status} 
-                    onChange={(e)=>setStatus(e.target.value)} 
-                    style={{ width:"3cm", height:"0.65cm",textAlign:"center" }}
-                >
-                    <option value="PROCESSING">처리중</option>
-                    <option value="UNPROCESSED">미처리</option>
-                    <option value="COMPLETE">처리완료</option>
-                </select>
-
+                <SelectStatus onChange={handleStatusChange} />
                 <div style={{ marginTop:"1cm"}}>
                     {values.length === 0 ? (
                         <div>문의가 존재하지 않습니다</div>
