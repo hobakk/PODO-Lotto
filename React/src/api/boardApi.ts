@@ -77,7 +77,14 @@ export const fixBoard = async (req: FixBoardRequest): Promise<UnifiedResponse<un
     }
 }
 
-export const getAllBoardsByStatus = async (status: string): Promise<UnifiedResponse<BoardsResponse[]>> => {
+export type PageBoardsRes = {
+    content: BoardsResponse,
+    totalPages: number,
+    pageNumber: number,
+    totalElements: number
+}
+
+export const getAllBoardsByStatus = async (status: string): Promise<UnifiedResponse<PageBoardsRes>> => {
     try {
         const { data } = await api.get("/board/admin", {
             params: {
