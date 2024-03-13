@@ -11,10 +11,6 @@ function GetBoardsByStatus() {
     const [boardId, setBoardId] = useState<number>(-1);
     const [selectedStatus, setSelectedStatus] = useState<string>("");
 
-    const handleStatusChange = (status: string) => {
-        setSelectedStatus(status);
-    };
-
     const getBoardsByStatusMutation = useMutation<UnifiedResponse<BoardsResponse[]>, Err, string>(getBoardsByStatus, {
         onSuccess: (res)=>{
             if (res.code === 200 && res.data) setValues(res.data);
@@ -38,7 +34,7 @@ function GetBoardsByStatus() {
         ):(
             <div style={CommonStyle}>
                 <h1 style={ TitleStyle }>내 문의 확인</h1>
-                <SelectStatus onChange={handleStatusChange} />
+                <SelectStatus onChange={(e)=>{setSelectedStatus(e)}} />
                 <div style={{ marginTop:"1cm"}}>
                     {values.length === 0 ? (
                         <div>문의가 존재하지 않습니다</div>
