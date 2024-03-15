@@ -3,10 +3,21 @@ import { ButtonDiv, ButtonStyle, CommonStyle, InputBox, MsgAndInput, TitleStyle 
 import { useMutation } from 'react-query';
 import { setWinNumber } from '../../api/adminApi';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
+import { getTimeOfWinNumber } from '../../api/winNumber';
 
 function SetWinNumber() {
     const dateRef = useRef<HTMLInputElement>(null);
     const [inputValue, setInputValue] = useState<number>(0);
+
+    const getTimeOfWinNunberMutation = useMutation<UnifiedResponse<number>, Err>(getTimeOfWinNumber, {
+        onSuccess: (res)=>{
+            if (res.code === 200 && res.data)
+            setInputValue(res.data);
+        },
+        onError: (err)=>{
+            if (err.code) alert(err.msg);
+        }
+    })
 
     const setWinNumberMutation = useMutation<UnifiedResponse<undefined>, unknown, number>(setWinNumber, {
         onSuccess: (res)=>{
@@ -31,6 +42,7 @@ function SetWinNumber() {
     useEffect(()=>{
         if (dateRef.current) {
             dateRef.current.focus()
+            getTimeOfWinNunberMutation.mutate();
         }
     }, [])
 
