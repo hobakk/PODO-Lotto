@@ -29,4 +29,11 @@ public class WinNumberController {
 		winNumberService.setWinNumbers(round);
 		return ResponseEntity.ok(UnifiedResponse.ok("등록 성공"));
 	}
+
+	@GetMapping("first")
+	public ResponseEntity<UnifiedResponse<Integer>> getTimeOfWinNumber() {
+		UnifiedResponse<Integer> response =
+				UnifiedResponse.ok("회차 조회성공", winNumberService.getFirstWinNumber().getTime());
+		return ResponseEntity.ok(response);
+	}
 }
