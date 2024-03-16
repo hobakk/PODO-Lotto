@@ -51,7 +51,13 @@ function SetWinNumber() {
         <h1 style={ TitleStyle }>당첨번호 등록</h1>
         <div style={MsgAndInput}>
             <span>회차:</span>
-            <InputBox type='number' onChange={onChangeHandler} ref={dateRef} placeholder='1075' />
+            <InputBox 
+                type='number' 
+                onChange={onChangeHandler} 
+                ref={dateRef} 
+                value={inputValue}
+                style={{ backgroundColor:"#D4F0F0"}}
+            />
         </div>
         <div style={ButtonDiv}>
             <button style={ButtonStyle}>등록하기</button>
