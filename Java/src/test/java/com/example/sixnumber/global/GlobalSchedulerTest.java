@@ -116,5 +116,6 @@ public class GlobalSchedulerTest {
 		verify(manager).retrieveLottoResult(anyInt());
 		verify(winNumberRepository).save(any(WinNumber.class));
 		verify(winNumberService).updateCache(anyList());
+		verify(winNumberService).updateCacheOfFirstWinNumber(any(WinNumber.class));
 	}
 }
