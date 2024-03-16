@@ -63,6 +63,11 @@ public class WinNumberService {
 		return winNumberList.get(0);
 	}
 
+	@CachePut(cacheNames = "WinNumber", key = "'first'")
+	public WinNumber updateCacheOfFirstWinNumber(WinNumber firstWinNumber) {
+		return firstWinNumber;
+	}
+
 	private List<WinNumber> getSortingWinNumbers() {
 		List<WinNumber> winNumberList = winNumberRepository.findAll();
 		if (winNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
