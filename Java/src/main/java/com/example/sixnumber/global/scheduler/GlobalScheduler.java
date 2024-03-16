@@ -78,7 +78,11 @@ public class GlobalScheduler {
 			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
 
 		winNumberRepository.save(winNumber);
-		winNumberService.updateCache(adjustWinNumbers());
+
+		List<WinNumber> winNumberList = adjustWinNumbers();
+		winNumberService.updateCache(winNumberList);
+		// winNumberList는 회차 내림차순
+		winNumberService.updateCacheOfFirstWinNumber(winNumberList.get(0));
 	}
 
 	private List<WinNumber> adjustWinNumbers() {
