@@ -54,6 +54,7 @@ public class WinNumberService {
 		return transform(winNumberList);
 	}
 
+	@Cacheable(cacheNames = "WinNumber", key = "'first'")
 	public WinNumber getFirstWinNumber() {
 		Pageable pageable = PageRequest.of(0, 1);
 		List<WinNumber> winNumberList = winNumberRepository.findTopByTime(pageable);
