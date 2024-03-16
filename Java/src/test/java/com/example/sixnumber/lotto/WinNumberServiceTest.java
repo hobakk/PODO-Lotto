@@ -22,6 +22,7 @@ import com.example.sixnumber.lotto.dto.WinNumberResponse;
 import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.lotto.repository.WinNumberRepository;
 import com.example.sixnumber.lotto.service.WinNumberService;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 public class WinNumberServiceTest {
@@ -87,5 +88,15 @@ public class WinNumberServiceTest {
 		Assertions.assertThrows(OverlapException.class, () -> winNumberService.setWinNumbers(1075));
 
 		verify(winNumberRepository).existsWinNumberByTime(anyInt());
+	}
+
+	@Test
+	void getFirstWinNumber_success() {
+		when(winNumberRepository.findTopByTime(any(Pageable.class))).thenReturn(List.of(TestDataFactory.winNumber()));
+
+		WinNumber res = winNumberService.getFirstWinNumber();
+
+		verify(winNumberRepository).findTopByTime(any(Pageable.class));
+		assertEquals(res, TestDataFactory.winNumber());
 	}
 }
