@@ -13,9 +13,6 @@ function SetWinNumber() {
         onSuccess: (res)=>{
             if (res.code === 200 && res.data)
             setInputValue(res.data);
-        },
-        onError: (err)=>{
-            if (err.code) alert(err.msg);
         }
     })
 
@@ -40,10 +37,8 @@ function SetWinNumber() {
     }
 
     useEffect(()=>{
-        if (dateRef.current) {
-            dateRef.current.focus()
-            getTimeOfWinNunberMutation.mutate();
-        }
+        getTimeOfWinNunberMutation.mutate();
+        if (dateRef.current) dateRef.current.focus();
     }, [])
 
   return (
