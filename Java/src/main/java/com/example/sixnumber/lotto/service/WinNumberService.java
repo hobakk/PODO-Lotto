@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.example.sixnumber.lotto.dto.WinNumberResponse;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
@@ -65,12 +66,18 @@ public class WinNumberService {
 	}
 
 	@Cacheable(cacheNames = "WinNumber", key = "'first'")
-	public WinNumber getFirstWinNumber() {
+	public WinNumberResponse getFirstWinNumber() {
 		Pageable pageable = PageRequest.of(0, 1);
 		List<WinNumber> winNumberList = winNumberRepository.findTopByTime(pageable);
 		if (winNumberList.isEmpty()) throw new CustomException(ErrorCode.NOT_FOUND);
 
-		return winNumberList.get(0);
+		WinNumber winNumber = winNumberList.get(0);
+		return new WinNumberResponse(
+				winNumber.getTime(),
+				winNumber.getData(),
+				winNumber.getTopNumberList(),
+				winNumber.getBonus()
+		);
 	}
 
 	@CachePut(cacheNames = "WinNumber", key = "'first'")
