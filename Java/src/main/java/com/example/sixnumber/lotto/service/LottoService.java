@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import com.example.sixnumber.global.exception.OverlapException;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -87,14 +88,7 @@ public class LottoService {
 			)
 		);
 
-		String result = manager.getTopNumbersAsString(map);
-
-		List<Integer> countList = IntStream.rangeClosed(1, 45)
-			.mapToObj(i -> map.getOrDefault(i, 0))
-			.collect(Collectors.toList());
-
-		Lotto lotto = new Lotto("Stats", "Scheduler", yearMonth, countList, result);
-		lottoRepository.save(lotto);
+		saveLottoResult("Stats", map, yearMonth);
 		updateCacheWithAllMonthlyStatsIndex();
 		return UnifiedResponse.ok("월별 통계 생성완료");
 	}
@@ -108,5 +102,15 @@ public class LottoService {
 		if (yearMonthList.isEmpty()) throw new IllegalArgumentException("해당 정보를 찾을 수 없습니다");
 
 		return yearMonthList;
+	}
+
+	private void saveLottoResult(String subject, Map<Integer, Integer> map, YearMonth yearMonth) {
+		String result = manager.getTopNumbersAsString(map);
+		List<Integer> countList = IntStream.rangeClosed(1, 45)
+				.mapToObj(i -> map.getOrDefault(i, 0))
+				.collect(Collectors.toList());
+
+		Lotto lotto = new Lotto(subject, "Scheduler", yearMonth, countList, result);
+		lottoRepository.save(lotto);
 	}
 }
