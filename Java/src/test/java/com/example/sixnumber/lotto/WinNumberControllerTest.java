@@ -20,8 +20,7 @@ import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.WithCustomMockUser;
 import com.example.sixnumber.lotto.controller.WinNumberController;
 import com.example.sixnumber.lotto.dto.TransformResponse;
-import com.example.sixnumber.lotto.dto.WinNumberRequest;
-import com.example.sixnumber.lotto.dto.WinNumberResponse;
+import com.example.sixnumber.lotto.dto.WinNumbersResponse;
 import com.example.sixnumber.lotto.service.WinNumberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -38,13 +37,13 @@ public class WinNumberControllerTest {
 	@MockBean
 	private WinNumberService winNumberService;
 
-	private WinNumberResponse response;
+	private WinNumbersResponse response;
 
 	@BeforeEach
 	public void setup() {
 		TransformResponse transformResponse = new TransformResponse
 			("2023-07-14", 14, 2000L, 7, TestDataFactory.countList(), 7);
-		response = new WinNumberResponse(List.of(transformResponse));
+		response = new WinNumbersResponse(List.of(transformResponse));
 	}
 
 	@Test

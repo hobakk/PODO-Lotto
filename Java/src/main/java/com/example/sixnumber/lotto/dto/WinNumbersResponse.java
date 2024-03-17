@@ -8,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
-public class WinNumberResponse {
+public class WinNumbersResponse {
 	private final List<TransformResponse> winNumberList;
 
 	@JsonCreator
-	public WinNumberResponse(@JsonProperty("winNumberList") List<TransformResponse> transformResponses) {
+	public WinNumbersResponse(@JsonProperty("winNumberList") List<TransformResponse> transformResponses) {
 		this.winNumberList = transformResponses;
 	}
 }

@@ -5,7 +5,6 @@ import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.example.sixnumber.global.exception.CustomException;
 import org.junit.jupiter.api.Assertions;
@@ -19,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.lotto.dto.WinNumberRequest;
-import com.example.sixnumber.lotto.dto.WinNumberResponse;
+import com.example.sixnumber.lotto.dto.WinNumbersResponse;
 import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.lotto.repository.WinNumberRepository;
 import com.example.sixnumber.lotto.service.WinNumberService;
@@ -47,7 +46,7 @@ public class WinNumberServiceTest {
 
 		when(winNumberRepository.findAll()).thenReturn(winNumberList);
 
-		WinNumberResponse response = winNumberService.getWinNumbers();
+		WinNumbersResponse response = winNumberService.getWinNumbers();
 
 		verify(winNumberRepository).findAll();
 		assertEquals(response.getWinNumberList().size(), 1);
@@ -72,7 +71,7 @@ public class WinNumberServiceTest {
 		when(winNumberRepository.existsWinNumberByTime(anyInt())).thenReturn(false);
 		when(winNumberRepository.findAll()).thenReturn(winNumberList);
 
-		WinNumberResponse response = winNumberService.setWinNumbers(1075);
+		WinNumbersResponse response = winNumberService.setWinNumbers(1075);
 
 		verify(winNumberRepository).existsWinNumberByTime(anyInt());
 		verify(winNumberRepository).save(any(WinNumber.class));

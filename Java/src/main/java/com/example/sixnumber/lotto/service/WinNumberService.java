@@ -16,7 +16,7 @@ import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.lotto.dto.TransformResponse;
-import com.example.sixnumber.lotto.dto.WinNumberResponse;
+import com.example.sixnumber.lotto.dto.WinNumbersResponse;
 import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.lotto.repository.WinNumberRepository;
 
@@ -30,12 +30,12 @@ public class WinNumberService {
 	private final Manager manager;
 
 	@Cacheable(cacheNames = "WinNumbers", key = "'all'")
-	public WinNumberResponse getWinNumbers() {
+	public WinNumbersResponse getWinNumbers() {
 		return transform(getSortingWinNumbers());
 	}
 
 	@CachePut(cacheNames = "WinNumbers", key = "'all'")
-	public WinNumberResponse setWinNumbers(int round) {
+	public WinNumbersResponse setWinNumbers(int round) {
 		WinNumber winNumber = manager.retrieveLottoResult(round)
 			.map(WinNumber::new)
 			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
@@ -60,7 +60,7 @@ public class WinNumberService {
 	}
 
 	@CachePut(cacheNames = "WinNumbers", key = "'all'")
-	public WinNumberResponse updateCache(List<WinNumber> winNumberList) {
+	public WinNumbersResponse updateCache(List<WinNumber> winNumberList) {
 		return transform(winNumberList);
 	}
 
@@ -86,7 +86,7 @@ public class WinNumberService {
 		return winNumberList;
 	}
 
-	private WinNumberResponse transform(List<WinNumber> winNumberList) {
+	private WinNumbersResponse transform(List<WinNumber> winNumberList) {
 		List<TransformResponse> transformList = winNumberList.stream()
 			.map(winNumber -> new TransformResponse(
 				winNumber.getData(),
@@ -98,6 +98,6 @@ public class WinNumberService {
 			)
 			.collect(Collectors.toList());
 
-		return new WinNumberResponse(transformList);
+		return new WinNumbersResponse(transformList);
 	}
 }

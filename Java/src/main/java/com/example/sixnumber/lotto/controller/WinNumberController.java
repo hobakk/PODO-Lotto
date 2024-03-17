@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sixnumber.global.dto.UnifiedResponse;
-import com.example.sixnumber.lotto.dto.WinNumberResponse;
+import com.example.sixnumber.lotto.dto.WinNumbersResponse;
 import com.example.sixnumber.lotto.service.WinNumberService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class WinNumberController {
 	private final WinNumberService winNumberService;
 
 	@GetMapping("")
-	public ResponseEntity<UnifiedResponse<WinNumberResponse>> getWinNumbers() {
+	public ResponseEntity<UnifiedResponse<WinNumbersResponse>> getWinNumbers() {
 		return ResponseEntity.ok(UnifiedResponse.ok("조회 성공", winNumberService.getWinNumbers()));
 	}
 
