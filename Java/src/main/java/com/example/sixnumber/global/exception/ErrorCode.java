@@ -19,6 +19,7 @@ public enum ErrorCode {
 	MISSING_DATA(HttpStatus.BAD_REQUEST, "UnifiedResponse data 가 누락되었습니다."),
 	NO_MATCHING_INFO_FOUND(HttpStatus.BAD_REQUEST, "일치하는 정보를 찾을 수 없습니다"),
 	NOT_OAUTH2_LOGIN(HttpStatus.BAD_REQUEST, "해당 이메일은 간편 로그인을 이용해 주세요"),
+	OUT_OF_RANGE(HttpStatus.BAD_REQUEST, "범위를 벗어났습니다"),
 
 	BREAK_THE_ROLE(HttpStatus.FORBIDDEN, "규정 위반으로 홈페이지를 이용할 수 없습니다"),
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "해당 리소스에 대한 권한이 없습니다"),
