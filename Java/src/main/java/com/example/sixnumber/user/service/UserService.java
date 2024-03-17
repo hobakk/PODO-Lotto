@@ -5,7 +5,6 @@ import static com.example.sixnumber.global.exception.ErrorCode.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -36,7 +35,6 @@ import com.example.sixnumber.global.util.Manager;
 import com.example.sixnumber.global.util.RedisDao;
 import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.lotto.entity.SixNumber;
-import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.lotto.service.WinNumberService;
 import com.example.sixnumber.user.dto.CashNicknameResponse;
@@ -349,7 +347,7 @@ public class UserService {
 
 	public UnifiedResponse<List<WinningNumberResponse>> checkLottoWinLastWeek(Long userId) {
 		WinNumberResponse lastWeekWinNumber = winNumberService.getFirstWinNumber();
-		String[] splitYearMonthString = lastWeekWinNumber.getData().split("-");
+		String[] splitYearMonthString = lastWeekWinNumber.getDate().split("-");
 		int year = Integer.parseInt(splitYearMonthString[0]);
 		int month = Integer.parseInt(splitYearMonthString[1]);
 		int day = Integer.parseInt(splitYearMonthString[2]);

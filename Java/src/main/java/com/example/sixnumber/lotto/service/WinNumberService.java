@@ -74,7 +74,7 @@ public class WinNumberService {
 		WinNumber winNumber = winNumberList.get(0);
 		return new WinNumberResponse(
 				winNumber.getTime(),
-				winNumber.getData(),
+				winNumber.getDate(),
 				winNumber.getTopNumberList(),
 				winNumber.getBonus()
 		);
@@ -96,7 +96,7 @@ public class WinNumberService {
 	private WinNumbersResponse transform(List<WinNumber> winNumberList) {
 		List<TransformResponse> transformList = winNumberList.stream()
 			.map(winNumber -> new TransformResponse(
-				winNumber.getData(),
+				winNumber.getDate(),
 				winNumber.getTime(),
 				winNumber.getPrize(),
 				winNumber.getWinner(),

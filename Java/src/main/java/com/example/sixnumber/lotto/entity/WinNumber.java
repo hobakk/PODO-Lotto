@@ -27,7 +27,7 @@ public class WinNumber {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@Column(nullable = false)
-	private String data;
+	private String date;
 	@Column(nullable = false)
 	private int time;
 	@Column(nullable = false)
@@ -45,7 +45,7 @@ public class WinNumber {
 				.split(" ")).map(Integer::parseInt).collect(Collectors.toList());
 		List<Integer> topNumberList = bonusInclude.subList(0, bonusInclude.size()-1);
 
-		this.data = request.getDate();
+		this.date = request.getDate();
 		this.time = request.getTime();
 		this.prize = request.getPrize();
 		this.winner = request.getWinner();
