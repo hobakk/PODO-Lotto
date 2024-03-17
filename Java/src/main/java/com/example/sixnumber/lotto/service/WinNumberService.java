@@ -32,7 +32,7 @@ public class WinNumberService {
 
 	@Cacheable(cacheNames = "WinNumbers", key = "'all'")
 	public WinNumbersResponse getWinNumbers() {
-		return transform(getSortingWinNumbers());
+		return transform(adjustWinNumbers());
 	}
 
 	@CachePut(cacheNames = "WinNumbers", key = "'all'")
@@ -57,7 +57,7 @@ public class WinNumberService {
 			else throw new CustomException(ErrorCode.OUT_OF_RANGE);
 		}
 
-		return transform(getSortingWinNumbers());
+		return transform(adjustWinNumbers());
 	}
 
 	@CachePut(cacheNames = "WinNumbers", key = "'all'")
@@ -85,12 +85,16 @@ public class WinNumberService {
 		return firstWinNumber;
 	}
 
-	private List<WinNumber> getSortingWinNumbers() {
+	public List<WinNumber> adjustWinNumbers() {
 		List<WinNumber> winNumberList = winNumberRepository.findAll();
 		if (winNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
 
 		winNumberList.sort(Comparator.comparing(WinNumber::getTime).reversed());
-		return winNumberList;
+		if (winNumberList.size() > 5) {
+			List<WinNumber> remainingList = winNumberList.subList(5, winNumberList.size());
+			winNumberRepository.deleteAll(remainingList);
+			return winNumberList.subList(0, 5);
+		} else return winNumberList;
 	}
 
 	private WinNumbersResponse transform(List<WinNumber> winNumberList) {

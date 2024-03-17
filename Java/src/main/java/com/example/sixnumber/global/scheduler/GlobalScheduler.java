@@ -2,7 +2,6 @@ package com.example.sixnumber.global.scheduler;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.context.annotation.Profile;
@@ -79,21 +78,9 @@ public class GlobalScheduler {
 
 		winNumberRepository.save(winNumber);
 
-		List<WinNumber> winNumberList = adjustWinNumbers();
+		List<WinNumber> winNumberList = winNumberService.adjustWinNumbers();
 		winNumberService.updateCache(winNumberList);
 		// winNumberList는 회차 내림차순
 		winNumberService.updateCacheOfFirstWinNumber(winNumberList.get(0));
-	}
-
-	private List<WinNumber> adjustWinNumbers() {
-		List<WinNumber> winNumberList = winNumberRepository.findAll();
-		if (winNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
-
-		winNumberList.sort(Comparator.comparing(WinNumber::getTime).reversed());
-		if (winNumberList.size() > 5) {
-			List<WinNumber> remainingList = winNumberList.subList(5, winNumberList.size());
-			winNumberRepository.deleteAll(remainingList);
-			return winNumberList.subList(0, 5);
-		} else return winNumberList;
 	}
 }
