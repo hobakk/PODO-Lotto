@@ -617,7 +617,7 @@ public class UserServiceTest {
 
 	@Test
 	void checkLottoWinLastWeek_success() {
-		when(winNumberService.getFirstWinNumber()).thenReturn(TestDataFactory.winNumber());
+		when(winNumberService.getFirstWinNumber()).thenReturn(TestDataFactory.winNumberResponse());
 		when(sixNumberRepository.findAllByUserIdAndBuyDateAfterAndBuyDateBefore(
 			anyLong(), any(LocalDateTime.class), any(LocalDateTime.class)
 		)).thenReturn(List.of(TestDataFactory.sixNumber()));
@@ -633,7 +633,7 @@ public class UserServiceTest {
 
 	@Test
 	void checkLottoWinLastWeek_NotFound() {
-		when(winNumberService.getFirstWinNumber()).thenReturn(TestDataFactory.winNumber());
+		when(winNumberService.getFirstWinNumber()).thenReturn(TestDataFactory.winNumberResponse());
 		when(sixNumberRepository.findAllByUserIdAndBuyDateAfterAndBuyDateBefore(
 			anyLong(), any(LocalDateTime.class), any(LocalDateTime.class)
 		)).thenReturn(new ArrayList<>());

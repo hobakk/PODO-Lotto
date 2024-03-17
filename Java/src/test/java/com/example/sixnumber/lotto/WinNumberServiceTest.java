@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.sixnumber.global.exception.CustomException;
+import com.example.sixnumber.lotto.dto.WinNumberResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -94,7 +95,7 @@ public class WinNumberServiceTest {
 	void getFirstWinNumber_success() {
 		when(winNumberRepository.findTopByTime(any(Pageable.class))).thenReturn(List.of(TestDataFactory.winNumber()));
 
-		WinNumber res = winNumberService.getFirstWinNumber();
+		WinNumberResponse res = winNumberService.getFirstWinNumber();
 
 		verify(winNumberRepository).findTopByTime(any(Pageable.class));
 		assertEquals(res, TestDataFactory.winNumber());

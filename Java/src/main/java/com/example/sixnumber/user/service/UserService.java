@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.example.sixnumber.lotto.dto.WinNumberResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -347,7 +348,7 @@ public class UserService {
 	}
 
 	public UnifiedResponse<List<WinningNumberResponse>> checkLottoWinLastWeek(Long userId) {
-		WinNumber lastWeekWinNumber = winNumberService.getFirstWinNumber();
+		WinNumberResponse lastWeekWinNumber = winNumberService.getFirstWinNumber();
 		String[] splitYearMonthString = lastWeekWinNumber.getData().split("-");
 		int year = Integer.parseInt(splitYearMonthString[0]);
 		int month = Integer.parseInt(splitYearMonthString[1]);
@@ -414,7 +415,7 @@ public class UserService {
 		return point;
 	}
 
-	private int getWinningNumbers(WinNumber lastWeekWinNumber, String sentence) {
+	private int getWinningNumbers(WinNumberResponse lastWeekWinNumber, String sentence) {
 		int count = 0;
 		for (String numberStr : sentence.split(" ")) {
 			for (int winningNumber : lastWeekWinNumber.getTopNumberList()) {

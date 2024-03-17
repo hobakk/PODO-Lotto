@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,18 +15,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.global.scheduler.GlobalScheduler;
 import com.example.sixnumber.global.util.Manager;
-import com.example.sixnumber.lotto.entity.Lotto;
-import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.entity.WinNumber;
-import com.example.sixnumber.lotto.repository.LottoRepository;
-import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.lotto.repository.WinNumberRepository;
 import com.example.sixnumber.lotto.service.WinNumberService;
 import com.example.sixnumber.user.entity.User;
@@ -42,10 +36,6 @@ public class GlobalSchedulerTest {
 
 	@Mock
 	private UserRepository userRepository;
-	@Mock
-	private LottoRepository lottoRepository;
-	@Mock
-	private SixNumberRepository sixNumberRepository;
 	@Mock
 	private WinNumberRepository winNumberRepository;
 	@Mock
@@ -107,7 +97,7 @@ public class GlobalSchedulerTest {
 
 	@Test
 	void updateLottoResultsOnSunday_success() {
-		when(winNumberService.getFirstWinNumber()).thenReturn(TestDataFactory.winNumber());
+		when(winNumberService.getFirstWinNumber()).thenReturn(TestDataFactory.winNumberResponse());
 		when(manager.retrieveLottoResult(1075)).thenReturn(Optional.of(TestDataFactory.winNumberRequest()));
 
 		globalScheduler.updateLottoResultsOnSunday();
