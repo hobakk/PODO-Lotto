@@ -80,6 +80,19 @@ public class Manager {
 		}
 	}
 
+	public Boolean checkMaxRound(int round) {
+		String responseBody = getResponseBody(round);
+
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+			return jsonNode.get("returnValue").asText().equals("true");
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	public boolean isAdmin(User user) {
 		return user.getRole() == UserRole.ROLE_ADMIN;
 	}
