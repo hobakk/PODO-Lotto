@@ -50,8 +50,7 @@ public class Manager {
 	}
 
 	public Optional<WinNumberRequest> retrieveLottoResult(int round) {
-		RestTemplate restTemplate = new RestTemplate();
-		String responseBody = restTemplate.getForObject(URL + round, String.class);
+		String responseBody = getResponseBody(round);
 		StringBuilder sb = new StringBuilder();
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -83,5 +82,10 @@ public class Manager {
 
 	public boolean isAdmin(User user) {
 		return user.getRole() == UserRole.ROLE_ADMIN;
+	}
+
+	private String getResponseBody(int round) {
+		RestTemplate restTemplate = new RestTemplate();
+		return restTemplate.getForObject(URL + round, String.class);
 	}
 }
