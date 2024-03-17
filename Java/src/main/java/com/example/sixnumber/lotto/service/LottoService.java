@@ -93,6 +93,30 @@ public class LottoService {
 		return UnifiedResponse.ok("월별 통계 생성완료");
 	}
 
+	public UnifiedResponse<?> createYearlyReport(int year) {
+		String index = year + "Stats";
+		if (lottoRepository.existsLottoBySubject(index))
+			throw new OverlapException(year + "년도 통계가 이미 생성되어 있습니다");
+
+		List<Lotto> lottoList = lottoRepository.findAllBySubject(index);
+		if (lottoList.isEmpty()) throw new CustomException(ErrorCode.NOT_FOUND);
+
+		List<List<Integer>> countListOfMonthlyReport = lottoList.stream()
+				.map(Lotto::getCountList)
+				.collect(Collectors.toList());
+
+		Map<Integer, Integer> map = new HashMap<>();
+		for (List<Integer> list : countListOfMonthlyReport) {
+			int count = 0;
+			while (count < list.size()) {
+				map.put(count +1, map.getOrDefault(count +1, 0) + list.get(count));
+			}
+		}
+
+		saveLottoResult(index, map, YearMonth.now());
+		return UnifiedResponse.ok( year + "년 통계 생성 성공");
+	}
+
 	private List<String> getAllMonthIndex() {
 		List<String> yearMonthList = lottoRepository.findAllBySubject("Stats").stream()
 			.map(lotto -> lotto.getCreationDate().toString())
