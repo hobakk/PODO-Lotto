@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import com.example.sixnumber.lotto.dto.WinNumberResponse;
 import org.junit.jupiter.params.provider.Arguments;
 
 import com.example.sixnumber.board.dto.BoardRequest;
@@ -195,4 +196,6 @@ public class TestDataFactory {
 	public static Comment comment() {
 		return new Comment(user(), board(), "댓글");
 	}
+
+	public static WinNumberResponse winNumberResponse() { return new WinNumberResponse(winNumber()); }
 }

@@ -1,5 +1,6 @@
 package com.example.sixnumber.lotto.dto;
 
+import com.example.sixnumber.lotto.entity.WinNumber;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -28,5 +29,13 @@ public class WinNumberResponse {
         this.data = data;
         this.topNumberList = topNumberList;
         this.bonus = bonus;
+    }
+
+    // TestDataFactory 테스트 용
+    public WinNumberResponse(WinNumber winNumber) {
+        this.time = winNumber.getTime();
+        this.data = winNumber.getData();
+        this.topNumberList = winNumber.getTopNumberList();
+        this.bonus = winNumber.getBonus();
     }
 }
