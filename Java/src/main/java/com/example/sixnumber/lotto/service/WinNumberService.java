@@ -40,12 +40,22 @@ public class WinNumberService {
 			.map(WinNumber::new)
 			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
 
-		int time = winNumber.getTime();
-		int topRound = getFirstWinNumber().getTime();
-		if (topRound > 0 && time <= topRound - 5 || winNumberRepository.existsWinNumberByTime(time))
-			throw new OverlapException("등록된 당첨 결과 이거나 범위를 벗어났습니다");
+		try {
+			int time = winNumber.getTime();
+			int topRound = getFirstWinNumber().getTime();
+			if (topRound > 0 && time <= topRound - 5 || winNumberRepository.existsWinNumberByTime(time))
+				throw new OverlapException("등록된 당첨 결과 이거나 범위를 벗어났습니다");
 
-		winNumberRepository.save(winNumber);
+			winNumberRepository.save(winNumber);
+		} catch (CustomException e) {
+			int checkingRound = 1110;
+			while (manager.checkMaxRound(checkingRound)) checkingRound++;
+
+			int result = checkingRound - round;
+			if (result <= 0 && result >= -5) winNumberRepository.save(winNumber);
+			else throw new CustomException(ErrorCode.OUT_OF_RANGE);
+		}
+
 		return transform(getSortingWinNumbers());
 	}
 
