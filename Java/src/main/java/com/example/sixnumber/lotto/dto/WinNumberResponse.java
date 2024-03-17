@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -27,7 +28,7 @@ public class WinNumberResponse {
     public WinNumberResponse(int time, String data, List<Integer> topNumberList, int bonus) {
         this.time = time;
         this.data = data;
-        this.topNumberList = topNumberList;
+        this.topNumberList = new ArrayList<>(topNumberList);
         this.bonus = bonus;
     }
 
