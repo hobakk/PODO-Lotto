@@ -59,12 +59,12 @@ public class LottoService {
 			.orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
 	}
 
-	@Cacheable(cacheNames = "MonthlyStatsIndex", key = "'all'")
+	@Cacheable(cacheNames = "StatsIndex", key = "'all'")
 	public YearMonthResponse getAllMonthlyStats() {
 		return new YearMonthResponse(getAllMonthIndex());
 	}
 
-	@CachePut(cacheNames = "MonthlyStatsIndex", key = "'all'")
+	@CachePut(cacheNames = "StatsIndex", key = "'all'")
 	public YearMonthResponse updateCacheWithAllMonthlyStatsIndex() {
 		return new YearMonthResponse(getAllMonthIndex());
 	}
@@ -121,7 +121,6 @@ public class LottoService {
 	@Cacheable(cacheNames = "Stats", key = "#year")
 	public LottoResponse getYearlyStats(int year) {
 		String index = year + "Stats";
-
 		return lottoRepository.findBySubject(index)
 				.map(LottoResponse::new)
 				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
