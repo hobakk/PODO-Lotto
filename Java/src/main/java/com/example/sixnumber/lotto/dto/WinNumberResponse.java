@@ -36,7 +36,7 @@ public class WinNumberResponse {
     public WinNumberResponse(WinNumber winNumber) {
         this.time = winNumber.getTime();
         this.date = winNumber.getDate();
-        this.topNumberList = winNumber.getTopNumberList();
+        this.topNumberList = new ArrayList<>(winNumber.getTopNumberList());
         this.bonus = winNumber.getBonus();
     }
 }
