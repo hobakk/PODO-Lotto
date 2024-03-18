@@ -114,7 +114,7 @@ public class LottoService {
 			}
 		}
 
-		saveLottoResult(index, map, YearMonth.now());
+		saveLottoResult("yearlyStats", map, YearMonth.now());
 		return UnifiedResponse.ok( year + "년 통계 생성 성공");
 	}
 
@@ -124,6 +124,15 @@ public class LottoService {
 		return lottoRepository.findBySubject(index)
 				.map(LottoResponse::new)
 				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+	}
+
+	@Cacheable(cacheNames = "StatsIndex", key = "'allYearlyStatsIndex'")
+	public YearMonthResponse getAllYearlyStatsIndex() {
+		return new YearMonthResponse(lottoRepository.findAllBySubject("yearlyStats").stream()
+				.findAny()
+				.map(lotto -> lotto.getCreationDate().toString().split("-")[0])
+				.map(Collections::singletonList)
+				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND)));
 	}
 
 	private List<String> getAllMonthIndex() {
