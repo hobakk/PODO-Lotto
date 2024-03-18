@@ -118,6 +118,15 @@ public class LottoService {
 		return UnifiedResponse.ok( year + "년 통계 생성 성공");
 	}
 
+	@Cacheable(cacheNames = "Stats", key = "#year")
+	public LottoResponse getYearlyStats(int year) {
+		String index = year + "Stats";
+
+		return lottoRepository.findBySubject(index)
+				.map(LottoResponse::new)
+				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
+	}
+
 	private List<String> getAllMonthIndex() {
 		List<String> yearMonthList = lottoRepository.findAllBySubject("Stats").stream()
 			.map(lotto -> lotto.getCreationDate().toString())

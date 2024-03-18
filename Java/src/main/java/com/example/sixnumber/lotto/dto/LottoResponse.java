@@ -3,6 +3,7 @@ package com.example.sixnumber.lotto.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.sixnumber.lotto.entity.Lotto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -20,5 +21,14 @@ public class LottoResponse{
 	) {
 		this.countList = new ArrayList<>(countList);
 		this.value = value;
+	}
+
+	public LottoResponse(Lotto lotto) {
+		countList = new ArrayList<>(lotto.getCountList());
+		value = lotto.getTopNumber();
+	}
+
+	public Boolean isEmpty() {
+		return this.countList.isEmpty() && this.value.isEmpty();
 	}
 }
