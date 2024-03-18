@@ -74,7 +74,7 @@ public class LottoServiceTest {
 	void getTopNumberForMonth() {
 		when(lottoRepository.findByTopNumbersForMonth(lotto.getCreationDate())).thenReturn(Optional.of(lotto));
 
-		LottoResponse response = lottoService.getTopNumberForMonth(lotto.getCreationDate());
+		LottoResponse response = lottoService.getMonthlyStats(lotto.getCreationDate());
 
 		verify(lottoRepository).findByTopNumbersForMonth(lotto.getCreationDate());
 		assertEquals(response.getValue(), "1 2 3 4 5 6");
@@ -85,7 +85,7 @@ public class LottoServiceTest {
 	void getTopNumberForMonth_fail() {
 		when(lottoRepository.findByTopNumbersForMonth(any(YearMonth.class))).thenReturn(Optional.empty());
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> lottoService.getTopNumberForMonth(YearMonth.now()));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> lottoService.getMonthlyStats(YearMonth.now()));
 
 		verify(lottoRepository).findByTopNumbersForMonth(any(YearMonth.class));
 	}
@@ -94,7 +94,7 @@ public class LottoServiceTest {
 	void getAllMonthStats_success() {
 		when(lottoRepository.findAllBySubject(anyString())).thenReturn(List.of(lotto));
 
-		YearMonthResponse response = lottoService.getAllMonthStats();
+		YearMonthResponse response = lottoService.getAllMonthlyStats();
 
 		verify(lottoRepository).findAllBySubject(anyString());
 		assertEquals(response.getYearMonthList(), List.of(lotto.getCreationDate().toString()));
@@ -104,7 +104,7 @@ public class LottoServiceTest {
 	void getAllMonthStats_fail_isEmpty() {
 		when(lottoRepository.findAllBySubject(anyString())).thenReturn(new ArrayList<>());
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> lottoService.getAllMonthStats());
+		Assertions.assertThrows(IllegalArgumentException.class, () -> lottoService.getAllMonthlyStats());
 
 		verify(lottoRepository).findAllBySubject(anyString());
 	}

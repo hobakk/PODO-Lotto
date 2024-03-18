@@ -59,7 +59,7 @@ public class LottoControllerTest {
 
 	@Test
 	public void GetTopNumberForMonth() throws Exception {
-		when(lottoService.getTopNumberForMonth(any(YearMonth.class))).thenReturn(response);
+		when(lottoService.getMonthlyStats(any(YearMonth.class))).thenReturn(response);
 
 		mockMvc.perform(get("/api/lotto/yearMonth").with(csrf())
 			.param("yearMonth","2023-07")
@@ -68,12 +68,12 @@ public class LottoControllerTest {
 			.andExpect(jsonPath("$.msg").value("조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
-		verify(lottoService).getTopNumberForMonth(any(YearMonth.class));
+		verify(lottoService).getMonthlyStats(any(YearMonth.class));
 	}
 
 	@Test
 	public void GetAllMonthStats() throws Exception {
-		when(lottoService.getAllMonthStats()).thenReturn(new YearMonthResponse(List.of("2023-07")));
+		when(lottoService.getAllMonthlyStats()).thenReturn(new YearMonthResponse(List.of("2023-07")));
 
 		mockMvc.perform(get("/api/lotto/yearMonth/all").with(csrf())
 			.contentType(MediaType.APPLICATION_JSON))
@@ -81,6 +81,6 @@ public class LottoControllerTest {
 			.andExpect(jsonPath("$.msg").value("조회 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
-		verify(lottoService).getAllMonthStats();
+		verify(lottoService).getAllMonthlyStats();
 	}
 }

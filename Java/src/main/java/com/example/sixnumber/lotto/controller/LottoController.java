@@ -30,13 +30,13 @@ public class LottoController {
 	}
 
 	@GetMapping("/yearMonth")
-	public ResponseEntity<UnifiedResponse<LottoResponse>> getTopNumberForMonth(@RequestParam YearMonth yearMonth) {
-		return ResponseEntity.ok(UnifiedResponse.ok("조회 성공", lottoService.getTopNumberForMonth(yearMonth)));
+	public ResponseEntity<UnifiedResponse<LottoResponse>> getMonthlyStats(@RequestParam YearMonth yearMonth) {
+		return ResponseEntity.ok(UnifiedResponse.ok("조회 성공", lottoService.getMonthlyStats(yearMonth)));
 	}
 
 	@GetMapping("/yearMonth/all")
-	public ResponseEntity<UnifiedResponse<YearMonthResponse>> getAllMonthStats() {
-		return ResponseEntity.ok(UnifiedResponse.ok("조회 성공", lottoService.getAllMonthStats()));
+	public ResponseEntity<UnifiedResponse<YearMonthResponse>> getAllMonthlyStats() {
+		return ResponseEntity.ok(UnifiedResponse.ok("조회 성공", lottoService.getAllMonthlyStats()));
 	}
 
 	@PostMapping("/stats/{year}/{month}")

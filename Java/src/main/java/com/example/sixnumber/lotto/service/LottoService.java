@@ -53,14 +53,14 @@ public class LottoService {
 	}
 
 	@Cacheable(cacheNames = "MonthlyStats", key = "#yearMonth")
-	public LottoResponse getTopNumberForMonth(YearMonth yearMonth) {
+	public LottoResponse getMonthlyStats(YearMonth yearMonth) {
 		return lottoRepository.findByTopNumbersForMonth(yearMonth)
 			.map(lotto -> new LottoResponse(lotto.getCountList(), lotto.getTopNumber()))
 			.orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
 	}
 
 	@Cacheable(cacheNames = "MonthlyStatsIndex", key = "'all'")
-	public YearMonthResponse getAllMonthStats() {
+	public YearMonthResponse getAllMonthlyStats() {
 		return new YearMonthResponse(getAllMonthIndex());
 	}
 
