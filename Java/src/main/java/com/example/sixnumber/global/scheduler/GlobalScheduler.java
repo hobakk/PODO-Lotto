@@ -83,4 +83,10 @@ public class GlobalScheduler {
 		// winNumberList는 회차 내림차순
 		winNumberService.updateCacheOfFirstWinNumber(winNumberList.get(0));
 	}
+
+	@Scheduled(cron = "0 0 23 L 12 ?")
+	public void createYearlyReportForPreviousYear() {
+		int year = YearMonth.now().getYear();
+		lottoService.createYearlyReport(year);
+	}
 }
