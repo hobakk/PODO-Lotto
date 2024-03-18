@@ -13,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -39,7 +38,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 		String accessToken = tokenDto.getAccessToken();
 		String refreshToken = tokenDto.getRefreshToken();
 
-		if (tokensIsNotNull(tokenDto)) {
+		if (tokenDto.ifPresent()) {
 			try {
 				String verifiedAccessToken = validateAccessToken(accessToken);
 				String refreshPointer = jwtProvider.getClaims(verifiedAccessToken).getSubject();
@@ -76,10 +75,6 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 		}
 
 		filterChain.doFilter(request, response);
-	}
-
-	private boolean tokensIsNotNull(TokenDto tokenDto) {
-		return tokenDto.getAccessToken() != null && tokenDto.getRefreshToken() != null;
 	}
 
 	private String validateAccessToken(String accessToken) {
