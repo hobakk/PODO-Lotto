@@ -3,6 +3,7 @@ package com.example.sixnumber.lotto.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.sixnumber.lotto.entity.WinNumber;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -36,5 +37,14 @@ public class TransformResponse {
 		this.winner = winner;
 		this.topNumberList = new ArrayList<>(topNumberList);
 		this.bonus = bonus;
+	}
+
+	public TransformResponse(WinNumber winNumber) {
+		this.date = winNumber.getDate();
+		this.time = winNumber.getTime();
+		this.prize = winNumber.getPrize();
+		this.winner = winNumber.getWinner();
+		this.topNumberList = new ArrayList<>(winNumber.getTopNumberList());
+		this.bonus = winNumber.getBonus();
 	}
 }

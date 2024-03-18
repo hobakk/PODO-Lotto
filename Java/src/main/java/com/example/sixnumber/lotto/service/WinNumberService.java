@@ -71,13 +71,7 @@ public class WinNumberService {
 		List<WinNumber> winNumberList = winNumberRepository.findTopByTime(pageable);
 		if (winNumberList.isEmpty()) throw new CustomException(ErrorCode.NOT_FOUND);
 
-		WinNumber winNumber = winNumberList.get(0);
-		return new WinNumberResponse(
-				winNumber.getTime(),
-				winNumber.getDate(),
-				winNumber.getTopNumberList(),
-				winNumber.getBonus()
-		);
+		return new WinNumberResponse(winNumberList.get(0));
 	}
 
 	@CachePut(cacheNames = "WinNumber", key = "'first'")
@@ -98,17 +92,8 @@ public class WinNumberService {
 	}
 
 	private WinNumbersResponse transform(List<WinNumber> winNumberList) {
-		List<TransformResponse> transformList = winNumberList.stream()
-			.map(winNumber -> new TransformResponse(
-				winNumber.getDate(),
-				winNumber.getTime(),
-				winNumber.getPrize(),
-				winNumber.getWinner(),
-				winNumber.getTopNumberList(),
-				winNumber.getBonus())
-			)
-			.collect(Collectors.toList());
-
-		return new WinNumbersResponse(transformList);
+		return new WinNumbersResponse(winNumberList.stream()
+				.map(TransformResponse::new)
+				.collect(Collectors.toList()));
 	}
 }
