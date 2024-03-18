@@ -110,6 +110,7 @@ public class LottoService {
 			int count = 0;
 			while (count < list.size()) {
 				map.put(count +1, map.getOrDefault(count +1, 0) + list.get(count));
+				count++;
 			}
 		}
 
