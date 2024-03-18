@@ -20,14 +20,14 @@ public class TransformResponse {
 
 	@JsonCreator
 	public static TransformResponse create(
-		@JsonProperty("date") String data,
+		@JsonProperty("date") String date,
 		@JsonProperty("time") int time,
 		@JsonProperty("prize") Long prize,
 		@JsonProperty("winner") int winner,
 		@JsonProperty("topNumberList") List<Integer> topNumberList,
 		@JsonProperty("bonus") int bonus
 	) {
-		return new TransformResponse(data, time, prize, winner, topNumberList, bonus);
+		return new TransformResponse(date, time, prize, winner, topNumberList, bonus);
 	}
 
 	public TransformResponse(String date, int time, Long prize, int winner, List<Integer> topNumberList, int bonus) {
