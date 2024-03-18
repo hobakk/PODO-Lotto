@@ -54,7 +54,7 @@ public class RedisConfig {
 				.fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
 		Map<String, RedisCacheConfiguration> cacheConfigurationMap = new HashMap<>();
-		cacheConfigurationMap.put("MonthlyStats", redisCacheConfiguration.entryTtl(Duration.ZERO));
+		cacheConfigurationMap.put("Stats", redisCacheConfiguration.entryTtl(Duration.ZERO));
 		cacheConfigurationMap.put("MonthlyStatsIndex", redisCacheConfiguration.entryTtl(Duration.ofDays(3)));
 		cacheConfigurationMap.put("WinNumbers", redisCacheConfiguration.entryTtl(Duration.ZERO));
 
