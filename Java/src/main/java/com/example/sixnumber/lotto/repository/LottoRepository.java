@@ -20,6 +20,8 @@ public interface LottoRepository extends JpaRepository<Lotto, Long> {
 
 	List<Lotto> findAllBySubject(String subject);
 
+	Optional<Lotto> findBySubject(String subject);
+
 	Boolean existsLottoBySubject(String subject);
 
 	Boolean existsLottoByCreationDate(YearMonth yearMonth);
