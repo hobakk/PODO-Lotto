@@ -1,6 +1,7 @@
 package com.example.sixnumber.lotto.service;
 
 import java.time.YearMonth;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,12 +99,11 @@ public class LottoService {
 		if (lottoRepository.existsLottoBySubject(index))
 			throw new OverlapException(year + "년도 통계가 이미 생성되어 있습니다");
 
-		List<Lotto> lottoList = lottoRepository.findAllBySubject(index);
-		if (lottoList.isEmpty()) throw new CustomException(ErrorCode.NOT_FOUND);
-
-		List<List<Integer>> countListOfMonthlyReport = lottoList.stream()
+		List<List<Integer>> countListOfMonthlyReport = lottoRepository.findAllBySubject(index).stream()
+				.findAny()
 				.map(Lotto::getCountList)
-				.collect(Collectors.toList());
+				.map(Collections::singletonList)
+				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 
 		Map<Integer, Integer> map = new HashMap<>();
 		for (List<Integer> list : countListOfMonthlyReport) {
