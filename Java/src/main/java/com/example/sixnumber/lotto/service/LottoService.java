@@ -128,11 +128,13 @@ public class LottoService {
 
 	@Cacheable(cacheNames = "StatsIndex", key = "'allYearlyStatsIndex'")
 	public YearMonthResponse getAllYearlyStatsIndex() {
-		return new YearMonthResponse(lottoRepository.findAllBySubject("yearlyStats").stream()
-				.findAny()
-				.map(lotto -> lotto.getCreationDate().toString().split("-")[0])
-				.map(Collections::singletonList)
-				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND)));
+		List<Lotto> lottoList = lottoRepository.findAllBySubject("yearlyStats");
+		if (lottoList.isEmpty()) throw new CustomException(ErrorCode.NOT_FOUND);
+
+		return new YearMonthResponse(lottoList.stream()
+				.map(lotto -> String.valueOf(lotto.getCreationDate().getYear()))
+				.sorted()
+				.collect(Collectors.toList()));
 	}
 
 	private List<String> getAllMonthIndex() {
