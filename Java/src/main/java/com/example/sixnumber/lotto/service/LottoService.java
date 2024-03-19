@@ -64,11 +64,6 @@ public class LottoService {
 		return new YearMonthResponse(getAllMonthIndex());
 	}
 
-	@CachePut(cacheNames = "StatsIndex", key = "'all'")
-	public YearMonthResponse updateCacheWithAllMonthlyStatsIndex() {
-		return new YearMonthResponse(getAllMonthIndex());
-	}
-
 	public UnifiedResponse<?> createMonthlyReport(int year, int month) {
 		YearMonth yearMonth = YearMonth.of(year, month);
 		if (lottoRepository.existsLottoByCreationDate(yearMonth)
@@ -90,7 +85,6 @@ public class LottoService {
 		);
 
 		saveLottoResult("Stats", map, yearMonth);
-		updateCacheWithAllMonthlyStatsIndex();
 		return UnifiedResponse.ok("월별 통계 생성완료");
 	}
 
