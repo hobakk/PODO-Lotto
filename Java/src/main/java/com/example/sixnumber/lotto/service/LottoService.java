@@ -10,7 +10,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import com.example.sixnumber.global.exception.OverlapException;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,7 +60,7 @@ public class LottoService {
 
 	@Cacheable(cacheNames = "StatsIndex", key = "'all'")
 	public YearMonthResponse getAllMonthlyStats() {
-		return new YearMonthResponse(getAllMonthIndex());
+		return getAllStatsIndexBySubject("Stats");
 	}
 
 	public UnifiedResponse<?> createMonthlyReport(int year, int month) {
@@ -122,24 +121,20 @@ public class LottoService {
 
 	@Cacheable(cacheNames = "StatsIndex", key = "'allYearlyStatsIndex'")
 	public YearMonthResponse getAllYearlyStatsIndex() {
-		List<Lotto> lottoList = lottoRepository.findAllBySubject("yearlyStats");
+		return getAllStatsIndexBySubject("yearlyStats");
+	}
+
+	public YearMonthResponse getAllStatsIndexBySubject(String subject) {
+		List<Lotto> lottoList = lottoRepository.findAllBySubject(subject);
 		if (lottoList.isEmpty()) throw new CustomException(ErrorCode.NOT_FOUND);
 
 		return new YearMonthResponse(lottoList.stream()
-				.map(lotto -> String.valueOf(lotto.getCreationDate().getYear()))
+				.map(lotto -> {
+					if (subject.equals("yearlyStats")) return convertObjectToString(lotto.getCreationDate().getYear());
+					else return convertObjectToString(lotto.getCreationDate());
+				})
 				.sorted()
 				.collect(Collectors.toList()));
-	}
-
-	private List<String> getAllMonthIndex() {
-		List<String> yearMonthList = lottoRepository.findAllBySubject("Stats").stream()
-			.map(lotto -> lotto.getCreationDate().toString())
-			.sorted()
-			.collect(Collectors.toList());
-
-		if (yearMonthList.isEmpty()) throw new IllegalArgumentException("해당 정보를 찾을 수 없습니다");
-
-		return yearMonthList;
 	}
 
 	private void saveLottoResult(String subject, Map<Integer, Integer> map, YearMonth yearMonth) {
@@ -150,5 +145,9 @@ public class LottoService {
 
 		Lotto lotto = new Lotto(subject, "Scheduler", yearMonth, countList, result);
 		lottoRepository.save(lotto);
+	}
+
+	private String convertObjectToString(Object o) {
+		return String.valueOf(o);
 	}
 }
