@@ -54,7 +54,7 @@ public class LottoService {
 	@Cacheable(cacheNames = "Stats", key = "#yearMonth")
 	public LottoResponse getMonthlyStats(YearMonth yearMonth) {
 		return lottoRepository.findByTopNumbersForMonth(yearMonth)
-			.map(lotto -> new LottoResponse(lotto.getCountList(), lotto.getTopNumber()))
+			.map(LottoResponse::new)
 			.orElseThrow(() -> new IllegalArgumentException("해당 정보를 찾을 수 없습니다"));
 	}
 
