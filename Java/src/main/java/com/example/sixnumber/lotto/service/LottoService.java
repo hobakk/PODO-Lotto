@@ -40,7 +40,7 @@ public class LottoService {
 	public LottoResponse mainTopNumbers() {
 		return lottoRepository.findByMain()
 			.map(lotto -> {
-				Map<Integer, Integer> map = new HashMap<>();
+				Map<Integer, Integer> map = new HashMap<>(45);
 				for (int i = 0; i < lotto.getCountList().size(); i++) {
 					map.put(i + 1, lotto.getCountList().get(i));
 				}
@@ -70,7 +70,7 @@ public class LottoService {
 			|| yearMonth.isAfter(YearMonth.now())
 		) throw new IllegalArgumentException("이미 처리되었거나 잘못된 입력값 입니다");
 
-		Map<Integer, Integer> map = new HashMap<>();
+		Map<Integer, Integer> map = new HashMap<>(45);
 		List<SixNumber> sixNumberList = sixNumberRepository.findAllByBuyDate(year, month);
 		if (sixNumberList.isEmpty()) throw new CustomException(ErrorCode.NOT_FOUND);
 
@@ -98,7 +98,7 @@ public class LottoService {
 				.map(Collections::singletonList)
 				.orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
 
-		Map<Integer, Integer> map = new HashMap<>();
+		Map<Integer, Integer> map = new HashMap<>(45);
 		for (List<Integer> list : countListOfMonthlyReport) {
 			int count = 0;
 			while (count < list.size()) {
