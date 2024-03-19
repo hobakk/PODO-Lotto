@@ -124,7 +124,7 @@ public class LottoService {
 		return getAllStatsIndexBySubject("yearlyStats");
 	}
 
-	public YearMonthResponse getAllStatsIndexBySubject(String subject) {
+	private YearMonthResponse getAllStatsIndexBySubject(String subject) {
 		List<Lotto> lottoList = lottoRepository.findAllBySubject(subject);
 		if (lottoList.isEmpty()) throw new CustomException(ErrorCode.NOT_FOUND);
 
