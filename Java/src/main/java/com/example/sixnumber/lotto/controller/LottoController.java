@@ -52,7 +52,7 @@ public class LottoController {
 		return ResponseEntity.ok(lottoService.createYearlyReport(year));
 	}
 
-	@GetMapping("yearly/all")
+	@GetMapping("/yearly/all")
 	public ResponseEntity<UnifiedResponse<YearMonthResponse>> getAllYearlyStatsIndex() {
 		return ResponseEntity.ok(UnifiedResponse.ok(
 				"모든 연도별 통계 인덱스 조회성공",
