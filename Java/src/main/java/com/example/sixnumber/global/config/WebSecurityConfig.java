@@ -39,7 +39,12 @@ public class WebSecurityConfig {
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private static final String[] URL_PERMIT_ALL = {
 		"/api/users/signin", "/api/users/signup", "/api/winnumber", "/api/jwt/re-issuance",
-		"/api/users/email", "/api/users/email/auth-code", "/api/users/find-password"
+		"/api/users/email", "/api/users/email/auth-code", "/api/users/find-password",
+		"/api/lotto/yearMonth/all"
+	};
+	private static final String[] URL_PERMIT_ADMIN = {
+		"/api/admin/**", "/api/winnumber/set", "/api/board/admin/**", "/api/lotto/stats/**",
+		"/api/winnumber/first"
 	};
 
 	@Bean
@@ -68,7 +73,7 @@ public class WebSecurityConfig {
 			.authorizeRequests()
 				.antMatchers(HttpMethod.OPTIONS).permitAll()
 				.antMatchers(URL_PERMIT_ALL).permitAll()
-				.antMatchers("/api/admin/**", "/api/winnumber/set", "/api/board/admin/**").hasRole("ADMIN")
+				.antMatchers(URL_PERMIT_ADMIN).hasRole("ADMIN")
 				.antMatchers("/api/lotto/**", "/api/users/sixnumber-list").hasAnyRole("ADMIN", "PAID")
 				.anyRequest().authenticated()
 
