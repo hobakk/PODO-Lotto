@@ -59,4 +59,12 @@ public class LottoController {
 				lottoService.getAllYearlyStatsIndex())
 		);
 	}
+
+	@GetMapping("/yearly/{year}")
+	public ResponseEntity<UnifiedResponse<LottoResponse>> getYearlyStats(@PathVariable int year) {
+		return ResponseEntity.ok(UnifiedResponse.ok(
+						year + "년 통계 조회성공",
+						lottoService.getYearlyStats(year))
+		);
+	}
 }
