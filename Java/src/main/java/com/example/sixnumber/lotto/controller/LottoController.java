@@ -46,4 +46,9 @@ public class LottoController {
 	) {
 		return ResponseEntity.ok(lottoService.createMonthlyReport(year, month));
 	}
+
+	@GetMapping("/stats/{year}")
+	public ResponseEntity<UnifiedResponse<?>> createYearlyReport(@PathVariable int year) {
+		return ResponseEntity.ok(lottoService.createYearlyReport(year));
+	}
 }
