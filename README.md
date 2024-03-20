@@ -56,13 +56,14 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 - 조회: 충전요청 검색
 - 수정: 관리자 등록, 충전, 차감, 상태 수정, 권한 수정
 
-<br/><br/><h2>Lotto [Service](https://github.com/hobakk/PODO-Lotto/blob/8ae94aad72464abcbe6d84901a48cf6ab708356e/Java/src/main/java/com/example/sixnumber/lotto/service/LottoService.java#L34)</h2>
+<br/><br/><h2>Lotto [Service](https://github.com/hobakk/PODO-Lotto/blob/b190dad6fc7c337a85ee7f29105525bee091b56b/Java/src/main/java/com/example/sixnumber/lotto/service/LottoService.java#L33)</h2>
 
 Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.tistory.com/131)
 ### 1. 메인 로또 통계
-- Cache 의 entryTtl 을 30분으로 제한하여 30분 단위로 갱신 (조회를 한다는 가정하에)
-### 2. 월 통계, 저장된 월 통계 YearMonth(index)
-- entryTtl 제한을 두지 않음
+- entryTtl을 15분으로 설정하여, 15분 단위로 갱신
+### 2. 월 통계, 저장된 모든 월 통계 index 조회
+### 3. 월 통계, 년도별 통계 생성
+### 4. 년도별 통계, index 조회
 
 <br/><br/><h2>SixNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/48f5d9bb5df96a9cf2e6619159a55f1238e41d7f/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L45)</h2>
 
@@ -73,7 +74,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 - 주어진 조건에 따라 무작위로 숫자를 생성하고, 그 중에서 가장 자주 등장하는 숫자를 찾아 리스트로 반환
 ### 3. 이전 구매번호 조회
 
-<br/><br/><h2>WinNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/8ae94aad72464abcbe6d84901a48cf6ab708356e/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L29)</h2>
+<br/><br/><h2>WinNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/b190dad6fc7c337a85ee7f29105525bee091b56b/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L29)</h2>
 
 Redis Cache 사용해서 속도 개선
 ### 1. 당첨번호 조회
