@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
-public class FullFieldOfWinNumber {
+public class FullFieldOfWinNumber extends WinNumber {
 	private final String date;
 	private final int time;
 	private final Long prize;
