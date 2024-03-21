@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.sixnumber.lotto.dto.WinNumbersResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -105,7 +106,7 @@ public class GlobalSchedulerTest {
 		verify(winNumberService).getFirstWinNumber();
 		verify(manager).retrieveLottoResult(anyInt());
 		verify(winNumberRepository).save(any(WinNumber.class));
-		verify(winNumberService).updateCache(anyList());
-		verify(winNumberService).updateCacheOfFirstWinNumber(any(WinNumber.class));
+		verify(winNumberService).updateCache(any(WinNumbersResponse.class));
+		verify(winNumberService).updateCacheOfFirstWinNumber(any(WinNumbersResponse.class));
 	}
 }
