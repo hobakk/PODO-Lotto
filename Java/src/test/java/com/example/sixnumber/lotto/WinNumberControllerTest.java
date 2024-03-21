@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.example.sixnumber.fixture.TestDataFactory;
 import com.example.sixnumber.fixture.WithCustomMockUser;
 import com.example.sixnumber.lotto.controller.WinNumberController;
-import com.example.sixnumber.lotto.dto.TransformResponse;
 import com.example.sixnumber.lotto.dto.WinNumbersResponse;
 import com.example.sixnumber.lotto.service.WinNumberService;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
-public class TransformResponse {
+public class FullFieldOfWinNumber {
 	private final String date;
 	private final int time;
 	private final Long prize;
@@ -19,7 +19,7 @@ public class TransformResponse {
 	private final int bonus;
 
 	@JsonCreator
-	public static TransformResponse create(
+	public static FullFieldOfWinNumber create(
 		@JsonProperty("date") String date,
 		@JsonProperty("time") int time,
 		@JsonProperty("prize") Long prize,
@@ -27,10 +27,10 @@ public class TransformResponse {
 		@JsonProperty("topNumberList") List<Integer> topNumberList,
 		@JsonProperty("bonus") int bonus
 	) {
-		return new TransformResponse(date, time, prize, winner, topNumberList, bonus);
+		return new FullFieldOfWinNumber(date, time, prize, winner, topNumberList, bonus);
 	}
 
-	public TransformResponse(String date, int time, Long prize, int winner, List<Integer> topNumberList, int bonus) {
+	public FullFieldOfWinNumber(String date, int time, Long prize, int winner, List<Integer> topNumberList, int bonus) {
 		this.date = date;
 		this.time = time;
 		this.prize = prize;
@@ -39,7 +39,7 @@ public class TransformResponse {
 		this.bonus = bonus;
 	}
 
-	public TransformResponse(WinNumber winNumber) {
+	public FullFieldOfWinNumber(WinNumber winNumber) {
 		this.date = winNumber.getDate();
 		this.time = winNumber.getTime();
 		this.prize = winNumber.getPrize();

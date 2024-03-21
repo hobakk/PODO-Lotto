@@ -11,12 +11,12 @@ import lombok.Getter;
 
 @Getter
 public class WinNumbersResponse {
-	private final List<TransformResponse> winNumberList;
+	private final List<FullFieldOfWinNumber> winNumberList;
 
 	@JsonCreator
 	public WinNumbersResponse(@JsonProperty("winNumberList") List<WinNumber> winNumberList) {
 		this.winNumberList = winNumberList.stream()
-				.map(TransformResponse::new)
+				.map(FullFieldOfWinNumber::new)
 				.collect(Collectors.toList());
 	}
 }
