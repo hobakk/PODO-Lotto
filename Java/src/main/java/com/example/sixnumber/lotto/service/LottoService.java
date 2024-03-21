@@ -86,8 +86,9 @@ public class LottoService {
 
 	public UnifiedResponse<?> createYearlyReport(int year) {
 		String index = year + "Stats";
-		if (lottoRepository.existsLottoBySubject(index))
-			throw new OverlapException(year + "년도 통계가 이미 생성되어 있습니다");
+		int currentYear = YearMonth.now().getYear();
+		if (lottoRepository.existsLottoBySubject(index) || year == currentYear)
+			throw new OverlapException(year + "년도 통계가 이미 생성됬거나 생성할 수 없는 상태입니다");
 
 		List<List<Integer>> countListOfMonthlyReport = lottoRepository.findAllBySubject(index).stream()
 				.findAny()
