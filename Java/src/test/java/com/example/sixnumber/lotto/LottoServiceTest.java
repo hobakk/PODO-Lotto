@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.sixnumber.global.exception.OverlapException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -163,8 +164,19 @@ public class LottoServiceTest {
 	void createYearlyReport_fail_Overlap() {
 		when(lottoRepository.existsLottoBySubject(anyString())).thenReturn(true);
 
+		Assertions.assertThrows(OverlapException.class, () -> lottoService.createYearlyReport(2022));
+
+		verify(lottoRepository).existsLottoBySubject(anyString());
+	}
+
+	@Test
+	void createYearlyReport_fail_NotFound() {
+		when(lottoRepository.existsLottoBySubject(anyString())).thenReturn(false);
+		when(lottoRepository.findAllBySubject(anyString())).thenReturn(new ArrayList<>());
+
 		Assertions.assertThrows(CustomException.class, () -> lottoService.createYearlyReport(2022));
 
 		verify(lottoRepository).existsLottoBySubject(anyString());
+		verify(lottoRepository).findAllBySubject(anyString());
 	}
 }
