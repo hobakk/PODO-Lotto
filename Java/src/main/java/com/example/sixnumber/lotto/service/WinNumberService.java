@@ -29,6 +29,7 @@ import lombok.AllArgsConstructor;
 public class WinNumberService {
 	private final WinNumberRepository winNumberRepository;
 	private final Manager manager;
+	private final int MAX_VIEW = 4;
 
 	@Cacheable(cacheNames = "WinNumbers", key = "'all'")
 	public WinNumbersResponse getWinNumbers() {
@@ -44,7 +45,7 @@ public class WinNumberService {
 		try {
 			int time = winNumber.getTime();
 			int topRound = getFirstWinNumber().getTime();
-			if (topRound > 0 && time <= topRound - 5 || winNumberRepository.existsWinNumberByTime(time))
+			if (topRound > 0 && time <= topRound - MAX_VIEW || winNumberRepository.existsWinNumberByTime(time))
 				throw new OverlapException("등록된 당첨 결과 이거나 범위를 벗어났습니다");
 
 			winNumberRepository.save(winNumber);
@@ -53,7 +54,7 @@ public class WinNumberService {
 			while (manager.checkMaxRound(checkingRound)) checkingRound++;
 
 			int result = checkingRound - round;
-			if (result <= 0 && result >= -5) winNumberRepository.save(winNumber);
+			if (result <= 0 && result >= -MAX_VIEW) winNumberRepository.save(winNumber);
 			else throw new CustomException(ErrorCode.OUT_OF_RANGE);
 		}
 
@@ -84,10 +85,10 @@ public class WinNumberService {
 		if (winNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
 
 		winNumberList.sort(Comparator.comparing(WinNumber::getTime).reversed());
-		if (winNumberList.size() > 5) {
-			List<WinNumber> remainingList = winNumberList.subList(5, winNumberList.size());
+		if (winNumberList.size() > MAX_VIEW) {
+			List<WinNumber> remainingList = winNumberList.subList(MAX_VIEW, winNumberList.size());
 			winNumberRepository.deleteAll(remainingList);
-			return winNumberList.subList(0, 5);
+			return winNumberList.subList(0, MAX_VIEW);
 		} else return winNumberList;
 	}
 
