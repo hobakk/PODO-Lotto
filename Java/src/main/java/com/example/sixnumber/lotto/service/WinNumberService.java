@@ -16,7 +16,6 @@ import com.example.sixnumber.global.exception.CustomException;
 import com.example.sixnumber.global.exception.ErrorCode;
 import com.example.sixnumber.global.exception.OverlapException;
 import com.example.sixnumber.global.util.Manager;
-import com.example.sixnumber.lotto.dto.TransformResponse;
 import com.example.sixnumber.lotto.dto.WinNumbersResponse;
 import com.example.sixnumber.lotto.entity.WinNumber;
 import com.example.sixnumber.lotto.repository.WinNumberRepository;
@@ -33,7 +32,7 @@ public class WinNumberService {
 
 	@Cacheable(cacheNames = "WinNumbers", key = "'all'")
 	public WinNumbersResponse getWinNumbers() {
-		return transform(adjustWinNumbers());
+		return new WinNumbersResponse(adjustWinNumbers());
 	}
 
 	@CachePut(cacheNames = "WinNumbers", key = "'all'")
@@ -58,12 +57,12 @@ public class WinNumberService {
 			else throw new CustomException(ErrorCode.OUT_OF_RANGE);
 		}
 
-		return transform(adjustWinNumbers());
+		return new WinNumbersResponse(adjustWinNumbers());
 	}
 
 	@CachePut(cacheNames = "WinNumbers", key = "'all'")
 	public WinNumbersResponse updateCache(List<WinNumber> winNumberList) {
-		return transform(winNumberList);
+		return new WinNumbersResponse(winNumberList);
 	}
 
 	@Cacheable(cacheNames = "WinNumber", key = "'first'")
@@ -90,11 +89,5 @@ public class WinNumberService {
 			winNumberRepository.deleteAll(remainingList);
 			return winNumberList.subList(0, MAX_VIEW);
 		} else return winNumberList;
-	}
-
-	private WinNumbersResponse transform(List<WinNumber> winNumberList) {
-		return new WinNumbersResponse(winNumberList.stream()
-				.map(TransformResponse::new)
-				.collect(Collectors.toList()));
 	}
 }
