@@ -145,4 +145,17 @@ public class LottoServiceTest {
 		verify(lottoRepository).existsLottoByCreationDate(any(YearMonth.class));
 		verify(sixNumberRepository).findAllByBuyDate(anyInt(), anyInt());
 	}
+
+	@Test
+	void createYearlyReport_success() {
+		int year = 2022;
+		when(lottoRepository.existsLottoBySubject(anyString())).thenReturn(false);
+		when(lottoRepository.findAllBySubject(anyString())).thenReturn(List.of(TestDataFactory.lotto()));
+
+		UnifiedResponse<?> response = lottoService.createYearlyReport(year);
+
+		verify(lottoRepository).existsLottoBySubject(anyString());
+		verify(lottoRepository).findAllBySubject(anyString());
+		TestUtil.UnifiedResponseEquals(response, 200, year + "년 통계 생성 성공");
+	}
 }
