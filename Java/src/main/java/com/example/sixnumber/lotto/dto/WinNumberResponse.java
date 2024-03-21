@@ -39,4 +39,11 @@ public class WinNumberResponse {
         this.topNumberList = new ArrayList<>(winNumber.getTopNumberList());
         this.bonus = winNumber.getBonus();
     }
+
+    public WinNumberResponse(FullFieldOfWinNumber winNumber) {
+        this.time = winNumber.getTime();
+        this.date = winNumber.getDate();
+        this.topNumberList = new ArrayList<>(winNumber.getTopNumberList());
+        this.bonus = winNumber.getBonus();
+    }
 }

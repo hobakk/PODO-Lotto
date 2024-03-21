@@ -19,4 +19,8 @@ public class WinNumbersResponse {
 				.map(FullFieldOfWinNumber::new)
 				.collect(Collectors.toList());
 	}
+
+	public WinNumberResponse retrieveFirstWinNumberAndModifyResponse() {
+		return new WinNumberResponse(this.getWinNumberList().get(0));
+	}
 }
