@@ -32,7 +32,7 @@ public class WinNumberService {
 
 	@Cacheable(cacheNames = "WinNumbers", key = "'all'")
 	public WinNumbersResponse getWinNumbers() {
-		return new WinNumbersResponse(adjustWinNumbers());
+		return adjustWinNumbers();
 	}
 
 	@CachePut(cacheNames = "WinNumbers", key = "'all'")
@@ -57,12 +57,12 @@ public class WinNumberService {
 			else throw new CustomException(ErrorCode.OUT_OF_RANGE);
 		}
 
-		return new WinNumbersResponse(adjustWinNumbers());
+		return adjustWinNumbers();
 	}
 
 	@CachePut(cacheNames = "WinNumbers", key = "'all'")
-	public WinNumbersResponse updateCache(List<WinNumber> winNumberList) {
-		return new WinNumbersResponse(winNumberList);
+	public WinNumbersResponse updateCache(WinNumbersResponse response) {
+		return response;
 	}
 
 	@Cacheable(cacheNames = "WinNumber", key = "'first'")
@@ -75,11 +75,11 @@ public class WinNumberService {
 	}
 
 	@CachePut(cacheNames = "WinNumber", key = "'first'")
-	public WinNumber updateCacheOfFirstWinNumber(WinNumber firstWinNumber) {
-		return firstWinNumber;
+	public WinNumberResponse updateCacheOfFirstWinNumber(WinNumbersResponse response) {
+		return response.retrieveFirstWinNumberAndModifyResponse();
 	}
 
-	public List<WinNumber> adjustWinNumbers() {
+	public WinNumbersResponse adjustWinNumbers() {
 		List<WinNumber> winNumberList = winNumberRepository.findAll();
 		if (winNumberList.isEmpty()) throw new IllegalArgumentException("해당 정보가 존재하지 않습니다");
 
@@ -87,7 +87,9 @@ public class WinNumberService {
 		if (winNumberList.size() > MAX_VIEW) {
 			List<WinNumber> remainingList = winNumberList.subList(MAX_VIEW, winNumberList.size());
 			winNumberRepository.deleteAll(remainingList);
-			return winNumberList.subList(0, MAX_VIEW);
-		} else return winNumberList;
+			winNumberList = winNumberList.subList(0, MAX_VIEW);
+		}
+
+		return new WinNumbersResponse(winNumberList);
 	}
 }

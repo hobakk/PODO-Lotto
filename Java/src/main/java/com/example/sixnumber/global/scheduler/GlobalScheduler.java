@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
+import com.example.sixnumber.lotto.dto.WinNumbersResponse;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -78,10 +79,10 @@ public class GlobalScheduler {
 
 		winNumberRepository.save(winNumber);
 
-		List<WinNumber> winNumberList = winNumberService.adjustWinNumbers();
-		winNumberService.updateCache(winNumberList);
+		WinNumbersResponse response = winNumberService.adjustWinNumbers();
+		winNumberService.updateCache(response);
 		// winNumberList는 회차 내림차순
-		winNumberService.updateCacheOfFirstWinNumber(winNumberList.get(0));
+		winNumberService.updateCacheOfFirstWinNumber(response);
 	}
 
 	@Scheduled(cron = "0 0 23 L 12 ?")
