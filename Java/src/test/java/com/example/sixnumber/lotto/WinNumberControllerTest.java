@@ -41,9 +41,7 @@ public class WinNumberControllerTest {
 
 	@BeforeEach
 	public void setup() {
-		TransformResponse transformResponse = new TransformResponse
-			("2023-07-14", 14, 2000L, 7, TestDataFactory.countList(), 7);
-		response = new WinNumbersResponse(List.of(transformResponse));
+		response = new WinNumbersResponse(List.of(TestDataFactory.winNumber()));
 	}
 
 	@Test
