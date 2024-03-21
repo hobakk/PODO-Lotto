@@ -158,4 +158,13 @@ public class LottoServiceTest {
 		verify(lottoRepository).findAllBySubject(anyString());
 		TestUtil.UnifiedResponseEquals(response, 200, year + "년 통계 생성 성공");
 	}
+
+	@Test
+	void createYearlyReport_fail_Overlap() {
+		when(lottoRepository.existsLottoBySubject(anyString())).thenReturn(true);
+
+		Assertions.assertThrows(CustomException.class, () -> lottoService.createYearlyReport(2022));
+
+		verify(lottoRepository).existsLottoBySubject(anyString());
+	}
 }
