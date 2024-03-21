@@ -1,10 +1,7 @@
 package com.example.sixnumber.lotto.service;
 
 import java.time.YearMonth;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -130,8 +127,11 @@ public class LottoService {
 
 		return new YearMonthResponse(lottoList.stream()
 				.map(lotto -> {
-					if (subject.equals("yearlyStats")) return convertObjectToString(lotto.getCreationDate().getYear());
-					else return convertObjectToString(lotto.getCreationDate());
+					Object object;
+					if (subject.equals("yearlyStats")) object = lotto.getCreationDate().getYear();
+					else object = lotto.getCreationDate();
+
+					return object.toString();
 				})
 				.sorted()
 				.collect(Collectors.toList()));
@@ -145,9 +145,5 @@ public class LottoService {
 
 		Lotto lotto = new Lotto(subject, "Scheduler", yearMonth, countList, result);
 		lottoRepository.save(lotto);
-	}
-
-	private String convertObjectToString(Object o) {
-		return String.valueOf(o);
 	}
 }
