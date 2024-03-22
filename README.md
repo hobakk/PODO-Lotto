@@ -56,7 +56,7 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 - 조회: 충전요청 검색
 - 수정: 관리자 등록, 충전, 차감, 상태 수정, 권한 수정
 
-<br/><br/><h2>Lotto [Service](https://github.com/hobakk/PODO-Lotto/blob/b190dad6fc7c337a85ee7f29105525bee091b56b/Java/src/main/java/com/example/sixnumber/lotto/service/LottoService.java#L33)</h2>
+<br/><br/><h2>Lotto [Service](https://github.com/hobakk/PODO-Lotto/blob/bdef53bf6fa4e391592b8a36f1e2feeae38b7d32/Java/src/main/java/com/example/sixnumber/lotto/service/LottoService.java#L30)</h2>
 
 Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.tistory.com/131)
 ### 1. 메인 로또 통계
@@ -74,7 +74,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 - 주어진 조건에 따라 무작위로 숫자를 생성하고, 그 중에서 가장 자주 등장하는 숫자를 찾아 리스트로 반환
 ### 3. 이전 구매번호 조회
 
-<br/><br/><h2>WinNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/b190dad6fc7c337a85ee7f29105525bee091b56b/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L29)</h2>
+<br/><br/><h2>WinNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/bdef53bf6fa4e391592b8a36f1e2feeae38b7d32/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L28)</h2>
 
 Redis Cache 사용해서 속도 개선
 ### 1. 당첨번호 조회
