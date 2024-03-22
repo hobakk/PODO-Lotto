@@ -300,7 +300,7 @@ public class UserServiceTest {
 		HttpServletResponse response = mock(HttpServletResponse.class);
 		TokenDto tokenDto = new TokenDto("accessTokenValue", "refreshTokenValue");
 
-		when(jwtProvider.resolveTokens(request)).thenReturn(tokenDto);
+		when(jwtProvider.resolveTokens(request)).thenReturn(Optional.of(tokenDto));
 		when(jwtProvider.getRemainingTime(anyString())).thenReturn((long) 3000);
 
 		UnifiedResponse<?> unifiedResponse = userService.logout(request, response, saveUser);
