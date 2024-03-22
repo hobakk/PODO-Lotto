@@ -153,14 +153,17 @@ public class UserService {
 		user.setRefreshPointer(null);
 		userRepository.save(user);
 
-		TokenDto tokenDto = jwtProvider.resolveTokens(request);
-		String accessToken = tokenDto.getAccessToken();
-		if (accessToken != null) {
-			Long remainingTime = jwtProvider.getRemainingTime(accessToken);
-			redisDao.setBlackList(accessToken, remainingTime);
-		}
+		jwtProvider.resolveTokens(request).ifPresent(
+				(dto) -> {
+					if (dto.hasAccessToken()) {
+						String accessToken = dto.getAccessToken();
+						Long remainingTime = jwtProvider.getRemainingTime(accessToken);
+						redisDao.setBlackList(accessToken, remainingTime);
+					}
+				}
+		);
 
-		jwtProvider.addCookiesToHeaders(response, tokenDto, 0);
+		jwtProvider.addCookiesToHeaders(response, new TokenDto(), 0);
 		return UnifiedResponse.ok("로그아웃 성공");
 	}
 
