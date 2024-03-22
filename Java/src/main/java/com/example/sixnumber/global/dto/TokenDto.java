@@ -24,7 +24,8 @@ public class TokenDto {
 		this.refreshPointer = refreshPointer;
 	}
 
-	public Boolean ifPresent(){
+	public Boolean hasBothToken(){
 		return this.accessToken != null && this.refreshToken != null;
 	}
+	public Boolean hasAccessToken() { return this.accessToken != null; }
 }
