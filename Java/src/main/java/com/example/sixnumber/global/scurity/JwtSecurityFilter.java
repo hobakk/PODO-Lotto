@@ -1,6 +1,7 @@
 package com.example.sixnumber.global.scurity;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -34,45 +35,45 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		TokenDto tokenDto = jwtProvider.resolveTokens(request);
-		String accessToken = tokenDto.getAccessToken();
-		String refreshToken = tokenDto.getRefreshToken();
+		Optional<TokenDto> tokenDto = jwtProvider.resolveTokens(request);
 
-		if (tokenDto.hasBothToken()) {
-			try {
-				String verifiedAccessToken = validateAccessToken(accessToken);
-				String refreshPointer = jwtProvider.getClaims(verifiedAccessToken).getSubject();
+		tokenDto.ifPresent((dto -> {
+			if (dto.hasBothToken()) {
+				String accessToken = dto.getAccessToken();
+				String refreshToken = dto.getRefreshToken();
 
-				redisDao.getValue(RedisDao.RT_KEY + refreshPointer)
-					.ifPresentOrElse(
-						value -> {
-							validateRefreshToken(response, refreshToken, value);
-							createAuthentication(jwtProvider.getTokenInUserId(value));
-						},
-						() -> {
-							redisDao.setBlackList(verifiedAccessToken, (long) 300000);
-							deleteCookieAndThrowException(response);
-						}
+				try {
+					String verifiedAccessToken = validateAccessToken(accessToken);
+					String refreshPointer = jwtProvider.getClaims(verifiedAccessToken).getSubject();
+					redisDao.getValue(RedisDao.RT_KEY + refreshPointer).ifPresentOrElse(
+							value -> {
+								validateRefreshToken(response, refreshToken, value);
+								createAuthentication(jwtProvider.getTokenInUserId(value));
+							},
+							() -> {
+								redisDao.setBlackList(verifiedAccessToken, (long) 300000);
+								deleteCookieAndThrowException(response);
+							}
 					);
-			} catch (ExpiredJwtException e) {
-				String refreshPointer = e.getClaims().getSubject();
-				redisDao.getValue(RedisDao.RT_KEY + refreshPointer)
-					.ifPresentOrElse(
-						value -> {
-							validateRefreshToken(response, refreshToken, value);
-							Claims claims = jwtProvider.getClaims(value);
-							String newAccessToken = jwtProvider.accessToken(claims.get("key", String.class));
-							int remainingSeconds = (int) Math.floor((double) jwtProvider.getRemainingTime(value) / 1000);
-							if (remainingSeconds < 360) deleteCookieAndThrowException(response);
+				} catch (ExpiredJwtException e) {
+					String refreshPointer = e.getClaims().getSubject();
+					redisDao.getValue(RedisDao.RT_KEY + refreshPointer).ifPresentOrElse(
+							value -> {
+								validateRefreshToken(response, refreshToken, value);
+								Claims claims = jwtProvider.getClaims(value);
+								String newAccessToken = jwtProvider.accessToken(claims.get("key", String.class));
+								int remainingSeconds = (int)Math.floor((double) jwtProvider.getRemainingTime(value)/1000);
+								if (remainingSeconds < 360) deleteCookieAndThrowException(response);
 
-							jwtProvider.createCookieForAddHeaders(
-								response, JwtProvider.ACCESS_TOKEN, newAccessToken, remainingSeconds);
-							createAuthentication(claims.get("id", Long.class));
-						},
-						() -> deleteCookieAndThrowException(response)
+								jwtProvider.createCookieForAddHeaders(
+										response, JwtProvider.ACCESS_TOKEN, newAccessToken, remainingSeconds);
+								createAuthentication(claims.get("id", Long.class));
+							},
+							() -> deleteCookieAndThrowException(response)
 					);
+				}
 			}
-		}
+		}));
 
 		filterChain.doFilter(request, response);
 	}
