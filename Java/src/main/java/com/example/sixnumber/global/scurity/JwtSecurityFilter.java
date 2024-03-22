@@ -38,7 +38,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 		String accessToken = tokenDto.getAccessToken();
 		String refreshToken = tokenDto.getRefreshToken();
 
-		if (tokenDto.ifPresent()) {
+		if (tokenDto.hasBothToken()) {
 			try {
 				String verifiedAccessToken = validateAccessToken(accessToken);
 				String refreshPointer = jwtProvider.getClaims(verifiedAccessToken).getSubject();

@@ -2,10 +2,7 @@ package com.example.sixnumber.global.util;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 import javax.crypto.SecretKey;
@@ -145,15 +142,15 @@ public class JwtProvider {
 		return new TokenDto(accessToken, refreshToken, refreshPointer);
 	}
 
-	public TokenDto resolveTokens(HttpServletRequest request) {
+	public Optional<TokenDto> resolveTokens(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
 		if(cookies != null && cookies.length >= 2) {
 			String accessToken = getTokenValue(cookies, ACCESS_TOKEN);
 			String refreshToken = getTokenValue(cookies, REFRESH_TOKEN);
-			return new TokenDto(accessToken, refreshToken);
+			return Optional.of(new TokenDto(accessToken, refreshToken));
 		}
 
-		return new TokenDto();
+		return Optional.empty();
 	}
 
 	public void addCookiesToHeaders(HttpServletResponse response, TokenDto tokenDto, Object maxAge) {
