@@ -154,10 +154,15 @@ public class JwtProvider {
 	}
 
 	public void addCookiesToHeaders(HttpServletResponse response, TokenDto tokenDto, Object maxAge) {
-		createCookieForAddHeaders(
-			response, JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), maxAge);
-		createCookieForAddHeaders(
-			response, JwtProvider.REFRESH_TOKEN, tokenDto.getRefreshToken(), maxAge);
+		if (tokenDto.hasBothToken()) {
+			createCookieForAddHeaders(
+					response, JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), maxAge);
+			createCookieForAddHeaders(
+					response, JwtProvider.REFRESH_TOKEN, tokenDto.getRefreshToken(), maxAge);
+		} else if (tokenDto.onlyHaveAccessToken()) {
+			createCookieForAddHeaders(
+					response, JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), maxAge);
+		}
 	}
 
 	private String getTokenValue(Cookie[] cookies, String name) {
