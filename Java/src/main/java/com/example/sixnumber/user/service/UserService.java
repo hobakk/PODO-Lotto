@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.example.sixnumber.lotto.dto.WinNumberResponse;
+import com.example.sixnumber.user.dto.*;
+import io.jsonwebtoken.Claims;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,19 +39,6 @@ import com.example.sixnumber.lotto.dto.SixNumberResponse;
 import com.example.sixnumber.lotto.entity.SixNumber;
 import com.example.sixnumber.lotto.repository.SixNumberRepository;
 import com.example.sixnumber.lotto.service.WinNumberService;
-import com.example.sixnumber.user.dto.CashNicknameResponse;
-import com.example.sixnumber.user.dto.ChargingRequest;
-import com.example.sixnumber.user.dto.ChargingResponse;
-import com.example.sixnumber.user.dto.EmailAuthCodeRequest;
-import com.example.sixnumber.user.dto.EmailRequest;
-import com.example.sixnumber.user.dto.FindPasswordRequest;
-import com.example.sixnumber.user.dto.OnlyMsgRequest;
-import com.example.sixnumber.user.dto.SigninRequest;
-import com.example.sixnumber.user.dto.SignupRequest;
-import com.example.sixnumber.user.dto.StatementModifyMsgRequest;
-import com.example.sixnumber.user.dto.StatementResponse;
-import com.example.sixnumber.user.dto.UserResponse;
-import com.example.sixnumber.user.dto.WinningNumberResponse;
 import com.example.sixnumber.user.entity.Statement;
 import com.example.sixnumber.user.entity.User;
 import com.example.sixnumber.user.repository.StatementRepository;
@@ -132,7 +121,7 @@ public class UserService {
 		validatePasswordMatching(request.getPassword(), user.getPassword());
 
 		UnifiedResponse<?> unifiedResponse;
-		if (user.getRefreshPointer() == null) {
+		if (user.getRefreshPointer().isEmpty()) {
 			TokenDto tokenDto = jwtProvider.generateTokens(user);
 			user.setRefreshPointer(tokenDto.getRefreshPointer());
 			redisDao.setValues(RedisDao.RT_KEY + tokenDto.getRefreshPointer(),
@@ -377,6 +366,30 @@ public class UserService {
 
 		return UnifiedResponse.ok("당첨 이력 조회 성공", winningNumberResponses);
 	}
+
+    public UnifiedResponse<?> checkUserIdNextIssuanceNewAccessToken(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            OnlyMsgRequest msgRequest
+    ) {
+        return jwtProvider.resolveTokens(request)
+                .filter(TokenDto::onlyHaveRefreshToken)
+                .map(dto -> {
+                    Claims claims = jwtProvider.getClaims(dto.getRefreshToken());
+                    String userIdInRedux = claims.get("id", String.class);
+                    UnifiedResponse<?> unifiedResponse;
+                    if (userIdInRedux.equals(msgRequest.getMsg())) {
+                        String refreshPointer = claims.get("key", String.class);
+                        String newAccessToken = jwtProvider.accessToken(refreshPointer);
+                        TokenDto tokenDto = new TokenDto(newAccessToken);
+                        jwtProvider.addCookiesToHeaders(response, tokenDto, "oneWeek");
+                        unifiedResponse = UnifiedResponse.ok("accessToken 재발급 성공");
+                    } else unifiedResponse = UnifiedResponse.badRequest("accessToken 재발급 실패");
+
+                    return unifiedResponse;
+                })
+                .orElseThrow(() -> new CustomException(INVALID_ACCESS));
+    }
 
 	private int generateRandomNumber(int range) {
 		Random random = new Random();
