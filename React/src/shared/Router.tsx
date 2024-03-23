@@ -29,6 +29,7 @@ import GetBoardsByStatus from '../pages/board/GetBoardsByStatus'
 import GetBoard from '../pages/admin/GetBoards'
 import CreateMonthlyStats from '../pages/lotto/CreateMonthlyStats'
 import CheckLottoWinLastWeek from '../pages/users/CheckLottoWinLastWeek'
+import CheckIdNextIssuanceAccess from '../pages/users/CheckIdNextIssuanceAccess'
 
 const Router = () => {
   return (
@@ -63,6 +64,8 @@ const Router = () => {
                 <Route path='/admin/boards' element={<GetBoard />} />
                 <Route path='/admin/monthlystats' element={<CreateMonthlyStats />} />
                 <Route path='/check-lotto/last-week' element={<CheckLottoWinLastWeek />} />
+                <Route path='/check-user/issuance-access' element={<CheckIdNextIssuanceAccess />} />
+
             </Routes>
         </Layout>
     </BrowserRouter>
