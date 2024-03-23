@@ -150,14 +150,11 @@ public class JwtProvider {
 	}
 
 	public void addCookiesToHeaders(HttpServletResponse response, TokenDto tokenDto, Object maxAge) {
-		if (tokenDto.hasBothToken()) {
-			createCookieForAddHeaders(
-					response, JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), maxAge);
-			createCookieForAddHeaders(
-					response, JwtProvider.REFRESH_TOKEN, tokenDto.getRefreshToken(), maxAge);
-		} else if (tokenDto.onlyHaveAccessToken()) {
-			createCookieForAddHeaders(
-					response, JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), maxAge);
+		if (tokenDto.onlyHaveAccessToken()) {
+			createCookieForAddHeaders(response, JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), maxAge);
+		} else {
+			createCookieForAddHeaders(response, JwtProvider.ACCESS_TOKEN, tokenDto.getAccessToken(), maxAge);
+			createCookieForAddHeaders(response, JwtProvider.REFRESH_TOKEN, tokenDto.getRefreshToken(), maxAge);
 		}
 	}
 
