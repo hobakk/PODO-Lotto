@@ -12,6 +12,10 @@ public class TokenDto {
 	private String refreshToken;
 	private String refreshPointer;
 
+	public TokenDto(String accessToken) {
+		this.accessToken = accessToken;
+	}
+
 	public TokenDto(String accessToken, String refreshToken) {
 		this.accessToken = accessToken;
 		this.refreshToken = refreshToken;
@@ -28,4 +32,6 @@ public class TokenDto {
 		return this.accessToken != null && this.refreshToken != null;
 	}
 	public Boolean hasAccessToken() { return this.accessToken != null; }
+	public Boolean onlyHaveRefreshToken() { return this.accessToken == null && this.refreshToken != null; }
+	public Boolean onlyHaveAccessToken() { return this.accessToken != null && this.refreshToken == null; }
 }
