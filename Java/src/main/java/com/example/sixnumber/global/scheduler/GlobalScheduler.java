@@ -70,8 +70,8 @@ public class GlobalScheduler {
 			});
 	}
 
-	@Scheduled(cron = "0 0 6 ? * SUN")
-	public void updateLottoResultsOnSunday() {
+	@Scheduled(cron = "0 0 21 ? * SAT")
+	public void updateLottoResultsOnSaturday() {
 		int nextRound = winNumberService.getFirstWinNumber().getTime() + 1;
 		WinNumber winNumber = manager.retrieveLottoResult(nextRound)
 			.map(WinNumber::new)
