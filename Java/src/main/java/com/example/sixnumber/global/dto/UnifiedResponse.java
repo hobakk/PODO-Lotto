@@ -47,4 +47,6 @@ public class UnifiedResponse<T> {
 	}
 
 	public static <T> UnifiedResponse<T> badRequest(String msg) { return new UnifiedResponse<>(BAD_REQUEST, msg); }
+
+	public Boolean isOK() { return this.code == 200; }
 }
