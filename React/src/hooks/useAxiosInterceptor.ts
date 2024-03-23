@@ -23,6 +23,8 @@ const useAxiosInterceptor = () => {
             if (exceptionType === "RE_ISSUANCE") {
                 const newConfig = error.response.config;
                 return await axios.request(newConfig)
+            } else if (exceptionType === "ONLY_HAVE_REFRESH") {
+                navigate("/check-user/issuance-access");
             } else if (exceptionType === "DONT_LOGIN") {
                 alert(msg);
                 purge();
