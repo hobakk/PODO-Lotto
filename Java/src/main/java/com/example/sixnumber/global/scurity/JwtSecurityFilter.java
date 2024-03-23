@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.example.sixnumber.global.exception.OnlyHaveRefreshTokenException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -72,7 +73,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 							() -> deleteCookieAndThrowException(response)
 					);
 				}
-			}
+			} else if (dto.onlyHaveRefreshToken()) throw new OnlyHaveRefreshTokenException();
 		}));
 
 		filterChain.doFilter(request, response);

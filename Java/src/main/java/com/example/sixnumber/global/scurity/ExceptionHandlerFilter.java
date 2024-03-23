@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.example.sixnumber.global.exception.OnlyHaveRefreshTokenException;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -34,6 +35,9 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 			setExceptionDto(response, exceptionDto);
 		} catch (RefreshTokenIsNullException e) {
 			exceptionDto = new ExceptionDto(400, "REFRESH_ISNULL", "Redis 에 refreshToken 이 없습니다 ");
+			setExceptionDto(response, exceptionDto);
+		} catch (OnlyHaveRefreshTokenException e) {
+			exceptionDto = new ExceptionDto(400, "ONLY_HAVE_REFRESH", "");
 			setExceptionDto(response, exceptionDto);
 		}
 	}
