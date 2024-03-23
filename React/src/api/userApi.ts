@@ -179,3 +179,12 @@ export const checkLottoWinLastWeek = async (): Promise<UnifiedResponse<WinningNu
         throw error.data.msg;
     }
 }
+
+export const checkIdNextIssuanceAccess = async (id: string): Promise<UnifiedResponse<undefined>> => {
+    try {
+        const { data } = await api.post("/users//check-user/issuance-access", id);
+        return data;
+    } catch (error: any) {
+        throw error.data.msg;
+    }
+}
