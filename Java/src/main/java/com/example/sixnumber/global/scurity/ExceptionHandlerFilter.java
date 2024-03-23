@@ -37,7 +37,7 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
 			exceptionDto = new ExceptionDto(400, "REFRESH_ISNULL", "Redis 에 refreshToken 이 없습니다 ");
 			setExceptionDto(response, exceptionDto);
 		} catch (OnlyHaveRefreshTokenException e) {
-			exceptionDto = new ExceptionDto(400, "ONLY_HAVE_REFRESH", "");
+			exceptionDto = new ExceptionDto(401, "ONLY_HAVE_REFRESH", "");
 			setExceptionDto(response, exceptionDto);
 		}
 	}
