@@ -214,4 +214,9 @@ public class UserController {
 		return unifiedResponse.isOK() ?
 				ResponseEntity.ok(unifiedResponse) : ResponseEntity.badRequest().body(unifiedResponse);
 	}
+
+	@PatchMapping("/delete-cookie")
+	public ResponseEntity<UnifiedResponse<?>> deleteCookie(HttpServletResponse response) {
+		return ResponseEntity.ok(userService.deleteCookie(response));
+	}
 }
