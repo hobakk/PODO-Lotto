@@ -391,6 +391,11 @@ public class UserService {
                 .orElseThrow(() -> new CustomException(INVALID_ACCESS));
     }
 
+	public UnifiedResponse<?> deleteCookie(HttpServletResponse response) {
+		jwtProvider.addCookiesToHeaders(response, new TokenDto(), 0);
+		return UnifiedResponse.ok("쿠키 삭제 성공");
+	}
+
 	private int generateRandomNumber(int range) {
 		Random random = new Random();
 		return random.nextInt(range);
