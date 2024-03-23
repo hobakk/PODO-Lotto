@@ -14,6 +14,7 @@ public enum ErrorCode {
 	EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "Expired Tokens, 만료된 토큰 입니다"),
 	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 Token 입니다"),
 	DONT_LOGIN(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요"),
+	INVALID_ACCESS(HttpStatus.UNAUTHORIZED, "유효하지 않은 접근 입니다"),
 
 	INVALID_INPUT(HttpStatus.BAD_REQUEST, "잘못된 입력값입니다"),
 	MISSING_DATA(HttpStatus.BAD_REQUEST, "UnifiedResponse data 가 누락되었습니다."),
