@@ -121,7 +121,7 @@ public class UserService {
 		validatePasswordMatching(request.getPassword(), user.getPassword());
 
 		UnifiedResponse<?> unifiedResponse;
-		if (user.getRefreshPointer().isEmpty()) {
+		if (user.getRefreshPointer() == null) {
 			TokenDto tokenDto = jwtProvider.generateTokens(user);
 			user.setRefreshPointer(tokenDto.getRefreshPointer());
 			redisDao.setValues(RedisDao.RT_KEY + tokenDto.getRefreshPointer(),
