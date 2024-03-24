@@ -180,11 +180,24 @@ export const checkLottoWinLastWeek = async (): Promise<UnifiedResponse<WinningNu
     }
 }
 
-export const checkIdNextIssuanceAccess = async (id: string): Promise<UnifiedResponse<undefined>> => {
+export const checkIdNextIssuanceAccess = async (id:number): Promise<UnifiedResponse<undefined>> => {
     try {
-        const { data } = await api.post("/users//check-user/issuance-access", id);
+        const { data } = await api.post(`/users/check-user/issuance-access/${id}`, null, {
+            headers: {
+                ["X-Custom-Exception"]: "NOT"
+            }
+        });
         return data;
     } catch (error: any) {
         throw error.data.msg;
     }
+}
+
+export const deleteCookie = async (): Promise<UnifiedResponse<undefined>> => {
+    const { data } = await api.patch("/users/delete-cookie", null, {
+        headers: {
+            ["X-Custom-Exception"]: "NOT"
+        }
+    })
+    return data;
 }
