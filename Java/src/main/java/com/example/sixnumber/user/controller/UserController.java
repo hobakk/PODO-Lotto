@@ -203,14 +203,14 @@ public class UserController {
 		return ResponseEntity.ok(userService.checkLottoWinLastWeek(user.getId()));
 	}
 
-	@PostMapping("/check-user/issuance-access")
+	@PostMapping("/check-user/issuance-access/{userId}")
 	public ResponseEntity<UnifiedResponse<?>> checkUserIdNextIssuanceAccess(
 			HttpServletRequest request,
 			HttpServletResponse response,
-			@RequestBody OnlyMsgRequest msgRequest
+			@PathVariable Long userId
 	) {
 		UnifiedResponse<?> unifiedResponse = userService
-				.checkUserIdNextIssuanceNewAccessToken(request, response, msgRequest);
+				.checkUserIdNextIssuanceNewAccessToken(request, response, userId);
 		return unifiedResponse.isOK() ?
 				ResponseEntity.ok(unifiedResponse) : ResponseEntity.badRequest().body(unifiedResponse);
 	}

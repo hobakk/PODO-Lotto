@@ -5,12 +5,7 @@ import static com.example.sixnumber.global.exception.ErrorCode.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -370,15 +365,15 @@ public class UserService {
     public UnifiedResponse<?> checkUserIdNextIssuanceNewAccessToken(
             HttpServletRequest request,
             HttpServletResponse response,
-            OnlyMsgRequest msgRequest
+            Long userIdInRedux
     ) {
         return jwtProvider.resolveTokens(request)
                 .filter(TokenDto::onlyHaveRefreshToken)
                 .map(dto -> {
                     Claims claims = jwtProvider.getClaims(dto.getRefreshToken());
-                    String userIdInRedux = claims.get("id", String.class);
+                    Long userIdInRefreshToken = claims.get("id", Long.class);
                     UnifiedResponse<?> unifiedResponse;
-                    if (userIdInRedux.equals(msgRequest.getMsg())) {
+                    if (Objects.equals(userIdInRefreshToken, userIdInRedux)) {
                         String refreshPointer = claims.get("key", String.class);
                         String newAccessToken = jwtProvider.accessToken(refreshPointer);
                         TokenDto tokenDto = new TokenDto(newAccessToken);
