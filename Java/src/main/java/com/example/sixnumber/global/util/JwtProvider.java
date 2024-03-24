@@ -144,9 +144,14 @@ public class JwtProvider {
 
 	public Optional<TokenDto> resolveTokens(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
-		String accessToken = getTokenValue(cookies, ACCESS_TOKEN);
-		String refreshToken = getTokenValue(cookies, REFRESH_TOKEN);
-		return Optional.of(new TokenDto(accessToken, refreshToken));
+		TokenDto tokenDto;
+		if(cookies != null && cookies.length >= 1) {
+			String accessToken = getTokenValue(cookies, ACCESS_TOKEN);
+			String refreshToken = getTokenValue(cookies, REFRESH_TOKEN);
+			tokenDto = new TokenDto(accessToken, refreshToken);
+		} else tokenDto = new TokenDto();
+
+		return tokenDto.isNotEmpty() ? Optional.of(tokenDto) : Optional.empty();
 	}
 
 	public void addCookiesToHeaders(HttpServletResponse response, TokenDto tokenDto, Object maxAge) {
