@@ -73,7 +73,11 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 							() -> deleteCookieAndThrowException(response)
 					);
 				}
-			} else if (dto.onlyHaveRefreshToken()) throw new OnlyHaveRefreshTokenException();
+			} else if (dto.onlyHaveRefreshToken()) {
+				String getHeaderValue = request.getHeader("X-Custom-Exception");
+				if (getHeaderValue == null || !getHeaderValue.equals("NOT"))
+					throw new OnlyHaveRefreshTokenException();
+			}
 		}));
 
 		filterChain.doFilter(request, response);
