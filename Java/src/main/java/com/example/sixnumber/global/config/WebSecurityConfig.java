@@ -40,7 +40,7 @@ public class WebSecurityConfig {
 	private static final String[] URL_PERMIT_ALL = {
 		"/api/users/signin", "/api/users/signup", "/api/winnumber",
 		"/api/users/email", "/api/users/email/auth-code", "/api/users/find-password",
-		"/api/lotto/yearMonth/all", "/api/users/delete-cookie", "/api/users/check-user/issuance-access"
+		"/api/lotto/yearMonth/all", "/api/users/delete-cookie", "/api/users/check-user/issuance-access/**"
 	};
 	private static final String[] URL_PERMIT_ADMIN = {
 		"/api/admin/**", "/api/winnumber/set", "/api/board/admin/**", "/api/lotto/stats/**",
