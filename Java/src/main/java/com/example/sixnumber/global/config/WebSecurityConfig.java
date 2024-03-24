@@ -54,7 +54,7 @@ public class WebSecurityConfig {
 
 	@Bean
 	public JwtSecurityFilter jwtSecurityFilter() {
-		return new JwtSecurityFilter(userDetailsService, jwtProvider, redisDao);
+		return new JwtSecurityFilter(userDetailsService, jwtProvider, redisDao, userRepository);
 	}
 
 	@Bean

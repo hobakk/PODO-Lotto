@@ -35,6 +35,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	private final UserDetailsServiceImpl userDetailsService;
 	private final JwtProvider jwtProvider;
 	private final RedisDao redisDao;
+	private final UserRepository userRepository;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse httpServletResponse,
@@ -81,6 +82,18 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 				String getHeaderValue = request.getHeader("X-Custom-Exception");
 				if (getHeaderValue == null || !getHeaderValue.equals("NOT"))
 					throw new OnlyHaveRefreshTokenException();
+
+				String refreshToken = dto.getRefreshToken();
+				Claims claims = jwtProvider.getClaims(refreshToken);
+				IdAndRefreshPointerResponse idAndRefreshPointer = new IdAndRefreshPointerResponse(claims);
+				redisDao.delete(idAndRefreshPointer.getRefreshPointer());
+				User target = userRepository.findById(idAndRefreshPointer.getUserId())
+						.map(user -> {
+							user.setRefreshPointer(null);
+							return user;
+						})
+						.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 유저"));
+				userRepository.save(target);
 			}
 		}));
 
