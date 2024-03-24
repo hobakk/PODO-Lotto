@@ -32,6 +32,8 @@ public class TokenDto {
 		return this.accessToken != null && this.refreshToken != null;
 	}
 	public Boolean hasAccessToken() { return this.accessToken != null; }
+	public Boolean hasRefreshToken() { return this.refreshToken != null; }
 	public Boolean onlyHaveRefreshToken() { return this.accessToken == null && this.refreshToken != null; }
 	public Boolean onlyHaveAccessToken() { return this.accessToken != null && this.refreshToken == null; }
+	public Boolean isNotEmpty() { return hasAccessToken() || hasRefreshToken(); }
 }
