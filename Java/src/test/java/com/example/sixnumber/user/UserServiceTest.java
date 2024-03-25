@@ -297,13 +297,12 @@ public class UserServiceTest {
 	@Test
 	void logout() {
 		HttpServletRequest request = mock(HttpServletRequest.class);
-		HttpServletResponse response = mock(HttpServletResponse.class);
 		TokenDto tokenDto = new TokenDto("accessTokenValue", "refreshTokenValue");
 
 		when(jwtProvider.resolveTokens(request)).thenReturn(Optional.of(tokenDto));
 		when(jwtProvider.getRemainingTime(anyString())).thenReturn((long) 3000);
 
-		UnifiedResponse<?> unifiedResponse = userService.logout(request, response, saveUser);
+		UnifiedResponse<?> unifiedResponse = userService.logout(request, saveUser);
 
 		verify(redisDao).delete(anyString());
 		verify(userRepository).save(saveUser);

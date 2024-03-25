@@ -118,7 +118,7 @@ class UserControllerTest {
 	@Test
 	@WithCustomMockUser
 	public void logout() throws Exception {
-		when(userService.logout(any(HttpServletRequest.class), any(HttpServletResponse.class), any(User.class)))
+		when(userService.logout(any(HttpServletRequest.class), any(User.class)))
 			.thenReturn(UnifiedResponse.ok("로그아웃 성공"));
 
 		mockMvc.perform(post("/api/users/logout").with(csrf())
@@ -127,7 +127,7 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.msg").value("로그아웃 성공"))
 			.andExpect(cookie().value("accessToken", (String) null));
 
-		verify(userService).logout(any(HttpServletRequest.class), any(HttpServletResponse.class), any(User.class));
+		verify(userService).logout(any(HttpServletRequest.class), any(User.class));
 	}
 
 	@Test
