@@ -216,15 +216,21 @@ public class UserService {
 	}
 
 	public UnifiedResponse<?> update(SignupRequest request, User user) {
-		UpdateProfileResponse response;
-		if (request.getPassword().isEmpty()) response = new UpdateProfileResponse(request);
-		else {
-			String password = passwordEncoder.matches(user.getPassword(), request.getPassword()) ?
-					user.getPassword() : passwordEncoder.encode(request.getPassword());
-			response = new UpdateProfileResponse(request, password);
-		}
+		String email = user.getEmail().equals(request.getEmail()) ?
+				user.getEmail() : userRepository.existsUserByEmail(request.getEmail()) ?
+				"" : request.getEmail();
 
-		user.update(response);
+		String password = request.getPassword().isEmpty() ?
+				user.getPassword() : passwordEncoder.matches(user.getPassword(), request.getPassword()) ?
+				user.getPassword() : passwordEncoder.encode(request.getPassword());
+
+		String nickname = user.getNickname().equals(request.getNickname()) ?
+				user.getNickname() : userRepository.existsUserByNickname(request.getNickname()) ?
+				"" : request.getNickname();
+
+		if (email.isEmpty() || nickname.isEmpty()) throw new OverlapException("이메일 또는 닉네임 중복입니다");
+
+		user.update(email, password, nickname);
 		userRepository.save(user);
 		return UnifiedResponse.ok("수정 완료");
 	}
