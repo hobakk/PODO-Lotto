@@ -31,7 +31,6 @@ function CheckIdNextIssuanceAccess() {
     }, [userIf])
 
     useEffect(()=>{
-        console.log(id)
         if (id === 0) {
             purge();
             deleteCookieMutation.mutate();  
