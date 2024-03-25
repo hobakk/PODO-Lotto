@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.example.sixnumber.user.dto.UpdateProfileResponse;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -112,10 +113,15 @@ public class User implements UserDetails {
 		this.timeoutCount = 0;
 	}
 
-	public void update(List<String> list) {
-		this.email = list.get(0);
-		this.password = list.get(1);
-		this.nickname = list.get(2);
+	public void update(UpdateProfileResponse response) {
+		this.email = returnChangesAfterComparison(this.email, response.getEmail());
+		this.password = response.getEncodedPassword().isEmpty() ?
+				this.getPassword() : response.getEncodedPassword();
+		this.nickname = returnChangesAfterComparison(this.nickname, response.getNickname());
+	}
+
+	public String returnChangesAfterComparison(String userInfo, String newValue) {
+		return userInfo.equals(newValue) ? userInfo : newValue;
 	}
 
 	public User setNickname(String nickname) {
