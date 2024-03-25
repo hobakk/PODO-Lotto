@@ -22,7 +22,7 @@
 https://github.com/hobakk/PODO-Lotto/blob/main/podo_erd.png</br>
 https://podo-lotto.site/
 
-<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/8ae94aad72464abcbe6d84901a48cf6ab708356e/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L65)</h2>
+<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/6e08d78e2cd4ce990eaecd231cbd11afc7d94f06/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L49)</h2>
 
 ### 1. 회원가입
 sendAuthCodeToEmail, compareAuthCode, signUp
@@ -43,6 +43,10 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 - count 가 4 이상일 경우 충전요청을 할 수 없으며, 스케줄러에 의해 계정을 정지
 ### 5. 프리미엄
 - Req 값에 따라 권한을 수정
+### 6. 엑세스 토큰 재발급
+- SecurityFilter에서 Cookie를 겅즘 RefreshToken만 존재할 경우 해당 메서드를 동작
+- Redux에 저장되어 있는 유저Id 값을 받아 RefreshToken Claims 값과 비교
+- 두 값이 동일하다면 accessToken을 재발급 
 ### 6. 기타
 - 조회: 닉네임과 캐쉬, 충전요청, 거래명세, 회원 정보, 비밀번호 재확인, 최근 구매한 번호 리스트, 지난주 발급번호 당첨 확인
 - 수정: 회원정보, 비밀번호 찾기, 출석 체크
