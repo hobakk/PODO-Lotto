@@ -216,29 +216,15 @@ public class UserService {
 	}
 
 	public UnifiedResponse<?> update(SignupRequest request, User user) {
-		String password = request.getPassword();
-		if (password.isEmpty()) password = user.getPassword();
-
-		List<String> userData = Arrays.asList(user.getEmail(), user.getPassword(), user.getNickname());
-		List<String> inputData = Arrays.asList(request.getEmail(), password, request.getNickname());
-		if (userData.equals(inputData)) throw new IllegalArgumentException("변경된 부분이 없습니다");
-
-		for (int i = 0; i < userData.size(); i++) {
-			switch (i) {
-				case 0: {
-					if (user.getEmail().equals(inputData.get(0))) continue;
-					else if (userRepository.existsUserByEmail(inputData.get(i)))
-						throw new OverlapException("중복된 이메일입니다"); break;
-				}
-				case 1: if (passwordEncoder.matches(inputData.get(i), userData.get(i))) break;
-					else inputData.set(i, passwordEncoder.encode(inputData.get(i))); continue;
-				case 2: if (userRepository.existsUserByNickname(inputData.get(i)))
-					throw new OverlapException("중복된 닉네임입니다"); break;
-			}
-			userData.set(i, inputData.get(i));
+		UpdateProfileResponse response;
+		if (request.getPassword().isEmpty()) response = new UpdateProfileResponse(request);
+		else {
+			String password = passwordEncoder.matches(user.getPassword(), request.getPassword()) ?
+					user.getPassword() : passwordEncoder.encode(request.getPassword());
+			response = new UpdateProfileResponse(request, password);
 		}
 
-		user.update(userData);
+		user.update(response);
 		userRepository.save(user);
 		return UnifiedResponse.ok("수정 완료");
 	}
