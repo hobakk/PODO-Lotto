@@ -132,11 +132,10 @@ public class UserService {
 		return unifiedResponse;
 	}
 
-	public UnifiedResponse<?> logout(HttpServletRequest request, HttpServletResponse response, User user) {
+	public UnifiedResponse<?> logout(HttpServletRequest request, User user) {
 		redisDao.delete(RedisDao.RT_KEY + user.getRefreshPointer());
 		user.setRefreshPointer(null);
 		userRepository.save(user);
-
 		jwtProvider.resolveTokens(request).ifPresent((dto) -> {
 			if (dto.hasAccessToken()) {
 				String accessToken = dto.getAccessToken();
@@ -144,8 +143,6 @@ public class UserService {
 				redisDao.setBlackList(accessToken, remainingTime);
 			}
 		});
-
-		jwtProvider.addCookiesToHeaders(response, new TokenDto(), 0);
 		return UnifiedResponse.ok("로그아웃 성공");
 	}
 

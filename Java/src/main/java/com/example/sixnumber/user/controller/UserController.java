@@ -83,10 +83,9 @@ public class UserController {
 	@PostMapping("/logout")
 	public ResponseEntity<UnifiedResponse<?>> logout(
 		@AuthenticationPrincipal User user,
-		HttpServletRequest request,
-		HttpServletResponse response
+		HttpServletRequest request
 	) {
-		return ResponseEntity.ok(userService.logout(request, response, user));
+		return ResponseEntity.ok(userService.logout(request, user));
 	}
 
 	@PatchMapping("/withdraw")
