@@ -47,7 +47,7 @@ public class SixNumberControllerTest {
 
 	@Test
 	public void BuyNumbers() throws Exception {
-		when(sixNumberService.buyNumber(any(BuyNumberRequest.class), any(User.class))).thenReturn(
+		when(sixNumberService.buyNumber(anyInt())).thenReturn(
 			UnifiedResponse.ok("요청 성공", topNumbers));
 
 		mockMvc.perform(post("/api/sixnum").with(csrf())
@@ -57,7 +57,7 @@ public class SixNumberControllerTest {
 			.andExpect(jsonPath("$.msg").value("요청 성공"))
 			.andExpect(jsonPath("$.data").isNotEmpty());
 
-		verify(sixNumberService).buyNumber(any(BuyNumberRequest.class), any(User.class));
+		verify(sixNumberService).buyNumber(anyInt());
 	}
 
 	@Test

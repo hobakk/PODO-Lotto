@@ -68,7 +68,7 @@ public class SixNumberServiceTest {
 
 		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
 
-		UnifiedResponse<List<String>> response = sixNumberService.buyNumber(buyNumberRequest, saveUser);
+		UnifiedResponse<List<String>> response = sixNumberService.buyNumber(24);
 
 		verify(userRepository).findByIdAndCashGreaterThanEqual(anyLong(), anyInt());
 		verify(lottoRepository).findByMain();
@@ -89,7 +89,7 @@ public class SixNumberServiceTest {
 		when(userRepository.findByIdAndCashGreaterThanEqual(anyLong(), anyInt()))
 			.thenReturn(Optional.of(saveUser));
 
-		Assertions.assertThrows(IllegalArgumentException.class, () -> sixNumberService.buyNumber(request, saveUser));
+		Assertions.assertThrows(IllegalArgumentException.class, () -> sixNumberService.buyNumber(24));
 
 		verify(userRepository).findByIdAndCashGreaterThanEqual(anyLong(), anyInt());
 	}
