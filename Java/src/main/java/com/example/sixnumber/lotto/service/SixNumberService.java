@@ -70,18 +70,13 @@ public class SixNumberService {
 
 	public UnifiedResponse<List<String>> statisticalNumber(StatisticalNumberRequest request, User user) {
 		List<String> topNumbers = new ArrayList<>();
-		HashMap<Integer, Integer> countMap = new HashMap<>();
-		for (int x = 1; x <= 45; x++) {
-			countMap.put(x, 0);
-		}
-
 		int value = request.getValue();
 		int repetition = request.getRepetition();
 		ExecutorService executorService = Executors.newFixedThreadPool(value);
 
 		for (int i = 0; i < value; i++) {
 			executorService.execute(() -> {
-				Map<Integer, Integer> localCountMap = new HashMap<>(countMap);
+				Map<Integer, Integer> map = new HashMap<>();
 				for (int j = 0; j < repetition; j++) {
 					Set<Integer> set = new HashSet<>();
 
@@ -91,12 +86,11 @@ public class SixNumberService {
 					}
 
 					set.forEach(num -> {
-						int count = localCountMap.get(num);
-						localCountMap.put(num, count + 1);
+						map.put(num, map.getOrDefault(num, 0) +1);
 					});
 				}
 
-				String result = manager.getTopNumbersAsString(localCountMap);
+				String result = manager.getTopNumbersAsString(map);
 				synchronized (topNumbers) {
 					topNumbers.add(result);
 				}
