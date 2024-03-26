@@ -50,8 +50,8 @@ public class SixNumberService {
 	private final Manager manager;
 	private final Random rd = new Random();
 
-	public UnifiedResponse<List<String>> buyNumber(BuyNumberRequest request) {
-		List<String> topNumbers = IntStream.range(0, request.getValue())
+	public UnifiedResponse<List<String>> buyNumber(int total) {
+		List<String> topNumbers = IntStream.range(0, total)
 				.mapToObj(n -> {
 					Set<Integer> set = new HashSet<>();
 					while (set.size() < 6) {
