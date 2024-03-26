@@ -22,7 +22,7 @@
 https://github.com/hobakk/PODO-Lotto/blob/main/podo_erd.png</br>
 https://podo-lotto.site/
 
-<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/3b3aef4eaeaaedefd6689ce6ca4f55de92c72d38/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L49)</h2>
+<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/500a643254569ab24dd46a6af24e25ea6d32b3b4/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L49)</h2>
 
 ### 1. 회원가입
 sendAuthCodeToEmail, compareAuthCode, signUp
