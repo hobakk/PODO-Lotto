@@ -47,30 +47,24 @@ public class SixNumberService {
 
 	private final SixNumberRepository sixNumberRepository;
 	private final LottoRepository lottoRepository;
-	private final UserRepository userRepository;
 	private final Manager manager;
 	private final Random rd = new Random();
 
-	public UnifiedResponse<List<String>> buyNumber(BuyNumberRequest request, User user) {
-		List<String> topNumbers = new ArrayList<>();
-		for (int i = 0; i < request.getValue(); i++) {
-			Set<Integer> set = new HashSet<>();
+	public UnifiedResponse<List<String>> buyNumber(BuyNumberRequest request) {
+		List<String> topNumbers = IntStream.range(0, request.getValue())
+				.mapToObj(n -> {
+					Set<Integer> set = new HashSet<>();
+					while (set.size() < 6) {
+						int randomNum = rd.nextInt(45) + 1;
+						set.add(randomNum);
+					}
 
-			while (set.size() < 6) {
-				int randomNum = rd.nextInt(45) + 1;
-				set.add(randomNum);
-			}
-
-			String result = set.stream()
-				.sorted()
-				.map(Objects::toString)
-				.collect(Collectors.joining(" "));
-
-			topNumbers.add(result);
-		}
-
-		sixNumberRepository.save(new SixNumber(user, LocalDateTime.now(), topNumbers));
-		saveMainLottoList(topNumbers);
+					return set.stream()
+							.sorted()
+							.map(Objects::toString)
+							.collect(Collectors.joining(" "));
+				})
+				.collect(Collectors.toList());
 		return UnifiedResponse.ok("요청 성공", topNumbers);
 	}
 
