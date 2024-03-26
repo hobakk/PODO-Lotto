@@ -3,7 +3,7 @@ import { api } from "./config";
 
 export const buyNumber = async (value: number): Promise<UnifiedResponse<string[]>> => {
     try {
-        const { data } = await api.post("/sixnum", value);
+        const { data } = await api.post(`/sixnum/${value}`);
         return data;
     } catch (error: any) {
         throw error.data;
