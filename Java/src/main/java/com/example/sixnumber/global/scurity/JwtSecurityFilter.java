@@ -41,9 +41,10 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse httpServletResponse,
 		FilterChain filterChain) throws ServletException, IOException {
 		Optional<TokenDto> tokenDto = jwtProvider.resolveTokens(request);
+		String headerValue = request.getHeader("X-Custom-Exception");
 
 		tokenDto.ifPresent((dto -> {
-			if (dto.hasBothToken()) {
+			if (dto.hasBothToken() && headerValue == null) {
 				String accessToken = dto.getAccessToken();
 				String refreshToken = dto.getRefreshToken();
 
@@ -79,8 +80,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 					);
 				}
 			} else if (dto.onlyHaveRefreshToken()) {
-				String getHeaderValue = request.getHeader("X-Custom-Exception");
-				if (getHeaderValue == null || !getHeaderValue.equals("NOT"))
+				if (headerValue == null || !headerValue.equals("NOT"))
 					throw new OnlyHaveRefreshTokenException();
 
 				String refreshToken = dto.getRefreshToken();
