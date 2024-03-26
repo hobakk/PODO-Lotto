@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.springframework.data.domain.PageRequest;
@@ -50,12 +51,7 @@ public class SixNumberService {
 	private final Manager manager;
 	private final Random rd = new Random();
 
-	private static final String RANDOM_NUMBER = "buyNumber";
-	private static final String PREMIUM_NUMBER = "statisticalNumber";
-
 	public UnifiedResponse<List<String>> buyNumber(BuyNumberRequest request, User user) {
-		paymentHandler(RANDOM_NUMBER, request.getValue(),  user.getId());
-
 		List<String> topNumbers = new ArrayList<>();
 		for (int i = 0; i < request.getValue(); i++) {
 			Set<Integer> set = new HashSet<>();
@@ -79,8 +75,6 @@ public class SixNumberService {
 	}
 
 	public UnifiedResponse<List<String>> statisticalNumber(StatisticalNumberRequest request, User user) {
-		paymentHandler(PREMIUM_NUMBER, request.getValue(), user.getId());
-
 		List<String> topNumbers = new ArrayList<>();
 		HashMap<Integer, Integer> countMap = new HashMap<>();
 		for (int x = 1; x <= 45; x++) {
@@ -133,27 +127,6 @@ public class SixNumberService {
 		if (recentBuyNumberList.isEmpty()) throw new CustomException(NO_MATCHING_INFO_FOUND);
 
 		return UnifiedResponse.ok("최근 구매 번호 조회 성공", recentBuyNumberList.get(0).getNumberList());
-	}
-
-	private void paymentHandler(String event, int generationCount, Long userId) {
-		int payment;
-		String subject;
-
-		if (event.equals(RANDOM_NUMBER)) {
-			payment = generationCount * 100;
-			subject = "랜덤 번호 " + generationCount + "회 발급";
-		} else {
-			payment = generationCount * 200;
-			subject = "프리미엄 번호 " + generationCount + "회 발급";
-		}
-
-		userRepository.findByIdAndCashGreaterThanEqual(userId, payment)
-			.map(user -> {
-				user.minusCash(payment);
-				user.addStatement(new Statement(user, subject, payment));
-				return user;
-			})
-			.orElseThrow(() -> new IllegalArgumentException("금액이 부족합니다"));
 	}
 
 	private void saveMainLottoList(List<String> topNumbersList) {
