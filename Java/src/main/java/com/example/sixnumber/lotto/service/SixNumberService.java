@@ -51,6 +51,7 @@ public class SixNumberService {
 						.sorted()
 						.map(Objects::toString)
 						.collect(Collectors.joining(" "))
+						.trim()
 				)
 				.collect(Collectors.toList());
 		return UnifiedResponse.ok("요청 성공", topNumbers);
