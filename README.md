@@ -69,7 +69,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 ### 3. 월 통계, 년도별 통계 생성
 ### 4. 년도별 통계, index 조회
 
-<br/><br/><h2>SixNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/48f5d9bb5df96a9cf2e6619159a55f1238e41d7f/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L45)</h2>
+<br/><br/><h2>SixNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/87f494ab1a67873fe4bc18953e46f10dca3564e2/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L42)</h2>
 
 ### 1. 랜덤 번호 추천
 ### 2. 반복 연산된 번호 추천
