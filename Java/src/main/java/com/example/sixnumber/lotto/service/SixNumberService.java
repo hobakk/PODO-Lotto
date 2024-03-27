@@ -3,8 +3,6 @@ package com.example.sixnumber.lotto.service;
 import static com.example.sixnumber.global.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,9 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -69,40 +64,28 @@ public class SixNumberService {
 	}
 
 	public UnifiedResponse<List<String>> statisticalNumber(StatisticalNumberRequest request, User user) {
-		List<String> topNumbers = new ArrayList<>();
-		int value = request.getValue();
-		int repetition = request.getRepetition();
-		ExecutorService executorService = Executors.newFixedThreadPool(value);
+		List<String> topNumbers = IntStream.range(0, request.getValue())
+				.parallel()
+				.mapToObj(i -> IntStream.range(0, request.getRepetition())
+						.mapToObj(j -> {
+							Map<Integer, Integer> map = new HashMap<>();
+							Set<Integer> set = new HashSet<>();
 
-		for (int i = 0; i < value; i++) {
-			executorService.execute(() -> {
-				Map<Integer, Integer> map = new HashMap<>();
-				for (int j = 0; j < repetition; j++) {
-					Set<Integer> set = new HashSet<>();
+							while (set.size() < 6) {
+								int num = rd.nextInt(45) + 1;
+								set.add(num);
+							}
 
-					while (set.size() < 6) {
-						int num = rd.nextInt(45) + 1;
-						set.add(num);
-					}
+							set.forEach(num -> {
+								map.put(num, map.getOrDefault(num, 0) + 1);
+							});
 
-					set.forEach(num -> {
-						map.put(num, map.getOrDefault(num, 0) +1);
-					});
-				}
-
-				String result = manager.getTopNumbersAsString(map);
-				synchronized (topNumbers) {
-					topNumbers.add(result);
-				}
-			});
-		}
-		executorService.shutdown();
-
-		try {
-			executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
+							return manager.getTopNumbersAsString(map);
+						})
+						.collect(Collectors.toList())
+				)
+				.flatMap(List::stream)
+				.collect(Collectors.toList());
 
 		sixNumberRepository.save(new SixNumber(user, LocalDateTime.now(), topNumbers));
 		saveMainLottoList(topNumbers);
