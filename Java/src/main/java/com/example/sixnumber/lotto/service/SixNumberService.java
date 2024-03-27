@@ -47,18 +47,11 @@ public class SixNumberService {
 
 	public UnifiedResponse<List<String>> buyNumber(int total) {
 		List<String> topNumbers = IntStream.range(0, total)
-				.mapToObj(n -> {
-					Set<Integer> set = new HashSet<>();
-					while (set.size() < 6) {
-						int randomNum = rd.nextInt(45) + 1;
-						set.add(randomNum);
-					}
-
-					return set.stream()
-							.sorted()
-							.map(Objects::toString)
-							.collect(Collectors.joining(" "));
-				})
+				.mapToObj(n -> getRandomNumberSet().stream()
+						.sorted()
+						.map(Objects::toString)
+						.collect(Collectors.joining(" "))
+				)
 				.collect(Collectors.toList());
 		return UnifiedResponse.ok("요청 성공", topNumbers);
 	}
@@ -69,13 +62,7 @@ public class SixNumberService {
 				.mapToObj(i -> IntStream.range(0, request.getRepetition())
 						.mapToObj(j -> {
 							Map<Integer, Integer> map = new HashMap<>();
-							Set<Integer> set = new HashSet<>();
-
-							while (set.size() < 6) {
-								int num = rd.nextInt(45) + 1;
-								set.add(num);
-							}
-
+							Set<Integer> set = getRandomNumberSet();
 							set.forEach(num -> {
 								map.put(num, map.getOrDefault(num, 0) + 1);
 							});
@@ -113,5 +100,15 @@ public class SixNumberService {
 					});
 				});
 			});
+	}
+
+	private Set<Integer> getRandomNumberSet() {
+		Set<Integer> set = new HashSet<>();
+		while (set.size() < 6) {
+			int num = rd.nextInt(45) + 1;
+			set.add(num);
+		}
+
+		return set;
 	}
 }
