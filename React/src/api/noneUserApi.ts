@@ -33,7 +33,11 @@ const signup = async (inputValue: SignupRequest): Promise<UnifiedResponse<undefi
 
 const getWinNumber = async (): Promise<UnifiedResponse<{winNumberList: WinNumber[]}>> => {
     try {
-        const res = await dontLogin.get(`/winnumber`);
+        const res = await dontLogin.get(`/winnumber`, {
+            headers: {
+                ["X-Custom-Exception"]: "NOT"
+            }
+        });
         return res.data;  
     } catch (error: any) {
         throw error.response.data;
