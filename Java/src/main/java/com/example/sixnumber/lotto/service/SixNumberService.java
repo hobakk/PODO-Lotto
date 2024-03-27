@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import com.example.sixnumber.lotto.entity.Lotto;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -86,8 +87,8 @@ public class SixNumberService {
 	}
 
 	private void saveMainLottoList(List<String> topNumbersList) {
-		lottoRepository.findByMain()
-			.ifPresent(lotto -> {
+		Lotto updateLotto = lottoRepository.findByMain()
+			.map(lotto -> {
 				List<Integer> countList = lotto.getCountList();
 
 				topNumbersList.forEach(sentence -> {
@@ -97,7 +98,12 @@ public class SixNumberService {
 						countList.set(num, countList.get(num) + 1);
 					});
 				});
-			});
+
+				return lotto;
+			})
+			.orElseThrow(() -> new CustomException(NOT_FOUND));
+
+		lottoRepository.save(updateLotto);
 	}
 
 	private Set<Integer> getRandomNumberSet() {
