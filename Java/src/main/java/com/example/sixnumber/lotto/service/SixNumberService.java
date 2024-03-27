@@ -60,19 +60,16 @@ public class SixNumberService {
 	public UnifiedResponse<List<String>> statisticalNumber(StatisticalNumberRequest request, User user) {
 		List<String> topNumbers = IntStream.range(0, request.getValue())
 				.parallel()
-				.mapToObj(i -> IntStream.range(0, request.getRepetition())
-						.mapToObj(j -> {
-							Map<Integer, Integer> map = new HashMap<>();
-							Set<Integer> set = getRandomNumberSet();
-							set.forEach(num -> {
+				.mapToObj(i -> {
+						Map<Integer, Integer> map = new HashMap<>();
+						IntStream.range(0, request.getRepetition())
+							.forEach(j -> getRandomNumberSet().forEach(num -> {
 								map.put(num, map.getOrDefault(num, 0) + 1);
-							});
+							}));
 
-							return manager.getTopNumbersAsString(map);
-						})
-						.collect(Collectors.toList())
+						return manager.getTopNumbersAsString(map);
+					}
 				)
-				.flatMap(List::stream)
 				.collect(Collectors.toList());
 
 		sixNumberRepository.save(new SixNumber(user, LocalDateTime.now(), topNumbers));
