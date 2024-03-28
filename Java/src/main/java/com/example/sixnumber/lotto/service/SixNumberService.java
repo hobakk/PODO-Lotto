@@ -70,7 +70,7 @@ public class SixNumberService {
 							}));
 
 						List<Integer> numbersAsList = manager.getTopNumbersAsList(map);
-						numbersAsList.forEach(num -> totalMap.put(num, map.getOrDefault(num, 0) + 1));
+						numbersAsList.forEach(num -> totalMap.put(num, totalMap.getOrDefault(num, 0) + 1));
 						return manager.convertIntegerListToString(numbersAsList);
 					}
 				)
