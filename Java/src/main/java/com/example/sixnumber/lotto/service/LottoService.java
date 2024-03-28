@@ -35,7 +35,10 @@ public class LottoService {
 
 	public UnifiedResponse<?> createLotto() {
 		return lottoRepository.findByMain()
-				.map(main -> UnifiedResponse.badRequest("메인 로또가 이미 생성되어 있습니다"))
+				.map(main -> {
+					main.Initialization();
+					return UnifiedResponse.ok("초기화 완료");
+				})
 				.orElseGet(() -> {
 					List<Integer> countList = new ArrayList<>(Collections.nCopies(45, 1));
 					Lotto lotto = new Lotto("main", "ADMIN", countList);
