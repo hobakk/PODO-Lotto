@@ -26,15 +26,21 @@ public class Manager {
 	private final String URL = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=";
 
 	public String getTopNumbersAsString(Map<Integer, Integer> map) {
-		List<Integer> topNumberList = map.entrySet().stream()
-			.sorted(Map.Entry.<Integer, Integer> comparingByValue().reversed())
-			.limit(6)
-			.map(Map.Entry::getKey)
-			.sorted()
-			.collect(Collectors.toList());
+		return convertIntegerListToString(getTopNumbersAsList(map));
+	}
 
+	public List<Integer> getTopNumbersAsList(Map<Integer, Integer> map) {
+		return map.entrySet().stream()
+				.sorted(Map.Entry.<Integer, Integer> comparingByValue().reversed())
+				.limit(6)
+				.map(Map.Entry::getKey)
+				.sorted()
+				.collect(Collectors.toList());
+	}
+
+	public String convertIntegerListToString(List<Integer> integerList) {
 		StringBuilder sb = new StringBuilder();
-		for (int num : topNumberList) {
+		for (int num : integerList) {
 			sb.append(num).append(" ");
 		}
 
