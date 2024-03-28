@@ -89,18 +89,15 @@ public class SixNumberService {
 		return UnifiedResponse.ok("최근 구매 번호 조회 성공", recentBuyNumberList.get(0).getNumberList());
 	}
 
-	private void saveMainLottoList(List<String> topNumbersList) {
+	private void saveMainLottoList(Map<Integer, Integer> map) {
 		Lotto updateLotto = lottoRepository.findByMain()
 			.map(lotto -> {
 				List<Integer> countList = lotto.getCountList();
-
-				topNumbersList.forEach(sentence -> {
-					String[] numbers = sentence.split(" ");
-					Stream.of(numbers).forEach(numberStr -> {
-						int num = Integer.parseInt(numberStr) - 1;
-						countList.set(num, countList.get(num) + 1);
-					});
-				});
+				for (Map.Entry<Integer, Integer> ketValue : map.entrySet()) {
+					int key = ketValue.getKey() - 1;
+					int value = ketValue.getValue();
+					countList.set(key, countList.get(key) + value);
+				}
 
 				return lotto;
 			})
