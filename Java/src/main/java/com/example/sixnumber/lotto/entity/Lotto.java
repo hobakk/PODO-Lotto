@@ -1,6 +1,8 @@
 package com.example.sixnumber.lotto.entity;
 
 import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -50,5 +52,9 @@ public class Lotto {
 		this.email = email;
 		this.countList = countList;
 		this.topNumber = "";
+	}
+
+	public void Initialization() {
+		this.countList = new ArrayList<>(Collections.nCopies(45, 1));
 	}
 }
