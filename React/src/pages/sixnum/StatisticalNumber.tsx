@@ -107,7 +107,7 @@ function StatisticalNumber() {
                     style={InputStyle} 
                     placeholder='10만 이하 수를 입력해주세요'
                 />
-                <p style={{ marginTop: "40px" }}>1회 발급당 200원이 차감됩니다</p>
+                <p style={{ marginTop: "40px" }}>발급 횟수</p>
                 <input 
                     name="value"
                     value={inputNum["value"]} 
