@@ -27,8 +27,8 @@ public class LottoController {
 	private final LottoService lottoService;
 
 	@PostMapping("/main")
-	public ResponseEntity<UnifiedResponse<?>> createLotto(@AuthenticationPrincipal User user) {
-		UnifiedResponse<?> response = lottoService.createLotto(user.getEmail());
+	public ResponseEntity<UnifiedResponse<?>> createLotto() {
+		UnifiedResponse<?> response = lottoService.createLotto();
 		if (response.getCode() == 200) return ResponseEntity.ok(response);
 		else return ResponseEntity.badRequest().body(response);
 	}

@@ -54,7 +54,7 @@ public class LottoServiceTest {
 
 		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
 
-		UnifiedResponse<?> response = lottoService.createLotto("email");
+		UnifiedResponse<?> response = lottoService.createLotto();
 
 		verify(lottoRepository).findByMain();
 		TestUtil.UnifiedResponseEquals(response, 400, "메인 로또가 이미 생성되어 있습니다");
@@ -64,7 +64,7 @@ public class LottoServiceTest {
 	void createLotto_isEmpty() {
 		when(lottoRepository.findByMain()).thenReturn(Optional.empty());
 
-		UnifiedResponse<?> response = lottoService.createLotto("email");
+		UnifiedResponse<?> response = lottoService.createLotto();
 
 		verify(lottoRepository).findByMain();
 		verify(lottoRepository).save(any(Lotto.class));

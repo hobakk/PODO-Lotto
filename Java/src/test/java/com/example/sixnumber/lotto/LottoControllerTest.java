@@ -46,7 +46,7 @@ public class LottoControllerTest {
 
 	@Test
 	public void createLotto() throws Exception {
-		when(lottoService.createLotto(anyString())).thenReturn(UnifiedResponse.ok("생성 완료"));
+		when(lottoService.createLotto()).thenReturn(UnifiedResponse.ok("생성 완료"));
 
 		mockMvc.perform(post("/api/admin/lotto").with(csrf())
 						.contentType(MediaType.APPLICATION_JSON)
@@ -54,7 +54,7 @@ public class LottoControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.msg").value("생성 완료"));
 
-		verify(lottoService).createLotto(anyString());
+		verify(lottoService).createLotto();
 	}
 	@Test
 	public void MainTopNumbers() throws Exception {

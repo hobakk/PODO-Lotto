@@ -33,12 +33,12 @@ public class LottoService {
 	private final SixNumberRepository sixNumberRepository;
 	private final Manager manager;
 
-	public UnifiedResponse<?> createLotto(String email) {
+	public UnifiedResponse<?> createLotto() {
 		return lottoRepository.findByMain()
 				.map(main -> UnifiedResponse.badRequest("메인 로또가 이미 생성되어 있습니다"))
 				.orElseGet(() -> {
 					List<Integer> countList = new ArrayList<>(Collections.nCopies(45, 1));
-					Lotto lotto = new Lotto("main", email, countList);
+					Lotto lotto = new Lotto("main", "ADMIN", countList);
 					lottoRepository.save(lotto);
 					return UnifiedResponse.ok("생성 완료");
 				});
