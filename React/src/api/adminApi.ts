@@ -51,7 +51,7 @@ export const downCash = async (inputValue: upDownCashRequest): Promise<UnifiedRe
 
 export const createLotto = async (): Promise<UnifiedResponse<undefined>> => {
     try {
-        const { data } = await api.post("/admin/lotto");
+        const { data } = await api.post("/lotto/main");
         return data;    
     } catch (error: any) {
         throw error.data;
