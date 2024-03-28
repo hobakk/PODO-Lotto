@@ -44,6 +44,10 @@ public class LottoService {
 				});
 	}
 
+	public Boolean checkMain() {
+		return lottoRepository.existsLottoBySubject("main");
+	}
+
 	@Cacheable(value = "Stats", key = "'main'")
 	public LottoResponse mainTopNumbers() {
 		return lottoRepository.findByMain()
