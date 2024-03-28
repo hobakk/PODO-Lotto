@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.YearMonth;
 import java.util.List;
 
+import com.example.sixnumber.global.dto.UnifiedResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class LottoControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
-
 	@Autowired
 	private ObjectMapper objectMapper;
 
@@ -44,6 +44,18 @@ public class LottoControllerTest {
 		response = new LottoResponse(TestDataFactory.countList(), "1 2 3 4 5 6");
 	}
 
+	@Test
+	public void createLotto() throws Exception {
+		when(lottoService.createLotto(anyString())).thenReturn(UnifiedResponse.ok("생성 완료"));
+
+		mockMvc.perform(post("/api/admin/lotto").with(csrf())
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(objectMapper.writeValueAsString("testAdmin")))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.msg").value("생성 완료"));
+
+		verify(lottoService).createLotto(anyString());
+	}
 	@Test
 	public void MainTopNumbers() throws Exception {
 		when(lottoService.mainTopNumbers()).thenReturn(response);

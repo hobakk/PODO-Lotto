@@ -45,8 +45,6 @@ public class AdminServiceTest {
 	@Mock
 	private UserRepository userRepository;
 	@Mock
-	private LottoRepository lottoRepository;
-	@Mock
 	private RedisDao redisDao;
 
 	private User saveUser;
@@ -159,29 +157,6 @@ public class AdminServiceTest {
 		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.downCash(request));
 
 		verify(userRepository).findByIdAndCashGreaterThanEqual(anyLong(), anyInt());
-	}
-
-	@Test
-	void createLotto_isPresent() {
-		Lotto lotto = mock(Lotto.class);
-
-		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
-
-		UnifiedResponse<?> response = adminService.createLotto("email");
-
-		verify(lottoRepository).findByMain();
-		TestUtil.UnifiedResponseEquals(response, 400, "메인 로또가 이미 생성되어 있습니다");
-	}
-
-	@Test
-	void createLotto_isEmpty() {
-		when(lottoRepository.findByMain()).thenReturn(Optional.empty());
-
-		UnifiedResponse<?> response = adminService.createLotto("email");
-
-		verify(lottoRepository).findByMain();
-		verify(lottoRepository).save(any(Lotto.class));
-		TestUtil.UnifiedResponseEquals(response, 200, "생성 완료");
 	}
 
 	@Test

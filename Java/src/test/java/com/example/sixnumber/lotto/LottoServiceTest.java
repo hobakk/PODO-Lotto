@@ -49,6 +49,29 @@ public class LottoServiceTest {
 	}
 
 	@Test
+	void createLotto_isPresent() {
+		Lotto lotto = mock(Lotto.class);
+
+		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
+
+		UnifiedResponse<?> response = lottoService.createLotto("email");
+
+		verify(lottoRepository).findByMain();
+		TestUtil.UnifiedResponseEquals(response, 400, "메인 로또가 이미 생성되어 있습니다");
+	}
+
+	@Test
+	void createLotto_isEmpty() {
+		when(lottoRepository.findByMain()).thenReturn(Optional.empty());
+
+		UnifiedResponse<?> response = lottoService.createLotto("email");
+
+		verify(lottoRepository).findByMain();
+		verify(lottoRepository).save(any(Lotto.class));
+		TestUtil.UnifiedResponseEquals(response, 200, "생성 완료");
+	}
+
+	@Test
 	void mainTopNumbers() {
 		when(lottoRepository.findByMain()).thenReturn(Optional.of(lotto));
 

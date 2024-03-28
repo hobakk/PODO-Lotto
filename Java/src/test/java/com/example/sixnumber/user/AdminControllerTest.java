@@ -129,19 +129,6 @@ public class AdminControllerTest {
 	}
 
 	@Test
-	public void createLotto() throws Exception {
-		when(adminService.createLotto(anyString())).thenReturn(UnifiedResponse.ok("생성 완료"));
-
-		mockMvc.perform(post("/api/admin/lotto").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString("testAdmin")))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.msg").value("생성 완료"));
-
-		verify(adminService).createLotto(anyString());
-	}
-
-	@Test
 	public void setStatus() throws Exception {
 		when(adminService.setStatus(any(User.class), anyLong(), any(OnlyMsgRequest.class)))
 			.thenReturn(UnifiedResponse.ok("상태 변경 완료"));
