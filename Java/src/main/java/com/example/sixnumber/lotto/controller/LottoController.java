@@ -2,7 +2,9 @@ package com.example.sixnumber.lotto.controller;
 
 import java.time.YearMonth;
 
+import com.example.sixnumber.user.entity.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +25,13 @@ import lombok.RequiredArgsConstructor;
 public class LottoController {
 
 	private final LottoService lottoService;
+
+	@PostMapping("/main")
+	public ResponseEntity<UnifiedResponse<?>> createLotto(@AuthenticationPrincipal User user) {
+		UnifiedResponse<?> response = lottoService.createLotto(user.getEmail());
+		if (response.getCode() == 200) return ResponseEntity.ok(response);
+		else return ResponseEntity.badRequest().body(response);
+	}
 
 	@GetMapping("/main")
 	public ResponseEntity<UnifiedResponse<LottoResponse>> mainTopNumbers() {

@@ -37,7 +37,6 @@ public class AdminService {
 	@Value("${spring.admin.set-admin-key}")
 	private String KEY;
 	private final UserRepository userRepository;
-	private final LottoRepository lottoRepository;
 	private final RedisDao redisDao;
 
 	public UnifiedResponse<?> setAdmin(OnlyMsgRequest request, User user, Long userId) {
@@ -96,17 +95,6 @@ public class AdminService {
 			.orElseThrow(() -> {
 				String msg = "존재하지 않는 유저 또는 보유 금액보다 적은 유저입니다";
 				return new IllegalArgumentException(msg);
-			});
-	}
-
-	public UnifiedResponse<?> createLotto(String email) {
-		return lottoRepository.findByMain()
-			.map(main -> UnifiedResponse.badRequest("메인 로또가 이미 생성되어 있습니다"))
-			.orElseGet(() -> {
-				List<Integer> countList = new ArrayList<>(Collections.nCopies(45, 1));
-				Lotto lotto = new Lotto("main", email, countList);
-				lottoRepository.save(lotto);
-				return UnifiedResponse.ok("생성 완료");
 			});
 	}
 

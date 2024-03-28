@@ -67,13 +67,6 @@ public class AdminController {
 		return ResponseEntity.ok(adminService.downCash(cashRequest));
 	}
 
-	@PostMapping("/lotto")
-	public ResponseEntity<UnifiedResponse<?>> createLotto(@AuthenticationPrincipal User user) {
-		UnifiedResponse<?> response = adminService.createLotto(user.getEmail());
-		if (response.getCode() == 200) return ResponseEntity.ok(response);
-		else return ResponseEntity.badRequest().body(response);
-	}
-
 	@PatchMapping("/status/{userId}")
 	public ResponseEntity<UnifiedResponse<?>> setStatus(
 		@PathVariable Long userId,
