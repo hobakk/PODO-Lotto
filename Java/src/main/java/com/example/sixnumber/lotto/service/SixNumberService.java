@@ -59,6 +59,7 @@ public class SixNumberService {
 	}
 
 	public UnifiedResponse<List<String>> statisticalNumber(StatisticalNumberRequest request, User user) {
+		Map<Integer, Integer> totalMap = new HashMap<>();
 		List<String> topNumbers = IntStream.range(0, request.getValue())
 				.parallel()
 				.mapToObj(i -> {
@@ -68,13 +69,15 @@ public class SixNumberService {
 								map.put(num, map.getOrDefault(num, 0) + 1);
 							}));
 
-						return manager.getTopNumbersAsString(map);
+						List<Integer> numbersAsList = manager.getTopNumbersAsList(map);
+						numbersAsList.forEach(num -> totalMap.put(num, map.getOrDefault(num, 0) + 1));
+						return manager.convertIntegerListToString(numbersAsList);
 					}
 				)
 				.collect(Collectors.toList());
 
 		sixNumberRepository.save(new SixNumber(user, LocalDateTime.now(), topNumbers));
-		saveMainLottoList(topNumbers);
+		saveMainLottoList(totalMap);
 		return UnifiedResponse.ok("요청 성공", topNumbers);
 	}
 
