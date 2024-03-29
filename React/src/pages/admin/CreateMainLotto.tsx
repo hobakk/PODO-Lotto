@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query';
 import { createLotto } from '../../api/adminApi';
-import { CommonStyle, TitleStyle } from '../../shared/Styles';
+import { ButtonStyle, CommonStyle, TitleStyle } from '../../shared/Styles';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
 import { checkMain } from '../../api/lottoApi';
@@ -51,7 +51,7 @@ function CreateMainLotto() {
         ):(
             <h1 style={ TitleStyle }>로또 메인 생성</h1>
         )}
-        <button onClick={onClickHandler}>{isOk ? ("생성") : ("초기화")}</button>
+        <button style={ButtonStyle} onClick={onClickHandler}>{isOk ? ("초기화") : ("생성")}</button>
     </div>
   )
 }

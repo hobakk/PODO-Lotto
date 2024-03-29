@@ -11,7 +11,7 @@ export const AdminMenuValue: MenuType = {
         ["전체 유저 조회", "/admin/users"], 
         ["충전 요청 조회", "/admin/charges"],
         ["충전 요청 검색", "/admin/search"], 
-        ["메인 로또 생성", "/admin/lotto"],
+        ["메인 생성 / 초기화", "/admin/lotto"],
         ["당첨번호 등록", "/admin/winnumber"],
         ["모든 문의 확인", "/admin/boards"],
         ["월별 통계 생성", "/admin/monthlystats"]
