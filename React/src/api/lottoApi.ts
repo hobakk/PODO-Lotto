@@ -10,6 +10,15 @@ export type AllMonthProps = {
     yearMonthList: string[],
 }
 
+export const createLotto = async (): Promise<UnifiedResponse<undefined>> => {
+    try {
+        const { data } = await api.post("/lotto/admin");
+        return data;    
+    } catch (error: any) {
+        throw error.data;
+    }
+}
+
 export const getMainTopNumber = async (): Promise<UnifiedResponse<LottoResponse>> => {
     try {
         const { data } = await api.get("/lotto/main");
@@ -20,7 +29,7 @@ export const getMainTopNumber = async (): Promise<UnifiedResponse<LottoResponse>
 }
 
 export const checkMain = async (): Promise<Boolean> => {
-    const { data } = await api.get("/lotto/main/check");
+    const { data } = await api.get("/lotto/main/admin");
     return data;
 }
 

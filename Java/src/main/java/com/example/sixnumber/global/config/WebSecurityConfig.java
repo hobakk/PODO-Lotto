@@ -38,13 +38,16 @@ public class WebSecurityConfig {
 	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 	private final CustomOAuth2UserService customOAuth2UserService;
 	private static final String[] URL_PERMIT_ALL = {
-		"/api/users/signin", "/api/users/signup", "/api/winnumber",
+		"/api/users/signin", "/api/users/signup", "/api/winnumber", "/api/sixnum/**",
 		"/api/users/email", "/api/users/email/auth-code", "/api/users/find-password",
 		"/api/lotto/yearMonth/all", "/api/users/delete-cookie", "/api/users/check-user/issuance-access/**"
 	};
 	private static final String[] URL_PERMIT_ADMIN = {
 		"/api/admin/**", "/api/winnumber/set", "/api/board/admin/**", "/api/lotto/stats/**",
-		"/api/winnumber/first"
+		"/api/winnumber/first", "/api/lotto/main/admin"
+	};
+	private static final String[] URL_PERMIT_PAID = {
+		"/api/lotto/**", "/api/users/sixnumber-list", "/api/sixnum/repetition", "/api/sixnum/recent"
 	};
 
 	@Bean
@@ -74,7 +77,7 @@ public class WebSecurityConfig {
 				.antMatchers(HttpMethod.OPTIONS).permitAll()
 				.antMatchers(URL_PERMIT_ALL).permitAll()
 				.antMatchers(URL_PERMIT_ADMIN).hasRole("ADMIN")
-				.antMatchers("/api/lotto/**", "/api/users/sixnumber-list").hasAnyRole("ADMIN", "PAID")
+				.antMatchers(URL_PERMIT_PAID).hasAnyRole("ADMIN", "PAID")
 				.anyRequest().authenticated()
 
 			.and()
