@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query';
-import { createLotto } from '../../api/adminApi';
+import { createLotto } from '../../api/lottoApi';
 import { ButtonStyle, CommonStyle, TitleStyle } from '../../shared/Styles';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';

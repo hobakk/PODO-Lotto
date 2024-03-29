@@ -49,15 +49,6 @@ export const downCash = async (inputValue: upDownCashRequest): Promise<UnifiedRe
     }
 }
 
-export const createLotto = async (): Promise<UnifiedResponse<undefined>> => {
-    try {
-        const { data } = await api.post("/lotto/main");
-        return data;    
-    } catch (error: any) {
-        throw error.data;
-    }
-}
-
 export type UserIdMsgProps = {
     userId: number,
     msg: string,

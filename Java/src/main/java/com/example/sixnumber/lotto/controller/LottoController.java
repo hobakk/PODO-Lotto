@@ -26,12 +26,12 @@ public class LottoController {
 
 	private final LottoService lottoService;
 
-	@PostMapping("/main")
+	@PostMapping("/main/admin")
 	public ResponseEntity<UnifiedResponse<?>> createLotto() {
 		return ResponseEntity.ok(lottoService.createLotto());
 	}
 
-	@GetMapping("/main/check")
+	@GetMapping("/main/admin")
 	public ResponseEntity<Boolean> checkMain() {
 		return ResponseEntity.ok(lottoService.checkMain());
 	}
