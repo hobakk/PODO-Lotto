@@ -1,12 +1,21 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useMutation } from 'react-query';
 import { createLotto } from '../../api/adminApi';
 import { CommonStyle, TitleStyle } from '../../shared/Styles';
 import { useNavigate } from 'react-router-dom';
 import { UnifiedResponse, Err } from '../../shared/TypeMenu';
+import { checkMain } from '../../api/lottoApi';
 
 function CreateMainLotto() {
     const navigate = useNavigate();
+    const [isOk, setCheckMain] = useState<Boolean>(false);
+
+    const chekcMainMutation = useMutation<Boolean>(checkMain, {
+        onSuccess: (res) => {
+            setCheckMain(res);
+        }
+    })
+
     const setMainLottoMutation = useMutation<UnifiedResponse<undefined>>(createLotto, {
         onSuccess: (res) => {
             alert(res.msg);
@@ -22,6 +31,10 @@ function CreateMainLotto() {
             }
         }
     })
+
+    useEffect(()=> {
+        chekcMainMutation.mutate();
+    }, [])
 
   return (
     <div id='recent' style={ CommonStyle }>

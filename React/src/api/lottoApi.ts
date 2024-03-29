@@ -19,6 +19,11 @@ export const getMainTopNumber = async (): Promise<UnifiedResponse<LottoResponse>
     }
 }
 
+export const checkMain = async (): Promise<Boolean> => {
+    const { data } = await api.get("/lotto/main/check");
+    return data;
+}
+
 export const getTopNumberForMonth = async (yearMonth: string): Promise<UnifiedResponse<LottoResponse>> => {
     try {
         const { data } = await api.get("/lotto/yearMonth", {
