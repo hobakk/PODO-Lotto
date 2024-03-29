@@ -8,6 +8,7 @@ import { checkMain } from '../../api/lottoApi';
 
 function CreateMainLotto() {
     const navigate = useNavigate();
+    const [count, setCount] = useState<number>(0);
     const [isOk, setCheckMain] = useState<Boolean>(false);
 
     const chekcMainMutation = useMutation<Boolean>(checkMain, {
@@ -32,14 +33,25 @@ function CreateMainLotto() {
         }
     })
 
+    const onClickHandler = () => {
+        if (!isOk && count === 0) {
+            setCount(count + 1);
+            alert("정말 초기화 하시겠습니까 ? 재클릭 필요");
+        } else if (!isOk && count > 0) setMainLottoMutation.mutate();
+    }
+
     useEffect(()=> {
         chekcMainMutation.mutate();
     }, [])
 
   return (
     <div id='recent' style={ CommonStyle }>
-        <h1 style={ TitleStyle }>Create Main Lotto</h1>
-        <button onClick={()=>setMainLottoMutation.mutate()}>메인 로또 생성</button>
+        {isOk ? (
+            <h1 style={ TitleStyle }>로또 메인 객체 초기화</h1>
+        ):(
+            <h1 style={ TitleStyle }>로또 메인 생성</h1>
+        )}
+        <button onClick={onClickHandler}>{isOk ? ("생성") : ("초기화")}</button>
     </div>
   )
 }
