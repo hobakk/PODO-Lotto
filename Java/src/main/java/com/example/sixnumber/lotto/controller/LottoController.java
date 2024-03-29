@@ -31,6 +31,11 @@ public class LottoController {
 		return ResponseEntity.ok(lottoService.createLotto());
 	}
 
+	@GetMapping("/main/check")
+	public ResponseEntity<Boolean> checkMain() {
+		return ResponseEntity.ok(lottoService.checkMain());
+	}
+
 	@GetMapping("/main")
 	public ResponseEntity<UnifiedResponse<LottoResponse>> mainTopNumbers() {
 		return ResponseEntity.ok(UnifiedResponse.ok("조회 성공", lottoService.mainTopNumbers()));
