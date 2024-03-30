@@ -51,7 +51,7 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 - 조회: 닉네임과 캐쉬, 충전요청, 거래명세, 회원 정보, 비밀번호 재확인, 최근 구매한 번호 리스트, 지난주 발급번호 당첨 확인
 - 수정: 회원정보, 비밀번호 찾기, 출석 체크
 
-<br/><br/><h2>Admin [Service](https://github.com/hobakk/PODO-Lotto/blob/main/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L35)</h2>
+<br/><br/><h2>Admin [Service](https://github.com/hobakk/PODO-Lotto/blob/5e0d483486d48f2b0eeb3bb4a387e3d205681464/Java/src/main/java/com/example/sixnumber/user/service/AdminService.java#L35)</h2>
 
 ### 1. 모든 유저 조회, 모든 충전요청 조회
 - FE: 조회된 정보들을 Nickname, cash 값으로 필터링
@@ -60,7 +60,7 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 - 조회: 충전요청 검색
 - 수정: 관리자 등록, 충전, 차감, 상태 수정, 권한 수정
 
-<br/><br/><h2>Lotto [Service](https://github.com/hobakk/PODO-Lotto/blob/bdef53bf6fa4e391592b8a36f1e2feeae38b7d32/Java/src/main/java/com/example/sixnumber/lotto/service/LottoService.java#L30)</h2>
+<br/><br/><h2>Lotto [Service](https://github.com/hobakk/PODO-Lotto/blob/5e0d483486d48f2b0eeb3bb4a387e3d205681464/Java/src/main/java/com/example/sixnumber/lotto/service/LottoService.java#L30)</h2>
 
 Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.tistory.com/131)
 ### 1. 메인 로또 통계
@@ -69,7 +69,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 ### 3. 월 통계, 년도별 통계 생성
 ### 4. 년도별 통계, index 조회
 
-<br/><br/><h2>SixNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/87f494ab1a67873fe4bc18953e46f10dca3564e2/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L42)</h2>
+<br/><br/><h2>SixNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/5e0d483486d48f2b0eeb3bb4a387e3d205681464/Java/src/main/java/com/example/sixnumber/lotto/service/SixNumberService.java#L42)</h2>
 
 ### 1. 랜덤 번호 추천
 ### 2. 반복 연산된 번호 추천
