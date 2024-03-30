@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.example.sixnumber.lotto.entity.Lotto;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
@@ -27,7 +28,7 @@ public class LottoResponse{
 		countList = new ArrayList<>(lotto.getCountList());
 		value = lotto.getTopNumber();
 	}
-
+	@JsonIgnore
 	public Boolean isEmpty() {
 		return this.countList.isEmpty() && this.value.isEmpty();
 	}
