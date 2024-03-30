@@ -51,7 +51,7 @@ public class LottoService {
 		return lottoRepository.existsLottoBySubject("main");
 	}
 
-	@Cacheable(value = "Stats", key = "'main'")
+	@Cacheable(value = "Report", key = "'main'")
 	public LottoResponse mainTopNumbers() {
 		return lottoRepository.findByMain()
 			.map(lotto -> {
