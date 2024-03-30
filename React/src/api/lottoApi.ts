@@ -12,7 +12,7 @@ export type AllMonthProps = {
 
 export const createLotto = async (): Promise<UnifiedResponse<undefined>> => {
     try {
-        const { data } = await api.post("/lotto/admin");
+        const { data } = await api.post("/lotto/main/admin");
         return data;    
     } catch (error: any) {
         throw error.data;
