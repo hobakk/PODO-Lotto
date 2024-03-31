@@ -1,5 +1,6 @@
 package com.example.sixnumber.lotto.dto;
 
+import com.example.sixnumber.global.dto.NumberListAndBonusResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,4 +16,8 @@ public class WinNumberRequest {
 	private Long prize;
 	private int winner;
 	private String numbers;
+
+	public NumberListAndBonusResponse getNumberListAndBonus() {
+		return new NumberListAndBonusResponse(this.numbers);
+	}
 }

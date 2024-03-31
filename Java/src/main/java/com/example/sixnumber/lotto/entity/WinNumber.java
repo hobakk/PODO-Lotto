@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OrderColumn;
 
+import com.example.sixnumber.global.dto.NumberListAndBonusResponse;
 import com.example.sixnumber.lotto.dto.WinNumberRequest;
 
 import lombok.AccessLevel;
@@ -41,16 +42,14 @@ public class WinNumber {
 	private int bonus;
 
 	public WinNumber(WinNumberRequest request) {
-		List<Integer> bonusInclude = Arrays.stream(request.getNumbers()
-				.split(" ")).map(Integer::parseInt).collect(Collectors.toList());
-		List<Integer> topNumberList = bonusInclude.subList(0, bonusInclude.size()-1);
+		NumberListAndBonusResponse response = request.getNumberListAndBonus();
 
 		this.date = request.getDate();
 		this.time = request.getTime();
 		this.prize = request.getPrize();
 		this.winner = request.getWinner();
-		this.topNumberList = topNumberList;
-		this.bonus = bonusInclude.subList(bonusInclude.size()-1, bonusInclude.size()).get(0);
+		this.topNumberList = response.getNumberList();
+		this.bonus = response.getBonus();
 	}
 
 	@Override
