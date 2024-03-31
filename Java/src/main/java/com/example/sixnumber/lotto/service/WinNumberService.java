@@ -2,8 +2,10 @@ package com.example.sixnumber.lotto.service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.example.sixnumber.lotto.dto.WinNumberRequest;
 import com.example.sixnumber.lotto.dto.WinNumberResponse;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -37,24 +39,31 @@ public class WinNumberService {
 
 	@CachePut(cacheNames = "WinNumbers", key = "'all'")
 	public WinNumbersResponse setWinNumbers(int round) {
-		WinNumber winNumber = manager.retrieveLottoResult(round)
-			.map(WinNumber::new)
-			.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
+		Optional<WinNumber> optional = winNumberRepository.findByTime(round);
+		WinNumberRequest request = manager.retrieveLottoResult(round)
+				.orElseThrow(() -> new IllegalArgumentException("해당 회차의 정보가 없습니다"));
 
-		try {
-			int time = winNumber.getTime();
-			int topRound = getFirstWinNumber().getTime();
-			if (topRound > 0 && time <= topRound - MAX_VIEW || winNumberRepository.existsWinNumberByTime(time))
-				throw new OverlapException("등록된 당첨 결과 이거나 범위를 벗어났습니다");
-
+		if (optional.isPresent()) {
+			WinNumber winNumber = optional.get().update(request);
 			winNumberRepository.save(winNumber);
-		} catch (CustomException e) {
-			int checkingRound = 1110;
-			while (manager.checkMaxRound(checkingRound)) checkingRound++;
+		} else {
+			try {
+				WinNumber winNumber = new WinNumber(request);
+				int time = winNumber.getTime();
+				int topRound = getFirstWinNumber().getTime();
+				if (topRound > 0 && time <= topRound - MAX_VIEW) throw new OverlapException("범위를 벗어났습니다");
 
-			int result = checkingRound - round;
-			if (result <= 0 && result >= -MAX_VIEW) winNumberRepository.save(winNumber);
-			else throw new CustomException(ErrorCode.OUT_OF_RANGE);
+				winNumberRepository.save(winNumber);
+			} catch (CustomException e) {
+				int checkingRound = 1110;
+				while (manager.checkMaxRound(checkingRound)) checkingRound++;
+
+				int result = checkingRound - round;
+				if (result <= 0 && result >= -MAX_VIEW) {
+					WinNumber winNumber = new WinNumber(request);
+					winNumberRepository.save(winNumber);
+				} else throw new CustomException(ErrorCode.OUT_OF_RANGE);
+			}
 		}
 
 		return adjustWinNumbers();

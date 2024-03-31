@@ -52,6 +52,17 @@ public class WinNumber {
 		this.bonus = response.getBonus();
 	}
 
+	public WinNumber update(WinNumberRequest request) {
+		NumberListAndBonusResponse response = request.getNumberListAndBonus();
+
+		this.date = request.getDate();
+		this.prize = request.getPrize();
+		this.winner = request.getWinner();
+		this.topNumberList = response.getNumberList();
+		this.bonus = response.getBonus();
+		return this;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
