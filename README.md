@@ -22,7 +22,7 @@
 https://github.com/hobakk/PODO-Lotto/blob/main/podo_erd.png</br>
 https://podo-lotto.site/
 
-<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/500a643254569ab24dd46a6af24e25ea6d32b3b4/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L49)</h2>
+<br/><br/><h2>User [Service](https://github.com/hobakk/PODO-Lotto/blob/d47c62347a4bdc1896b36cf37302b899a88648ef/Java/src/main/java/com/example/sixnumber/user/service/UserService.java#L49)</h2>
 
 ### 1. 회원가입
 sendAuthCodeToEmail, compareAuthCode, signUp
@@ -60,7 +60,7 @@ sendAuthCodeToEmail, compareAuthCode, signUp
 - 조회: 충전요청 검색
 - 수정: 관리자 등록, 충전, 차감, 상태 수정, 권한 수정
 
-<br/><br/><h2>Lotto [Service](https://github.com/hobakk/PODO-Lotto/blob/5e0d483486d48f2b0eeb3bb4a387e3d205681464/Java/src/main/java/com/example/sixnumber/lotto/service/LottoService.java#L30)</h2>
+<br/><br/><h2>Lotto [Service](https://github.com/hobakk/PODO-Lotto/blob/d47c62347a4bdc1896b36cf37302b899a88648ef/Java/src/main/java/com/example/sixnumber/lotto/service/LottoService.java#L30)</h2>
 
 Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.tistory.com/131)
 ### 1. 메인 로또 통계
@@ -78,7 +78,7 @@ Redis Cache 사용해서 33% 속도 개선 -> [Blog](https://holloweyed-snail.ti
 - 주어진 조건에 따라 무작위로 숫자를 생성하고, 그 중에서 가장 자주 등장하는 숫자를 찾아 리스트로 반환
 ### 3. 이전 구매번호 조회
 
-<br/><br/><h2>WinNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/bdef53bf6fa4e391592b8a36f1e2feeae38b7d32/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L28)</h2>
+<br/><br/><h2>WinNumber [Service](https://github.com/hobakk/PODO-Lotto/blob/d47c62347a4bdc1896b36cf37302b899a88648ef/Java/src/main/java/com/example/sixnumber/lotto/service/WinNumberService.java#L30)</h2>
 
 Redis Cache 사용해서 속도 개선
 ### 1. 당첨번호 조회
@@ -102,7 +102,7 @@ Redis Cache 사용해서 속도 개선
 - 본인이 작성한 문의일 경우 조회, 수정, 삭제 가능
 - 관리자의 경우 모두 허용
 
-<br/><br/><h2>Scheduler [Service](https://github.com/hobakk/PODO-Lotto/blob/8ae94aad72464abcbe6d84901a48cf6ab708356e/Java/src/main/java/com/example/sixnumber/global/scurity/JwtSecurityFilter.java#L29)</h2>
+<br/><br/><h2>Scheduler [Service](https://github.com/hobakk/PODO-Lotto/blob/d47c62347a4bdc1896b36cf37302b899a88648ef/Java/src/main/java/com/example/sixnumber/global/scheduler/GlobalScheduler.java#L28)</h2>
 
 ### 1. 월 통계 생성
 - 매일 오전 11시에 동작되며, 매월 1일에 이전 달 통계를 생성
