@@ -111,9 +111,8 @@ public class UserService {
 	public UnifiedResponse<?> signIn(HttpServletResponse response, SigninRequest request) {
 		User user = userRepository
 			.findByEmailAndPasswordNotContainingAndStatus(request.getEmail(), "Oauth2Login", Status.ACTIVE)
-			.orElseThrow(() -> new IllegalArgumentException("등록되지 않은 이메일 또는 접속할 수 없는 상태입니다"));
-
-		validatePasswordMatching(request.getPassword(), user.getPassword());
+				.filter(u -> passwordEncoder.matches(request.getPassword(), u.getPassword()))
+				.orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 비 일치 및 접속할 수 없는 상태입니다"));
 
 		UnifiedResponse<?> unifiedResponse;
 		if (user.getRefreshPointer() == null) {
