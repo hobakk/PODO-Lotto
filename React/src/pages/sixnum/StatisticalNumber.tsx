@@ -4,7 +4,6 @@ import { statisticalNumber, repetitionAndNum } from '../../api/sixNumberApi';
 import { useMutation } from 'react-query';
 import { ResultContainer } from '../../components/Manufacturing';
 import { Err, UnifiedResponse } from '../../shared/TypeMenu';
-import useUserInfo from '../../hooks/useUserInfo';
 
 function StatisticalNumber() {
     const [inputNum, setInputNum] = useState<repetitionAndNum>({
@@ -14,7 +13,6 @@ function StatisticalNumber() {
     const [value, setValue] = useState<string[]>([]);
     const [isEmpty, setData] = useState<boolean>(true);
     const numRef = useRef<HTMLInputElement>(null);
-    const { getCashAndNickname } = useUserInfo();
 
     useEffect(()=>{
         if (numRef.current) 
@@ -35,7 +33,6 @@ function StatisticalNumber() {
             if (res.code === 200 && res.data) {
                 setValue(res.data);
                 setData(false);
-                getCashAndNickname.mutate();
             }
         },
         onError: (err: any | Err)=>{
