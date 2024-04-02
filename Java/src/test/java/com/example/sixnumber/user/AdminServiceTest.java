@@ -218,9 +218,10 @@ public class AdminServiceTest {
 
 		when(userRepository.findByIdAndRoleNot(anyLong(), any(UserRole.class))).thenReturn(Optional.of(saveUser));
 
-		UnifiedResponse<?> response = adminService.setRole(admin, saveUser.getId(), request);
+		UnifiedResponse<?> response = adminService.setRole(saveUser.getId(), request);
 
 		verify(userRepository).findByIdAndRoleNot(anyLong(), any(UserRole.class));
+		verify(userRepository).save(any(User.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "권한 변경 완료");
 	}
 
@@ -231,7 +232,7 @@ public class AdminServiceTest {
 		when(userRepository.findByIdAndRoleNot(anyLong(), any(UserRole.class))).thenReturn(Optional.of(saveUser));
 
 		Assertions.assertThrows(IllegalArgumentException.class,
-			() -> adminService.setRole(admin, saveUser.getId(), request));
+			() -> adminService.setRole(saveUser.getId(), request));
 
 		verify(userRepository).findByIdAndRoleNot(anyLong(), any(UserRole.class));
 	}

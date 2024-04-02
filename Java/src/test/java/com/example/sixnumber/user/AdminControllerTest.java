@@ -144,7 +144,7 @@ public class AdminControllerTest {
 
 	@Test
 	public void setRole() throws Exception {
-		when(adminService.setRole(any(User.class), anyLong(), any(OnlyMsgRequest.class)))
+		when(adminService.setRole(anyLong(), any(OnlyMsgRequest.class)))
 			.thenReturn(UnifiedResponse.ok("권한 변경 완료"));
 
 		mockMvc.perform(patch("/api/admin/role/99").with(csrf())
@@ -153,6 +153,6 @@ public class AdminControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("권한 변경 완료"));
 
-		verify(adminService).setRole(any(User.class), anyLong(), any(OnlyMsgRequest.class));
+		verify(adminService).setRole(anyLong(), any(OnlyMsgRequest.class));
 	}
 }
