@@ -96,23 +96,24 @@ public class AdminService {
 			});
 	}
 
-	public UnifiedResponse<?> setStatus(User user, Long targetId, OnlyMsgRequest request) {
-		User target = getTargetForConfirmation(user, targetId);
-
+	public UnifiedResponse<?> setStatus(Long targetId, OnlyMsgRequest request) {
 		Map<String, Status> statusMap = new HashMap<>();
 		statusMap.put("ACTIVE", Status.ACTIVE);
 		statusMap.put("SUSPENDED", Status.SUSPENDED);
 		statusMap.put("DORMANT", Status.DORMANT);
 
 		Status changeToStatus = statusMap.get(request.getMsg());
-		if (target.getStatus().equals(changeToStatus))
-			throw new IllegalArgumentException("이미 적용되어 있는 상태코드 입니다");
+		User target = userRepository.findByIdAndRoleNotAndStatusNot(targetId, UserRole.ROLE_ADMIN, changeToStatus)
+				.map(user -> {
+					user.setStatus(changeToStatus);
+					if (Arrays.asList(Status.SUSPENDED, Status.DORMANT).contains(user.getStatus())) {
+						redisDao.delete(RedisDao.RT_KEY + user.getRefreshPointer());
+					}
 
-		target.setStatus(changeToStatus);
-		Stream.of(Status.SUSPENDED, Status.DORMANT)
-			.filter(status -> status == changeToStatus)
-			.findFirst()
-			.ifPresent(status -> redisDao.delete(RedisDao.RT_KEY + target.getRefreshPointer()));
+					return user;
+				})
+				.orElseThrow(() -> new IllegalArgumentException("관리자 계정이거나 동일한 상태코드 입니다"));
+		userRepository.save(target);
 		return UnifiedResponse.ok("상태 변경 완료");
 	}
 
