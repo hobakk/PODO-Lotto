@@ -120,11 +120,4 @@ public class AdminService {
 		userRepository.save(target);
 		return UnifiedResponse.ok("권한 변경 완료");
 	}
-
-	private User getTargetForConfirmation(User user, Long targetId) {
-		if (user.getId().equals(targetId)) throw new IllegalArgumentException("본인 입니다");
-
-		return userRepository.findByIdAndRoleNot(targetId, UserRole.ROLE_ADMIN)
-			.orElseThrow(() -> new IllegalArgumentException("관리자 계정입니다"));
-	}
 }
