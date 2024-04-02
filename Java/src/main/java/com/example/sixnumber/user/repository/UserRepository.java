@@ -25,6 +25,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 	Optional<User> findByIdAndRoleNot(Long userId, UserRole role);
 
+	Optional<User> findByIdAndRoleNotAndStatusNot(Long userId, UserRole role, Status status);
+
 	Optional<User> findByIdAndCashGreaterThanEqual(Long userId, int cash);
 
 	Optional<User> findByIdAndSixNumberListNotNull(Long userId);
