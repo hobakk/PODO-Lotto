@@ -70,10 +70,9 @@ public class AdminController {
 	@PatchMapping("/status/{userId}")
 	public ResponseEntity<UnifiedResponse<?>> setStatus(
 		@PathVariable Long userId,
-		@RequestBody OnlyMsgRequest request,
-		@AuthenticationPrincipal User user
+		@RequestBody OnlyMsgRequest request
 	) {
-		return ResponseEntity.ok(adminService.setStatus(user, userId, request));
+		return ResponseEntity.ok(adminService.setStatus(userId, request));
 	}
 
 	@PatchMapping("/role/{userId}")
