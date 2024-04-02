@@ -167,9 +167,10 @@ public class AdminServiceTest {
 
 		when(userRepository.findByIdAndRoleNot(anyLong(), any(UserRole.class))).thenReturn(Optional.of(saveUser));
 
-		UnifiedResponse<?> response = adminService.setStatus(admin, saveUser.getId(), request);
+		UnifiedResponse<?> response = adminService.setStatus(saveUser.getId(), request);
 
 		verify(userRepository).findByIdAndRoleNot(anyLong(), any(UserRole.class));
+		verify(userRepository).save(any(User.class));
 		assertEquals(saveUser.getStatus(), Status.ACTIVE);
 		TestUtil.UnifiedResponseEquals(response, 200, "상태 변경 완료");
 	}
@@ -181,10 +182,11 @@ public class AdminServiceTest {
 
 		when(userRepository.findByIdAndRoleNot(anyLong(), any(UserRole.class))).thenReturn(Optional.of(saveUser));
 
-		UnifiedResponse<?> response = adminService.setStatus(admin, saveUser.getId(), request);
+		UnifiedResponse<?> response = adminService.setStatus(saveUser.getId(), request);
 
 		verify(userRepository).findByIdAndRoleNot(anyLong(), any(UserRole.class));
 		verify(redisDao).delete(anyString());
+		verify(userRepository).save(any(User.class));
 		TestUtil.UnifiedResponseEquals(response, 200, "상태 변경 완료");
 	}
 
@@ -195,7 +197,7 @@ public class AdminServiceTest {
 		when(userRepository.findByIdAndRoleNot(anyLong(), any(UserRole.class))).thenReturn(Optional.of(saveUser));
 
 		Assertions.assertThrows(
-			CustomException.class, () -> adminService.setStatus(admin, saveUser.getId(), request));
+			CustomException.class, () -> adminService.setStatus(saveUser.getId(), request));
 
 		verify(userRepository).findByIdAndRoleNot(anyLong(), any(UserRole.class));
 	}
@@ -207,7 +209,7 @@ public class AdminServiceTest {
 		when(userRepository.findByIdAndRoleNot(anyLong(), any(UserRole.class))).thenReturn(Optional.of(saveUser));
 
 		Assertions.assertThrows(IllegalArgumentException.class,
-			() -> adminService.setStatus(admin, saveUser.getId(), request));
+			() -> adminService.setStatus(saveUser.getId(), request));
 
 		verify(userRepository).findByIdAndRoleNot(anyLong(), any(UserRole.class));
 	}

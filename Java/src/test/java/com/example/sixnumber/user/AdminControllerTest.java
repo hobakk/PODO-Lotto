@@ -130,7 +130,7 @@ public class AdminControllerTest {
 
 	@Test
 	public void setStatus() throws Exception {
-		when(adminService.setStatus(any(User.class), anyLong(), any(OnlyMsgRequest.class)))
+		when(adminService.setStatus(anyLong(), any(OnlyMsgRequest.class)))
 			.thenReturn(UnifiedResponse.ok("상태 변경 완료"));
 
 		mockMvc.perform(patch("/api/admin/status/99").with(csrf())
@@ -139,7 +139,7 @@ public class AdminControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.msg").value("상태 변경 완료"));
 
-		verify(adminService).setStatus(any(User.class), anyLong(), any(OnlyMsgRequest.class));
+		verify(adminService).setStatus(anyLong(), any(OnlyMsgRequest.class));
 	}
 
 	@Test
