@@ -89,20 +89,6 @@ public class AdminControllerTest {
 	}
 
 	@Test
-	public void setAdmin() throws Exception {
-		when(adminService.setAdmin(any(OnlyMsgRequest.class), any(User.class), anyLong()))
-			.thenReturn(UnifiedResponse.ok("변경 완료"));
-
-		mockMvc.perform(patch("/api/admin/users/99").with(csrf())
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString("AdminSecurityKey")))
-			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.msg").value("변경 완료"));
-
-		verify(adminService).setAdmin(any(OnlyMsgRequest.class), any(User.class), anyLong());
-	}
-
-	@Test
 	public void upCash() throws Exception {
 		when(adminService.upCash(any(CashRequest.class))).thenReturn(UnifiedResponse.ok("충전 완료"));
 

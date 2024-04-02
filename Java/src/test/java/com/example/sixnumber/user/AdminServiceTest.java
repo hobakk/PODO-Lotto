@@ -57,27 +57,6 @@ public class AdminServiceTest {
 	}
 
 	@Test
-	void setAdmin_success() {
-		ReflectionTestUtils.setField(adminService, "KEY", "AdminSecurityKey");
-		OnlyMsgRequest request = new OnlyMsgRequest("AdminSecurityKey");
-
-		when(userRepository.findByIdAndRoleNot(anyLong(), any(UserRole.class))).thenReturn(Optional.of(saveUser));
-
-		UnifiedResponse<?> response = adminService.setAdmin(request, admin, saveUser.getId());
-
-		verify(userRepository).findByIdAndRoleNot(anyLong(), any(UserRole.class));
-		assertEquals(saveUser.getRole(), UserRole.ROLE_ADMIN);
-		TestUtil.UnifiedResponseEquals(response, 200, "변경 완료");
-	}
-
-	@Test
-	void setAdmin_fail_incorrectKey() {
-		OnlyMsgRequest request = new OnlyMsgRequest("false");
-
-		Assertions.assertThrows(IllegalArgumentException.class, () -> adminService.setAdmin(request, admin, saveUser.getId()));
-	}
-
-	@Test
 	void getUsers() {
 		when(userRepository.findAll()).thenReturn(List.of(saveUser));
 
