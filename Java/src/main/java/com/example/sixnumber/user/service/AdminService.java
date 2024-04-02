@@ -32,18 +32,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminService {
 
-	@Value("${spring.admin.set-admin-key}")
-	private String KEY;
 	private final UserRepository userRepository;
 	private final RedisDao redisDao;
-
-	public UnifiedResponse<?> setAdmin(OnlyMsgRequest request, User user, Long userId) {
-		if (!request.getMsg().equals(KEY)) throw new IllegalArgumentException("설정된 Key 값이 아닙니다");
-
-		User target = getTargetForConfirmation(user, userId);
-		target.setAdmin();
-		return UnifiedResponse.ok("변경 완료");
-	}
 
 	// page 처리 필요함
 	public UnifiedResponse<List<UserResponse>> getUsers() {
