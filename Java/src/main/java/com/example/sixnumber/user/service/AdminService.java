@@ -2,9 +2,7 @@ package com.example.sixnumber.user.service;
 
 import static com.example.sixnumber.global.exception.ErrorCode.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -101,14 +99,12 @@ public class AdminService {
 	public UnifiedResponse<?> setStatus(User user, Long targetId, OnlyMsgRequest request) {
 		User target = getTargetForConfirmation(user, targetId);
 
-		Status changeToStatus;
-		switch (request.getMsg()) {
-			case "ACTIVE": changeToStatus = Status.ACTIVE; break;
-			case "SUSPENDED": changeToStatus = Status.SUSPENDED; break;
-			case "DORMANT": changeToStatus = Status.DORMANT; break;
-			default: throw new CustomException(INVALID_INPUT);
-		}
+		Map<String, Status> statusMap = new HashMap<>();
+		statusMap.put("ACTIVE", Status.ACTIVE);
+		statusMap.put("SUSPENDED", Status.SUSPENDED);
+		statusMap.put("DORMANT", Status.DORMANT);
 
+		Status changeToStatus = statusMap.get(request.getMsg());
 		if (target.getStatus().equals(changeToStatus))
 			throw new IllegalArgumentException("이미 적용되어 있는 상태코드 입니다");
 
