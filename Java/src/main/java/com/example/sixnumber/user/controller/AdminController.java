@@ -79,9 +79,8 @@ public class AdminController {
 	@PatchMapping("/role/{userId}")
 	public ResponseEntity<UnifiedResponse<?>> setRole(
 		@PathVariable Long userId,
-		@RequestBody OnlyMsgRequest request,
-		@AuthenticationPrincipal User user
+		@RequestBody OnlyMsgRequest request
 	) {
-		return ResponseEntity.ok(adminService.setRole(user, userId, request));
+		return ResponseEntity.ok(adminService.setRole(userId, request));
 	}
 }
