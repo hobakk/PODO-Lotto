@@ -116,17 +116,17 @@ public class AdminService {
 		return UnifiedResponse.ok("상태 변경 완료");
 	}
 
-	public UnifiedResponse<?> setRole(User user, Long targetId, OnlyMsgRequest request) {
-		User target = getTargetForConfirmation(user, targetId);
-
+	public UnifiedResponse<?> setRole(Long targetId, OnlyMsgRequest request) {
 		Map<String, UserRole> roleMap = new HashMap<>();
 		roleMap.put("USER", UserRole.ROLE_USER);
 		roleMap.put("PAID", UserRole.ROLE_PAID);
 
 		UserRole changeRole = roleMap.get(request.getMsg());
-		if (target.getRole().equals(changeRole)) throw new IllegalArgumentException("동일한 권한입니다");
-
-		target.setRole(changeRole);
+		User target = userRepository.findByIdAndRoleNot(targetId, UserRole.ROLE_ADMIN)
+				.filter(u -> !changeRole.equals(u.getRole()))
+				.map(u -> u.setRole(changeRole))
+				.orElseThrow(() -> new IllegalArgumentException("관리자 계정이거나 동일한 상태라 변경할 수 없습니다"));
+		userRepository.save(target);
 		return UnifiedResponse.ok("권한 변경 완료");
 	}
 

@@ -168,8 +168,9 @@ public class User implements UserDetails {
 
 	public void minusCash(int cash) { this.cash -= cash; }
 
-	public void setRole(UserRole role) {
+	public User setRole(UserRole role) {
 		this.role = role;
+		return this;
 	}
 
 	public void setPassword(String password) { this.password = password; }
