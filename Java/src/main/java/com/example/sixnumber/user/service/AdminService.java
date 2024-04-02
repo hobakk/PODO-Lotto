@@ -119,13 +119,11 @@ public class AdminService {
 	public UnifiedResponse<?> setRole(User user, Long targetId, OnlyMsgRequest request) {
 		User target = getTargetForConfirmation(user, targetId);
 
-		UserRole changeRole;
-		switch (request.getMsg()) {
-			case "USER": changeRole = UserRole.ROLE_USER; break;
-			case "PAID": changeRole = UserRole.ROLE_PAID; break;
-			default: throw new CustomException(INVALID_INPUT);
-		}
+		Map<String, UserRole> roleMap = new HashMap<>();
+		roleMap.put("USER", UserRole.ROLE_USER);
+		roleMap.put("PAID", UserRole.ROLE_PAID);
 
+		UserRole changeRole = roleMap.get(request.getMsg());
 		if (target.getRole().equals(changeRole)) throw new IllegalArgumentException("동일한 권한입니다");
 
 		target.setRole(changeRole);
