@@ -48,15 +48,6 @@ public class AdminController {
 		return ResponseEntity.ok(adminService.searchCharging(msg, cash));
 	}
 
-	@PatchMapping("/users/{userId}")
-	public ResponseEntity<UnifiedResponse<?>> setAdmin(
-		@PathVariable Long userId,
-		@RequestBody OnlyMsgRequest request,
-		@AuthenticationPrincipal User user
-	) {
-		return ResponseEntity.ok(adminService.setAdmin(request, user, userId));
-	}
-
 	@PatchMapping("/users/up-cash")
 	public ResponseEntity<UnifiedResponse<?>> upCash(@RequestBody CashRequest cashRequest) {
 		return ResponseEntity.ok(adminService.upCash(cashRequest));
