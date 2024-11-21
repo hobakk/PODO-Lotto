@@ -8,7 +8,7 @@ RUN yarn install
 COPY . .
 
 ENV REACT_APP_ENCRYPTION_KEY=rlaalswodmldbxnqmvmflaldjarPwjddmswkdustksalsekdvoddldlrhqlalfqjsghsmsrhdrogkwldksgrpTek
-ENV REACT_APP_DOMAIN=https://podo-lotto.site
+ENV REACT_APP_DOMAIN=https://3.37.27.227
 
 RUN yarn build
 
